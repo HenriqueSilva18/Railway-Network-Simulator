@@ -1,20 +1,24 @@
 # Use Case Diagram (UCD)
 
-**In the scope of this project, there is a direct relationship of _1 to 1_ between Use Cases (UC) and User Stories (US).**
 
-However, be aware, this is a pedagogical simplification. On further projects and course units there may also exist _1 to N **and/or** N to 1_ relationships between UC and US.
-
-**Insert below the Use Case Diagram in a SVG format**
 
 ![Use Case Diagram](svg/UCD.svg)
 
-**For each UC/US, it must be provided evidences of applying main activities of the software development process (requirements, analysis, design, tests and code). Gather those evidences on a separate file for each UC/US and set up a link as suggested below.**
 
 # Use Cases / User Stories
 
-| UC/US | Description                                   |                   
-|:------|:----------------------------------------------|
-| US001 | [Short name for US001](../../US001/README.md) |
-| ...   | ...                                           |
-| US006 | [Create a Task](../../US006/US006-README.md)  |
-| ...   | ...                                           |
+
+| **UC/US**  | **Description**  |
+|:----------|:----------------|
+| **US01**  | Create a map with a size and a name. |
+| **US02**  | Add an industry in a position XY of the selected map. |
+| **US03**  | Add a city in a position XY of the selected map. |
+| **US04**  | Create a scenario for a selected map. |
+| **US05**  | Build a station. |
+| **US06**  | Upgrade a selected station with a building. |
+| **US07**  | List all the stations to select one and see its details. |
+| **US08**  | Build a railway line between two stations. |
+| **US09**  | Buy a train. |
+| **US10**  | Assign a selected train to a route . |
+| **US11**  | List all trains. |
+| **US12**  | Create a simulator that generates cargoes at current stations. |
