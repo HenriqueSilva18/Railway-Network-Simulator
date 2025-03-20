@@ -2,7 +2,7 @@
 
 
 
-![Use Case Diagram](svg/UCD.svg)
+![Use Case Diagram](../../outsourcing-tasks-example/global-artifacts/01.requirements-engineering/svg/UCD.svg)
 
 
 # Use Cases / User Stories

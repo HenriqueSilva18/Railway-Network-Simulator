@@ -4,12 +4,12 @@
 
 The team is formed by the students identified in the following table.
 
-| Student Number | Name              |
-|----------------|-------------------|
-| **1XXXXXX**    | Name of student 1 |
-| **1XXXXXX**    | Name of student 2 |
-| **1XXXXXX**    | Name of student 3 |
-| **1XXXXXX**    | Name of student 4 |
+| Student Number | Name           |
+|----------------|----------------|
+| **1221919**    | Gonçalo Couto  |
+| **1220848**    | José Moreira   |
+| **1240586**    | Duarte Machado |
+| **1240588 **   | Henrique Silva |
 
 # 2. Task Distribution ###
 
@@ -27,14 +27,19 @@ At last, remember that each User Story does not stand alone... it needs to be in
 
 **This table must be always up-to-date.**
 
-| Task                                                                                                                           | Sprint 1                             | Sprint 2 | Sprint 3 |
-|--------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|----------|----------|
-| [Glossary](system-documentation/global-artifacts/01.requirements-engineering/glossary.md)                                      | all                                  | all      | all      |
-| [Use Case Diagram (UCD)](system-documentation/global-artifacts/01.requirements-engineering/use-case-diagram.md)                | all                                  | all      | all      |
-| [Supplementary Specification](system-documentation/global-artifacts/01.requirements-engineering/suplementary-specification.md) | all                                  | all      | all      |
-| [Domain Model](system-documentation/global-artifacts/01.requirements-engineering/domain-model.md)                              | all                                  | all      | all      |
-| US01 (SDP Activities)                                                                                                          | [1XXXXXX](system-documentation/US01) |          |          |
-| US02 (SDP Activities)                                                                                                          | [1XXXXXX](system-documentation/US02) |          |          |
-| US03 (SDP Activities)                                                                                                          | [1XXXXXX](system-documentation/US03) |          |          |
-| ...                                                                                                                            | ...                                  | ...      | ...      |
-| ...                                                                                                                            | ...                                  | ...      | ...      |
+| Task                                                                                                                         | Sprint 1                             | Sprint 2 | Sprint 3 |
+|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|----------|----------|
+| [Glossary](system-documentation/global-artifacts/01.requirements-engineering/glossary.md)                                    | all                                  | all      | all      |
+| [Use Case Diagram (UCD)](system-documentation/global-artifacts/use-case-diagram.md)              | all                                  | all      | all      |
+| [Supplementary Specification](system-documentation/global-artifacts/01.requirements-engineering/supplementary-specification.md) | all                                  | all      | all      |
+| [Domain Model](system-documentation/global-artifacts/01.requirements-engineering/domain-model.md)                            | all                                  | all      | all      |
+| [US01](system-documentation/Sprint 1/US01)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US02](system-documentation/Sprint 1/US02)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US03](system-documentation/Sprint 1/US03)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US04](system-documentation/Sprint 1/US04)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US05](system-documentation/Sprint 1/US05)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US06](system-documentation/Sprint 1/US06)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US07](system-documentation/Sprint 1/US07)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US09](system-documentation/Sprint 1/US09)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
+| [US010](system-documentation/Sprint 1/US010)                                                                                 | [1XXXXXX](system-documentation/US01) |          |          |
+| [US012](system-documentation/Sprint 1/US012)                                                                                 | [1XXXXXX](system-documentation/US01) |          |          |
