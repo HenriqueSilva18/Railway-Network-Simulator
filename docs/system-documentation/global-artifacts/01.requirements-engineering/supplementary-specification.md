@@ -8,7 +8,7 @@ _Specifies functionalities that:
 
 (fill in here)
 
-## Usability 
+## Usability
 
 _Evaluates the user interface. It has several subcategories,
 among them: error prevention; interface aesthetics and design; help and

@@ -1,0 +1,24 @@
+@startuml
+left to right direction
+actor Editor
+actor Player
+actor "Product Owner" as PO
+
+rectangle "Railway Simulation System" {
+    
+    Editor -- (US01 - Create Map) 
+    Editor -- (US02 - Add Industry) 
+    Editor -- (US03 - Add City)
+    Editor -- (US04 - Create Scenario)
+
+    Player -- (US05 - Build Station)
+    Player -- (US06 - Upgrade Station)
+    Player -- (US07 - List Stations)
+    Player -- (US08 - Build Railway Line)
+    Player -- (US09 - Buy Train)
+    Player -- (US10 - Assign Train to Route)
+    Player -- (US11 - List Trains)
+
+    PO -- (US12 - Create Cargo Simulator)
+}
+@enduml
