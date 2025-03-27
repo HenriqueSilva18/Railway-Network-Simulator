@@ -2,76 +2,164 @@
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-'skinparam linetype ortho
-'left to right direction
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
 
-'title Domain Model
-
-class Organization {
+class Editor {
     name
-    vatNumber
-    website
-    phoneNumber
-    email
+    createdMaps
+    createdScenarios
 }
 
-class Task {
-    reference
-    description
-    informalDescription
-    technicalDescription
-    duration
-    cost
-}
-
-class Category {
-    description
-}
-
-class Employee {
+class Player {
     name
-    email
-    position
-    phone
+    currentGame
 }
 
-class TechnicalSkill{
-    shortDescription
-    fullDescription
+class Map{
+    name
+    width
+    height
+    cities
 }
 
-class ActivityArea{
-    shortDescription
-    fullDescription
+class Scenario{
+    name
+    maps
+    restrictions
+    startDate
+    endDate
 }
 
-class FeatureTS{
-    mandatory
+class Restriction{
+    restrictionType
 }
 
-'class User {
-'    name
-'    email
-'    password
-'}
-class PostalAddress{
-    street
-    zipCode
-    city
+class City{
+    name
+    width
+    height
+    population
+    stations
+    industries
 }
 
-Organization "1" - "*" Employee : has >
-Organization "1" - "*" Task: owns >
-Employee "1" -- "*" Task : creates >
-Task "*" - "1" Category: cataloged as >
-TechnicalSkill "*" - "1" ActivityArea: regarding an >
+class Industry{
+    name
+    width
+    height
+}
 
-Category "*" - "*" TechnicalSkill :  requires >
-(Category, TechnicalSkill) . FeatureTS
+class PrimaryIndustry{
+    generatedResources
+}
 
-Organization "1" -left "1" PostalAddress : located At >
+class TransformingIndustry{
+    transformedResources
+}
+
+class Resource{
+    name
+    cargoType
+}
+
+class Station{
+    name
+    stationType
+    width
+    height
+    routes
+    connectedRailways
+}
+
+class RailwayLine{
+    stations
+    railway
+}
+
+class Railway{
+    name
+    stations
+    routes
+    railwayLines
+}
+
+class Route{
+    name
+    stations
+    trains
+}
+
+class Train{
+    locomotives
+    carriage
+    routes
+    currentRoute
+}
+
+class Locomotive{
+    locomotiveType
+}
+
+class Carriage{
+    cargoType
+}
+
+enum RestrictionType{
+    timeRestrictions
+    technologyRestrictions
+    historicalRestrictions
+}
+
+enum StationType{
+    depot
+    station
+    terminal
+}
+
+enum LocomotiveType{
+    steam
+    diesel
+    electricity
+}
+
+enum CargoType{
+    passengers
+    mail
+    coal
+    iron ore
+    steel
+    cars
+    food
+    textiles
+}
+
+Editor "1" -- "0..*" Map: create/edit
+Editor "1" -- "0..*" Scenario: create/edit
+Player "1" -- "0..*" Scenario: play
+Scenario "1..*" -- "1..*" Restriction: has
+Restriction "1..*" -- "1" RestrictionType: has
+Map "1..*" -- "1..*" City: has
+Map "1" -- "0..*" Scenario: has
+City "1" -- "1..*" Station: has
+City "1" -- "1..*" Industry: has
+Station "1" -- "0..*" Industry: serves
+Station "1..*" -- "1" StationType: has
+Station "2" -- "1..*" RailwayLine: has
+Station "1..*" -- "1" Railway: has
+RailwayLine "1..*" -- "1" Railway: has
+Station "1..*" -- "1..*" Route: has
+Railway "1" -- "1..*" Route: has
+Route "1..*" -- "1..*" Train: has
+Train "1" -- "1..*" Locomotive: has
+Train "1" -- "0..*" Carriage: has
+Locomotive "1..*" -- "1" LocomotiveType: has
+Carriage "1..*" -- "1" CargoType: has
+Industry <|-- PrimaryIndustry
+Industry <|-- TransformingIndustry
+PrimaryIndustry "1..*" -- "1..*" Resource: generates
+TransformingIndustry "1..*" -- "1..*" Resource: transforms
+Resource "1..*" -- "1" CargoType: has
 
 @enduml
