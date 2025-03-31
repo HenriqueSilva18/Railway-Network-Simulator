@@ -5,11 +5,11 @@
 The team is formed by the students identified in the following table.
 
 | Student Number | Name           |
-|----------------|----------------|
-| **1221919**    | Gonçalo Couto  |
-| **1220848**    | José Moreira   |
-| **1240586**    | Duarte Machado |
-| **1240588 **   | Henrique Silva |
+|---------------|----------------|
+| **1221919**   | Gonçalo Couto  |
+| **1220848**   | José Moreira   |
+| **1240586**   | Duarte Machado |
+| **1240588**   | Henrique Silva |
 
 # 2. Task Distribution ###
 
@@ -27,19 +27,19 @@ At last, remember that each User Story does not stand alone... it needs to be in
 
 **This table must be always up-to-date.**
 
-| Task                                                                                                                         | Sprint 1                             | Sprint 2 | Sprint 3 |
-|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|----------|----------|
-| [Glossary](system-documentation/global-artifacts/01.requirements-engineering/glossary.md)                                    | all                                  | all      | all      |
-| [Use Case Diagram (UCD)](system-documentation/global-artifacts/use-case-diagram.md)              | all                                  | all      | all      |
-| [Supplementary Specification](system-documentation/global-artifacts/01.requirements-engineering/supplementary-specification.md) | all                                  | all      | all      |
-| [Domain Model](system-documentation/global-artifacts/01.requirements-engineering/domain-model.md)                            | all                                  | all      | all      |
-| [US01](system-documentation/Sprint 1/US01)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US02](system-documentation/Sprint 1/US02)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US03](system-documentation/Sprint 1/US03)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US04](system-documentation/Sprint 1/US04)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US05](system-documentation/Sprint 1/US05)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US06](system-documentation/Sprint 1/US06)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US07](system-documentation/Sprint 1/US07)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US09](system-documentation/Sprint 1/US09)                                                                                   | [1XXXXXX](system-documentation/US01) |          |          |
-| [US010](system-documentation/Sprint 1/US010)                                                                                 | [1XXXXXX](system-documentation/US01) |          |          |
-| [US012](system-documentation/Sprint 1/US012)                                                                                 | [1XXXXXX](system-documentation/US01) |          |          |
+| Task                                                                                                                           | Sprint 1                                                                                                | Sprint 2 | Sprint 3 |
+|--------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------|----------|
+| [Glossary](system-documentation/global-artifacts/01.requirements-engineering/glossary.md)                                      | [all](system-documentation/global-artifacts/glossary.md)                                                | all      | all      |
+| [Use Case Diagram (UCD)](system-documentation/global-artifacts/use-case-diagram.md)                                            | [all](system-documentation/global-artifacts/use-case-diagram.md)                                        | all      | all      |
+| [Supplementary Specification](system-documentation/global-artifacts/01.requirements-engineering/supplementary-specification.md) | [all](system-documentation/global-artifacts/01.requirements-engineering/supplementary-specification.md) | all      | all      |
+| [Domain Model](system-documentation/global-artifacts/01.requirements-engineering/domain-model.md)                              | [all](system-documentation/global-artifacts/02.analysis/puml/newDM.puml)                                | all      | all      |
+| [US01](system-documentation/Sprint 1/US01)                                                                                     | [1221919](system-documentation/Sprint 1/US01)                                                           |          |          |
+| [US02](system-documentation/Sprint 1/US02)                                                                                     | [1240588](system-documentation/Sprint 1/US02)                                                           |          |          |
+| [US03](system-documentation/Sprint 1/US03)                                                                                     | [1240586](system-documentation/Sprint 1/US03)                                                           |          |          |
+| [US04](system-documentation/Sprint 1/US04)                                                                                     | [1220848](system-documentation/Sprint 1/US04)                                                           |          |          |
+| [US05](system-documentation/Sprint 1/US05)                                                                                     | [1221919](system-documentation/Sprint 1/US05)                                                           |          |          |
+| [US06](system-documentation/Sprint 1/US06)                                                                                     | [1240588](system-documentation/Sprint 1/US06)                                                           |          |          |
+| [US07](system-documentation/Sprint 1/US07)                                                                                     | [1240586](system-documentation/Sprint 1/US07)                                                           |          |          |
+| [US09](system-documentation/Sprint 1/US09)                                                                                     | [1220848](system-documentation/Sprint 1/US09)                                                           |          |          |
+| [US010](system-documentation/Sprint 1/US010)                                                                                   | [1221919 & 1240588](system-documentation/Sprint 1/US10)                                                        |          |          |
+| [US012](system-documentation/Sprint 1/US012)                                                                                   | [1240586 & 1220848](system-documentation/Sprint 1/US12)                                                 |          |          |
