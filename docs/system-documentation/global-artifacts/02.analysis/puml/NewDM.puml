@@ -1,0 +1,284 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+' Layout optimization
+left to right direction
+
+' ====== User Entities ======
+package "User Management" {
+  class User {
+    username
+    email
+    password
+  }
+  class Editor {
+    createdMaps
+    createdScenarios
+  }
+
+  class Player {
+    budget
+  }
+  class ProductOwner
+
+  User <|-- Editor
+  User <|-- Player
+  User <|-- ProductOwner
+}
+
+' ====== Core Game Elements ======
+package "Editing Tool" {
+  class Map {
+    nameID
+    width
+    height
+  }
+
+  class Scenario {
+    nameID
+    configfile
+    timePeriod
+    technologicalRestrictions
+    historicalEvents
+  }
+
+  class City {
+    name
+    position
+    houseBlocks
+  }
+
+  ' Added from Industry System
+  abstract class Industry {
+    name
+    position
+  }
+
+  class PrimarySectorIndustry {
+    resourceType
+    generationRate
+  }
+
+  class TransformingIndustry {
+    requiredResources
+    productionRate
+  }
+
+  class Port {
+    importCargos
+    exportCargos
+    transformCapabilities
+  }
+
+  enum Position{
+    xAxis
+    yAxis
+  }
+
+  Industry <|-- PrimarySectorIndustry
+  Industry <|-- TransformingIndustry
+  Industry <|-- Port
+
+  ' Added from Economy
+  class Cargo {
+    amount
+    lifespan
+  }
+
+  class Resource {
+    name
+    amount
+    lifespan
+  }
+
+  class Product {
+    amount
+    lifespan
+  }
+
+  enum ResourceType {
+    COAL
+    IRON_ORE
+    BAUXITE
+    NITRATE
+    VEGETABLES
+    CEREALS
+    WOOL
+    COFFEE
+    RUBBER
+    CATTLE
+  }
+
+  enum ProductType {
+    STEEL
+    CARS
+    TEXTILES
+    FOOD
+  }
+
+  enum ServiceType {
+    PASSENGERS
+    MAIL
+  }
+
+  Cargo <|-- Resource
+  Cargo <|-- Product
+  Resource "1" -- "1" ResourceType : is of type >
+  Product "1" -- "1" ProductType : is of type >
+}
+
+' ====== Simulator ======
+  class Simulator {
+    status
+  }
+
+
+' ====== Railway Network ======
+package "Simulation" {
+  enum StationType {
+    DEPOT
+    STATION
+    TERMINAL
+  }
+
+  class Station {
+    name
+    position
+    type: StationType
+    radius
+    cost
+  }
+
+  enum BuildingType {
+    TELEGRAPH
+    TELEPHONE
+    SMALL_CAFE
+    LARGE_CAFE
+    CUSTOMS
+    POST_OFFICE
+    SMALL_HOTEL
+    LARGE_HOTEL
+    SILO
+    LIQUID_STORAGE
+  }
+
+  class Building {
+    type: BuildingType
+    availableYear
+    cost
+    effect
+  }
+
+  enum TrackType {
+    SINGLE
+    DOUBLE
+    SINGLE_ELECTRIFIED
+    DOUBLE_ELECTRIFIED
+  }
+
+  class RailwayLine {
+    length
+    type: TrackType
+    cost
+  }
+
+  enum LocomotiveType {
+    STEAM
+    DIESEL
+    ELECTRIC
+  }
+
+  class Locomotive {
+    name
+    type: LocomotiveType
+    power
+    acceleration
+    topSpeed
+    startYear
+    fuelCost
+    maintenanceCost
+    price
+  }
+
+  class Train {
+    name
+  }
+
+  class Carriage {
+    cargoType
+  }
+
+  class Route {
+    name
+  }
+
+  class StationCargoPickup {
+    amount
+  }
+}
+
+' ====== Core Relationships ======
+' Creation relationships
+Editor "1" -- "*" Map : creates >
+Editor "1" -- "*" Scenario : creates >
+Scenario "1" -- "1" Map : uses >
+
+' Map elements
+Map "1" *-- "*" Industry : contains >
+Map "1" *-- "*" City : contains >
+
+' Player actions
+Player "1" -- "*" Station : builds >
+Player "1" -- "*" RailwayLine : builds >
+Player "1" -- "*" Train : buys >
+Player "1" -- "*" Route : creates >
+
+' Station relationships
+Station "1" *-- "*" Building : upgrades with >
+Station "0..1" -- "*" City : serves >
+Station "0..1" -- "*" Industry : serves >
+Station "1" -- "*" Cargo : stores >
+
+' Railway network
+RailwayLine "1" -- "2" Station : connects >
+Train "1" *-- "1" Locomotive : has >
+Train "1" *-- "*" Carriage : has >
+Train "1" -- "0..1" Route : assigned to >
+Train "1" -- "*" Cargo : transports >
+
+' Routes and stations
+Route "1" *-- "*" StationCargoPickup : includes >
+StationCargoPickup "1" -- "1" Station : at >
+StationCargoPickup "1" -- "1" Cargo : specifies >
+Station "*" -- "*" Route : included in >
+
+' Scenario restrictions
+Scenario "*" -- "*" Locomotive : restricts >
+Scenario "1" -- "*" Port : configures >
+
+' ====== Production Chain Relationships ======
+' Resource generation
+PrimarySectorIndustry "1" -- "*" Resource : generates >
+City "1" -- "*" ServiceType : generates >
+
+' Resource transformation
+TransformingIndustry "*" -- "*" Resource : consumes >
+TransformingIndustry "1" -- "*" Product : produces >
+
+' Consumption
+City "*" -- "*" Product : consumes >
+City "*" -- "*" ServiceType : consumes >
+
+' Port's special role
+Port "*" -- "*" Resource : imports/exports >
+Port "*" -- "*" Product : imports/exports >
+Port "*" -- "*" Resource : transforms >
+Port "*" -- "*" Product : produces >
+
+' Simulator management
+ProductOwner "1" -- "1" Simulator : manages >
+@enduml

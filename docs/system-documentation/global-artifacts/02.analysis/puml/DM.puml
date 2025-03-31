@@ -22,6 +22,7 @@ class Map{
     width
     height
     cities
+    industries
 }
 
 class Scenario{
@@ -141,6 +142,7 @@ Player "1" -- "0..*" Scenario: play
 Scenario "1..*" -- "1..*" Restriction: has
 Restriction "1..*" -- "1" RestrictionType: has
 Map "1..*" -- "1..*" City: has
+Map "1..*" -- "1..*" Industry: has
 Map "1" -- "0..*" Scenario: has
 City "1" -- "1..*" Station: has
 City "1" -- "1..*" Industry: has
