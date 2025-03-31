@@ -9,12 +9,7 @@ hide methods
 left to right direction
 
 ' ====== User Entities ======
-package "User Management" {
-  class User {
-    username
-    email
-    password
-  }
+
   class Editor {
     createdMaps
     createdScenarios
@@ -23,15 +18,9 @@ package "User Management" {
   class Player {
     budget
   }
-  class ProductOwner
-
-  User <|-- Editor
-  User <|-- Player
-  User <|-- ProductOwner
-}
 
 ' ====== Core Game Elements ======
-package "Editing Tool" {
+
   class Map {
     nameID
     width
@@ -48,14 +37,16 @@ package "Editing Tool" {
 
   class City {
     name
-    position
     houseBlocks
+    xAxis
+    yAxis
   }
 
   ' Added from Industry System
   abstract class Industry {
     name
-    position
+    xAxis
+    yAxis
   }
 
   class PrimarySectorIndustry {
@@ -74,10 +65,6 @@ package "Editing Tool" {
     transformCapabilities
   }
 
-  enum Position{
-    xAxis
-    yAxis
-  }
 
   Industry <|-- PrimarySectorIndustry
   Industry <|-- TransformingIndustry
@@ -129,16 +116,11 @@ package "Editing Tool" {
   Cargo <|-- Product
   Resource "1" -- "1" ResourceType : is of type >
   Product "1" -- "1" ProductType : is of type >
-}
 
-' ====== Simulator ======
-  class Simulator {
-    status
-  }
 
 
 ' ====== Railway Network ======
-package "Simulation" {
+
   enum StationType {
     DEPOT
     STATION
@@ -147,7 +129,8 @@ package "Simulation" {
 
   class Station {
     name
-    position
+    xAxis
+    yAxis
     type: StationType
     radius
     cost
@@ -214,12 +197,13 @@ package "Simulation" {
 
   class Route {
     name
+    sequence
   }
 
   class StationCargoPickup {
     amount
   }
-}
+
 
 ' ====== Core Relationships ======
 ' Creation relationships
@@ -228,8 +212,8 @@ Editor "1" -- "*" Scenario : creates >
 Scenario "1" -- "1" Map : uses >
 
 ' Map elements
-Map "1" *-- "*" Industry : contains >
-Map "1" *-- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "*" City : contains >
 
 ' Player actions
 Player "1" -- "*" Station : builds >
@@ -238,20 +222,20 @@ Player "1" -- "*" Train : buys >
 Player "1" -- "*" Route : creates >
 
 ' Station relationships
-Station "1" *-- "*" Building : upgrades with >
+Station "1" -- "*" Building : upgrades with >
 Station "0..1" -- "*" City : serves >
 Station "0..1" -- "*" Industry : serves >
 Station "1" -- "*" Cargo : stores >
 
 ' Railway network
 RailwayLine "1" -- "2" Station : connects >
-Train "1" *-- "1" Locomotive : has >
-Train "1" *-- "*" Carriage : has >
+Train "1" -- "1" Locomotive : has >
+Train "1" -- "*" Carriage : has >
 Train "1" -- "0..1" Route : assigned to >
 Train "1" -- "*" Cargo : transports >
 
 ' Routes and stations
-Route "1" *-- "*" StationCargoPickup : includes >
+Route "1" -- "*" StationCargoPickup : includes >
 StationCargoPickup "1" -- "1" Station : at >
 StationCargoPickup "1" -- "1" Cargo : specifies >
 Station "*" -- "*" Route : included in >
@@ -279,6 +263,9 @@ Port "*" -- "*" Product : imports/exports >
 Port "*" -- "*" Resource : transforms >
 Port "*" -- "*" Product : produces >
 
-' Simulator management
-ProductOwner "1" -- "1" Simulator : manages >
+Station "*" -- "1" StationType : has >
+RailwayLine "*" -- "1" TrackType : is >
+Locomotive "*" -- "1" LocomotiveType : is >
+Building "*" -- "1" BuildingType : is >
+
 @enduml
