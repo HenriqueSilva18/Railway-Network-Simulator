@@ -209,7 +209,7 @@ left to right direction
 ' Creation relationships
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
-Scenario "1" -- "1" Map : uses >
+Scenario "*" -- "1" Map : uses >
 
 ' Map elements
 Map "1" -- "*" Industry : contains >
