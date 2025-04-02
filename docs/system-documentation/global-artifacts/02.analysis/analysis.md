@@ -51,6 +51,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * City
 * Station
 * Port
+* HouseBlock
 
 ---
 
@@ -72,6 +73,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Cargo
 * Resource
 * Product
+* HouseBlock
 
 ---
 
@@ -105,6 +107,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Train (contains locomotive and carriages)
 * Station (stores cargo and includes buildings)
 * Route (includes stations and cargo pickups)
+* City (contains HouseBlocks)
 
 ---
 
@@ -115,6 +118,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Cargo within a Station
 * Carriages within a Train
 * Station buildings within a Station
+* HouseBlocks within a City
 
 ---
 
@@ -162,54 +166,52 @@ An association is a relationship between instances of objects that indicates a r
 - **_A_** uses or manages or owns **_B_**
 - **_A_** is related to a transaction (item) of **_B_**
 
-| Concept (A)            |  Association               |  Concept (B) |
-|-----------------------|---------------------------|--------------|
-| Editor               | creates                    | Map          |
-| Editor               | creates                    | Scenario     |
-| Scenario            | uses                       | Map          |
-| Map                 | contains                   | Industry     |
-| Map                 | contains                   | City         |
-| Player              | builds                     | Station      |
-| Player              | builds                     | RailwayLine  |
-| Player              | buys                       | Train        |
-| Player              | creates                    | Route        |
-| Station            | upgrades with              | Building     |
-| Station            | serves                      | City         |
-| Station            | serves                      | Industry     |
-| Station            | stores                      | Cargo        |
-| RailwayLine        | connects                    | Station      |
-| Train              | has                         | Locomotive   |
-| Train              | has                         | Carriage     |
-| Train              | assigned to                 | Route        |
-| Train              | transports                  | Cargo        |
-| Route              | includes                    | StationCargoPickup |
-| StationCargoPickup | at                          | Station      |
-| StationCargoPickup | specifies                   | Cargo        |
-| Station            | included in                 | Route        |
-| Scenario           | restricts                   | Locomotive   |
-| Scenario           | configures                  | Port        |
-| PrimarySectorIndustry | generates                | Resource     |
-| City               | generates                   | ServiceType  |
-| TransformingIndustry | consumes                  | Resource     |
-| TransformingIndustry | produces                  | Product      |
-| City               | consumes                    | Product      |
-| City               | consumes                    | ServiceType  |
-| Port               | imports/exports            | Resource     |
-| Port               | imports/exports            | Product      |
-| Port               | transforms                  | Resource     |
-| Port               | produces                    | Product      |
-| ProductOwner       | manages                     | Simulator    |
-| Station            | has                         | StationType  |
-| RailwayLine        | is                          | TrackType    |
-| Locomotive        | is                          | LocomotiveType  |
-| StationBuildingSlot | contains                   | Building     |
-| StationBuildingSlot | is of category             | BuildingCategory  |
+| Concept (A)           | Association     | Concept (B)        |
+|-----------------------|-----------------|--------------------|
+| Editor                | creates         | Map                |
+| Editor                | creates         | Scenario           |
+| Scenario              | uses            | Map                |
+| Map                   | contains        | Industry           |
+| Map                   | contains        | City               |
+| City                  | contains        | HouseBlock         |
+| Player                | builds          | Station            |
+| Player                | builds          | RailwayLine        |
+| Player                | buys            | Train              |
+| Player                | creates         | Route              |
+| Station               | upgrades with   | Building           |
+| Station               | serves          | City               |
+| Station               | serves          | Industry           |
+| Station               | stores          | Cargo              |
+| RailwayLine           | connects        | Station            |
+| Train                 | has             | Locomotive         |
+| Train                 | has             | Carriage           |
+| Train                 | assigned to     | Route              |
+| Train                 | transports      | Cargo              |
+| Route                 | includes        | StationCargoPickup |
+| StationCargoPickup    | at              | Station            |
+| StationCargoPickup    | specifies       | Cargo              |
+| Station               | included in     | Route              |
+| Scenario              | restricts       | Locomotive         |
+| Scenario              | configures      | Port               |
+| PrimarySectorIndustry | generates       | Resource           |
+| City                  | generates       | ServiceType        |
+| TransformingIndustry  | consumes        | Resource           |
+| TransformingIndustry  | produces        | Product            |
+| City                  | consumes        | Product            |
+| City                  | consumes        | ServiceType        |
+| Port                  | imports/exports | Resource           |
+| Port                  | imports/exports | Product            |
+| Port                  | transforms      | Resource           |
+| Port                  | produces        | Product            |
+| ProductOwner          | manages         | Simulator          |
+| Station               | has             | StationType        |
+| RailwayLine           | is              | TrackType          |
+| Locomotive            | is              | LocomotiveType     |
+| StationBuildingSlot   | contains        | Building           |
+| StationBuildingSlot   | is of category  | BuildingCategory   |
+| Building              | upgrades to     | Building           |
 
 ## Domain Model
-
-**Do NOT forget to identify concept attributes too.**
-
-**Insert below the Domain Model Diagram in a SVG format**
 
 ![Domain Model](svg/DomainModel.svg)
 
