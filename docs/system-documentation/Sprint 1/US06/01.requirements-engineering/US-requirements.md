@@ -1,30 +1,57 @@
-# USXXX - YYY
-
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+# US006 - Upgrade a selected station with a building
 
 ## 1. Requirements Engineering
 
-_In this section, it is suggested to capture the requirement description and specifications as provided by the client as well as any further clarification on it. It is also suggested to capture the requirements acceptance criteria and existing dependencies to other requirements. Finally, identify the involved input and output data and depict an Actor-System interaction in order to fulfill the requirement._
-
 ### 1.1. User Story Description
 
-_Insert here the User Story as described by the client._
+- As a Player, I want to upgrade a selected station with a building. Each type of station improvement has a date from which it is available. Some equipments are mutually exclusive (e.g., small and grand hotel) and some equipments/buildings replace others (the telegraph was initially used to facilitate the operation of trains at stations, and was later replaced by the telephone, so after the advent of telephone, telegraph is no more available).
 
 ### 1.2. Customer Specifications and Clarifications 
 
-_Insert here any related specification and/or clarification provided by the client together with **your interpretation**. When possible, provide a link to such specifications/clarifications._
+**From the specifications document:**
+
+> When built, a station consists of just one building, which can be upgraded with other buildings that can increase the station’s performance, improve train operation, facilitate train manoeuvrers, and increase the lifespan of cargo stored at the station. Some of the buildings that can be used to upgrade
+stations are: telegraph (later telephone), café (small or large), customs, post office, hotel (small or large), silo, liquid storage. 
+
+> When viewing a station, in addition to the buildings present, the cargo that is ready for collection and the cargo that needs to be delivered should also be displayed.
+
+**From the client clarifications:**
+
+> **Question:** Is there a limit on the number of buildings a station can be upgraded with?
+>> **Answer:** No.
+
+> **Question:** Does the upgrade from telegraph to telephone occur automatically once a certain year is reached?
+>> **Answer:** There are no automatic updates; When a new building is available, the player can buy it and then the previous building is replaced.
+
+> **Question:** In the document, it is given the example of the small and large hotel as mutually exclusive equipments. Does that mean that all upgrades of the same kind are mutually exclusive? Or, per example, is it possible to have more than one unit of liquid storage in the same station?
+>> **Answer:** There are mutually exclusive buildings such as small and big restaurant. There are buildings that when they exist, it is no longer possible to build the former one, like the telegraph has been replaced with the telephone. The stations that had the telegraph stay with the telegraph working until it is built a telephone that replaces the telegraph. From the moment that the telephone exists, it is no longer possible to build the telegraph.
+
+> **Question:** In case it is allowed, is there a limit for the quantity of buildings in each stations?
+>> **Answer:** There can't be multiple equal buildings (per example, I can't have 3 cereal silos).
+
+> **Question:** Are all combinations allowed? Per example, does the Player have freedom of choosing, in the same station, the upgrades: customs + silo + telegraph?
+>> **Answer:** The combinations, as long as they are respecting the previously mentioned restrictions, are all possible.
 
 ### 1.3. Acceptance Criteria
 
-_Insert here the client acceptance criteria._
+* No Acceptance criteria mentioned.
 
 ### 1.4. Found out Dependencies
 
-_Identify here any found out dependency to other US and/or requirements._
+* There is a dependency on "US005 - Build a station" as there must be at least one created station in order to upgrade it.
 
 ### 1.5 Input and Output Data
 
-_Identify here the data to be inputted by the system actor as well as the output data that the system has/needs to present in order to properly support the actor actions. Regarding the inputted data, it is suggested to distinguish between typed data and selected data (e.g. from a list)_
+**Input Data:**
+
+* Selected data:
+    * a station
+    * a building type
+
+**Output Data:**
+
+* Success or insuccess of the operation
+* Details of the station and the building
 
 ### 1.6. System Sequence Diagram (SSD)
 
@@ -34,7 +61,4 @@ _Insert here a SSD depicting the envisioned Actor-System interactions and throug
 
 ### 1.7 Other Relevant Remarks
 
-_Use this section to capture other relevant information that is related with this US such as:  
-&nbsp; &nbsp; (i) special requirements;  
-&nbsp; &nbsp; (ii) data and/or technology variations;  
-&nbsp; &nbsp; (iii) how often this US is held._
+* 

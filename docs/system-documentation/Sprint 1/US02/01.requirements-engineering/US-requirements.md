@@ -1,30 +1,55 @@
-# USXXX - YYY
-
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+# US002 - Add an Industry
 
 ## 1. Requirements Engineering
 
-_In this section, it is suggested to capture the requirement description and specifications as provided by the client as well as any further clarification on it. It is also suggested to capture the requirements acceptance criteria and existing dependencies to other requirements. Finally, identify the involved input and output data and depict an Actor-System interaction in order to fulfill the requirement._
-
 ### 1.1. User Story Description
 
-_Insert here the User Story as described by the client._
+- As an Editor, I want to add an industry (selected from the
+available industries) in a position XY of the selected (current) map.
 
 ### 1.2. Customer Specifications and Clarifications 
 
-_Insert here any related specification and/or clarification provided by the client together with **your interpretation**. When possible, provide a link to such specifications/clarifications._
+**From the specifications document:**
+
+> The Map Editor allows you to create rectangular maps and place static elements on the map. Elements can be cities or industries.
+
+> As for industries, there are three different types:
+>> Primary sector industries;
+>> Transforming industries; 
+>> Mixed industries.
+
+**From the client clarifications:**
+
+> **Question:** Is it possible to select more than one industry at the same time to place on the map?
+> > **Answer:** That question is more UI/UX related than of the said User Story, so the teams have freedom to decide it.
+
+> **Question:** When adding a new industry to a map, is there any other necessary input aside from position and industry type?  
+> > **Answer:** No.
+
 
 ### 1.3. Acceptance Criteria
 
-_Insert here the client acceptance criteria._
+* No Acceptance criteria mentioned.
 
 ### 1.4. Found out Dependencies
 
-_Identify here any found out dependency to other US and/or requirements._
+* There is a dependency on "US01 - As an Editor, I want to create a map with a size and a name" as there a map must be created before.
 
 ### 1.5 Input and Output Data
 
-_Identify here the data to be inputted by the system actor as well as the output data that the system has/needs to present in order to properly support the actor actions. Regarding the inputted data, it is suggested to distinguish between typed data and selected data (e.g. from a list)_
+**Input Data:**
+* Typed data:
+    * a X coordinate
+    * a Y coordinate
+
+* Selected data:
+    * a map
+    * an industry available in the list
+
+**Output Data:**
+
+* Success or insuccess of the operation
+* Details of the industry placed in the map
 
 ### 1.6. System Sequence Diagram (SSD)
 
@@ -34,7 +59,4 @@ _Insert here a SSD depicting the envisioned Actor-System interactions and throug
 
 ### 1.7 Other Relevant Remarks
 
-_Use this section to capture other relevant information that is related with this US such as:  
-&nbsp; &nbsp; (i) special requirements;  
-&nbsp; &nbsp; (ii) data and/or technology variations;  
-&nbsp; &nbsp; (iii) how often this US is held._
+* 
