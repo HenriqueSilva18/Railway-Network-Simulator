@@ -1,0 +1,49 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+left to right direction
+
+class Player {
+  budget
+}
+
+class Locomotive {
+  name
+  type: LocomotiveType
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  maintenanceCost
+  price
+}
+
+class Train {
+  name
+}
+
+enum LocomotiveType {
+  STEAM
+  DIESEL
+  ELECTRIC
+}
+
+class Scenario {
+  nameID
+  configfile
+  timePeriod
+  technologicalRestrictions
+  historicalEvents
+}
+
+Player "1" -- "*" Train : buys >
+Train "1" -- "1" Locomotive : has >
+Locomotive "*" -- "1" LocomotiveType : is >
+Scenario "*" -- "*" Locomotive : restricts >
+
+@enduml

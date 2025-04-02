@@ -75,7 +75,7 @@ Technological Restrictions - for example, which locomotives or industries are av
 - n/a
 
 **(ii) data and/or technology variations:**
-- Technological Restrictions and date will set the available locomotives in the scenario.
+- Technological Restrictions and current date will set the available locomotives in the scenario.
 
 **(iii) how often this US is held:**
 - The purchase of locomotives can be done multiple times.
