@@ -67,13 +67,33 @@ AC2: The house blocks can be assigned manually or automatically (randomly around
 
 ### 1.6. System Sequence Diagram (SSD)
 
-_Insert here a SSD depicting the envisioned Actor-System interactions and throughout which data is inputted and outputted to fulfill the requirement. All interactions must be numbered._
 
-![US003-SSD](svg/base.svg)
+![US003-SSD](svg/US003-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
-_Use this section to capture other relevant information that is related with this US such as:  
-&nbsp; &nbsp; (i) special requirements;  
-&nbsp; &nbsp; (ii) data and/or technology variations;  
-&nbsp; &nbsp; (iii) how often this US is held._
+&nbsp; &nbsp; **(i) Special Requirements**:
+
+The system should allow the editor to select a map from a list of existing maps.
+
+The system must validate that the city name contains only letters and spaces.
+
+The system must ensure that the number of house blocks is a positive integer.
+
+If the city name already exists on the same map, a warning should be displayed to the editor.
+
+&nbsp; &nbsp; **(ii) Data and/or Technology Variations**:
+
+The system should allow the editor to select a map from a list of existing maps.
+
+The coordinates (X, Y) for the city should be within the boundaries of the selected map & the house blocks should be assigned around the city position.
+
+The assignment of house blocks can be done manually or automatically.
+
+The data should be stored in a persistent manner to ensure city information is saved between sessions.
+
+&nbsp; &nbsp; **(iii) Frequency of Use**:
+
+This functionality will be used frequently during the map creation/editing phase.
+
+While the simulation is running, cities cannot be removed.
