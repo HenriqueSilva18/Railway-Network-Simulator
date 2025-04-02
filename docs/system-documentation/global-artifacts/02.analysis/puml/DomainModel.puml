@@ -136,24 +136,29 @@ left to right direction
     cost
   }
 
-  enum BuildingType {
-    TELEGRAPH
-    TELEPHONE
-    SMALL_CAFE
-    LARGE_CAFE
-    CUSTOMS
-    POST_OFFICE
-    SMALL_HOTEL
-    LARGE_HOTEL
-    SILO
-    LIQUID_STORAGE
+  ' Building category enum
+  enum BuildingCategory {
+    COMMUNICATION
+    CATERING
+    ACCOMMODATION
+    STORAGE
+    ADMINISTRATION
   }
 
+  ' Modified Building Class
   class Building {
-    type: BuildingType
+    name
+    upgradeLevel
     availableYear
+    obsoleteYear
     cost
     effect
+  }
+
+  ' Station building slots
+  class StationBuildingSlot {
+    category: BuildingCategory
+    upgradeDate
   }
 
   enum TrackType {
@@ -209,7 +214,7 @@ left to right direction
 ' Creation relationships
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
-Scenario "*" -- "1" Map : uses >
+Scenario "1" -- "1" Map : uses >
 
 ' Map elements
 Map "1" -- "*" Industry : contains >
@@ -221,8 +226,11 @@ Player "1" -- "*" RailwayLine : builds >
 Player "1" -- "*" Train : buys >
 Player "1" -- "*" Route : creates >
 
-' Station relationships
-Station "1" -- "*" Building : upgrades with >
+' Station relationships - Modified
+Station "1" -- "1..*" StationBuildingSlot : has >
+StationBuildingSlot "1" -- "0..1" Building : contains >
+Building "1" -- "0..1" Building : upgrades to >
+StationBuildingSlot -- BuildingCategory : is of category >
 Station "0..1" -- "*" City : serves >
 Station "0..1" -- "*" Industry : serves >
 Station "1" -- "*" Cargo : stores >
@@ -266,6 +274,5 @@ Port "*" -- "*" Product : produces >
 Station "*" -- "1" StationType : has >
 RailwayLine "*" -- "1" TrackType : is >
 Locomotive "*" -- "1" LocomotiveType : is >
-Building "*" -- "1" BuildingType : is >
 
 @enduml
