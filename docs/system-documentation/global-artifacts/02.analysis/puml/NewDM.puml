@@ -35,6 +35,11 @@ left to right direction
     historicalEvents
   }
 
+  class HouseBlock {
+    xAxis
+    yAxis
+  }
+
   class City {
     name
     houseBlocks
@@ -99,6 +104,18 @@ left to right direction
     RUBBER
     CATTLE
   }
+
+  class BuildingUpgradePath {
+    from: BuildingType
+    to: BuildingType
+  }
+  Building "1" -- "0..1" BuildingUpgradePath : follows >
+  BuildingUpgradePath "1" -- "1" BuildingType : from >
+  BuildingUpgradePath "1" -- "1" BuildingType : to <
+
+  note "TELEGRAPH pode ser atualizado para TELEPHONE, \nmas TELEPHONE não pode ser rebaixado para TELEGRAPH" as UpgradeNote
+  UpgradeNote .. BuildingUpgradePath
+
 
   enum ProductType {
     STEEL
@@ -214,6 +231,9 @@ Scenario "*" -- "1" Map : uses >
 ' Map elements
 Map "1" -- "*" Industry : contains >
 Map "1" -- "*" City : contains >
+
+' City relationships
+City "1" -- "*" HouseBlock : contains >
 
 ' Player actions
 Player "1" -- "*" Station : builds >
