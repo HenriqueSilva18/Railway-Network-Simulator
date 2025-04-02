@@ -23,7 +23,7 @@
 
 ### 1.3. Acceptance Criteria
 
-* No Acceptance criteria mentioned.
+* **AC1:**  Each industry must occupy a cell in the map.
 
 ### 1.4. Found out Dependencies
 
