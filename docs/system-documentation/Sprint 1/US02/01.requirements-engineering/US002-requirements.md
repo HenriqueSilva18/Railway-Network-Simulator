@@ -4,19 +4,13 @@
 
 ### 1.1. User Story Description
 
-- As an Editor, I want to add an industry (selected from the
-available industries) in a position XY of the selected (current) map.
+- As an Editor, I want to add an industry (selected from the available industries) in a position XY of the selected (current) map.
 
 ### 1.2. Customer Specifications and Clarifications 
 
 **From the specifications document:**
 
-> The Map Editor allows you to create rectangular maps and place static elements on the map. Elements can be cities or industries.
-
-> As for industries, there are three different types:
->> Primary sector industries;
->> Transforming industries; 
->> Mixed industries.
+> The Map Editor allows you to create rectangular maps and place static elements on the map. Elements can be cities or industries. As for industries, there are three different types, primary sector industries, transforming industries and mixed industries.
 
 **From the client clarifications:**
 
@@ -53,10 +47,8 @@ available industries) in a position XY of the selected (current) map.
 
 ### 1.6. System Sequence Diagram (SSD)
 
-_Insert here a SSD depicting the envisioned Actor-System interactions and throughout which data is inputted and outputted to fulfill the requirement. All interactions must be numbered._
-
-![USXXX-SSD](svg/USXXX-SSD.svg)
+![System Sequence Diagram](svg/USXXX-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
-* 
+N/A
