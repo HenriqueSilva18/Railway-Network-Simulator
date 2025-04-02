@@ -45,10 +45,11 @@ left to right direction
 
   class City {
     name
-    houseBlocks
     xAxis
     yAxis
   }
+
+
 
   ' Added from Industry System
   abstract class Industry {
@@ -222,6 +223,7 @@ left to right direction
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
 Scenario "1" -- "1" Map : uses >
+Editor "1" -- "*" City: adds >
 
 ' Map elements
 Map "1" -- "*" Industry : contains >

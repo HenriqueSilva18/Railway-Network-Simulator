@@ -13,6 +13,8 @@ hide methods
 title Domain Model US03
 
 class Editor {
+   username
+   password
    createdMaps
    createdScenarios
 }
