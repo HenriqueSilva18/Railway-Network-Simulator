@@ -3,6 +3,7 @@
 The construction process of the domain model is based on the client specifications, especially the nouns (for _concepts_) and verbs (for _relations_) used.
 
 ## Rationale to identify domain conceptual classes
+
 To identify domain conceptual classes, start by making a list of candidate conceptual classes inspired by the list of categories suggested in the book "Applying UML and Patterns: An Introduction to Object-Oriented Analysis and Design and Iterative Development".
 
 ### _Conceptual Class Category List_
@@ -76,10 +77,14 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 **Descriptions of Things**
 
-* Position
+* Position (xAxis, yAxis)
 * ResourceType
 * ProductType
 * ServiceType
+* TrackType
+* LocomotiveType
+* StationType
+* BuildingCategory
 
 ---
 
@@ -87,6 +92,10 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 * List of locomotive types
 * List of track types
+* List of resource types
+* List of product types
+* List of service types
+* List of building categories
 
 ---
 
@@ -94,7 +103,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 * Map (contains industries and cities)
 * Train (contains locomotive and carriages)
-* Station (stores cargo)
+* Station (stores cargo and includes buildings)
 * Route (includes stations and cargo pickups)
 
 ---
@@ -105,6 +114,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * City within a Map
 * Cargo within a Station
 * Carriages within a Train
+* Station buildings within a Station
 
 ---
 
@@ -189,12 +199,17 @@ An association is a relationship between instances of objects that indicates a r
 | Port               | transforms                  | Resource     |
 | Port               | produces                    | Product      |
 | ProductOwner       | manages                     | Simulator    |
-
+| Station            | has                         | StationType  |
+| RailwayLine        | is                          | TrackType    |
+| Locomotive        | is                          | LocomotiveType  |
+| StationBuildingSlot | contains                   | Building     |
+| StationBuildingSlot | is of category             | BuildingCategory  |
 
 ## Domain Model
 
-**Do NOT forget to identify concept atributes too.**
+**Do NOT forget to identify concept attributes too.**
 
 **Insert below the Domain Model Diagram in a SVG format**
 
-![Domain Model](svg/DM.svg)
+![Domain Model](svg/DomainModel.svg)
+
