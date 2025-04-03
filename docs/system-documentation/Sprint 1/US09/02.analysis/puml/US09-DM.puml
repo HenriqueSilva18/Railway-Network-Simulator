@@ -23,10 +23,6 @@ class Locomotive {
   price
 }
 
-class Train {
-  name
-}
-
 enum LocomotiveType {
   STEAM
   DIESEL
@@ -41,8 +37,7 @@ class Scenario {
   historicalEvents
 }
 
-Player "1" -- "*" Train : buys >
-Train "1" -- "1" Locomotive : has >
+Player "1" -- "*" Locomotive : buys >
 Locomotive "*" -- "1" LocomotiveType : is >
 Scenario "*" -- "*" Locomotive : restricts >
 

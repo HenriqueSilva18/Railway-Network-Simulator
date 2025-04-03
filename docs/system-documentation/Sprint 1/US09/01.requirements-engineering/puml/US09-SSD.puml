@@ -31,7 +31,6 @@ activate Player
     Player -> System : confirms purchase
     activate System
 
-        System -> System : verifies player budget
         System --> Player : displays operation success
     deactivate System
 

@@ -13,11 +13,12 @@ As a Player, I want to buy a locomotive.
 > The Scenario Editor must allow the user to define the restrictions and conditions for using a given map, namely:
 Technological Restrictions - for example, which locomotives or industries are available in the scenario.
 
-> The locomotives provide traction to the composition (train) and can be of different types, namely, run by steam, diesel, and electricity
+> In the simulator, the player/user acquires trains within the available budget and can put the train into service on a specific route.
+
+
+> The locomotives provide traction to the composition (train) and can be of different types, namely, run by steam, diesel, and electricity.
 
 > The locomotives are characterized by several technical aspects, such as power, acceleration, top speed, start year of operation, fuel cost and maintenance per year, and acquisition price.
-
-> In the simulator, the player/user acquires trains within the available budget and can put the train into service on a specific route.
 
 **From the client clarifications:**
 
@@ -67,7 +68,7 @@ Technological Restrictions - for example, which locomotives or industries are av
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![USXXX-SSD](svg/US09-SSD.svg)
+![US09-SSD](svg/US09-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
@@ -75,7 +76,7 @@ Technological Restrictions - for example, which locomotives or industries are av
 - n/a
 
 **(ii) data and/or technology variations:**
-- Technological Restrictions and current date will set the available locomotives in the scenario.
+- Technological Restrictions will set the available locomotives in the scenario.
 
 **(iii) how often this US is held:**
 - The purchase of locomotives can be done multiple times.
