@@ -1,65 +1,64 @@
-# US006 - Create a Task
+# US006 - Upgrade a selected station with a building
 
 ## 1. Requirements Engineering
 
 ### 1.1. User Story Description
 
-As an organization employee, I want to create a new task in order to be further published.
+- As a Player, I want to upgrade a selected station with a building. Each type of station improvement has a date from which it is available. Some equipments are mutually exclusive (e.g., small and grand hotel) and some equipments/buildings replace others (the telegraph was initially used to facilitate the operation of trains at stations, and was later replaced by the telephone, so after the advent of telephone, telegraph is no more available).
 
 ### 1.2. Customer Specifications and Clarifications 
 
 **From the specifications document:**
 
->	Each task is characterized by having a unique reference per organization, a designation, an informal and a technical description, an estimated duration and cost, as well as a task category. 
+> When built, a station consists of just one building, which can be upgraded with other buildings that can increase the station’s performance, improve train operation, facilitate train manoeuvrers, and increase the lifespan of cargo stored at the station. Some of the buildings that can be used to upgrade
+stations are: telegraph (later telephone), café (small or large), customs, post office, hotel (small or large), silo, liquid storage. 
 
->	As long as it is not published, access to the task is exclusive to the employees of the respective organization. 
+> When viewing a station, in addition to the buildings present, the cargo that is ready for collection and the cargo that needs to be delivered should also be displayed.
 
 **From the client clarifications:**
 
-> **Question:** Which is the unit of measurement used to estimate duration?
->
-> **Answer:** Duration is estimated in days.
+> **Question:** Is there a limit on the number of buildings a station can be upgraded with?
+>> **Answer:** No.
 
-> **Question:** Monetary data is expressed in any particular currency?
->
-> **Answer:** Monetary data (e.g. estimated cost of a task) is indicated in POT (virtual currency internal to the platform).
+> **Question:** Does the upgrade from telegraph to telephone occur automatically once a certain year is reached?
+>> **Answer:** There are no automatic updates; When a new building is available, the player can buy it and then the previous building is replaced.
+
+> **Question:** In the document, it is given the example of the small and large hotel as mutually exclusive equipments. Does that mean that all upgrades of the same kind are mutually exclusive? Or, per example, is it possible to have more than one unit of liquid storage in the same station?
+>> **Answer:** There are mutually exclusive buildings such as small and big restaurant. There are buildings that when they exist, it is no longer possible to build the former one, like the telegraph has been replaced with the telephone. The stations that had the telegraph stay with the telegraph working until it is built a telephone that replaces the telegraph. From the moment that the telephone exists, it is no longer possible to build the telegraph.
+
+> **Question:** In case it is allowed, is there a limit for the quantity of buildings in each stations?
+>> **Answer:** There can't be multiple equal buildings (per example, I can't have 3 cereal silos).
+
+> **Question:** Are all combinations allowed? Per example, does the Player have freedom of choosing, in the same station, the upgrades: customs + silo + telegraph?
+>> **Answer:** The combinations, as long as they are respecting the previously mentioned restrictions, are all possible.
 
 ### 1.3. Acceptance Criteria
 
-* **AC1:** All required fields must be filled in.
-* **AC2:** The task reference must have at least 5 alphanumeric characters.
-* **AC3:** When creating a task with an existing reference, the system must reject such operation and the user must be able to modify the typed reference.
+* No Acceptance criteria mentioned.
 
 ### 1.4. Found out Dependencies
 
-* There is a dependency on "US003 - Create a task category" as there must be at least one task category to classify the task being created.
+* There is a dependency on "US005 - Build a station" as there must be at least one created station in order to upgrade it.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-* Typed data:
-    * a reference
-    * a designation 
-    * an informal description
-    * a technical description
-    * an estimated duration
-    * an estimated cost
-	
 * Selected data:
-    * a task category 
+    * a station
+    * a building type
 
 **Output Data:**
 
-* List of existing task categories
-* (In)Success of the operation
+* Success or insuccess of the operation
+* Details of the station and the building
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/US006-SSD.svg)
+_Insert here a SSD depicting the envisioned Actor-System interactions and throughout which data is inputted and outputted to fulfill the requirement. All interactions must be numbered._
 
-**_Other alternatives might exist._**
+![System Sequence Diagram](svg/USXXX-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
-* The created task stays in a "not published" state in order to distinguish from "published" tasks.
+N/A

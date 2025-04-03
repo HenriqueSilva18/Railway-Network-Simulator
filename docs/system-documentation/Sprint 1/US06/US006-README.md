@@ -1,4 +1,4 @@
-# US006 - Create a Task 
+# US006 - Upgrade a selected station with a building
 
 [Requirements Engineering](01.requirements-engineering/US006-requirements.md)
 
