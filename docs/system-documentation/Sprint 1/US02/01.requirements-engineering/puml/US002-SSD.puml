@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as editor
+participant "System" as system
+
+activate editor
+    editor -> system : Opens map
+        activate system
+        system -> editor: Shows map
+        deactivate system
+
+    editor -> system : Selects "Add Industry"
+        activate system
+        system -> editor: Shows all industries available in the list
+        deactivate system
+
+    editor -> system: Selects industry type
+        activate system
+        system -> editor: Asks for X and Y coordinates
+        deactivate system
+
+    editor -> system: Enters industry X and Y coordinates
+        activate system
+        system -> editor: Validates coordinates
+        deactivate system
+
+    editor -> system: Confirms industry placement
+        activate system
+        system -> editor: Displays operation success
+        system -> editor: Shows industry details on map
+        deactivate system
+
+deactivate editor
+
+@enduml

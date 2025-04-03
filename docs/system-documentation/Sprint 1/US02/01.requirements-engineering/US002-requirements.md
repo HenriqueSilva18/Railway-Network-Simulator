@@ -20,6 +20,8 @@
 > **Question:** When adding a new industry to a map, is there any other necessary input aside from position and industry type?  
 > > **Answer:** No.
 
+> **Question:** As an editor, when adding a new factory, do I need to check for overbuild?
+> > **Answer:** Yes.
 
 ### 1.3. Acceptance Criteria
 
@@ -47,7 +49,7 @@
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/USXXX-SSD.svg)
+![System Sequence Diagram](svg/US002-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 

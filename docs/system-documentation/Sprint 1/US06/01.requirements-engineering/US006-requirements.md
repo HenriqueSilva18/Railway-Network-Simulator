@@ -55,9 +55,7 @@ stations are: telegraph (later telephone), café (small or large), customs, post
 
 ### 1.6. System Sequence Diagram (SSD)
 
-_Insert here a SSD depicting the envisioned Actor-System interactions and throughout which data is inputted and outputted to fulfill the requirement. All interactions must be numbered._
-
-![System Sequence Diagram](svg/USXXX-SSD.svg)
+![System Sequence Diagram](svg/US006-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 

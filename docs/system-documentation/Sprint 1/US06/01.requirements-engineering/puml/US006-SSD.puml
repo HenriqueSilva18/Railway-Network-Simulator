@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as player
+participant "System" as system
+
+activate player
+
+    player -> system : Chooses station to upgrade
+        activate system
+        system -> player: Displays station information
+        deactivate system
+
+    player -> system: Selects "Upgrade Station"
+        activate system
+        system -> player: Displays upgrade options
+        deactivate system
+    player -> system: Chooses building type to upgrade
+        activate system
+        system -> system: Validates upgrade
+        system -> player: Displays building type information
+        deactivate system
+    player -> system: Confirms upgrade
+        activate system
+        system -> player: Displays confirmation message
+        system -> player: Displays station and building information
+        deactivate system
+
+deactivate player
+@enduml
