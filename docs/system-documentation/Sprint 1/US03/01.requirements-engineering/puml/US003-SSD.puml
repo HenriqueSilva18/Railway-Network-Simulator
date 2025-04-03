@@ -21,6 +21,7 @@ deactivate System
 Editor -> System : "Enters the name of the city"
 activate System
 System -> System : "Check if there isn’t special digits or characters in the name"
+System -> System : "Check if the name is not empty and if is not greater than 50 characters"
 System -> Editor : "Request the coordinates of the city"
 deactivate System
 Editor -> System : "Enters the coordinates of the city"
@@ -36,21 +37,26 @@ deactivate System
 Editor -> System : "Selects yes or no"
 activate System
 
-group if [while answer is yes]
-    System --> Editor : "Requests house blocks position"
+alt answer == yes
+    loop while answer == yes
+        System --> Editor : "Requests house blocks position"
+        deactivate System
+
+        Editor -> System : "Selects blocks position"
+        activate System
+        System -> System : "Check if the position is valid"
+        System -> Editor : "Asks if the editor wants to assign the next block manually"
+        deactivate System
+
+        Editor -> System : "Selects yes or no"
+    end
+else answer == no
+    System --> Editor : "Assigns house blocks automatically"
     deactivate System
+end
 
-    Editor -> System : "Selects blocks position"
-    activate System
-    System -> System : "Check if the position is valid"
-    System -> Editor : "Asks if the editor wants to assign the next block manually"
+activate System
 
-    deactivate System
-    Editor -> System : "Selects yes or no"
-else if [answer is no]
-System --> Editor : assigns house blocks automatically
-
-end if
 System -> Editor : "City added successfully"
 System -> Editor : "List the cities in the map"
 System -> Editor : "List the Details of the city that was added (name, position, number of house blocks, map)"
