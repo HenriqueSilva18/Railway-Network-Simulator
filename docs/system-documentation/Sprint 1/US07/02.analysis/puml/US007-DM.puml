@@ -1,0 +1,41 @@
+@startuml
+
+class Player {
+    username
+    password
+    budget
+  }
+
+class Station {
+    name
+    xAxis
+    yAxis
+    type: StationType
+    radius
+    cost
+  }
+
+class Cargo {
+   amount
+   lifespan
+  }
+
+class Building {
+    name
+    upgradeLevel
+    availableYear
+    cost
+    effect
+  }
+
+  class StationBuildingSlot {
+    category: BuildingCategory
+    upgradeDate
+  }
+
+Player "1" -- "1" Station : selects >
+Station "1" -- "*" Cargo : stores >
+Station "1" -- "1..*" StationBuildingSlot : has >
+StationBuildingSlot "1" -- "0..1" Building : contains >
+
+@enduml

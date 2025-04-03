@@ -1,13 +1,10 @@
-# USXXX - YYY
-
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+# US007 - As a Player, I want to list all the stations
 
 ## 2. Analysis
 
 ### 2.1. Relevant Domain Model Excerpt 
-_In this section, it is suggested to present an excerpt of the domain model that is seen as relevant to fulfill this requirement._ 
 
-![USXXX-DM](svg/USXXX-DM.svg)
+![US007-DM](svg/US007-DM.svg)
 
 ### 2.2. Other Remarks
 

@@ -286,5 +286,6 @@ Port "*" -- "*" Product : produces >
 Station "*" -- "1" StationType : has >
 RailwayLine "*" -- "1" TrackType : is >
 Locomotive "*" -- "1" LocomotiveType : is >
+Player "1" -- "1" Station : selects >
 
 @enduml
