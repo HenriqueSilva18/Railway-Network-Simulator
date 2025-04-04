@@ -1,0 +1,163 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+class Player {
+  username
+  password
+  budget
+}
+class Editor {
+    username
+    password
+    createdMaps
+    createdScenarios
+}
+class Map {
+  nameID
+  size
+}
+class Scenario {
+  nameID
+  timeRestrictions
+  technologicalRestrictions
+  historicalRestrictions
+}
+class Simulator {
+  status
+  runTime
+  report
+}
+class City {
+  nameID
+  position
+  houseBlocks
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+}
+class Station {
+  nameID
+  position
+  type
+  radius
+  cost
+  storageCapacity
+  centerPoint
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+class Building {
+  nameID
+  type
+  effect
+  availabilityYear
+  evolutionStages
+}
+class RailwayLine {
+  length
+  trackType
+  cost
+}
+class Locomotive {
+  nameID
+  type
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
+}
+class Train {
+  nameID
+}
+class Carriage {
+  storageCapacity
+}
+class Route {
+  nameID
+  stationSequence
+  cargoList
+  schedule
+}
+
+
+
+' Relationships with revised multiplicities
+
+Editor "1" -- "*" Map : creates >
+Editor "1" -- "*" Scenario : creates >
+
+Scenario "1" -- "1" Map : uses >
+Player "1" -- "*" Scenario : plays >
+Scenario "*" -- "1" Simulator : runs in >
+
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+
+Industry "*" -- "*" Cargo : produces/consumes >
+City "*" -- "*" Cargo : produces/consumes >
+
+Player "1" -- "*" Station : builds >
+Player "1" -- "*" RailwayLine : builds >
+Station "1" -- "*" Building : upgraded with >
+
+Station "*" -- "*" City : serves >
+Station "*" -- "*" Industry : serves >
+Station "1" -- "*" Cargo : stores >
+
+RailwayLine "1" --> "2" Station : connects >
+
+Player "1" -- "*" Locomotive : buys >
+Train "1" -- "1" Locomotive : powered by >
+Train "1" -- "*" Carriage : composed of >
+Carriage "1" -- "1" Cargo : carries >
+
+Train "1" -- "1" Route : assigned to >
+Route "1" -- "*" Station : includes >
+Route "*" -- "*" Cargo : manages >
+
+Scenario "1" -- "*" Locomotive : configures >
+Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" Station : configures >
+
+
+Building "1" -- "0..1" Building : evolves >
+
+Player -- Route: defines
+
+Simulator "1" --> "*" Cargo : generates >
+@enduml
