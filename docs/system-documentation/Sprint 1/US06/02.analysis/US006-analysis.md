@@ -1,4 +1,4 @@
-# US006 - Create a Task 
+# US006 - Upgrade a selected station with a building
 
 ## 2. Analysis
 

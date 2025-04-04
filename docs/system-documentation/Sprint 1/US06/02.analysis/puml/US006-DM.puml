@@ -1,0 +1,50 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model US06
+
+class Player {
+  username
+  password
+  budget
+}
+
+class Station {
+  nameID
+  position
+  type
+  radius
+  cost
+  storageCapacity
+  centerPoint
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class Building {
+  nameID
+  type
+  effect
+  availabilityYear
+  evolutionStages
+}
+
+Player "1" -- "*" Station : builds >
+Station "1" -- "*" Building : upgraded with >
+Building "1" -- "0..1" Building : evolves >
+
+@enduml

@@ -21,8 +21,8 @@ activate player
         deactivate system
     player -> system: Chooses building type to upgrade
         activate system
-        system -> system: Validates upgrade
         system -> player: Displays building type information
+        system -> player: Asks for confirmation
         deactivate system
     player -> system: Confirms upgrade
         activate system
