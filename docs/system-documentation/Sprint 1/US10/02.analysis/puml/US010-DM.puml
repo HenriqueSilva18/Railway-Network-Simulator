@@ -1,0 +1,122 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model US10
+
+class Player {
+  username
+  password
+  budget
+}
+
+class City {
+  nameID
+  position
+  houseBlocks
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Station {
+  nameID
+  position
+  type
+  radius
+  cost
+  storageCapacity
+  centerPoint
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class RailwayLine {
+  length
+  trackType
+  cost
+}
+
+class Locomotive {
+  nameID
+  type
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
+}
+
+class Route {
+  nameID
+  stationSequence
+  cargoList
+  schedule
+}
+
+class Carriage {
+  storageCapacity
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+}
+
+class Train {
+  nameID
+}
+
+Player "1" -- "*" Station : builds >
+Player "1" -- "*" RailwayLine : builds >
+Player "1" -- "*" Locomotive : buys >
+Player "1" -- "*" Route: defines >
+
+Route "1" -- "*" Station : includes >
+Route "*" -- "*" Cargo : manages >
+
+Train "1" -- "1" Locomotive : powered by >
+Train "1" -- "0..1" Route : assigned to >
+Train "1" -- "*" Carriage : composed of >
+
+RailwayLine "1" --> "2" Station : connects >
+
+Station "1" -- "*" Cargo : stores >
+Station "1" -- "*" City : serves >
+Station "1" -- "*" Industry : serves >
+
+Carriage "*" -- "1" Cargo : carries >
+
+Industry "*" -- "*" Cargo : produces/consumes >
+
+City "*" -- "*" Cargo : produces/consumes >
+@enduml

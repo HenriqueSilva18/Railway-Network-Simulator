@@ -41,9 +41,11 @@ No acceptance criteria mentioned.
 * Selected data:
     * a train
     * cargoes
+    * a route
 
 **Output Data:**
 * Success or insuccess of the operation
+* Information about the train, the route and the cargoes assigned to the train
 
 ### 1.6. System Sequence Diagram (SSD)
 

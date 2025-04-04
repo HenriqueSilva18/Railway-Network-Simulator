@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant "System" as System
+
+activate Player
+
+    Player -> System : Selects Train
+        activate System
+            System -> Player : Displays list of available trains
+        deactivate System
+
+    Player -> System : Selects Route
+        activate System
+            System -> Player : Displays list of available routes
+        deactivate System
+
+    Player -> System : Assigns Train to Route
+        activate System
+            System -> Player : Asks for confirmation
+        deactivate System
+
+    Player -> System : Confirms Assignment
+        activate System
+            System -> Player : Displays success message
+            System -> Player : Displays train, its cargoes and route information
+        deactivate System
+
+deactivate Player
+
+@enduml
