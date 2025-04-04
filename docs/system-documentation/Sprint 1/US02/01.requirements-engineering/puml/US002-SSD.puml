@@ -26,7 +26,7 @@ activate editor
 
     editor -> system: Enters industry X and Y coordinates
         activate system
-        system -> editor: Validates coordinates
+        system -> editor: Asks for confirmation
         deactivate system
 
     editor -> system: Confirms industry placement
