@@ -1,0 +1,17 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+
+
+@enduml
