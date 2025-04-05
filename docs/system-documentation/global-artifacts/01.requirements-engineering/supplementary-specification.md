@@ -79,7 +79,7 @@ database integrity, resource limits, operating system._
 _Specifies or constraints the features inherent to the interaction of the
 system being developed with other external systems._
 
-*n/a
+* n/a
 
 ### Physical Constraints
 

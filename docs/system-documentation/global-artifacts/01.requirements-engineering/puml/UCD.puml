@@ -15,7 +15,7 @@ rectangle "Railway Simulation System" {
     Player -- (US06 - Upgrade a Station)
     Player -- (US07 - List Stations)
     Player -- (US08 - Build a Railway Line)
-    Player -- (US09 - Buy a Train)
+    Player -- (US09 - Buy a Locomotive)
     Player -- (US10 - Assign a Train to Route)
     Player -- (US11 - List Trains)
 
