@@ -25,7 +25,8 @@ class Editor {
 }
 class Map {
   nameID
-  size
+  width
+  height
 }
 class Scenario {
   nameID
