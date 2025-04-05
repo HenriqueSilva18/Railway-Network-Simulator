@@ -1,4 +1,5 @@
 @startuml
+title System Sequence Diagram: US03 - Add a city
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -9,26 +10,19 @@ actor "Editor" as Editor
 participant ":System" as System
 
 activate Editor
+Editor -> System : Asks to add city
+        activate System
+        System --> Editor: Requests city data (name, X and Y coordinates, number of house blocks)
+        deactivate System
 
-Editor -> System : Request to add a new city
-activate System
-System -> Editor : Request for each map he wants to add the city to
-deactivate System
-Editor -> System : Selects the map he wants to add a new city to
-activate System
-System -> Editor : Request for the city name
-deactivate System
-Editor -> System : Enters the name of the city
-activate System
-System -> Editor : Request the coordinates of the city
-deactivate System
-Editor -> System : Enters the coordinates of the city
-activate System
-System -> Editor : Request the number of house blocks
-deactivate System
-Editor -> System : Enters the number of house blocks
-activate System
-System -> Editor : Asks if the editor wants to assign the blocks manually
+    Editor -> System: Types industry data
+        activate System
+        System --> Editor: Asks for confirmation
+        deactivate System
+
+    Editor -> System: Confirms industry data
+        activate System
+System --> Editor : Asks if the editor wants to assign the blocks manually
 deactivate System
 Editor -> System : Selects yes or no
 activate System
@@ -40,7 +34,7 @@ alt answer == yes
 
         Editor -> System : Selects blocks position
         activate System
-        System -> Editor : Asks if the editor wants to assign the next block manually
+        System --> Editor : Asks if the editor wants to assign the next block manually
         deactivate System
 
         Editor -> System : Selects yes or no
@@ -52,9 +46,9 @@ end
 
 activate System
 
-System -> Editor : City added successfully
-System -> Editor : List the cities in the map
-System -> Editor : List the Details of the city that was added (name, position, number of house blocks, map)
+System --> Editor : City added successfully
+System --> Editor : List the cities in the map
+System --> Editor : List the Details of the city that was added (name, position, number of house blocks, map)
 
 deactivate System
 deactivate Editor
