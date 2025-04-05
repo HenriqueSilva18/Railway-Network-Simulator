@@ -1,0 +1,72 @@
+@startuml
+
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+left to right direction
+
+
+class Simulator {
+  status
+  runTime
+  report
+}
+
+class City {
+  nameID
+  position
+  houseBlocks
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+}
+
+
+class Station {
+  nameID
+  position
+  type
+  economicRadius
+  cost
+  storageCapacity
+  centerPoint
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+Simulator "1 " -- "*" Cargo : generates
+Cargo "*" -- "1" Station : stores <
+Station "1" --"*" City  : serves
+Station"1" -- "*"Industry : serves
+
+@enduml

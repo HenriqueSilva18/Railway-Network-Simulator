@@ -1,11 +1,9 @@
-# USXXX - YYY
+# US012 - Create a Simulator 
 
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+[Requirements Engineering](01.requirements-engineering/US012-requirements.md)
 
-[Requirements Engineering](01.requirements-engineering/USXXX-requirements.md)
+[Analysis](02.analysis/US012-analysis.md)
 
-[Analysis](02.analysis/USXXX-analysis.md)
+[Design](03.design/US012-design.md)
 
-[Design](03.design/USXXX-design.md)
-
-[Tests & Implementation](04.tests-and-implementation/USXXX-tests-and-implementation.md)
+[Tests & Implementation](04.tests-and-implementation/US012-tests-and-implementation.md)
