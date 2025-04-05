@@ -1,44 +1,48 @@
 @startuml
-skinparam monochrome true
 skinparam shadowing false
 skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
 hide circle
 hide methods
 
-left to right direction
-
 class Player {
+  username
+  password
   budget
 }
 
+class Scenario {
+  nameID
+  timeRestrictions
+  technologicalRestrictions
+  historicalRestrictions
+}
+
 class Locomotive {
-  name
-  type: LocomotiveType
+  nameID
+  type
   power
   acceleration
   topSpeed
   startYear
   fuelCost
-  maintenanceCost
-  price
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
 }
 
-enum LocomotiveType {
-  STEAM
-  DIESEL
-  ELECTRIC
-}
-
-class Scenario {
-  nameID
-  configfile
-  timePeriod
-  technologicalRestrictions
-  historicalEvents
-}
-
+Player "1" -- "*" Scenario : plays >
 Player "1" -- "*" Locomotive : buys >
-Locomotive "*" -- "1" LocomotiveType : is >
-Scenario "*" -- "*" Locomotive : restricts >
+Scenario "1" -- "*" Locomotive : configures >
+
+
+
 
 @enduml

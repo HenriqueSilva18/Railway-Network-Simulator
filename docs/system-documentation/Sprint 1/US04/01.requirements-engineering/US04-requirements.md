@@ -30,13 +30,9 @@ cargo.
 
 ### 1.3. Acceptance Criteria
 
-**Explicit:**
 * **AC1:** Definition of the behaviour of ports, which cargoes they import/export and/or transform.
 * **AC2:** Definition of the available locomotion types (steam, diesel, and/or electric).
 * **AC3:** (Re)Definition of the factors that alter the generation (frequency) of generating industries
-
-**Implicit:**
-* A map must exist to be selected for which the scenario will be created.
 
 ### 1.4. Found out Dependencies
 
@@ -56,17 +52,17 @@ cargo.
 * Selected data:
     * a map
     * the available locomotion types
+    * the available industries
     * the imported cargoes (for each port)
     * the exported cargoes (for each port)
     * the transformed cargoes (for each port)
-    * the available industries
 
 **Output Data:**
 
 * List of available maps
 * List of available locomotion types
-* List of cargoes
 * List of industries
+* List of cargoes
 * (In)Success of the operation
 
 ### 1.6. System Sequence Diagram (SSD)

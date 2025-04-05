@@ -12,6 +12,63 @@ skinparam enum {
 hide circle
 hide methods
 
+class Editor {
+    username
+    password
+    createdMaps
+    createdScenarios
+}
 
+class Scenario {
+  nameID
+  timeRestrictions
+  technologicalRestrictions
+  historicalRestrictions
+}
+
+class Map {
+  nameID
+  size
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+}
+
+class Locomotive {
+  nameID
+  type
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
+}
+
+Editor "1" -- "*" Map : creates >
+Editor "1" -- "*" Scenario : creates >
+Scenario "1" -- "1" Map : uses >
+Map "1" -- "*" Industry : contains >
+Industry "*" -- "*" Cargo : produces/consumes >
+Scenario "1" -- "*" Locomotive : configures >
+Scenario "1" -- "*" Industry : configures >
 
 @enduml
