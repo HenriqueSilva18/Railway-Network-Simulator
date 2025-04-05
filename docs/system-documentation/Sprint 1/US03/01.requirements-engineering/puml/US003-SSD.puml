@@ -10,56 +10,51 @@ participant ":System" as System
 
 activate Editor
 
-Editor -> System : "Request to add a new city"
+Editor -> System : Request to add a new city
 activate System
-System -> Editor : "Request for each map he wants to add the city to"
+System -> Editor : Request for each map he wants to add the city to
 deactivate System
-Editor -> System : "Selects the map he wants to add a new city to"
+Editor -> System : Selects the map he wants to add a new city to
 activate System
-System -> Editor : "Request for the city name"
+System -> Editor : Request for the city name
 deactivate System
-Editor -> System : "Enters the name of the city"
+Editor -> System : Enters the name of the city
 activate System
-System -> System : "Check if there isn’t special digits or characters in the name"
-System -> System : "Check if the name is not empty and if is not greater than 50 characters"
-System -> Editor : "Request the coordinates of the city"
+System -> Editor : Request the coordinates of the city
 deactivate System
-Editor -> System : "Enters the coordinates of the city"
+Editor -> System : Enters the coordinates of the city
 activate System
-System -> System : "Validate the coordinates of the city"
-System -> Editor : "Request the number of house blocks"
+System -> Editor : Request the number of house blocks
 deactivate System
-Editor -> System : "Enters the number of house blocks"
+Editor -> System : Enters the number of house blocks
 activate System
-System -> System : "Check if the number of house blocks is a positive number"
-System -> Editor : "Ask if the editor wants to assign the blocks manually or automatically"
+System -> Editor : Asks if the editor wants to assign the blocks manually
 deactivate System
-Editor -> System : "Selects yes or no"
+Editor -> System : Selects yes or no
 activate System
 
 alt answer == yes
     loop while answer == yes
-        System --> Editor : "Requests house blocks position"
+        System --> Editor : Requests house blocks position
         deactivate System
 
-        Editor -> System : "Selects blocks position"
+        Editor -> System : Selects blocks position
         activate System
-        System -> System : "Check if the position is valid"
-        System -> Editor : "Asks if the editor wants to assign the next block manually"
+        System -> Editor : Asks if the editor wants to assign the next block manually
         deactivate System
 
-        Editor -> System : "Selects yes or no"
+        Editor -> System : Selects yes or no
     end
 else answer == no
-    System --> Editor : "Assigns house blocks automatically"
+    System --> Editor : Assigns house blocks automatically
     deactivate System
 end
 
 activate System
 
-System -> Editor : "City added successfully"
-System -> Editor : "List the cities in the map"
-System -> Editor : "List the Details of the city that was added (name, position, number of house blocks, map)"
+System -> Editor : City added successfully
+System -> Editor : List the cities in the map
+System -> Editor : List the Details of the city that was added (name, position, number of house blocks, map)
 
 deactivate System
 deactivate Editor

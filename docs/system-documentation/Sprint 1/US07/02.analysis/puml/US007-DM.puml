@@ -1,15 +1,19 @@
 @startuml
 
-skinparam monochrome true
 skinparam packageStyle rectangle
-skinparam shadowing false
+ skinparam shadowing false
+ skinparam classAttributeIconSize 0
+ skinparam class {
+   BackgroundColor LightBlue
+   BorderColor Blue
+ }
 
-'left to right direction
+ left to right direction
 
-skinparam classAttributeIconSize 0
+ skinparam classAttributeIconSize 0
 
-hide circle
-hide methods
+ hide circle
+ hide methods
 
 title Domain Model US03
 
@@ -21,34 +25,34 @@ class Player {
 
 class Station {
     name
-    xAxis
-    yAxis
-    type: StationType
-    radius
+    position
+    type
+    economicRadius
     cost
+    storageCapacity
+    centerPoint
+    buildingSlots
+    availableCargo
+    requestedCargo
   }
 
 class Cargo {
+   name
    amount
    lifespan
+   type
   }
 
 class Building {
-    name
-    upgradeLevel
-    availableYear
-    cost
+    nameID
+    type
     effect
+    availabilityYear
+    evolutionStages
   }
 
-  class StationBuildingSlot {
-    category: BuildingCategory
-    upgradeDate
-  }
 
-Player "1" -- "1" Station : selects >
-Station "1" -- "*" Cargo : stores >
-Station "1" -- "1..*" StationBuildingSlot : has >
-StationBuildingSlot "1" -- "0..1" Building : contains >
-
+Player "1" -- "1" Station : selects
+Station "1" -- "*" Cargo : stores
+Station "1" -- "*" Building : upgraded with
 @enduml

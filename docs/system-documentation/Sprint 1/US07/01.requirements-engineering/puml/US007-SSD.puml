@@ -11,14 +11,14 @@ participant ":System" as System
 activate Player
 activate System
 
-    System -> Player : shows available stations
+    System -> Player : Shows available stations
     deactivate System
 
-    Player -> System : types station name
+    Player -> System : Types station name
     activate System
     System -> System : Searches for station's name
-    System -> Player : shows station's existing buildings
-    System -> Player : shows station's demand/supply cargo
+    System -> Player : Shows station's existing buildings
+    System -> Player : Shows station's demand/supply cargo
     deactivate System
 
 
