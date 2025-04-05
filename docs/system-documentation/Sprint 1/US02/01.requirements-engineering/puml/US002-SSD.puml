@@ -5,36 +5,33 @@ skinparam shadowing false
 
 autonumber
 
+title System Sequence Diagram: US02 - Add an industry
+
 actor "Editor" as editor
-participant "System" as system
+participant ":System" as system
 
 activate editor
-    editor -> system : Opens map
+
+    editor -> system : asks to add industry
         activate system
-        system -> editor: Shows map
+        system --> editor: shows all industries available in the list
         deactivate system
 
-    editor -> system : Selects "Add Industry"
+    editor -> system: selects industry type
         activate system
-        system -> editor: Shows all industries available in the list
+        system --> editor: requests industry data (nameID, X and Y coordinates)
         deactivate system
 
-    editor -> system: Selects industry type
+    editor -> system: types industry data
         activate system
-        system -> editor: Asks for X and Y coordinates
+        system --> editor: asks for confirmation
         deactivate system
 
-    editor -> system: Enters industry X and Y coordinates
+    editor -> system: confirms industry data
         activate system
-        system -> editor: Asks for confirmation
+        system --> editor: displays operation success
+        system --> editor: shows industry details on map
         deactivate system
 
-    editor -> system: Confirms industry placement
-        activate system
-        system -> editor: Displays operation success
-        system -> editor: Shows industry details on map
-        deactivate system
-
-deactivate editor
 
 @enduml

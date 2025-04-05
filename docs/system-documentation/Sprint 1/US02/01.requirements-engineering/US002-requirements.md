@@ -35,6 +35,7 @@
 
 **Input Data:**
 * Typed data:
+    * industry nameID
     * a X coordinate
     * a Y coordinate
 
@@ -53,4 +54,4 @@
 
 ### 1.7 Other Relevant Remarks
 
-N/A
+n/a
