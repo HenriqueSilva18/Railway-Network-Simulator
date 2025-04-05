@@ -69,7 +69,7 @@ class Station {
   nameID
   position
   type
-  radius
+  economicRadius
   cost
   storageCapacity
   centerPoint
@@ -111,7 +111,6 @@ class Route {
   nameID
   stationSequence
   cargoList
-  schedule
 }
 
 
@@ -155,7 +154,7 @@ Scenario "1" -- "*" Industry : configures >
 Scenario "1" -- "*" Station : configures >
 
 
-Building "1" -- "0..1" Building : evolves >
+Building "1" -- "0..1" Building : evolves into >
 
 Player "1" -- "*" Route: defines >
 
