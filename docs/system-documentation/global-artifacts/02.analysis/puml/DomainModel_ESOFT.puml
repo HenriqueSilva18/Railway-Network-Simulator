@@ -83,6 +83,7 @@ class Building {
   nameID
   type
   availabilityYear
+  evolutionCost
   evolutionStagesLeft
 }
 class RailwayLine {
@@ -121,7 +122,7 @@ class Route {
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
 
-Scenario "1" -- "1" Map : uses >
+Scenario "*" -- "1" Map : uses >
 Player "1" -- "*" Scenario : plays >
 Scenario "*" -- "1" Simulator : runs in >
 

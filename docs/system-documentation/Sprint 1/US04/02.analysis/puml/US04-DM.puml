@@ -76,7 +76,7 @@ class City {
 
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
-Scenario "1" -- "1" Map : uses >
+Scenario "*" -- "1" Map : uses >
 Map "1" -- "*" Industry : contains >
 Industry "*" -- "*" Cargo : produces/consumes >
 Scenario "1" -- "*" Locomotive : configures >

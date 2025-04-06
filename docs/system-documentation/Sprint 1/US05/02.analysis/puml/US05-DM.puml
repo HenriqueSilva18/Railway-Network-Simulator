@@ -56,15 +56,14 @@ class Station {
   requestedCargo
 }
 
-note right of Station::type
-  Can be: DEPOT, STATION, or TERMINAL
+note right of Station::nameID
+  Format: [Closest City Name] + [Station Type]
+  Examples: "Porto Terminal", "Ovar Station", "Silvalde Depot"
 end note
 
-note right of Station::centerPoint
-  For STATION type only:
-  Can be NE, SE, NW, SW
-  For DEPOT and TERMINAL:
-  Geometric center is used
+
+note right of Station::type
+  Can be: DEPOT, STATION, or TERMINAL
 end note
 
 note right of Station::economicRadius
@@ -79,11 +78,12 @@ note right of Station::cost
   TERMINAL: 200k
 end note
 
-note right of Station::nameID
-  Format: [Closest City Name] + [Station Type]
-  Examples: "Porto Terminal", "Ovar Station", "Silvalde Depot"
+note right of Station::centerPoint
+  For STATION type only:
+  Can be NE, SE, NW, SW
+  For DEPOT and TERMINAL:
+  Geometric center is used
 end note
-
 ' Relationships
 Player "1" -- "*" Station : builds >
 Map "1" -- "*" City : contains >
