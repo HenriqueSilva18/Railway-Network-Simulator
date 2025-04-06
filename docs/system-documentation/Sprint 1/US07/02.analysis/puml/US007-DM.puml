@@ -15,7 +15,7 @@ skinparam packageStyle rectangle
  hide circle
  hide methods
 
-title Domain Model US03
+title Domain Model US07: - List all the stations
 
 class Player {
     username

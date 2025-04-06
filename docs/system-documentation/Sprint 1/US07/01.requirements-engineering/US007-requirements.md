@@ -43,12 +43,11 @@ n/a
 ### 1.5 Input and Output Data
 
 **Input Data:**
-
 * Typed data:
-    * A station name
-
+    * n/a
 * Selected data:
     * A specific station from the list
+    * Confirmation to view the details of the selected station
 
 **Output Data:**
 

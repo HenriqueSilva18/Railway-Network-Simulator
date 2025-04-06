@@ -219,6 +219,7 @@ An association is a relationship between instances of objects that indicates a r
 | Train                 | composed of  | Carriage                             |
 | Train                 | assigned to  | Route                                |
 | Carriage              | carries      | Cargo                                |
+| Route                 | contains     | RailwayLine                          |
 | Route                 | includes     | Station                              |
 | Route                 | manages      | Cargo                                |
 | Building              | evolves into | Building                             |

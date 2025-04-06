@@ -270,7 +270,7 @@ Train "1" -- "0..1" Route : assigned to
 ' Routes and stations
 Route "1" o-- "*" Station : includes
 Route "*" -- "*" Cargo : manages
-
+Route "1..*" *-- "1..*" RailwayLine : contains
 
 ' Scenario restrictions
 Scenario "1" -- "*" Locomotive : configures
