@@ -53,7 +53,6 @@ AC2: The house blocks can be assigned manually or automatically (randomly around
     * a number of house blocks
 
 * Selected data:
-    * a map
     * decision on how to assign the house blocks (manually or automatically)
     * position for assigning the house blocks (if manually)
 
@@ -73,8 +72,6 @@ AC2: The house blocks can be assigned manually or automatically (randomly around
 ### 1.7 Other Relevant Remarks
 
 &nbsp; &nbsp; **(i) Special Requirements**:
-
-The system should allow the editor to select a map from a list of existing maps.
 
 The system must validate that the city name contains only letters and spaces.
 

@@ -7,7 +7,6 @@ skinparam class {
   BorderColor Blue
 }
 
-left to right direction
 
 skinparam classAttributeIconSize 0
 
@@ -37,15 +36,15 @@ class City {
     demandedCargo
 }
 
-
-
+note left of City::houseBlocks
+  houseBlocks have
+  x and y coordinates
+end note
 
 
 Map "1" -- "*" City: contains
 
 Editor "1" -- "*" City: adds
 Editor "1" - "*" Map: creates
-
-
 
 @enduml

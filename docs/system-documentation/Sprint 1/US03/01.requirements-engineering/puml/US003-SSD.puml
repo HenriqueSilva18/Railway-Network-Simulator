@@ -38,10 +38,11 @@ alt answer == yes
         deactivate System
 
         Editor -> System : Selects yes or no
+        activate System
+
     end
 else answer == no
     System --> Editor : Assigns house blocks automatically
-    deactivate System
 end
 
 activate System
