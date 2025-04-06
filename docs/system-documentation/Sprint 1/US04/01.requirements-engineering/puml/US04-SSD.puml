@@ -1,5 +1,4 @@
 @startuml
-skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
@@ -15,17 +14,26 @@ activate Editor
     Editor -> System : asks to create a scenario
     activate System
 
-        System --> Editor : requests name and time restrictions (i.e. start and end date)
+        System --> Editor : requests name, start and end date (time period)
     deactivate System
+
+        hnote right
+            time restrictions
+        end note
 
     Editor -> System : types requested data
     activate System
 
-        System --> Editor : requests the historical events
+        System --> Editor : shows a list of industries and asks to select the ones available in the scenario
     deactivate System
 
-    Editor -> System : types the historical events
+            hnote right
+                technological restrictions
+            end note
+
+    Editor -> System : selects the available industries in the scenario
     activate System
+
 
     loop while port exist (mixed industries)
             System --> Editor : shows a list of cargoes and asks to select the ones the port import
@@ -47,22 +55,28 @@ activate Editor
             activate System
     end
 
-        System --> Editor : shows a list of industries and asks to select the ones available in the scenario
-    deactivate System
+    hnote right
+        historical restrictions
+    end note
 
-    Editor -> System : selects the available industries in the scenario
-    activate System
-
-    loop while generating industry exist
-            System --> Editor : requests the industry generating frequency factor
+    loop while generating entities exist
+            System --> Editor : requests the entities generating frequency factor
         deactivate System
 
-        Editor -> System : types the generating industry factor
+        Editor -> System : types the generating entities factor
         activate System
     end
 
+    hnote right
+        historical restrictions
+    end note
+
             System --> Editor : shows a list of locomotive types and asks to select the available ones
         deactivate System
+
+            hnote right
+                technological restrictions
+            end note
 
         Editor -> System : selects the available locomotive types
         activate System

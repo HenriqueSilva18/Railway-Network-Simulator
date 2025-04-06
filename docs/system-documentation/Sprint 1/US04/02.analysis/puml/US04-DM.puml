@@ -65,6 +65,15 @@ class Locomotive {
   maintenancePrice
 }
 
+class City {
+  nameID
+  position
+  houseBlocks
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
 Scenario "1" -- "1" Map : uses >
@@ -72,5 +81,8 @@ Map "1" -- "*" Industry : contains >
 Industry "*" -- "*" Cargo : produces/consumes >
 Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
+City "*" -- "*" Cargo : produces/consumes >
+Map "1" -- "*" City : contains >
+Scenario "1" -- "*" City : configures >
 
 @enduml

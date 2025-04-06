@@ -161,4 +161,7 @@ Building "1" -- "0..1" Building : evolves into >
 Player "1" -- "*" Route: defines >
 
 Simulator "1" --> "*" Cargo : generates >
+
+Scenario "1" -- "*" City : configures >
+
 @enduml

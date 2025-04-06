@@ -78,8 +78,6 @@ As a Product Owner, I want to create a simulator that generates cargoes at curre
 * Typed data:
     * n/a
 * Selected data:
-    * a map
-    * a scenario
     * an operation
 
 **Output Data:**

@@ -2,6 +2,7 @@
 skinparam sequenceMessageAlign center
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 5
+autonumber
 
 title System Sequence Diagram: US12 - Create a Simulator
 
@@ -10,52 +11,62 @@ participant ":System" as System
 
 activate PO
 
-    PO -> System : selects a map and a scenario, and asks to start a simulation (for testing the simulator)
+    PO -> System : asks to start a simulation (for testing the simulator)
     activate System
 
-        System --> PO : shows details (time, technological and historical restrictions) and asks confirmation
+        System --> PO : shows details (map and scenario for the simulation) and asks confirmation
     deactivate System
 
     PO -> System : confirms simulation
     activate System
 
-        System --> PO : starts simulation of the map and scenario
+        System --> PO : display operation success (simulation started)
     deactivate System
 
-    PO -> System : asks to pause the simulator
-    activate System
+    hnote right
+        simulator generates cargoes
+        at current stations automatically
+    end note
 
-        System --> PO : pauses simulation and waits for instructions to resume
-    deactivate System
+    loop while simulation is running
+        alt user requests operation
+            PO -> System : asks for operation (buy locomotive, add railway line, etc.)
+            activate System
 
-    PO -> System : asks to resume the simulation
-    activate System
+                System --> PO : shows operation details and ask confirmation
+            deactivate System
 
-        System --> PO : resume simulation of the map and scenario
-    deactivate System
+            PO -> System : confirms operation
+            activate System
 
-    loop while intended
-        PO -> System : asks for operation (buy locomotive, add railway line, etc.)
-        activate System
+                System --> PO : displays operation success
+            deactivate System
 
-            System --> PO : shows operation details and ask confirmation
-        deactivate System
+        else user pauses simulation
+            PO -> System : asks to pause the simulator
+            activate System
 
-        PO -> System : confirms operation
-        activate System
+                System --> PO : pauses simulation and waits for instructions to resume
+            deactivate System
 
-            System --> PO : displays operation success
-        deactivate System
+            PO -> System : asks to resume the simulation
+            activate System
+
+                System --> PO : resume simulation of the map and scenario
+            deactivate System
+
+        else user stops simulation
+            PO -> System : asks to stop the simulation
+            activate System
+
+                System --> PO : requests confirmation
+            deactivate System
+
+            PO -> System : confirms end of simulation
+            activate System
+
+        end
     end
-
-    PO -> System : asks to stop the simulation
-    activate System
-
-        System --> PO : requests confirmation
-    deactivate System
-
-    PO -> System : confirms end of simulation
-    activate System
 
         System --> PO : shows simulation results and creates a report
     deactivate System

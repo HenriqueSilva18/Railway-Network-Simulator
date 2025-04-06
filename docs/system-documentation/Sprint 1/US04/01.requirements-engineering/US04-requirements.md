@@ -46,23 +46,20 @@ cargo.
     * a name
     * the start date
     * the end date
-    * the historical events
-    * the industry generation factors (for each generating industry)
+    * the entity generation factor (for each generating entity)
 
 * Selected data:
-    * a map
-    * the available locomotion types
     * the available industries
     * the imported cargoes (for each port)
     * the exported cargoes (for each port)
     * the transformed cargoes (for each port)
+    * the available locomotion types
 
 **Output Data:**
 
-* List of available maps
-* List of available locomotion types
 * List of industries
 * List of cargoes
+* List of available locomotion types
 * (In)Success of the operation
 
 ### 1.6. System Sequence Diagram (SSD)
