@@ -5,30 +5,26 @@ skinparam shadowing false
 
 autonumber
 
+title System Sequence Diagram: US06 - Upgrade a selected station with a building
+
 actor "Player" as player
 participant "System" as system
 
 activate player
 
-    player -> system : Chooses station to upgrade
+    player -> system: asks to upgrade station
         activate system
-        system -> player: Displays station information
+        system --> player: displays upgrade options
+        deactivate system
+    player -> system: chooses building to upgrade
+        activate system
+        system --> player: displays building information
+        system --> player: asks for confirmation
+        deactivate system
+    player -> system: confirms upgrade
+        activate system
+        system --> player: displays operation success
+        system --> player: displays station and building information
         deactivate system
 
-    player -> system: Selects "Upgrade Station"
-        activate system
-        system -> player: Displays upgrade options
-        deactivate system
-    player -> system: Chooses building type to upgrade
-        activate system
-        system -> player: Displays building type information
-        system -> player: Asks for confirmation
-        deactivate system
-    player -> system: Confirms upgrade
-        activate system
-        system -> player: Displays confirmation message
-        system -> player: Displays station and building information
-        deactivate system
-
-deactivate player
 @enduml

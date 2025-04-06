@@ -14,7 +14,7 @@ skinparam classAttributeIconSize 0
 hide circle
 hide methods
 
-title Domain Model US06
+title Domain Model: US06 - Upgrade a selected station with a building
 
 class Player {
   username
@@ -38,13 +38,12 @@ class Station {
 class Building {
   nameID
   type
-  effect
   availabilityYear
-  evolutionStages
+  evolutionStagesLeft
 }
 
 Player "1" -- "*" Station : builds >
 Station "1" -- "*" Building : upgraded with >
-Building "1" -- "0..1" Building : evolves >
+Building "1" -- "0..1" Building : evolves into <
 
 @enduml
