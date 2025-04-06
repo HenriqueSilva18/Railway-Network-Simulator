@@ -39,6 +39,7 @@ class Building {
   nameID
   type
   availabilityYear
+  evolutionCost
   evolutionStagesLeft
 }
 
