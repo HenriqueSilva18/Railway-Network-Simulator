@@ -1,0 +1,63 @@
+@startuml
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 5
+
+title System Sequence Diagram: US12 - Create a Simulator
+
+actor "Product Owner" as PO
+participant ":System" as System
+
+activate PO
+
+    PO -> System : selects a map and a scenario, and asks to start a simulation (for testing the simulator)
+    activate System
+
+        System --> PO : shows details (time, technological and historical restrictions) and asks confirmation
+    deactivate System
+
+    PO -> System : confirms simulation
+    activate System
+
+        System --> PO : starts simulation of the map and scenario
+    deactivate System
+
+    PO -> System : asks to pause the simulator
+    activate System
+
+        System --> PO : pauses simulation and waits for instructions to resume
+    deactivate System
+
+    PO -> System : asks to resume the simulation
+    activate System
+
+        System --> PO : resume simulation of the map and scenario
+    deactivate System
+
+    loop while intended
+        PO -> System : asks for operation (buy locomotive, add railway line, etc.)
+        activate System
+
+            System --> PO : shows operation details and ask confirmation
+        deactivate System
+
+        PO -> System : confirms operation
+        activate System
+
+            System --> PO : displays operation success
+        deactivate System
+    end
+
+    PO -> System : asks to stop the simulation
+    activate System
+
+        System --> PO : requests confirmation
+    deactivate System
+
+    PO -> System : confirms end of simulation
+    activate System
+
+        System --> PO : shows simulation results and creates a report
+    deactivate System
+
+@enduml

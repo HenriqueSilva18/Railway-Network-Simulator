@@ -16,6 +16,7 @@ hide methods
 
 left to right direction
 
+title Domain Model Excerpt: US12 - Create a Simulator
 
 class Simulator {
   status

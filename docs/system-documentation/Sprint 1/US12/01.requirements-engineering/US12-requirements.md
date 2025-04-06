@@ -62,17 +62,35 @@ As a Product Owner, I want to create a simulator that generates cargoes at curre
 
 ### 1.4. Found out Dependencies
 
-* There is a dependency on ...
+* There is a dependency on "US01 - Create a map" as there must be at least one map created for the simulation to run.
+* There is a dependency on "US02 - Add an industry" as industries are needed to generate cargo at stations.
+* There is a dependency on "US03 - Add a city" as cities generate passenger and mail cargo at stations.
+* There is a dependency on "US04 - Create a scenario" as scenarios define the restrictions for the simulation.
+* There is a dependency on "US05 - Build station" as stations are required to serve cities and industries for cargo generation.
+* There is a dependency on "US08 - Build a railway line" as railway lines are needed to connect stations.
+* There is a dependency on "US09 - Buy a locomotive" as locomotives are needed to form trains for cargo transport.
+* There is a dependency on "US10 - Assign a train to a route" as routes are needed for trains to transport cargo between stations.
 
 ### 1.5 Input and Output Data
 
-_Identify here the data to be inputted by the system actor as well as the output data that the system has/needs to present in order to properly support the actor actions. Regarding the inputted data, it is suggested to distinguish between typed data and selected data (e.g. from a list)_
+**Input Data:**
+
+* Typed data:
+    * n/a
+* Selected data:
+    * a map
+    * a scenario
+    * an operation
+
+**Output Data:**
+
+* (In)Success of the operation
+* Simulation results
+* Simulation report
 
 ### 1.6. System Sequence Diagram (SSD)
 
-_Insert here a SSD depicting the envisioned Actor-System interactions and throughout which data is inputted and outputted to fulfill the requirement. All interactions must be numbered._
-
-![USXXX-SSD](svg/USXXX-SSD.svg)
+![US12-SSD](svg/US12-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
@@ -84,3 +102,4 @@ _Insert here a SSD depicting the envisioned Actor-System interactions and throug
 
 **(iii) how often this US is held:**
 - The Product Owner will develop the simulator initially and maintain it throughout the project.
+- The Simulator will be used by players during gameplay.
