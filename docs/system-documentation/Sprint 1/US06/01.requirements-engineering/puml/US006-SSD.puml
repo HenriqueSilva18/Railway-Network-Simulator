@@ -8,7 +8,7 @@ autonumber
 title System Sequence Diagram: US06 - Upgrade a selected station with a building
 
 actor "Player" as player
-participant "System" as system
+participant ":System" as system
 
 activate player
 
