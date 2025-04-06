@@ -1,0 +1,50 @@
+@startuml
+autonumber
+
+title "System Sequence Diagram - US05 : Build a Station"
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+Player -> System: asks to build a station
+
+activate System
+System --> Player: requests station type (depot, station, terminal)
+deactivate System
+
+Player -> System: selects station type
+activate System
+System --> Player: requests location on map for the station
+deactivate System
+
+Player -> System: provides location coordinates
+
+activate System
+alt station type is "Station"
+    System --> Player: requests center point selection (NE, SE, NW, SW)
+    deactivate System
+
+    Player -> System: selects center point
+    activate System
+end
+
+note right of System
+  Acceptance Criteria:
+  - Overbuilding is not possible
+  - Station name will be based on closest city
+end note
+
+System --> Player: proposes station name based on closest city
+System --> Player: shows preview of station placement and requests confirmation
+deactivate System
+
+Player -> System: confirms station placement
+
+activate System
+System --> Player: displays operation success
+System --> Player: updates map with the new station
+deactivate System
+
+
+@enduml
