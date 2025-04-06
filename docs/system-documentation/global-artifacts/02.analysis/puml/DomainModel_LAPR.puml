@@ -61,7 +61,6 @@ abstract class Industry {
   yAxis
   description
   availabilityYear
-  productionRate
 }
 
 class PrimarySectorIndustry {

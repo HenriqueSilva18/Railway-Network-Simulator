@@ -43,6 +43,7 @@ class City {
   nameID
   position
   houseBlocks
+  productionRate
   suppliedCargo
   demandedCargo
 }
@@ -81,9 +82,8 @@ class Station {
 class Building {
   nameID
   type
-  effect
   availabilityYear
-  evolutionStages
+  evolutionStagesLeft
 }
 class RailwayLine {
   length
@@ -154,6 +154,7 @@ Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
 Scenario "1" -- "*" Station : configures >
 
+Route "1..*"-- "1..*" RailwayLine: contains >
 
 Building "1" -- "0..1" Building : evolves into >
 

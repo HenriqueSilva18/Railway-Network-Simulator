@@ -31,21 +31,21 @@ No acceptance criteria mentioned.
 
 ### 1.4. Found out Dependencies
 
-* There is a dependency on "US05 - Build a station", since a train can only be assigned to a route that includes at least one valid station.
 * There is a dependency on "US07 - List all the stations", as the player needs to select stations that have demand/supply cargoes to define a valid route.
 * There is a dependency on "US08 - Build a railway line", given the train must be able to travel between stations connected by railway lines.
 * There is a dependency on "US09 - Buy a locomotive", as the player must first acquire a train before assigning it to a route.
 
 ### 1.5 Input and Output Data
 
+**Input Data:**
+
 * Selected data:
     * a train
-    * cargoes
     * a route
 
 **Output Data:**
 * Success or insuccess of the operation
-* Information about the train, the route and the cargoes assigned to the train
+* Information about the train, the route, the stations included, as well as the cargoes assigned to the train for pick up
 
 ### 1.6. System Sequence Diagram (SSD)
 
@@ -53,4 +53,4 @@ No acceptance criteria mentioned.
 
 ### 1.7 Other Relevant Remarks
 
-N/A
+- N/A

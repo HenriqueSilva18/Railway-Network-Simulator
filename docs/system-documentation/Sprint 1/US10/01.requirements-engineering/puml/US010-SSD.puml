@@ -5,32 +5,32 @@ skinparam shadowing false
 
 autonumber
 
+title "System Sequence Diagram - US10 : Assign a train to a route"
+
 actor "Player" as Player
-participant "System" as System
+participant ":System" as System
 
 activate Player
 
-    Player -> System : Selects Train
+
+
+    Player -> System : asks to assign a train
         activate System
-            System -> Player : Displays list of available trains
+            System --> Player : displays list of available routes with valid stations
         deactivate System
 
-    Player -> System : Selects Route
+    Player -> System : selects a route
         activate System
-            System -> Player : Displays list of available routes
+            System --> Player : displays route details (name, station stops)
+            System --> Player : asks for confirmation
         deactivate System
 
-    Player -> System : Assigns Train to Route
+    Player -> System : confirms assignment
         activate System
-            System -> Player : Asks for confirmation
+            System --> Player : displays operation success
+            System --> Player : displays train, route and station details (including  list of cargoes to be picked up)
         deactivate System
 
-    Player -> System : Confirms Assignment
-        activate System
-            System -> Player : Displays success message
-            System -> Player : Displays train, its cargoes and route information
-        deactivate System
 
-deactivate Player
 
 @enduml

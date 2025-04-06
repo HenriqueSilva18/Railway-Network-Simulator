@@ -7,14 +7,13 @@ skinparam class {
   BorderColor Blue
 }
 
-left to right direction
 
 skinparam classAttributeIconSize 0
 
 hide circle
 hide methods
 
-title Domain Model US10
+title Domain Model - US10 : Assign a train to a route
 
 class Player {
   username
@@ -115,6 +114,7 @@ Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 
 Carriage "*" -- "1" Cargo : carries >
+Route "1..*"-- "1..*" RailwayLine: contains >
 
 Industry "*" -- "*" Cargo : produces/consumes >
 
