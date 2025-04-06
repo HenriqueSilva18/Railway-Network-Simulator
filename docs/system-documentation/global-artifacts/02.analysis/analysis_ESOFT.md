@@ -159,35 +159,36 @@ An association is a relationship between instances of objects that indicates a r
 
 | Concept (A) | Association       | Concept (B) |
 |-------------|-------------------|-------------|
+| Building    | evolves into      | Building    |
+| Carriage    | carries           | Cargo       |
+| City        | produces/consumes | Cargo       |
 | Editor      | creates           | Map         |
 | Editor      | creates           | Scenario    |
-| Scenario    | uses              | Map         |
-| Player      | plays             | Scenario    |
-| Scenario    | runs in           | Simulator   |
+| Industry    | produces/consumes | Cargo       |
 | Map         | contains          | City        |
 | Map         | contains          | Industry    |
-| Industry    | produces/consumes | Cargo       |
-| City        | produces/consumes | Cargo       |
-| Player      | builds            | Station     |
 | Player      | builds            | RailwayLine |
-| Station     | upgraded with     | Building    |
+| Player      | builds            | Station     |
+| Player      | buys              | Locomotive  |
+| Player      | defines           | Route       |
+| Player      | plays             | Scenario    |
+| RailwayLine | connects          | Station     |
+| Route       | contains          | RailwayLine |
+| Route       | includes          | Station     |
+| Route       | manages           | Cargo       |
+| Scenario    | configures        | Industry    |
+| Scenario    | configures        | Locomotive  |
+| Scenario    | configures        | Station     |
+| Scenario    | runs in           | Simulator   |
+| Scenario    | uses              | Map         |
+| Simulator   | generates         | Cargo       |
 | Station     | serves            | City        |
 | Station     | serves            | Industry    |
 | Station     | stores            | Cargo       |
-| RailwayLine | connects          | Station     |
-| Player      | buys              | Locomotive  |
-| Train       | powered by        | Locomotive  |
-| Train       | composed of       | Carriage    |
-| Carriage    | carries           | Cargo       |
+| Station     | upgraded with     | Building    |
 | Train       | assigned to       | Route       |
-| Route       | includes          | Station     |
-| Route       | manages           | Cargo       |
-| Scenario    | configures        | Locomotive  |
-| Scenario    | configures        | Industry    |
-| Scenario    | configures        | Station     |
-| Building    | evolves into      | Building    |
-| Player      | defines           | Route       |
-| Simulator   | generates         | Cargo       |
+| Train       | composed of       | Carriage    |
+| Train       | powered by        | Locomotive  |
 
 ## Domain Model
 
