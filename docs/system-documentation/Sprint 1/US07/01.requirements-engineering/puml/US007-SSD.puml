@@ -1,4 +1,5 @@
 @startuml
+title System Sequence Diagram: US07 - Show station details
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,14 +12,14 @@ participant ":System" as System
 activate Player
 activate System
 
-    System -> Player : Shows available stations
+    System --> Player : Shows available stations
     deactivate System
 
     Player -> System : Types station name
     activate System
-    System -> System : Searches for station's name
-    System -> Player : Shows station's existing buildings
-    System -> Player : Shows station's demand/supply cargo
+    System --> System : Searches for station's name
+    System --> Player : Shows station's existing buildings
+    System --> Player : Shows station's demand/supply cargo
     deactivate System
 
 
