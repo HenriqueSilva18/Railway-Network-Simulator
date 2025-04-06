@@ -46,8 +46,8 @@ class Cargo {
 class Building {
     nameID
     type
-    effect
     availabilityYear
+    evolutionCost
     evolutionStages
   }
 
