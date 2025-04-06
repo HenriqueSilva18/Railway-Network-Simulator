@@ -12,6 +12,8 @@ skinparam enum {
 hide circle
 hide methods
 
+title Domain Model Excerpt: US04 - Create a Scenario
+
 class Editor {
     username
     password
