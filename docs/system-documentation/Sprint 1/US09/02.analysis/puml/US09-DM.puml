@@ -12,6 +12,8 @@ skinparam enum {
 hide circle
 hide methods
 
+title Domain Model Excerpt: US09 - Buy a Locomotive
+
 class Player {
   username
   password

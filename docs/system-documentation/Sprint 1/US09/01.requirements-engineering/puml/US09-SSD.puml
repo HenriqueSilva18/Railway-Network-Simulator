@@ -5,6 +5,8 @@ skinparam shadowing false
 
 autonumber
 
+title System Sequence Diagram: US09 - Create a Scenario
+
 actor "Player" as Player
 participant ":System" as System
 
@@ -13,19 +15,13 @@ activate Player
     Player -> System : asks to buy a locomotive
     activate System
 
-        System --> Player : asks for the current date
-    deactivate System
-
-    Player -> System : types the current date
-    activate System
-
-        System --> Player : shows a list of available locomotives
+        System --> Player : shows a list of available locomotives (for the scenario and current date)
     deactivate System
 
     Player -> System : selects a locomotive
     activate System
 
-        System --> Player : shows locomotive details, and requests confirmation
+        System --> Player : shows locomotive details and requests confirmation
     deactivate System
 
     Player -> System : confirms purchase
@@ -34,5 +30,4 @@ activate Player
         System --> Player : displays operation success
     deactivate System
 
-deactivate Player
 @enduml

@@ -45,7 +45,6 @@ Technological Restrictions - for example, which locomotives or industries are av
 ### 1.3. Acceptance Criteria
 
 * **AC1:** The player should choose the locomotive from a list of available locomotives for the scenario as well as a current date.
-* The player must have sufficient budget to purchase the locomotive.
 
 ### 1.4. Found out Dependencies
 
@@ -56,14 +55,14 @@ Technological Restrictions - for example, which locomotives or industries are av
 **Input Data:**
 
 * Typed data:
-    * the current date
+    * n/a
 
 * Selected data:
     * a locomotive
 
 **Output Data:**
 
-* List of available locomotives
+* List of available locomotives (for the scenario and current date)
 * (In)Success of the operation
 
 ### 1.6. System Sequence Diagram (SSD)
@@ -76,7 +75,7 @@ Technological Restrictions - for example, which locomotives or industries are av
 - n/a
 
 **(ii) data and/or technology variations:**
-- Technological Restrictions will set the available locomotives in the scenario.
+- Scenario restrictions and current date will set the available locomotives.
 
 **(iii) how often this US is held:**
 - The purchase of locomotives can be done multiple times.
