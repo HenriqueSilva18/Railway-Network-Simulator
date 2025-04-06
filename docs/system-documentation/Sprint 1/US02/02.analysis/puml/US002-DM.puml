@@ -7,7 +7,7 @@ skinparam class {
   BorderColor Blue
 }
 
-left to right direction
+'left to right direction
 
 skinparam classAttributeIconSize 0
 
@@ -39,6 +39,14 @@ class Industry {
   suppliedCargo
   demandedCargo
 }
+
+note right of Industry::sector
+  Must be primary, transforming or mixed industry
+end note
+
+note right of Industry::type
+  Must be mine, farm, bakery or other of the kind
+end note
 
 Map "1" -- "*" Industry: contains >
 Editor "1" -- "*" Industry: adds
