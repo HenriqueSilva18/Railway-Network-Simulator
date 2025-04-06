@@ -14,7 +14,7 @@ skinparam classAttributeIconSize 0
 hide circle
 hide methods
 
-title Domain Model US03
+title Domain Model: US03 - Add a city
 
 class Editor {
    username
@@ -31,19 +31,17 @@ class Map {
 class City {
     nameID
     position
+    houseBlocks
+    productionRate
     suppliedCargo
     demandedCargo
 }
 
-class HouseBlocks {
-    position
-}
+
 
 
 
 Map "1" -- "*" City: contains
-
-City "1" - "*" HouseBlocks: has
 
 Editor "1" -- "*" City: adds
 Editor "1" - "*" Map: creates
