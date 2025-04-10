@@ -1,4 +1,6 @@
-# Glossary of Railway Simulation and Software Development Terms
+# Glossary
+
+---
 
 ## Software Engineering Terms
 
