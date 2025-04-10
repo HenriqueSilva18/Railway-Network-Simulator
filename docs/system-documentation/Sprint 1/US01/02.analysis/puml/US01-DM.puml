@@ -8,6 +8,7 @@ skinparam class {
 
 hide circle
 hide methods
+title Domain Model: US01 - Create a Map
 
 class Editor {
   username
