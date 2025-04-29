@@ -1,0 +1,122 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ApplicationSession
+{
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+}
+
+class UserSession
+{
+    + getCurrentPlayer()
+}
+
+class Player {
+    - username : String
+    - password : String
+    - initialBudget : double
+    - currentBudget : double
+    - locomotivesList : List<Locomotive>
+
+    + canAfford(price)
+    + subtractFromBudget(price)
+    + addLocomotiveToList(locomotive)
+}
+
+class Locomotive {
+    - nameID : String
+    - owner : Player
+    - type : String
+    - power : double
+    - acceleration : double
+    - topSpeed : double
+    - startYear : int
+    - fuelCost : double
+    - availabilityYear : int
+    - acquisitionPrice : double
+    - maintenancePrice : double
+
+    + setOwner(player)
+}
+
+class Scenario {
+    - nameID : String
+    - timeRestrictions : List<TimeRestriction>
+    - technologicalRestrictions : List<TechnologicalRestriction>
+    - historicalRestrictions : List<HistoricalRestriction>
+
+    + getCurrentDate()
+}
+
+class LocomotiveRepository {
+    + getAvailableLocomotives(scenario, currentDate)
+    + getLocomotiveById(locomotiveId)
+}
+
+class ScenarioRepository {
+    + getCurrentScenario()
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getLocomotiveRepository()
+    + getScenarioRepository()
+}
+
+class BuyLocomotiveController {
+    + BuyLocomotiveController()
+    + getAvailableLocomotives()
+    + getLocomotiveDetails(locomotiveId)
+    + purchaseLocomotive(locomotiveId)
+}
+
+note right of BuyLocomotiveController
+    This controller manages the
+    locomotive purchasing process
+end note
+
+note bottom of LocomotiveRepository
+    - used for retrieving available
+    locomotives for purchase
+end note
+
+class BuyLocomotiveUI {
+}
+
+BuyLocomotiveUI .> BuyLocomotiveController
+
+BuyLocomotiveController ..> ApplicationSession
+BuyLocomotiveController ..> UserSession
+BuyLocomotiveController ..> LocomotiveRepository
+BuyLocomotiveController ..> ScenarioRepository
+BuyLocomotiveController ..> Player
+BuyLocomotiveController ..> Locomotive
+BuyLocomotiveController .> Repositories
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" LocomotiveRepository : locomotiveRepository
+Repositories --> "1" ScenarioRepository : scenarioRepository
+
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession ..> UserSession
+
+LocomotiveRepository --> "*" Locomotive : locomotives
+
+ScenarioRepository --> "*" Scenario : scenarios
+
+Player "1" -- "*" Locomotive : buys >
+Player "1" -- "*" Scenario : plays >
+Scenario "1" -- "*" Locomotive : configures >
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'hide footbox
+participant ":BuyLocomotiveUI" as UI
+participant ":BuyLocomotiveController" as CTRL
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+
+activate UI
+    UI -> CTRL : getLocomotiveDetails(locomotiveId)
+    activate CTRL
+
+        CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL : locomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> LOC_REPO : getLocomotiveById(locomotiveId)
+        activate LOC_REPO
+            LOC_REPO --> CTRL : locomotive
+        deactivate LOC_REPO
+
+        CTRL --> UI : locomotive
+    deactivate CTRL
+deactivate UI
+@enduml

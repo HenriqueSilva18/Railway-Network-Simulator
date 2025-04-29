@@ -1,0 +1,88 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title Domain Model Excerpt: US04 - Create a Scenario
+
+class Editor {
+    username
+    password
+    createdMaps
+    createdScenarios
+}
+
+class Scenario {
+  nameID
+  timeRestrictions
+  technologicalRestrictions
+  historicalRestrictions
+}
+
+class Map {
+  nameID
+  size
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+}
+
+class Locomotive {
+  nameID
+  type
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
+}
+
+class City {
+  nameID
+  position
+  houseBlocks
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+Editor "1" -- "*" Map : creates >
+Editor "1" -- "*" Scenario : creates >
+Scenario "*" -- "1" Map : uses >
+Map "1" -- "*" Industry : contains >
+Industry "*" -- "*" Cargo : produces/consumes >
+Scenario "1" -- "*" Locomotive : configures >
+Scenario "1" -- "*" Industry : configures >
+City "*" -- "*" Cargo : produces/consumes >
+Map "1" -- "*" City : contains >
+Scenario "1" -- "*" City : configures >
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'hide footbox
+participant ":BuyLocomotiveUI" as UI
+participant ":BuyLocomotiveController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+participant "scenarioRepository\n:ScenarioRepository" as SCENARIO_REPO
+participant "scenario\n:Scenario" as SCENARIO
+
+activate UI
+    UI -> CTRL : getAvailableLocomotives()
+    activate CTRL
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL : repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL : locomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> REPOS_SINGLETON : getScenarioRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL : scenarioRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> SCENARIO_REPO : getCurrentScenario()
+        activate SCENARIO_REPO
+            SCENARIO_REPO --> CTRL : scenario
+        deactivate SCENARIO_REPO
+
+        CTRL -> SCENARIO : getCurrentDate()
+        activate SCENARIO
+            SCENARIO --> CTRL : currentDate
+        deactivate SCENARIO
+
+        CTRL -> LOC_REPO : getAvailableLocomotives(scenario, currentDate)
+        activate LOC_REPO
+            LOC_REPO --> CTRL : availableLocomotivesList
+        deactivate LOC_REPO
+
+        CTRL --> UI : availableLocomotivesList
+    deactivate CTRL
+deactivate UI
+@enduml

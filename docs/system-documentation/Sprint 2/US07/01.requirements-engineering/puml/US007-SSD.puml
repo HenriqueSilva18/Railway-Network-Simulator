@@ -1,0 +1,32 @@
+@startuml
+title System Sequence Diagram: US07 - List all the stations
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+activate System
+
+    System --> Player : Shows available stations
+    deactivate System
+
+    Player -> System : Selects station
+    activate System
+    System --> Player : Asks for confirmation
+    deactivate System
+    Player -> System : Confirms selection
+    activate System
+    System --> Player : Shows station's existing buildings
+    System --> Player : Shows station's demand/supply cargo
+    deactivate System
+
+
+    deactivate System
+
+
+@enduml

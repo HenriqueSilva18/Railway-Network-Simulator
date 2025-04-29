@@ -1,0 +1,61 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'hide footbox
+participant ":BuyLocomotiveUI" as UI
+participant ":BuyLocomotiveController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+participant "player\n:Player" as PLAYER_OBJ
+participant "locomotive\n:Locomotive" as LOCOMOTIVE
+
+activate UI
+    UI -> CTRL : purchaseLocomotive(locomotiveId)
+    activate CTRL
+
+        ref over CTRL
+            Get Current Player
+        end ref
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL : repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL : locomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> LOC_REPO : getLocomotiveById(locomotiveId)
+        activate LOC_REPO
+            LOC_REPO --> CTRL : locomotive
+        deactivate LOC_REPO
+
+        CTRL -> PLAYER_OBJ : canAfford(locomotive.acquisitionPrice)
+        activate PLAYER_OBJ
+            PLAYER_OBJ --> CTRL : true
+        deactivate PLAYER_OBJ
+
+        CTRL -> PLAYER_OBJ : subtractFromBudget(locomotive.acquisitionPrice)
+        activate PLAYER_OBJ
+            PLAYER_OBJ --> CTRL : success
+        deactivate PLAYER_OBJ
+
+        CTRL -> PLAYER_OBJ : addLocomotiveToList(locomotive)
+        activate PLAYER_OBJ
+            PLAYER_OBJ --> CTRL : success
+        deactivate PLAYER_OBJ
+
+        CTRL -> LOCOMOTIVE : setOwner(player)
+        activate LOCOMOTIVE
+            LOCOMOTIVE --> CTRL : success
+        deactivate LOCOMOTIVE
+
+        CTRL --> UI : purchaseResult
+    deactivate CTRL
+deactivate UI
+@enduml

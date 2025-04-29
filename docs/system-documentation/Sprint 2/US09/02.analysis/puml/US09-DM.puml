@@ -1,0 +1,53 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title Domain Model Excerpt: US09 - Buy a Locomotive
+
+class Player {
+  username
+  password
+  initialBudget
+  currentBudget
+  locomotivesList
+}
+
+class Scenario {
+  nameID
+  timeRestrictions
+  technologicalRestrictions
+  historicalRestrictions
+}
+
+class Locomotive {
+  nameID
+  owner
+  type
+  power
+  acceleration
+  topSpeed
+  startYear
+  fuelCost
+  availabilityYear
+  acquisitionPrice
+  maintenancePrice
+}
+
+Player "1" -- "*" Scenario : plays >
+Player "1" -- "*" Locomotive : buys >
+Scenario "1" -- "*" Locomotive : configures >
+
+
+
+
+@enduml

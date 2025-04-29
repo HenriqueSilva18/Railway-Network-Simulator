@@ -1,0 +1,47 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Player" as PLAYER
+participant ":BuyLocomotiveUI" as UI
+participant ":BuyLocomotiveController" as CTRL
+
+activate PLAYER
+
+    PLAYER -> UI : asks to buy a locomotive
+    activate UI
+        UI --> CTRL** : create()
+
+        ref over UI, CTRL
+            Get Available Locomotives
+        end ref
+
+        UI --> PLAYER : shows list of available locomotives
+    deactivate UI
+
+    PLAYER -> UI : selects a locomotive
+    activate UI
+
+        ref over UI, CTRL
+            Get Locomotive Details
+        end ref
+
+        UI --> PLAYER : shows locomotive details and requests confirmation
+    deactivate UI
+
+    PLAYER -> UI : confirms purchase
+    activate UI
+
+        ref over UI, CTRL
+            Purchase Locomotive
+        end ref
+
+        UI --> PLAYER : displays operation success
+    deactivate UI
+
+deactivate PLAYER
+@enduml

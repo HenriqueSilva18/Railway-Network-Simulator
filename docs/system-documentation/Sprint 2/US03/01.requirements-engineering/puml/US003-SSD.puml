@@ -1,0 +1,56 @@
+@startuml
+title System Sequence Diagram: US03 - Add a city
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+Editor -> System : Asks to add city
+        activate System
+        System --> Editor: Requests city data (name, X and Y coordinates, number of house blocks)
+        deactivate System
+
+    Editor -> System: Types industry data
+        activate System
+        System --> Editor: Asks for confirmation
+        deactivate System
+
+    Editor -> System: Confirms industry data
+        activate System
+System --> Editor : Asks if the editor wants to assign the blocks manually
+deactivate System
+Editor -> System : Selects yes or no
+activate System
+
+alt answer == yes
+    loop while answer == yes
+        System --> Editor : Requests house blocks position
+        deactivate System
+
+        Editor -> System : Selects blocks position
+        activate System
+        System --> Editor : Asks if the editor wants to assign the next block manually
+        deactivate System
+
+        Editor -> System : Selects yes or no
+        activate System
+
+    end
+else answer == no
+    System --> Editor : Assigns house blocks automatically
+end
+
+activate System
+
+System --> Editor : City added successfully
+System --> Editor : List the cities in the map
+System --> Editor : List the Details of the city that was added (name, position, number of house blocks, map)
+
+deactivate System
+deactivate Editor
+@enduml

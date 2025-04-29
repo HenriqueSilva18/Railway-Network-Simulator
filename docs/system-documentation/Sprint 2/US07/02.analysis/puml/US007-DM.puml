@@ -1,0 +1,58 @@
+@startuml
+
+skinparam packageStyle rectangle
+ skinparam shadowing false
+ skinparam classAttributeIconSize 0
+ skinparam class {
+   BackgroundColor LightBlue
+   BorderColor Blue
+ }
+
+ left to right direction
+
+ skinparam classAttributeIconSize 0
+
+ hide circle
+ hide methods
+
+title Domain Model US07: - List all the stations
+
+class Player {
+    username
+    password
+    budget
+  }
+
+class Station {
+    name
+    position
+    type
+    economicRadius
+    cost
+    storageCapacity
+    centerPoint
+    buildingSlots
+    availableCargo
+    requestedCargo
+  }
+
+class Cargo {
+   name
+   amount
+   lifespan
+   type
+  }
+
+class Building {
+    nameID
+    type
+    availabilityYear
+    evolutionCost
+    evolutionStages
+  }
+
+
+Player "1" -- "1" Station : selects
+Station "1" -- "*" Cargo : stores
+Station "1" -- "*" Building : upgraded with
+@enduml

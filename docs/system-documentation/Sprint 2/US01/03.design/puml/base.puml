@@ -1,0 +1,112 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Editor" as EDITOR
+participant ":CreateMapUI" as UI
+participant ":CreateMapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "currentSession\n:UserSession" as USER_SESSION
+participant "map\n:Map" as MAP
+
+activate EDITOR
+
+    EDITOR -> UI : asks to create a new map
+    activate UI
+        UI --> CTRL** : create()
+
+        UI --> EDITOR : requests data (name, width, height)
+    deactivate UI
+
+    EDITOR -> UI : inputs requested data
+    activate UI
+        UI --> EDITOR : shows map data and requests confirmation
+    deactivate UI
+
+    EDITOR -> UI : confirms data
+    activate UI
+        UI -> CTRL : createMap(name, width, height)
+        activate CTRL
+            CTRL -> CTRL : getEditorFromSession()
+            activate CTRL
+                CTRL -> APP_SESSION: getInstance()
+                activate APP_SESSION
+                    APP_SESSION --> CTRL: appSession
+                deactivate APP_SESSION
+
+                CTRL -> APP_SESSION_SINGLETON: getCurrentSession()
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> CTRL: currentSession
+                deactivate APP_SESSION_SINGLETON
+
+                CTRL -> USER_SESSION: getUserEmail()
+                activate USER_SESSION
+                    USER_SESSION --> CTRL: email
+                deactivate USER_SESSION
+
+                CTRL --> CTRL : editor
+            deactivate CTRL
+
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL: repositories
+            deactivate REPOS
+
+            CTRL -> REPOS_SINGLETON: getMapRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: mapRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> MAP_REPO: createMap(name, width, height, editor)
+            activate MAP_REPO
+                MAP_REPO --> MAP**: create(name, width, height, editor)
+
+                MAP -> MAP: validateDimensions()
+                activate MAP
+                    note right of MAP
+                      Verifies that width and height
+                      are positive integers
+                    end note
+                    MAP --> MAP : true
+                deactivate MAP
+
+                MAP -> MAP: validateName()
+                activate MAP
+                    note right of MAP
+                      Verifies that name is a
+                      valid filename
+                    end note
+                    MAP --> MAP : true
+                deactivate MAP
+
+                MAP_REPO -> MAP_REPO: saveMap(map)
+                activate MAP_REPO
+                    MAP_REPO --> MAP_REPO : true
+                deactivate MAP_REPO
+
+                MAP_REPO -> MAP_REPO: setCurrentMap(map)
+                activate MAP_REPO
+                    MAP_REPO --> MAP_REPO : true
+                deactivate MAP_REPO
+
+                MAP_REPO --> CTRL : map
+            deactivate MAP_REPO
+
+            CTRL --> UI: map
+        deactivate CTRL
+
+        UI --> EDITOR: displays operation success
+        UI --> EDITOR: displays map details
+    deactivate UI
+
+deactivate EDITOR
+
+@enduml

@@ -1,0 +1,94 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title "System Sequence Diagram - US05 : Build a Station"
+
+class Player {
+  username
+  password
+  budget
+}
+
+class Map {
+  nameID
+  width
+  height
+}
+
+class City {
+  nameID
+  position
+  houseBlocks
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  position
+  sector
+  type
+  description
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Station {
+  nameID
+  position
+  type
+  economicRadius
+  cost
+  storageCapacity
+  centerPoint
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+note right of Station::nameID
+  Format: [Closest City Name] + [Station Type]
+  Examples: "Porto Terminal", "Ovar Station", "Silvalde Depot"
+end note
+
+
+note right of Station::type
+  Can be: DEPOT, STATION, or TERMINAL
+end note
+
+note right of Station::economicRadius
+  DEPOT: 3x3 radius
+  STATION: 4x4 radius
+  TERMINAL: 5x5 radius
+end note
+
+note right of Station::cost
+  DEPOT: 50k
+  STATION: 100k
+  TERMINAL: 200k
+end note
+
+note right of Station::centerPoint
+  For STATION type only:
+  Can be NE, SE, NW, SW
+  For DEPOT and TERMINAL:
+  Geometric center is used
+end note
+' Relationships
+Player "1" -- "*" Station : builds >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "*" Station : contains >
+Station "1" -- "*" City : serves >
+Station "1" -- "*" Industry : serves >
+@enduml

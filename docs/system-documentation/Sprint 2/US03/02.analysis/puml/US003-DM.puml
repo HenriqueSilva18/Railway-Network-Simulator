@@ -1,0 +1,50 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model: US03 - Add a city
+
+class Editor {
+   username
+   password
+   createdMaps
+   createdScenarios
+}
+
+class Map {
+   nameID
+   size
+}
+
+class City {
+    nameID
+    position
+    houseBlocks
+    productionRate
+    suppliedCargo
+    demandedCargo
+}
+
+note left of City::houseBlocks
+  houseBlocks have
+  x and y coordinates
+end note
+
+
+Map "1" -- "*" City: contains
+
+Editor "1" -- "*" City: adds
+Editor "1" - "*" Map: creates
+
+@enduml
