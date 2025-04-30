@@ -31,7 +31,7 @@ This module solves the problem of determining whether a train (steam, diesel, or
 ### 1. DFS for Route Checking
 
 ```java
-private static boolean dfs(String current, String end, TrainType trainType, String stationType, Set<String> visited)
+private static boolean dfs(String current, String end, TrainType trainType, String stationType, Set<String> visited);
 ```
 
 - Checks for a valid route:
@@ -44,7 +44,7 @@ private static boolean dfs(String current, String end, TrainType trainType, Stri
 ### 2. Matrix Exponentiation for Walk Count
 
 ```java
-public static int[][] computeWalksMatrix(int power)
+public static int[][] computeWalksMatrix(int power);
 ```
 
 - Builds adjacency matrix from the graph.
@@ -56,7 +56,7 @@ public static int[][] computeWalksMatrix(int power)
 ### 3. Boolean Transitive Closure
 
 ```java
-public static boolean[][] computeTransitiveClosure()
+public static boolean[][] computeTransitiveClosure();
 ```
 
 - Combines all matrix powers using Boolean OR logic.

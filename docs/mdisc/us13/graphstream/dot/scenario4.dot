@@ -1,0 +1,29 @@
+graph RailwayNetwork {
+  node [shape=circle];
+  "S_Fort_William" -- "D_Tulloch" [label="29,0 km", color=black];
+  "S_Fort_William" -- "S_Mallaig" [label="68,0 km", color=black];
+  "T_Glasgow_Queen_Street" -- "D_Croy" [label="22,0 km", color=blue];
+  "T_Glasgow_Queen_Street" -- "S_Airdrie" [label="20,0 km", color=blue];
+  "T_Glasgow_Queen_Street" -- "S_Dalmuir" [label="17,0 km", color=black];
+  "T_Edinburgh" -- "D_Inverkeithing" [label="23,0 km", color=black];
+  "T_Edinburgh" -- "D_Croy" [label="66,0 km", color=black];
+  "T_Edinburgh" -- "S_Bathgate" [label="35,0 km", color=blue];
+  "D_Aviemore" -- "T_Inverness" [label="48,0 km", color=blue];
+  "D_Aviemore" -- "S_Kingussie" [label="21,0 km", color=blue];
+  "S_Dalmuir" -- "D_Crianlarich" [label="69,0 km", color=black];
+  "S_Kingussie" -- "T_Perth" [label="115,0 km", color=blue];
+  "T_Inverness" -- "S_Dingwall" [label="25,0 km", color=black];
+  "T_Inverness" -- "S_Elgin" [label="61,0 km", color=blue];
+  "D_Crianlarich" -- "D_Tulloch" [label="70,0 km", color=black];
+  "D_Attadale" -- "S_Dingwall" [label="109,0 km", color=black];
+  "S_Arbroath" -- "T_Aberdeen" [label="87,0 km", color=blue];
+  "S_Arbroath" -- "T_Dundee" [label="27,0 km", color=blue];
+  "D_Croy" -- "T_Stirling" [label="27,0 km", color=blue];
+  "S_Bathgate" -- "S_Airdrie" [label="26,0 km", color=blue];
+  "T_Dundee" -- "D_Inverkeithing" [label="70,0 km", color=black];
+  "T_Dundee" -- "T_Perth" [label="36,0 km", color=blue];
+  "T_Stirling" -- "S_Dunblane" [label="9,0 km", color=blue];
+  "S_Dunblane" -- "T_Perth" [label="45,0 km", color=blue];
+  "T_Perth" -- "D_Inverkeithing" [label="50,0 km", color=blue];
+  "S_Elgin" -- "T_Aberdeen" [label="106,0 km", color=blue];
+}
