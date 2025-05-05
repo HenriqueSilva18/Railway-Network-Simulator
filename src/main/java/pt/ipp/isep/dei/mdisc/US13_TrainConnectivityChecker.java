@@ -1,10 +1,13 @@
-package pt.ipp.isep.dei.mdisc.us13;
+package pt.ipp.isep.dei.mdisc;
 
+import pt.ipp.isep.dei.mdisc.util.Edge;
+import pt.ipp.isep.dei.mdisc.util.MatrixUtils;
+import pt.ipp.isep.dei.mdisc.util.Station;
 
 import java.io.*;
 import java.util.*;
 
-public class TrainConnectivityChecker {
+public class US13_TrainConnectivityChecker {
 
     enum TrainType { STEAM, DIESEL, ELECTRIC }
 
@@ -89,7 +92,7 @@ public class TrainConnectivityChecker {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Loading railway data from data/porto_railways.csv...");
-        loadCSV("C:\\Users\\gonca\\IdeaProjects\\sem2-pi-24.25-g112-repo\\docs\\mdisc\\us13\\data\\scenario4_lines.csv");
+        loadCSV("docs/mdisc/us13/data/scenario4_lines.csv");
 
         System.out.println("Enter start station:");
         String start = sc.nextLine().trim();
@@ -107,7 +110,7 @@ public class TrainConnectivityChecker {
         System.out.println(result ? "Train can travel!" : "No valid route found.");
 
         System.out.println("Exporting network to dot/network.dot");
-        exportToDOT("C:\\Users\\gonca\\IdeaProjects\\sem2-pi-24.25-g112-repo\\docs\\mdisc\\us13\\graphstream\\dot\\scenario4.dot");
+        exportToDOT("docs/mdisc/us13/graphstream/dot/scenario4.dot");
         System.out.println("Export complete.");
 
         System.out.println("Enter path length to compute walk count (e.g., 4):");

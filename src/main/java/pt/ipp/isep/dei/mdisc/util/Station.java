@@ -1,4 +1,4 @@
-package pt.ipp.isep.dei.mdisc.us13;
+package pt.ipp.isep.dei.mdisc.util;
 
 public class Station {
     private String name;
