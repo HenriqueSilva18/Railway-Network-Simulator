@@ -10,9 +10,14 @@ public class Station {
     }
 
     private String inferType(String name) {
-        String lower = name.toLowerCase();
-        if (lower.contains("depot")) return "depot";
-        if (lower.contains("terminal")) return "terminal";
+//        String lower = name.toLowerCase();
+//        if (lower.contains("depot")) return "depot";
+//        if (lower.contains("terminal")) return "terminal";
+//        return "station";
+
+        char firstChar = name.toUpperCase().charAt(0);
+        if (firstChar == 'D') return "depot";
+        if (firstChar == 'T') return "terminal";
         return "station";
     }
 
