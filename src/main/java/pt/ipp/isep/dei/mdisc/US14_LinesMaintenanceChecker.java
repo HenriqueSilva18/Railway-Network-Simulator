@@ -1,9 +1,6 @@
 package pt.ipp.isep.dei.mdisc;
 
-import pt.ipp.isep.dei.mdisc.util.Edge;
-import pt.ipp.isep.dei.mdisc.util.FleuryAlgorithm;
-import pt.ipp.isep.dei.mdisc.util.MatrixUtils;
-import pt.ipp.isep.dei.mdisc.util.Station;
+import pt.ipp.isep.dei.mdisc.util.*;
 
 import java.io.IOException;
 import java.util.*;
