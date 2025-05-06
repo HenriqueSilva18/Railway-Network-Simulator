@@ -1,11 +1,16 @@
 package pt.ipp.isep.dei.mdisc.util;
 
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class FilesUtils {
 
-    public static void loadCSV(String csvPath, Map<String, Station> stations, Map<String, List<Edge>> graph, List<String> stationOrder) throws IOException {
+    public static void loadCSV(String csvPath, Map<String, Station> stations, Map<String, List<Edge>> graph,
+                               List<String> stationOrder, int maintenanceType) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(csvPath));
         String line;
         while ((line = reader.readLine()) != null) {
@@ -14,6 +19,10 @@ public class FilesUtils {
             String to = parts[1].trim();
             boolean electrified = parts[2].trim().equals("1");
             double distance = Double.parseDouble(parts[3].trim());
+
+            if (maintenanceType == 2 && !electrified) {
+                continue;
+            }
 
             stations.putIfAbsent(from, new Station(from));
             stations.putIfAbsent(to, new Station(to));
@@ -50,15 +59,10 @@ public class FilesUtils {
         writer.close();
     }
 
-//    public static void convertDotToPng(String dotPath, String pngPath) {
-//        try {
-//            File dotFile = new File(dotPath);
-//
-//            Graphviz.fromFile(dotFile)
-//                    .render(Format.PNG)
-//                    .toFile(new File(pngPath));
-//        } catch (IOException e) {
-//            throw new RuntimeException("Conversion failed: " + e.getMessage(), e);
-//        }
-//    }
+    public static void dotToPNG(String dotPath, String pngPath) throws IOException {
+        String dotSource = Files.readString(Paths.get(dotPath));
+        Graphviz.fromString(dotSource)
+                .render(Format.PNG)
+                .toFile(new File(pngPath));
+    }
 }
