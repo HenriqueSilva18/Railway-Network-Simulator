@@ -1,0 +1,16 @@
+graph RailwayNetwork {
+  node [shape=circle];
+  "S_Kingussie" -- "S_Dingwall" [label="25,0 km", color=black];
+  "S_Kingussie" -- "S_Elgin" [label="115,0 km", color=blue];
+  "S_Kingussie" -- "T_Aberdeen" [label="115,0 km", color=blue];
+  "S_Kingussie" -- "T_Inverness" [label="25,0 km", color=black];
+  "S_Elgin" -- "D_Attadale" [label="109,0 km", color=black];
+  "S_Elgin" -- "S_Dingwall" [label="25,0 km", color=black];
+  "S_Elgin" -- "T_Aberdeen" [label="87,0 km", color=blue];
+  "T_Inverness" -- "S_Dingwall" [label="25,0 km", color=black];
+  "S_Kyle_of_Lochalsh" -- "D_Attadale" [label="27,0 km", color=black];
+  "S_Kyle_of_Lochalsh" -- "S_Dingwall" [label="27,0 km", color=black];
+  "D_Attadale" -- "S_Dingwall" [label="109,0 km", color=black];
+  "D_Attadale" -- "T_Aberdeen" [label="109,0 km", color=black];
+  "S_Dingwall" -- "T_Aberdeen" [label="25,0 km", color=black];
+}
