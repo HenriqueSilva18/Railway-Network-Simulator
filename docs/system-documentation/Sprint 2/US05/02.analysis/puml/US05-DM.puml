@@ -18,13 +18,10 @@ class Player {
 
 class Map {
   nameID
-  width
-  height
 }
 
 class City {
   nameID
-  position
   houseBlocks
   productionRate
   suppliedCargo
@@ -33,7 +30,6 @@ class City {
 
 class Industry {
   nameID
-  position
   sector
   type
   description
@@ -43,9 +39,19 @@ class Industry {
   demandedCargo
 }
 
+class Position {
+  x
+  y
+  occupied
+}
+
+class Size {
+  width
+  height
+}
+
 class Station {
   nameID
-  position
   type
   economicRadius
   cost
@@ -58,9 +64,7 @@ class Station {
 
 note right of Station::nameID
   Format: [Closest City Name] + [Station Type]
-  Examples: "Porto Terminal", "Ovar Station", "Silvalde Depot"
 end note
-
 
 note right of Station::type
   Can be: DEPOT, STATION, or TERMINAL
@@ -79,16 +83,24 @@ note right of Station::cost
 end note
 
 note right of Station::centerPoint
-  For STATION type only:
-  Can be NE, SE, NW, SW
-  For DEPOT and TERMINAL:
-  Geometric center is used
+  For STATION type only: Can be NE, SE, NW, SW
+  For DEPOT and TERMINAL: Geometric center is used
 end note
-' Relationships
+
+' Relationships with corrected multiplicities
 Player "1" -- "*" Station : builds >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
 Map "1" -- "*" City : contains >
 Map "1" -- "*" Industry : contains >
+Map "1" -- "*" Position : contains >
 Map "1" -- "*" Station : contains >
+Map "*" -- "1" Size : has >
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
+Station "1" -- "1" Position : located at >
+
 @enduml
+
+
+

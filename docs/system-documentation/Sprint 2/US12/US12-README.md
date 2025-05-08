@@ -2,7 +2,7 @@
 
 [Requirements Engineering](01.requirements-engineering/US12-requirements.md)
 
-[Analysis](02.analysis/US12-analysis)
+[Analysis](02.analysis/US12-analysis.md)
 
 [Design](03.design/US12-design.md)
 

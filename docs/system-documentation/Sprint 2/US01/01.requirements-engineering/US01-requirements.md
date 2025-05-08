@@ -29,7 +29,7 @@ As an Editor, I want to create a map with a size and a name.
 ### 1.3. Acceptance Criteria
 
 * **AC1:** The maps dimensions are positive integers.
-* **AC2:** Map name should be a valid file name.
+  * **AC2:** Map name should be a valid file name.
 
 ### 1.4. Found out Dependencies
 
@@ -40,6 +40,8 @@ As an Editor, I want to create a map with a size and a name.
 **Input Data:**
 
 * Typed data:
+  * username
+  * password
   * map name
   * width (x-axis size)
   * height (y-axis size) 
@@ -60,3 +62,4 @@ As an Editor, I want to create a map with a size and a name.
 
 * The map serves as the foundation for the entire simulation system, where cities, industries, and railway networks will be built.
 * The map needs to be created before any scenario can be associated with it.
+* A login is required prior to accessing the map creation interface.

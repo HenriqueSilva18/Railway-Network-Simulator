@@ -19,23 +19,26 @@ class Editor {
 
 class Map {
   nameID
+}
+
+class Size {
   width
   height
 }
 
 note right of Map::nameID
   Must be a valid file name
-  No special characters
 end note
 
-note right of Map::width
+note right of Size::width
   Must be positive integer
 end note
 
-note right of Map::height
+note right of Size::height
   Must be positive integer
 end note
 
 Editor "1" -- "*" Map : creates >
+Map "*" -- "1" Size : has >
 
 @enduml

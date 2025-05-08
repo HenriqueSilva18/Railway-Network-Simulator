@@ -6,9 +6,10 @@ skinparam class {
   BackgroundColor LightBlue
   BorderColor Blue
 }
-
-
-skinparam classAttributeIconSize 0
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
 
 hide circle
 hide methods
@@ -21,17 +22,22 @@ class Player {
   budget
 }
 
+class Position {
+  x
+  y
+  occupied
+}
+
 class City {
   nameID
-  position
   houseBlocks
+  productionRate
   suppliedCargo
   demandedCargo
 }
 
 class Industry {
   nameID
-  position
   sector
   type
   description
@@ -43,9 +49,8 @@ class Industry {
 
 class Station {
   nameID
-  position
   type
-  radius
+  economicRadius
   cost
   storageCapacity
   centerPoint
@@ -77,7 +82,6 @@ class Route {
   nameID
   stationSequence
   cargoList
-  schedule
 }
 
 class Carriage {
@@ -104,7 +108,7 @@ Route "1" -- "*" Station : includes >
 Route "*" -- "*" Cargo : manages >
 
 Train "1" -- "1" Locomotive : powered by >
-Train "1" -- "0..1" Route : assigned to >
+Train "1" -- "*" Route : assigned to >
 Train "1" -- "*" Carriage : composed of >
 
 RailwayLine "1" --> "2" Station : connects >
@@ -117,6 +121,9 @@ Carriage "*" -- "1" Cargo : carries >
 Route "1..*"-- "1..*" RailwayLine: contains >
 
 Industry "*" -- "*" Cargo : produces/consumes >
-
 City "*" -- "*" Cargo : produces/consumes >
+
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+Station "1" -- "1" Position : located at >
 @enduml

@@ -12,6 +12,29 @@ participant ":System" as System
 
 activate Player
 
+Player -> System: requests to access system
+activate System
+System --> Player: displays login screen
+deactivate System
+
+Player -> System: provides username and password
+activate System
+System --> Player: grants access to player interface
+deactivate System
+
+
+
+Player -> System: requests to see available maps
+
+activate System
+System --> Player: shows list of available maps
+deactivate System
+
+Player -> System: selects a map
+
+activate System
+System --> Player: loads and displays the selected map
+deactivate System
 
 
     Player -> System : asks to assign a train

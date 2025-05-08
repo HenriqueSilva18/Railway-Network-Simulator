@@ -8,6 +8,6 @@ This folder contains all the global artifacts for your project, split by each im
 
 [Use Case Diagram](use-case-diagram.md)
 
-[Analysis](02.analysis/analysis_ESOFT.md)
+[Analysis](02.analysis/analysis)
 
 [Design](03.design/design.md)

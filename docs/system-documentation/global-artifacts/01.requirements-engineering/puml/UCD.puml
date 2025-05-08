@@ -18,7 +18,15 @@ rectangle "Railway Simulation System" {
     Player -- (US09 - Buy a Locomotive)
     Player -- (US10 - Assign a Train to Route)
     Player -- (US11 - List Trains)
+    Player -- (US13 - Verify Train Travel)
+    Player -- (US14 - View Maintenance Route)
+    Player -- (US15 - Analyze Station Profit)
+    Player -- (US16 - Compare Passenger Arrivals)
+    Player -- (US17 - Analyze Cargo Arrivals)
+    Player -- (US18 - Analyze Distribution)
 
     PO -- (US12 - Create a Simulator)
+
+
 }
 @enduml

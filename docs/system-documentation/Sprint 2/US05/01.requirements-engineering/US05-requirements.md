@@ -42,14 +42,15 @@
 
 **Input Data:**
 * Selected data:
-  - Station type (depot, station, terminal)
-  - For **Station type:** Center point (NE, SE, NW, SW)
+  - Station type (DEPOT, STATION, TERMINAL)
+  - For **STATION** type: Center point (NE, SE, NW, SW)
 
 * Typed data:
-  - Location coordinates (x,y) on map
+  - Location coordinates (x, y) on map
 
 **Output Data:**
 - Proposed station name
+- Station cost and economic radius
 - Preview of station placement
 - (In)Success of the operation
 - Updated map with new station

@@ -1,32 +1,35 @@
 @startuml
 autonumber
-
-title "System Sequence Diagram - US01 : Create a Map"
-
+title "System Sequence Diagram - US01 : Create a Map (with Login)"
 actor "Editor" as Editor
 participant ":System" as System
 
 activate Editor
-Editor -> System: asks to create a new map
 
+Editor -> System: requests to access system
+activate System
+System --> Editor: displays login screen
+deactivate System
+
+Editor -> System: provides username and password
+activate System
+System --> Editor: grants access to editor interface
+deactivate System
+
+Editor -> System: asks to create a new map
 activate System
 System --> Editor: requests map data (name, width, height)
 deactivate System
 
 Editor -> System: inputs requested data
 activate System
-
-note right of System
-  Acceptance Criteria:
-  - Map dimensions must be positive integers
-  - Map name must be a valid filename
-end note
 System --> Editor: shows map data and requests confirmation
-deactivate
-Editor -> System: confirms data
+deactivate System
 
+Editor -> System: confirms data
 activate System
 System --> Editor: displays operation success
 System --> Editor: displays map details
 deactivate System
+
 @enduml
