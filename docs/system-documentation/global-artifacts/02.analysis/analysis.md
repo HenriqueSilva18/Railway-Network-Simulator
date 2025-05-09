@@ -29,6 +29,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Building (station upgrades)
 * Locomotive (transport service with acquisition/maintenance costs)
 * Carriage (transport capacity)
+* StationType (classification of stations)
+* IndustryType (classification of industries)
 
 ---
 
@@ -53,6 +55,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Industry (production facility)
 * Position (spatial location)
 * Size (map dimensions)
+* HouseBlock (city residential area)
+* Sector (industrial sector)
 
 ---
 
@@ -73,6 +77,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Building
 * RailwayLine
 * Position
+* HouseBlock
 
 ---
 
@@ -82,6 +87,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Map (world layout)
 * Cargo (goods specifications)
 * Industry (production specs)
+* StationType (station classification)
+* IndustryType (industry classification)
 
 ---
 
@@ -91,6 +98,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Available buildings
 * Available industries
 * Available scenarios
+* Station types
+* Industry types
 
 ---
 
@@ -100,6 +109,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Train (with carriages)
 * Map (contains cities, industries, positions)
 * Route (with stations and railway lines)
+* City (contains HouseBlocks)
+* Sector (contains industries)
 
 ---
 
@@ -108,9 +119,10 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Carriage (part of train)
 * Building (part of station)
 * City (part of map)
-* Industry (part of map)
+* Industry (part of map/sector)
 * Station (part of map)
 * Position (element of map)
+* HouseBlock (part of city)
 
 ---
 
@@ -164,47 +176,53 @@ An association is a relationship between instances of objects that indicates a r
 - **_A_** uses or manages or owns **_B_**
 - **_A_** is related to a transaction (item) of **_B_**
 
-| Concept (A) | Association       | Concept (B) |
-|-------------|-------------------|-------------|
-| Building    | evolves into      | Building    |
-| Carriage    | carries           | Cargo       |
-| City        | produces/consumes | Cargo       |
-| City        | located at        | Position    |
-| Editor      | creates           | Map         |
-| Editor      | creates           | Scenario    |
-| Industry    | produces/consumes | Cargo       |
-| Industry    | located at        | Position    |
-| Locomotive  | configured in     | Scenario    |
-| Map         | contains          | City        |
-| Map         | contains          | Industry    |
-| Map         | contains          | Position    |
-| Map         | has               | Size        |
-| Player      | builds            | RailwayLine |
-| Player      | builds            | Station     |
-| Player      | buys              | Locomotive  |
-| Player      | defines           | Route       |
-| Player      | plays             | Scenario    |
-| RailwayLine | connects          | Station     |
-| Route       | contains          | RailwayLine |
-| Route       | defined by        | Player      |
-| Route       | includes          | Station     |
-| Route       | manages           | Cargo       |
-| Scenario    | configures        | Industry    |
-| Scenario    | configures        | Locomotive  |
-| Scenario    | configures        | Station     |
-| Scenario    | configures        | City        |
-| Scenario    | uses              | Map         |
-| Scenario    | runs in           | Simulator   |
-| Simulator   | generates         | Cargo       |
-| Station     | serves            | City        |
-| Station     | serves            | Industry    |
-| Station     | stores            | Cargo       |
-| Station     | upgraded with     | Building    |
-| Station     | located at        | Position    |
-| Train       | assigned to       | Route       |
-| Train       | composed of       | Carriage    |
-| Train       | powered by        | Locomotive  |
-| Rout        | defined by        | Player      |
+| Concept (A)  | Association       | Concept (B)  |
+|--------------|-------------------|--------------|
+| Building     | evolves into      | Building     |
+| Carriage     | carries           | Cargo        |
+| City         | produces/consumes | Cargo        |
+| City         | located at        | Position     |
+| City         | contains          | HouseBlock   |
+| Editor       | creates           | Map          |
+| Editor       | creates           | Scenario     |
+| HouseBlock   | has               | Position     |
+| Industry     | produces/consumes | Cargo        |
+| Industry     | located at        | Position     |
+| Industry     | belongs to        | Sector       |
+| IndustryType | produces/consumes | Cargo        |
+| Locomotive   | configured in     | Scenario     |
+| Map          | contains          | City         |
+| Map          | contains          | Industry     |
+| Map          | contains          | Position     |
+| Map          | has               | Size         |
+| Player       | builds            | RailwayLine  |
+| Player       | builds            | Station      |
+| Player       | buys              | Locomotive   |
+| Player       | defines           | Route        |
+| Player       | plays             | Scenario     |
+| RailwayLine  | connects          | Station      |
+| Route        | contains          | RailwayLine  |
+| Route        | defined by        | Player       |
+| Route        | includes          | Station      |
+| Route        | manages           | Cargo        |
+| Scenario     | configures        | Industry     |
+| Scenario     | configures        | Locomotive   |
+| Scenario     | configures        | Station      |
+| Scenario     | configures        | City         |
+| Scenario     | uses              | Map          |
+| Scenario     | runs in           | Simulator    |
+| Sector       | has               | IndustryType |
+| Simulator    | generates         | Cargo        |
+| Station      | serves            | City         |
+| Station      | serves            | Industry     |
+| Station      | stores            | Cargo        |
+| Station      | upgraded with     | Building     |
+| Station      | located at        | Position     |
+| Station      | has               | StationType  |
+| StationType  | can change        | StationType  |
+| Train        | assigned to       | Route        |
+| Train        | composed of       | Carriage     |
+| Train        | powered by        | Locomotive   |
 
 ## Domain Model
 
