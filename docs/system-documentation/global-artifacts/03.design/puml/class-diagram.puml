@@ -1,0 +1,27 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class ApplicationSession
+{
+    +static getInstance()
+    +getCurrentSession()
+}
+
+class UserSession
+{
+    +isLoggedInWithRole(USER_ROLE)
+}
+
+class "{CreateSkills}Controller" {
+    + {CreateSkills}Controller()
+    + methodX(...)
+}
+
+class "{CreateSkills}UI" {
+}
+
+"{CreateSkills}UI" ..> "{CreateSkills}Controller"
+"{CreateSkills}Controller" ..> ApplicationSession
+"{CreateSkills}Controller" ..> UserSession
+
+@enduml
