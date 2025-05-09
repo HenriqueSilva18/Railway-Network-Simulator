@@ -62,6 +62,13 @@ class Station {
   requestedCargo
 }
 
+class StationUpgrade {
+  upgradeDate
+  upgradeCost
+  previousType
+  newType
+}
+
 note right of Station::nameID
   Format: [Closest City Name] + [Station Type]
 end note
@@ -89,6 +96,8 @@ end note
 
 ' Relationships with corrected multiplicities
 Player "1" -- "*" Station : builds >
+Player "1" -- "*" StationUpgrade : performs >
+
 City "1" -- "1" Position : located at >
 Industry "1" -- "1" Position : located at >
 Map "1" -- "*" City : contains >
@@ -99,6 +108,8 @@ Map "*" -- "1" Size : has >
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 Station "1" -- "1" Position : located at >
+Station "1" -- "*" StationUpgrade : has >
+
 
 @enduml
 

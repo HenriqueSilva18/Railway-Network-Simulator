@@ -79,9 +79,9 @@ class Cargo {
   type
 }
 
+
 class Station {
   nameID
-  type
   economicRadius
   cost
   storageCapacity
@@ -89,6 +89,7 @@ class Station {
   buildingSlots
   availableCargo
   requestedCargo
+  upgradeHistory
 }
 
 class Building {
@@ -132,6 +133,13 @@ class Route {
   cargoList
 }
 
+class StationUpgrade {
+  upgradeDate
+  upgradeCost
+  previousType
+  newType
+}
+
 ' Relationships with revised multiplicities
 
 Editor "1" -- "*" Map : creates >
@@ -155,6 +163,7 @@ Station "1" -- "*" Building : upgraded with >
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 Station "1" -- "*" Cargo : stores >
+Station "1" -- "*" StationUpgrade : has >
 
 RailwayLine "1" --> "2" Station : connects >
 
@@ -176,6 +185,7 @@ Route "1..*"-- "1..*" RailwayLine: contains >
 Building "1" -- "0..1" Building : evolves into >
 
 Player "1" -- "*" Route: defines >
+Player "1" -- "*" StationUpgrade : performs >
 
 Simulator "1" --> "*" Cargo : generates >
 
