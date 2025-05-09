@@ -62,42 +62,35 @@ class Station {
   requestedCargo
 }
 
-class StationUpgrade {
-  upgradeDate
-  upgradeCost
-  previousType
-  newType
-}
 
-note right of Station::nameID
+
+note left of Station::nameID
   Format: [Closest City Name] + [Station Type]
 end note
 
-note right of Station::type
+note left of Station::type
   Can be: DEPOT, STATION, or TERMINAL
 end note
 
-note right of Station::economicRadius
+note left of Station::economicRadius
   DEPOT: 3x3 radius
   STATION: 4x4 radius
   TERMINAL: 5x5 radius
 end note
 
-note right of Station::cost
+note left of Station::cost
   DEPOT: 50k
   STATION: 100k
   TERMINAL: 200k
 end note
 
-note right of Station::centerPoint
+note left of Station::centerPoint
   For STATION type only: Can be NE, SE, NW, SW
   For DEPOT and TERMINAL: Geometric center is used
 end note
 
 ' Relationships with corrected multiplicities
 Player "1" -- "*" Station : builds >
-Player "1" -- "*" StationUpgrade : performs >
-
 City "1" -- "1" Position : located at >
 Industry "1" -- "1" Position : located at >
 Map "1" -- "*" City : contains >
@@ -108,8 +101,6 @@ Map "*" -- "1" Size : has >
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 Station "1" -- "1" Position : located at >
-Station "1" -- "*" StationUpgrade : has >
-
 
 @enduml
 
