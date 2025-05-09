@@ -15,14 +15,16 @@ hide methods
 class Player {
   username
   password
-  budget
+  initialBudget
+  currentBudget
+  ownedLocomotives
 }
 
 class Editor {
-    username
-    password
-    createdMaps
-    createdScenarios
+  username
+  password
+  createdMaps
+  createdScenarios
 }
 
 class Map {
@@ -55,21 +57,24 @@ class Simulator {
 
 class City {
   nameID
-  houseBlocks
   productionRate
   suppliedCargo
   demandedCargo
 }
 
+class HouseBlock {
+  automaticPlacement
+}
+
 class Industry {
   nameID
-  sector
-  type
   description
   availabilityYear
+}
+
+class IndustryType {
+  name
   productionRate
-  suppliedCargo
-  demandedCargo
 }
 
 class Cargo {
@@ -81,14 +86,17 @@ class Cargo {
 
 class Station {
   nameID
-  type
-  economicRadius
-  cost
   storageCapacity
   centerPoint
   buildingSlots
   availableCargo
   requestedCargo
+}
+
+class StationType {
+  name
+  economicRadius
+  cost
 }
 
 class Building {
@@ -107,6 +115,7 @@ class RailwayLine {
 
 class Locomotive {
   nameID
+  owner
   type
   power
   acceleration
@@ -116,6 +125,13 @@ class Locomotive {
   availabilityYear
   acquisitionPrice
   maintenancePrice
+}
+
+class Sector {
+  sectorType
+  suppliedCargo
+  demandedCargo
+  importsExports
 }
 
 class Train {
@@ -132,59 +148,51 @@ class Route {
   cargoList
 }
 
-' Relationships with revised multiplicities
-
+' Relationships
 Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
-
 Scenario "*" -- "1" Map : uses >
 Player "1" -- "*" Scenario : plays >
 Scenario "*" -- "1" Simulator : runs in >
-
 Map "1" -- "*" City : contains >
 Map "1" -- "*" Industry : contains >
 Map "*" -- "1" Size : has >
-
-Industry "*" -- "*" Cargo : produces/consumes >
 City "*" -- "*" Cargo : produces/consumes >
-
 Player "1" -- "*" Station : builds >
 Player "1" -- "*" RailwayLine : builds >
 Station "1" -- "*" Building : upgraded with >
-
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 Station "1" -- "*" Cargo : stores >
-
-RailwayLine "1" --> "2" Station : connects >
-
+RailwayLine "1" -- "2" Station : connects >
 Player "1" -- "*" Locomotive : buys >
 Train "1" -- "1" Locomotive : powered by >
 Train "1" -- "*" Carriage : composed of >
 Carriage "*" -- "1" Cargo : carries >
-
 Train "1" -- "*" Route : assigned to >
 Route "1" -- "*" Station : includes >
 Route "*" -- "*" Cargo : manages >
-
 Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
 Scenario "1" -- "*" Station : configures >
-
-Route "1..*"-- "1..*" RailwayLine: contains >
-
+Route "1..*" -- "1..*" RailwayLine : contains >
 Building "1" -- "0..1" Building : evolves into >
-
-Player "1" -- "*" Route: defines >
-
+Player "1" -- "*" Route : defines >
 Simulator "1" --> "*" Cargo : generates >
-
 Scenario "1" -- "*" City : configures >
-
 City "1" -- "1" Position : located at >
 Industry "1" -- "1" Position : located at >
 Station "1" -- "1" Position : located at >
-
 Map "1" -- "*" Position : contains >
+City "1" -- "1..*" HouseBlock : contains >
+HouseBlock "1" -- "1" Position : has >
+Industry "*" -- "1" Sector : belongs to >
+
+Sector "1" -- "*" IndustryType : has >
+IndustryType "*" -- "*" Cargo : produces/consumes >
+
+Station "1" -- "1" StationType : has >
+
+StationType "1" -- "*" StationType : can change >
 
 @enduml

@@ -13,7 +13,9 @@ title "System Sequence Diagram - US05 : Build a Station"
 class Player {
   username
   password
-  budget
+  initialBudget
+  currentBudget
+  ownedLocomotives
 }
 
 class Map {
@@ -22,7 +24,6 @@ class Map {
 
 class City {
   nameID
-  houseBlocks
   productionRate
   suppliedCargo
   demandedCargo
@@ -30,13 +31,20 @@ class City {
 
 class Industry {
   nameID
-  sector
-  type
   description
   availabilityYear
+}
+
+class IndustryType {
+  name
   productionRate
+}
+
+class Sector {
+  sectorType
   suppliedCargo
   demandedCargo
+  importsExports
 }
 
 class Position {
@@ -52,9 +60,6 @@ class Size {
 
 class Station {
   nameID
-  type
-  economicRadius
-  cost
   storageCapacity
   centerPoint
   buildingSlots
@@ -62,23 +67,32 @@ class Station {
   requestedCargo
 }
 
+class StationType {
+  name
+  economicRadius
+  cost
+}
+
+class HouseBlock {
+  automaticPlacement
+}
 
 
 note left of Station::nameID
   Format: [Closest City Name] + [Station Type]
 end note
 
-note left of Station::type
+note left of StationType::name
   Can be: DEPOT, STATION, or TERMINAL
 end note
 
-note left of Station::economicRadius
+note left of StationType::economicRadius
   DEPOT: 3x3 radius
   STATION: 4x4 radius
   TERMINAL: 5x5 radius
 end note
 
-note left of Station::cost
+note left of StationType::cost
   DEPOT: 50k
   STATION: 100k
   TERMINAL: 200k
@@ -101,6 +115,16 @@ Map "*" -- "1" Size : has >
 Station "1" -- "*" City : serves >
 Station "1" -- "*" Industry : serves >
 Station "1" -- "1" Position : located at >
+
+City "1" -- "1..*" HouseBlock : contains >
+HouseBlock "1" -- "1" Position : has >
+
+Industry "*" -- "1" Sector : belongs to >
+Sector "1" -- "*" IndustryType : has >
+Station "1" -- "1" StationType : has >
+
+StationType "1" -- "*" StationType : can change >
+
 
 @enduml
 
