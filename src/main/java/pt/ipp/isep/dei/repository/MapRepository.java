@@ -25,4 +25,8 @@ public class MapRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public List<Map> getAllMaps() {
+        return new ArrayList<>(maps); // Return defensive copy
+    }
 }
