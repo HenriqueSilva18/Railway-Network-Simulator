@@ -1,4 +1,4 @@
-package pt.ipp.isep.dei.repository;
+package pt.ipp.isep.dei.repository.template;
 
 /**
  * Inspired on https://refactoring.guru/design-patterns/singleton/java/example

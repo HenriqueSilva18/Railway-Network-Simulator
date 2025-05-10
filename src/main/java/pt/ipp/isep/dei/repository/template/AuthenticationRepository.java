@@ -1,4 +1,4 @@
-package pt.ipp.isep.dei.repository;
+package pt.ipp.isep.dei.repository.template;
 
 import pt.isep.lei.esoft.auth.AuthFacade;
 import pt.isep.lei.esoft.auth.UserSession;

@@ -1,7 +1,7 @@
-package pt.ipp.isep.dei.repository;
+package pt.ipp.isep.dei.repository.template;
 
-import pt.ipp.isep.dei.domain.Employee;
-import pt.ipp.isep.dei.domain.Organization;
+import pt.ipp.isep.dei.domain.template.Employee;
+import pt.ipp.isep.dei.domain.template.Organization;
 
 import java.util.ArrayList;
 import java.util.List;

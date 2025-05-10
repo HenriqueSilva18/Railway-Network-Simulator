@@ -1,8 +1,8 @@
 package pt.ipp.isep.dei.ui.console;
 
-import pt.ipp.isep.dei.controller.CreateTaskController;
-import pt.ipp.isep.dei.domain.Task;
-import pt.ipp.isep.dei.domain.TaskCategory;
+import pt.ipp.isep.dei.controller.template.CreateTaskController;
+import pt.ipp.isep.dei.domain.template.Task;
+import pt.ipp.isep.dei.domain.template.TaskCategory;
 
 import java.util.List;
 import java.util.Optional;

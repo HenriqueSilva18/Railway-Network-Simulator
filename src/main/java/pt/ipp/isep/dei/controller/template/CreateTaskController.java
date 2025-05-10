@@ -1,13 +1,13 @@
-package pt.ipp.isep.dei.controller;
+package pt.ipp.isep.dei.controller.template;
 
-import pt.ipp.isep.dei.domain.Employee;
-import pt.ipp.isep.dei.domain.Organization;
-import pt.ipp.isep.dei.domain.Task;
-import pt.ipp.isep.dei.domain.TaskCategory;
-import pt.ipp.isep.dei.repository.AuthenticationRepository;
-import pt.ipp.isep.dei.repository.OrganizationRepository;
-import pt.ipp.isep.dei.repository.Repositories;
-import pt.ipp.isep.dei.repository.TaskCategoryRepository;
+import pt.ipp.isep.dei.domain.template.Employee;
+import pt.ipp.isep.dei.domain.template.Organization;
+import pt.ipp.isep.dei.domain.template.Task;
+import pt.ipp.isep.dei.domain.template.TaskCategory;
+import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
+import pt.ipp.isep.dei.repository.template.OrganizationRepository;
+import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.ipp.isep.dei.repository.template.TaskCategoryRepository;
 import pt.isep.lei.esoft.auth.domain.model.Email;
 
 import java.util.List;

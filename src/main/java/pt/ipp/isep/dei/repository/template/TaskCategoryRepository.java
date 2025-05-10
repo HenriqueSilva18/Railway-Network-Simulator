@@ -1,6 +1,6 @@
-package pt.ipp.isep.dei.repository;
+package pt.ipp.isep.dei.repository.template;
 
-import pt.ipp.isep.dei.domain.TaskCategory;
+import pt.ipp.isep.dei.domain.template.TaskCategory;
 
 import java.util.ArrayList;
 import java.util.List;

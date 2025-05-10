@@ -1,7 +1,7 @@
-package pt.ipp.isep.dei.controller;
+package pt.ipp.isep.dei.controller.template;
 
-import pt.ipp.isep.dei.repository.AuthenticationRepository;
-import pt.ipp.isep.dei.repository.Repositories;
+import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
+import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.isep.lei.esoft.auth.mappers.dto.UserRoleDTO;
 
 import java.util.List;

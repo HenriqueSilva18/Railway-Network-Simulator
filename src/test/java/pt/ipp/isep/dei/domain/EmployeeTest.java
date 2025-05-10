@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.domain;
 
 import org.junit.jupiter.api.Test;
+import pt.ipp.isep.dei.domain.template.Employee;
 
 import static org.junit.jupiter.api.Assertions.*;
 

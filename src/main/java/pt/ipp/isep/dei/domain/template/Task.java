@@ -1,4 +1,4 @@
-package pt.ipp.isep.dei.domain;
+package pt.ipp.isep.dei.domain.template;
 
 import java.util.Objects;
 
