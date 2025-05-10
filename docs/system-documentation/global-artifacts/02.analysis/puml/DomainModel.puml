@@ -68,13 +68,19 @@ class HouseBlock {
 
 class Industry {
   nameID
+  type
   description
   availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
 }
 
-class IndustryType {
+class IndustrySector {
   name
-  productionRate
+  importsExports
+  generatesCargo
+  consumesCargo
 }
 
 class Cargo {
@@ -87,7 +93,6 @@ class Cargo {
 class Station {
   nameID
   storageCapacity
-  centerPoint
   buildingSlots
   availableCargo
   requestedCargo
@@ -97,6 +102,7 @@ class StationType {
   name
   economicRadius
   cost
+  centerPoint
 }
 
 class Building {
@@ -125,13 +131,6 @@ class Locomotive {
   availabilityYear
   acquisitionPrice
   maintenancePrice
-}
-
-class Sector {
-  sectorType
-  suppliedCargo
-  demandedCargo
-  importsExports
 }
 
 class Train {
@@ -186,12 +185,11 @@ Station "1" -- "1" Position : located at >
 Map "1" -- "*" Position : contains >
 City "1" -- "1..*" HouseBlock : contains >
 HouseBlock "1" -- "1" Position : has >
-Industry "*" -- "1" Sector : belongs to >
+IndustrySector "1" -- "*" Industry : contains >
 
-Sector "1" -- "*" IndustryType : has >
-IndustryType "*" -- "*" Cargo : produces/consumes >
+Industry "*" -- "*" Cargo : produces/consumes >
 
-Station "1" -- "1" StationType : has >
+Station "*" -- "1" StationType : defined by >
 
 StationType "1" -- "*" StationType : can change >
 

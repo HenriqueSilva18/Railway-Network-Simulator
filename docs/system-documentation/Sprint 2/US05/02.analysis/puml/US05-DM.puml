@@ -31,20 +31,19 @@ class City {
 
 class Industry {
   nameID
+  type
   description
   availabilityYear
-}
-
-class IndustryType {
-  name
   productionRate
-}
-
-class Sector {
-  sectorType
   suppliedCargo
   demandedCargo
+}
+
+class IndustrySector {
+  name
   importsExports
+  generatesCargo
+  consumesCargo
 }
 
 class Position {
@@ -61,7 +60,6 @@ class Size {
 class Station {
   nameID
   storageCapacity
-  centerPoint
   buildingSlots
   availableCargo
   requestedCargo
@@ -71,6 +69,7 @@ class StationType {
   name
   economicRadius
   cost
+  centerPoint
 }
 
 class HouseBlock {
@@ -98,7 +97,7 @@ note left of StationType::cost
   TERMINAL: 200k
 end note
 
-note left of Station::centerPoint
+note left of StationType::centerPoint
   For STATION type only: Can be NE, SE, NW, SW
   For DEPOT and TERMINAL: Geometric center is used
 end note
@@ -119,9 +118,8 @@ Station "1" -- "1" Position : located at >
 City "1" -- "1..*" HouseBlock : contains >
 HouseBlock "1" -- "1" Position : has >
 
-Industry "*" -- "1" Sector : belongs to >
-Sector "1" -- "*" IndustryType : has >
-Station "1" -- "1" StationType : has >
+IndustrySector "1" -- "*" Industry : contains >
+Station "*" -- "1" StationType : defined by >
 
 StationType "1" -- "*" StationType : can change >
 

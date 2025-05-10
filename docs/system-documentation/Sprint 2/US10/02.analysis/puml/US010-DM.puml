@@ -44,26 +44,24 @@ class HouseBlock {
 
 class Industry {
   nameID
+  type
   description
   availabilityYear
-}
-
-class IndustryType {
-  name
   productionRate
-}
-
-class Sector {
-  sectorType
   suppliedCargo
   demandedCargo
+}
+
+class IndustrySector {
+  name
   importsExports
+  generatesCargo
+  consumesCargo
 }
 
 class Station {
   nameID
   storageCapacity
-  centerPoint
   buildingSlots
   availableCargo
   requestedCargo
@@ -73,6 +71,7 @@ class StationType {
   name
   economicRadius
   cost
+  centerPoint
 }
 
 class RailwayLine {
@@ -145,11 +144,10 @@ Station "1" -- "1" Position : located at >
 City "1" -- "1..*" HouseBlock : contains >
 HouseBlock "1" -- "1" Position : has >
 
-Sector "1" -- "*" IndustryType : has >
-IndustryType "*" -- "*" Cargo : produces/consumes >
+Industry "*" -- "*" Cargo : produces/consumes >
 
-Station "1" -- "1" StationType : has >
-Industry "*" -- "1" Sector : belongs to >
+Station "*" -- "1" StationType : defined by >
+IndustrySector "1" -- "*" Industry : contains >
 
 StationType "1" -- "*" StationType : can change >
 
