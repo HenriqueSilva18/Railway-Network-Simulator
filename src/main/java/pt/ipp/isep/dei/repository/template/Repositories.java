@@ -1,5 +1,11 @@
 package pt.ipp.isep.dei.repository.template;
 
+import pt.ipp.isep.dei.repository.EditorRepository;
+import pt.ipp.isep.dei.repository.MapRepository;
+import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
+import pt.ipp.isep.dei.repository.template.OrganizationRepository;
+import pt.ipp.isep.dei.repository.template.TaskCategoryRepository;
+
 /**
  * Inspired on https://refactoring.guru/design-patterns/singleton/java/example
  *
@@ -8,17 +14,30 @@ package pt.ipp.isep.dei.repository.template;
  */
 public class Repositories {
     private static Repositories instance;
+
+    // Original template repositories
     private final OrganizationRepository organizationRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final AuthenticationRepository authenticationRepository;
+
+    // New railway simulation repositories
+    private final EditorRepository editorRepository;
+    private final MapRepository mapRepository;
+    /* private final ScenarioRepository scenarioRepository; */
 
     /**
      * The Singleton's constructor should always be private to prevent direct construction calls with the new operator.
      */
     private Repositories() {
-        organizationRepository = new OrganizationRepository();
-        taskCategoryRepository = new TaskCategoryRepository();
-        authenticationRepository = new AuthenticationRepository();
+        // Initialize template repositories
+        this.organizationRepository = new OrganizationRepository();
+        this.taskCategoryRepository = new TaskCategoryRepository();
+        this.authenticationRepository = new AuthenticationRepository();
+
+        // Initialize railway simulation repositories
+        this.editorRepository = new EditorRepository();
+        this.mapRepository = new MapRepository();
+        /* this.scenarioRepository = new ScenarioRepository(); */
     }
 
     /**
@@ -26,15 +45,14 @@ public class Repositories {
      * On the first run, it creates a singleton object and places it into the static attribute.
      * On subsequent runs, it returns the existing object stored in the static attribute.
      */
-    public static Repositories getInstance() {
+    public static synchronized Repositories getInstance() {
         if (instance == null) {
-            synchronized (Repositories.class) {
-                instance = new Repositories();
-            }
+            instance = new Repositories();
         }
         return instance;
     }
 
+    // Template repository accessors
     public OrganizationRepository getOrganizationRepository() {
         return organizationRepository;
     }
@@ -46,4 +64,17 @@ public class Repositories {
     public AuthenticationRepository getAuthenticationRepository() {
         return authenticationRepository;
     }
+
+    // Railway simulation repository accessors
+    public EditorRepository getEditorRepository() {
+        return editorRepository;
+    }
+
+    public MapRepository getMapRepository() {
+        return mapRepository;
+    }
+
+    /* public ScenarioRepository getScenarioRepository() {
+        return scenarioRepository;
+    } */
 }
