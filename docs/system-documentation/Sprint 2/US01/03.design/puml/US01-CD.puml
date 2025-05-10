@@ -1,0 +1,116 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+class ApplicationSession {
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+}
+
+class UserSession {
+    + getCurrentEditor()
+}
+
+class Editor {
+    - username : String
+    - password : String
+    - createdMaps : List<Map>
+    - createdScenarios : List<Scenario>
+
+    + createMap(name, width, height)
+    + addMap(map)
+}
+
+class Map {
+    - nameID : String
+    - size : Size
+    - cities : List<City>
+    - industries : List<Industry>
+
+    + validateName()
+}
+
+class Size {
+    - width : int
+    - height : int
+
+    + validateDimensions()
+}
+
+class ScenarioRepository {
+    + getCurrentScenario()
+}
+
+class MapRepository {
+    + saveMap(map)
+    + getMapByName(name)
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getMapRepository()
+    + getScenarioRepository()
+}
+
+class CreateMapController {
+    + CreateMapController()
+    + createNewMap(name, width, height)
+    + validateMapName(name)
+    + validateMapDimensions(width, height)
+}
+
+note right of CreateMapController
+    This controller manages the
+    map creation process
+end note
+
+note bottom of MapRepository
+    - used for persisting and
+    retrieving created maps
+end note
+
+class CreateMapUI {
+}
+
+CreateMapUI .> CreateMapController
+
+CreateMapController ..> ApplicationSession
+CreateMapController ..> UserSession
+CreateMapController ..> MapRepository
+CreateMapController ..> ScenarioRepository
+CreateMapController ..> Editor
+CreateMapController ..> Map
+CreateMapController ..> Size
+CreateMapController .> Repositories
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
+Repositories --> "1" ScenarioRepository : scenarioRepository
+
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession ..> UserSession
+
+MapRepository --> "*" Map : maps
+
+ScenarioRepository --> "*" Scenario : scenarios
+
+Editor "1" -- "*" Map : creates >
+Editor "1" -- "*" Scenario : creates >
+Map "1" -- "1" Size : has >
+
+note right of Map::nameID
+    Must be a valid file name
+end note
+
+note right of Size::width
+    Must be positive integer
+end note
+
+note right of Size::height
+    Must be positive integer
+end note
+@enduml

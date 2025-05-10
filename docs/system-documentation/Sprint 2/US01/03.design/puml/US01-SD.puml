@@ -1,0 +1,117 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as EDITOR
+participant ":CreateMapUI" as UI
+participant ":CreateMapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "currentSession\n:UserSession" as CURRENT_SESSION
+participant "editor\n:Editor" as EDITOR_OBJ
+participant "map\n:Map" as MAP
+participant "size\n:Size" as SIZE
+participant "scenarioRepository\n:ScenarioRepository" as SCENARIO_REPO
+
+activate EDITOR
+
+    EDITOR -> UI : requests to create new map
+    activate UI
+        UI --> CTRL** : create()
+
+        UI -> CTRL : request map creation form
+        activate CTRL
+            CTRL --> UI : display map creation form
+        deactivate CTRL
+
+        UI --> EDITOR : shows map creation form
+    deactivate UI
+
+    EDITOR -> UI : inputs map data (name, width, height)
+    activate UI
+        UI -> CTRL : validateMapName(name)
+        activate CTRL
+            CTRL -> MAP : validateName()
+            activate MAP
+                MAP --> CTRL : validationResult
+            deactivate MAP
+            CTRL --> UI : nameValidationResult
+        deactivate CTRL
+
+        UI -> CTRL : validateMapDimensions(width, height)
+        activate CTRL
+            CTRL -> SIZE : validateDimensions()
+            activate SIZE
+                SIZE --> CTRL : validationResult
+            deactivate SIZE
+            CTRL --> UI : dimensionsValidationResult
+        deactivate CTRL
+
+        UI --> EDITOR : shows validation results
+    deactivate UI
+
+    EDITOR -> UI : confirms creation
+        activate UI
+            UI -> CTRL : createNewMap(name, width, height)
+            activate CTRL
+                CTRL -> APP_SESSION : getInstance()
+                activate APP_SESSION
+                    APP_SESSION --> CTRL : appSession
+                deactivate APP_SESSION
+
+                CTRL -> APP_SESSION_SINGLETON : getCurrentSession()
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> CTRL : currentSession
+                deactivate APP_SESSION_SINGLETON
+
+                CTRL -> CURRENT_SESSION : getCurrentEditor()
+                activate CURRENT_SESSION
+                    CURRENT_SESSION --> CTRL : editor
+                deactivate CURRENT_SESSION
+
+                CTRL -> REPOS : getInstance()
+                activate REPOS
+                    REPOS --> CTRL : repositories
+                deactivate REPOS
+
+                CTRL -> REPOS_SINGLETON : getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL : mapRepository
+                deactivate REPOS_SINGLETON
+
+                CTRL -> REPOS_SINGLETON : getScenarioRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL : scenarioRepository
+                deactivate REPOS_SINGLETON
+
+                CTRL -> EDITOR_OBJ : createMap(name, width, height)
+                activate EDITOR_OBJ
+                EDITOR_OBJ -> MAP : create(name, width, height)
+                activate MAP
+               MAP -> SIZE : create(width, height)
+                activate SIZE
+                SIZE --> MAP : size
+                deactivate SIZE
+                MAP --> EDITOR_OBJ : newMap
+                deactivate MAP
+                EDITOR_OBJ --> CTRL : newMap
+                deactivate EDITOR_OBJ
+
+                CTRL -> MAP_REPO : saveMap(map)
+                activate MAP_REPO
+                    MAP_REPO --> CTRL : saveResult
+                deactivate MAP_REPO
+
+                CTRL --> UI : creationResult
+            deactivate CTRL
+
+            UI --> EDITOR : displays operation success and map details
+        deactivate UI
+
+    deactivate EDITOR
+    @enduml

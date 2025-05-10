@@ -1,0 +1,33 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+actor Editor
+participant ":CreateMapUI" as UI
+participant ":CreateMapController" as CTRL
+participant "map\n:Map" as MAP
+participant "size\n:Size" as SIZE
+
+Editor -> UI : inputs map data (name, width, height)
+activate UI
+    UI -> CTRL : validateMapName(name)
+    activate CTRL
+        CTRL -> MAP : validateName()
+        activate MAP
+            MAP --> CTRL : validationResult
+        deactivate MAP
+        CTRL --> UI : nameValidationResult
+    deactivate CTRL
+
+    UI -> CTRL : validateMapDimensions(width, height)
+    activate CTRL
+        CTRL -> SIZE : validateDimensions()
+        activate SIZE
+            SIZE --> CTRL : validationResult
+        deactivate SIZE
+        CTRL --> UI : dimensionsValidationResult
+    deactivate CTRL
+    UI --> Editor : shows validation results
+deactivate UI
+@enduml
