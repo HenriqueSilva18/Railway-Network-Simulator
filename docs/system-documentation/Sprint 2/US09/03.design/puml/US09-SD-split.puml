@@ -1,47 +1,80 @@
 @startuml
-'skinparam monochrome true
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
 autonumber
 
 'hide footbox
-actor "Player" as PLAYER
+actor "Player" as PLAYER_ACTOR
+
 participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
+participant "player\n:Player" as PLAYER
+participant "locomotive\n:Locomotive" as LOCOMOTIVE
 
-activate PLAYER
+activate PLAYER_ACTOR
 
-    PLAYER -> UI : asks to buy a locomotive
+    PLAYER_ACTOR -> UI : asks to buy a locomotive
+
     activate UI
+
         UI --> CTRL** : create()
-
-        ref over UI, CTRL
+        UI -> CTRL : getAvailableLocomotives()
+        ref over CTRL
             Get Available Locomotives
+
         end ref
 
-        UI --> PLAYER : shows list of available locomotives
+        activate CTRL
+
+            CTRL --> UI : availableLocomotives
+        deactivate CTRL
+
+        UI --> PLAYER_ACTOR : shows a list of available locomotives (for the scenario and current date)
     deactivate UI
 
-    PLAYER -> UI : selects a locomotive
+    PLAYER_ACTOR -> UI : selects a locomotive
     activate UI
 
-        ref over UI, CTRL
-            Get Locomotive Details
-        end ref
+        UI -> CTRL : getLocomotiveDetails(locomotiveID)
+        activate CTRL
+            ref over CTRL
+                Get Locomotive Details
 
-        UI --> PLAYER : shows locomotive details and requests confirmation
+            end ref
+            CTRL --> UI : locomotive
+        deactivate CTRL
+
+        UI --> PLAYER_ACTOR : shows locomotive details and requests confirmation
     deactivate UI
 
-    PLAYER -> UI : confirms purchase
+    PLAYER_ACTOR -> UI : confirms purchase
     activate UI
 
-        ref over UI, CTRL
-            Purchase Locomotive
-        end ref
+        UI -> CTRL : purchaseLocomotive(locomotiveID, playerUsername)
+        activate CTRL
 
-        UI --> PLAYER : displays operation success
+            CTRL -> CTRL : getPlayerByUsername(playerUsername)
+            activate CTRL
+
+                ref over CTRL
+                    Get Current Player
+
+                end ref
+                CTRL --> CTRL : player
+            deactivate CTRL
+
+            ref over CTRL, PLAYER, LOCOMOTIVE
+                Purchase Locomotive
+            end ref
+
+            CTRL --> UI : true
+        deactivate CTRL
+
+        UI --> PLAYER_ACTOR : displays operation success
     deactivate UI
 
-deactivate PLAYER
-@enduml
+deactivate PLAYER_ACTOR
+
+@enduml 

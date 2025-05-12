@@ -12,7 +12,7 @@
 |                |                                                                     | Player                  | IE: knows its own data                                                                                                                                                                                                         |
 |                |                                                                     | Locomotive              | IE: knows its own data                                                                                                                                                                                                         |
 | Step 2     	   | ... knowing all existing available locomotives to show? 							     | Repositories            | IE: Repositories maintains Locomotives.                                                                                                                                                                                        |
-|                |                                                                     | LocomotiveRepository    | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility on LocomotiveContainer.<br/>IE: has the responsibility to filter locomotives based on the scenario and current date. |
+|                |                                                                     | LocomotiveRepository    | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility on LocomotiveRepository.<br/>IE: has the responsibility to filter locomotives based on the scenario and current date. |
 | Step 3  		     | ... saving the selected locomotive? 							                         | BuyLocomotiveUI         | IE: is responsible for keeping the selected locomotive.                                                                                                                                                                        |
 | Step 4  		     | ... showing locomotive details and requesting confirmation? 							 | BuyLocomotiveUI         | IE: is responsible for user interactions.                                                                                                                                                                                      |
 | Step 5  		     | ... validating if player can afford the locomotive?							          | Player                  | IE: knows its own current budget.                                                                                                                                                                                              |
@@ -56,25 +56,23 @@ It uses Interaction Occurrence (a.k.a. Interaction Use).
 
 ![Sequence Diagram - split](svg/US09-SD-split.svg)
 
-**Get Available Locomotives Partial SD**
+**Get Available Locomotives**
 
-![Sequence Diagram - Partial - Get Task Category List](svg/US09-SD-partial-get-task-category-list.svg)
+![Sequence Diagram - Partial - Get Available Locomotives](svg/US09-SD-partial-get-available-locomotives.svg)
 
 **Get Locomotive Details**
 
-![Sequence Diagram - Partial - Get Task Category Object](svg/US006-SD-partial-get-task-category.svg)
+![Sequence Diagram - Partial - Get Locomotive Details](svg/US09-SD-partial-get-locomotive-details.svg)
 
 **Get Current Player**
 
-![Sequence Diagram - Partial - Get Employee](svg/US006-SD-partial-get-employee.svg)
+![Sequence Diagram - Partial - Get Current Player](svg/US09-SD-partial-get-current-player.svg)
 
 **Purchase Locomotive**
 
-![Sequence Diagram - Partial - Create Task](svg/US006-SD-partial-create-task.svg)
+![Sequence Diagram - Partial - Purchase Locomotive](svg/US09-SD-partial-purchase-locomotive.svg)
 
 
 ## 3.3. Class Diagram (CD)
 
-_In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
-
-![USXXX-CD](svg/USXXX-CD.svg)
+![US09-CD](svg/US09-CD.svg)

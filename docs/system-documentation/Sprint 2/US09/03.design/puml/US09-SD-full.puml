@@ -12,13 +12,9 @@ participant ":BuyLocomotiveController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
-participant "ApplicationSession" as APP_SESSION
-participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
-participant "currentSession\n:UserSession" as CURRENT_SESSION
-participant "player\n:Player" as PLAYER_OBJ
+participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
 participant "locomotive\n:Locomotive" as LOCOMOTIVE
-participant "scenarioRepository\n:ScenarioRepository" as SCENARIO_REPO
-participant "scenario\n:Scenario" as SCENARIO
+participant "player\n:Player" as PLAYER_OBJ
 
 activate PLAYER
 
@@ -28,50 +24,43 @@ activate PLAYER
 
         UI -> CTRL : getAvailableLocomotives()
         activate CTRL
-
             CTRL -> REPOS : getInstance()
             activate REPOS
-                REPOS --> CTRL : repositories
+                REPOS --> CTRL: repositories
             deactivate REPOS
 
             CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
             activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL : locomotiveRepository
+                REPOS_SINGLETON --> CTRL: locomotiveRepository
             deactivate REPOS_SINGLETON
 
-            CTRL -> REPOS_SINGLETON : getScenarioRepository()
-            activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL : scenarioRepository
-            deactivate REPOS_SINGLETON
-
-            CTRL -> SCENARIO_REPO : getCurrentScenario()
-            activate SCENARIO_REPO
-                SCENARIO_REPO --> CTRL : scenario
-            deactivate SCENARIO_REPO
-
-            CTRL -> SCENARIO : getCurrentDate()
-            activate SCENARIO
-                SCENARIO --> CTRL : currentDate
-            deactivate SCENARIO
-
-            CTRL -> LOC_REPO : getAvailableLocomotives(scenario, currentDate)
+            CTRL -> LOC_REPO : getAvailableLocomotives(currentScenario, currentDate)
             activate LOC_REPO
-                LOC_REPO --> CTRL : availableLocomotivesList
+                LOC_REPO --> CTRL : availableLocomotives
             deactivate LOC_REPO
 
-            CTRL --> UI : availableLocomotivesList
+            CTRL --> UI : availableLocomotives
         deactivate CTRL
 
-        UI --> PLAYER : shows list of available locomotives
+        UI --> PLAYER : shows a list of available locomotives (for the scenario and current date)
     deactivate UI
 
     PLAYER -> UI : selects a locomotive
     activate UI
 
-        UI -> CTRL : getLocomotiveDetails(locomotiveId)
+        UI -> CTRL : getLocomotiveDetails(locomotiveID)
         activate CTRL
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL: repositories
+            deactivate REPOS
 
-            CTRL -> LOC_REPO : getLocomotiveById(locomotiveId)
+            CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: locomotiveRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> LOC_REPO : getLocomotive(locomotiveID)
             activate LOC_REPO
                 LOC_REPO --> CTRL : locomotive
             deactivate LOC_REPO
@@ -85,64 +74,84 @@ activate PLAYER
     PLAYER -> UI : confirms purchase
     activate UI
 
-        UI -> CTRL : purchaseLocomotive(locomotiveId)
+        UI -> CTRL : purchaseLocomotive(locomotiveID, playerUsername)
         activate CTRL
-
-            CTRL -> APP_SESSION : getInstance()
-            activate APP_SESSION
-                APP_SESSION --> CTRL : appSession
-            deactivate APP_SESSION
-
-            CTRL -> APP_SESSION_SINGLETON : getCurrentSession()
-            activate APP_SESSION_SINGLETON
-                APP_SESSION_SINGLETON --> CTRL : currentSession
-            deactivate APP_SESSION_SINGLETON
-
-            CTRL -> CURRENT_SESSION : getCurrentPlayer()
-            activate CURRENT_SESSION
-                CURRENT_SESSION --> CTRL : player
-            deactivate CURRENT_SESSION
-
             CTRL -> REPOS : getInstance()
             activate REPOS
-                REPOS --> CTRL : repositories
+                REPOS --> CTRL: repositories
             deactivate REPOS
 
             CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
             activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL : locomotiveRepository
+                REPOS_SINGLETON --> CTRL: locomotiveRepository
             deactivate REPOS_SINGLETON
 
-            CTRL -> LOC_REPO : getLocomotiveById(locomotiveId)
+            CTRL -> LOC_REPO : getLocomotive(locomotiveID)
             activate LOC_REPO
                 LOC_REPO --> CTRL : locomotive
             deactivate LOC_REPO
 
-            CTRL -> PLAYER_OBJ : canAfford(locomotive.acquisitionPrice)
+            CTRL -> REPOS_SINGLETON : getPlayerRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: playerRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> PLAYER_REPO : getPlayerByUsername(playerUsername)
+            activate PLAYER_REPO
+                PLAYER_REPO --> CTRL : player
+            deactivate PLAYER_REPO
+
+            CTRL -> CTRL : checkBalance(locomotive, player)
+            activate CTRL
+                CTRL -> LOCOMOTIVE : getPrice()
+                activate LOCOMOTIVE
+                    LOCOMOTIVE --> CTRL : price
+                deactivate LOCOMOTIVE
+
+                CTRL -> PLAYER_OBJ : getBalance()
+                activate PLAYER_OBJ
+                    PLAYER_OBJ --> CTRL : balance
+                deactivate PLAYER_OBJ
+
+                CTRL --> CTRL : true
+            deactivate CTRL
+
+            CTRL -> PLAYER_OBJ : purchaseLocomotive(locomotive)
             activate PLAYER_OBJ
+                PLAYER_OBJ -> PLAYER_OBJ : removeBalance(price)
+                activate PLAYER_OBJ
+                    PLAYER_OBJ --> PLAYER_OBJ : true
+                deactivate PLAYER_OBJ
+
+                PLAYER_OBJ -> PLAYER_OBJ : addLocomotive(locomotive)
+                activate PLAYER_OBJ
+                    PLAYER_OBJ --> PLAYER_OBJ : true
+                deactivate PLAYER_OBJ
+
                 PLAYER_OBJ --> CTRL : true
             deactivate PLAYER_OBJ
-
-            CTRL -> PLAYER_OBJ : subtractFromBudget(locomotive.acquisitionPrice)
-            activate PLAYER_OBJ
-                PLAYER_OBJ --> CTRL : success
-            deactivate PLAYER_OBJ
-
-            CTRL -> PLAYER_OBJ : addLocomotiveToList(locomotive)
-            activate PLAYER_OBJ
-                PLAYER_OBJ --> CTRL : success
-            deactivate PLAYER_OBJ
-
+            
             CTRL -> LOCOMOTIVE : setOwner(player)
             activate LOCOMOTIVE
-                LOCOMOTIVE --> CTRL : success
+                LOCOMOTIVE --> CTRL : true
             deactivate LOCOMOTIVE
 
-            CTRL --> UI : purchaseResult
+            CTRL -> LOC_REPO : save(locomotive)
+            activate LOC_REPO
+                LOC_REPO --> CTRL : true
+            deactivate LOC_REPO
+
+            CTRL -> PLAYER_REPO : save(player)
+            activate PLAYER_REPO
+                PLAYER_REPO --> CTRL : true
+            deactivate PLAYER_REPO
+
+            CTRL --> UI : true
         deactivate CTRL
 
         UI --> PLAYER : displays operation success
     deactivate UI
 
 deactivate PLAYER
+
 @enduml

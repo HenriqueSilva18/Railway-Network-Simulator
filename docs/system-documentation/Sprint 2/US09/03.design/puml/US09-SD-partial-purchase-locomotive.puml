@@ -1,61 +1,69 @@
 @startuml
-'skinparam monochrome true
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-'hide footbox
-participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
-participant "player\n:Player" as PLAYER_OBJ
+participant "player\n:Player" as PLAYER
 participant "locomotive\n:Locomotive" as LOCOMOTIVE
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
 
-activate UI
-    UI -> CTRL : purchaseLocomotive(locomotiveId)
-    activate CTRL
+autonumber 16
+-> CTRL: purchaseLocomotive(locomotive, player)
 
-        ref over CTRL
-            Get Current Player
-        end ref
+autonumber 16.1
+activate CTRL
+    group Purchase Locomotive
 
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL : repositories
-        deactivate REPOS
+        CTRL -> CTRL: checkBalance(locomotive, player)
+        activate CTRL
+            CTRL -> LOCOMOTIVE: getPrice()
+            activate LOCOMOTIVE
+                LOCOMOTIVE --> CTRL: price
+            deactivate LOCOMOTIVE
 
-        CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL : locomotiveRepository
-        deactivate REPOS_SINGLETON
+            CTRL -> PLAYER: getBalance()
+            activate PLAYER
+                PLAYER --> CTRL: balance
+            deactivate PLAYER
 
-        CTRL -> LOC_REPO : getLocomotiveById(locomotiveId)
-        activate LOC_REPO
-            LOC_REPO --> CTRL : locomotive
-        deactivate LOC_REPO
+            CTRL --> CTRL: true
+        deactivate CTRL
 
-        CTRL -> PLAYER_OBJ : canAfford(locomotive.acquisitionPrice)
-        activate PLAYER_OBJ
-            PLAYER_OBJ --> CTRL : true
-        deactivate PLAYER_OBJ
+        CTRL -> PLAYER: purchaseLocomotive(locomotive)
+        activate PLAYER
+            PLAYER -> PLAYER: removeBalance(price)
+            activate PLAYER
+                PLAYER --> PLAYER: true
+            deactivate PLAYER
 
-        CTRL -> PLAYER_OBJ : subtractFromBudget(locomotive.acquisitionPrice)
-        activate PLAYER_OBJ
-            PLAYER_OBJ --> CTRL : success
-        deactivate PLAYER_OBJ
+            PLAYER -> PLAYER: addLocomotive(locomotive)
+            activate PLAYER
+                PLAYER --> PLAYER: true
+            deactivate PLAYER
 
-        CTRL -> PLAYER_OBJ : addLocomotiveToList(locomotive)
-        activate PLAYER_OBJ
-            PLAYER_OBJ --> CTRL : success
-        deactivate PLAYER_OBJ
+            PLAYER --> CTRL: true
+        deactivate PLAYER
 
-        CTRL -> LOCOMOTIVE : setOwner(player)
+        CTRL -> LOCOMOTIVE: setOwner(player)
         activate LOCOMOTIVE
-            LOCOMOTIVE --> CTRL : success
+            LOCOMOTIVE --> CTRL: true
         deactivate LOCOMOTIVE
 
-        CTRL --> UI : purchaseResult
-    deactivate CTRL
-deactivate UI
-@enduml
+        CTRL -> LOC_REPO: save(locomotive)
+        activate LOC_REPO
+            LOC_REPO --> CTRL: true
+        deactivate LOC_REPO
+
+        CTRL -> PLAYER_REPO: save(player)
+        activate PLAYER_REPO
+            PLAYER_REPO --> CTRL: true
+        deactivate PLAYER_REPO
+    end
+
+    autonumber 17
+    <-- CTRL: true
+deactivate CTRL
+
+@enduml 

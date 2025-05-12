@@ -18,7 +18,7 @@ class ApplicationSession
 
 class UserSession
 {
-    + getCurrentPlayer()
+    + getUsername()
 }
 
 class Player {
@@ -26,16 +26,16 @@ class Player {
     - password : String
     - initialBudget : double
     - currentBudget : double
-    - locomotivesList : List<Locomotive>
-
-    + canAfford(price)
-    + subtractFromBudget(price)
-    + addLocomotiveToList(locomotive)
+    - ownedLocomotives : List<Locomotive>
+    
+    + getBalance() : double
+    + purchaseLocomotive(locomotive : Locomotive) : boolean
+    - removeBalance(amount : double) : boolean
+    - addLocomotive(locomotive : Locomotive) : boolean
 }
 
 class Locomotive {
     - nameID : String
-    - owner : Player
     - type : String
     - power : double
     - acceleration : double
@@ -45,50 +45,70 @@ class Locomotive {
     - availabilityYear : int
     - acquisitionPrice : double
     - maintenancePrice : double
-
-    + setOwner(player)
+    - owner : Player
+    - scenario : Scenario
+    
+    + getPrice() : double
+    + getType() : String
+    + getOwner() : Player
+    + setOwner(player : Player) : boolean
+    + getAvailableDate() : Date
+    + getScenario() : Scenario
 }
 
 class Scenario {
     - nameID : String
-    - timeRestrictions : List<TimeRestriction>
-    - technologicalRestrictions : List<TechnologicalRestriction>
-    - historicalRestrictions : List<HistoricalRestriction>
-
-    + getCurrentDate()
+    - timeRestrictions : String
+    - technologicalRestrictions : String
+    - historicalRestrictions : String
+    
+    + getId() : String
+    + getName() : String
+    + getDescription() : String
+    + getStartDate() : Date
+    + getEndDate() : Date
 }
 
 class LocomotiveRepository {
-    + getAvailableLocomotives(scenario, currentDate)
-    + getLocomotiveById(locomotiveId)
+    + getAvailableLocomotives(scenario : Scenario, currentDate : Date) : List<Locomotive>
+    + getLocomotive(locomotiveID : String) : Locomotive
+    + save(locomotive : Locomotive) : boolean
+}
+
+class PlayerRepository {
+    + getPlayerByUsername(username : String) : Player
+    + save(player : Player) : boolean
 }
 
 class ScenarioRepository {
-    + getCurrentScenario()
+    + getCurrentScenario() : Scenario
 }
 
 class Repositories {
     - Repositories()
     + {static} getInstance()
-    + getLocomotiveRepository()
-    + getScenarioRepository()
+    + getLocomotiveRepository() : LocomotiveRepository
+    + getPlayerRepository() : PlayerRepository
+    + getScenarioRepository() : ScenarioRepository
 }
 
 class BuyLocomotiveController {
     + BuyLocomotiveController()
-    + getAvailableLocomotives()
-    + getLocomotiveDetails(locomotiveId)
-    + purchaseLocomotive(locomotiveId)
+    + getAvailableLocomotives() : List<Locomotive>
+    + getLocomotiveDetails(locomotiveID : String) : Locomotive
+    + purchaseLocomotive(locomotiveID : String, playerUsername : String) : boolean
+    - checkBalance(locomotive : Locomotive, player : Player) : boolean
+    - getPlayerByUsername(username : String) : Player
 }
 
 note right of BuyLocomotiveController
-    This controller manages the
-    locomotive purchasing process
+    Gets available locomotives based on
+    current scenario and date
 end note
 
 note bottom of LocomotiveRepository
-    - used for retrieving available
-    locomotives for purchase
+    - filters locomotives based on 
+    scenario and availability date
 end note
 
 class BuyLocomotiveUI {
@@ -98,14 +118,15 @@ BuyLocomotiveUI .> BuyLocomotiveController
 
 BuyLocomotiveController ..> ApplicationSession
 BuyLocomotiveController ..> UserSession
-BuyLocomotiveController ..> LocomotiveRepository
-BuyLocomotiveController ..> ScenarioRepository
-BuyLocomotiveController ..> Player
 BuyLocomotiveController ..> Locomotive
+BuyLocomotiveController ..> LocomotiveRepository
+BuyLocomotiveController ..> Player
+BuyLocomotiveController ..> PlayerRepository
 BuyLocomotiveController .> Repositories
 
 Repositories -> "1" Repositories : instance
 Repositories --> "1" LocomotiveRepository : locomotiveRepository
+Repositories --> "1" PlayerRepository : playerRepository
 Repositories --> "1" ScenarioRepository : scenarioRepository
 
 ApplicationSession -> "1" ApplicationSession : instance
@@ -113,10 +134,10 @@ ApplicationSession ..> UserSession
 
 LocomotiveRepository --> "*" Locomotive : locomotives
 
-ScenarioRepository --> "*" Scenario : scenarios
+PlayerRepository --> "*" Player : players
 
-Player "1" -- "*" Locomotive : buys >
-Player "1" -- "*" Scenario : plays >
-Scenario "1" -- "*" Locomotive : configures >
+Player --> "*" Locomotive : ownedLocomotives
+Locomotive --> "0..1" Player : owner
+Locomotive --> "1" Scenario : availableInScenario
 
-@enduml
+@enduml 
