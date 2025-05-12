@@ -1,0 +1,159 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ApplicationSession
+{
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+}
+
+class UserSession
+{
+    + getUsername()
+}
+
+class Editor {
+    - username : String
+    - password : String
+    - createdMaps
+    - createdScenarios
+}
+
+class Scenario {
+    - nameID : String
+    - startDate : Date
+    - endDate : Date
+    
+    + Scenario(nameID, startDate, endDate, mapID, editor)
+    + configureIndustry(industry, generationFactor) : boolean
+    + configurePortCargoes(port, imports, exports, transforms) : boolean
+    + configureLocomotive(locomotive) : boolean
+}
+
+class Map {
+    - nameID : String
+}
+
+class Industry {
+    - nameID : String
+    - type : String
+    - description : String
+    - availabilityYear : int
+    - productionRate : double
+    - suppliedCargo
+    - demandedCargo
+}
+
+class Cargo {
+    - name : String
+    - amount : int
+    - lifespan : int
+    - type : String
+}
+
+class Locomotive {
+    - nameID : String
+    - type : String
+    - power : double
+    - topSpeed : double
+    - startYear : int
+    - availabilityYear : int
+}
+
+class MapRepository {
+    + getMaps() : List<Map>
+}
+
+class IndustryRepository {
+    + getAvailableIndustries(startDate, endDate) : List<Industry>
+}
+
+class CargoRepository {
+    + getAvailableCargoes() : List<Cargo>
+}
+
+class LocomotiveRepository {
+    + getLocomotiveTypes() : List<Locomotive>
+}
+
+class EditorRepository {
+    + getEditorByUsername(username) : Editor
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getMapRepository() : MapRepository
+    + getIndustryRepository() : IndustryRepository
+    + getCargoRepository() : CargoRepository
+    + getLocomotiveRepository() : LocomotiveRepository
+    + getEditorRepository() : EditorRepository
+}
+
+class CreateScenarioController {
+    + CreateScenarioController()
+    + getMaps() : List<Map>
+    + getAvailableIndustries(startDate, endDate) : List<Industry>
+    + getAvailableCargoes() : List<Cargo>
+    + getLocomotiveTypes() : List<Locomotive>
+    + createScenario(nameID, startDate, endDate, mapID, selectedIndustries, portImports, \nportExports, portTransforms, industryGenerationFactors, selectedLocomotiveTypes) : Scenario
+    - getEditorFromSession() : Editor
+}
+
+class CreateScenarioUI {
+}
+
+note right of CreateScenarioController
+    Controller responsible for 
+    coordinating scenario creation
+end note
+
+note bottom of IndustryRepository
+    Filters industries based on 
+    time period restrictions
+end note
+
+CreateScenarioUI .> CreateScenarioController
+
+CreateScenarioController ..> ApplicationSession
+CreateScenarioController ..> UserSession
+CreateScenarioController ..> Map
+CreateScenarioController ..> Industry
+CreateScenarioController ..> Cargo
+CreateScenarioController ..> Locomotive
+CreateScenarioController ..> Editor
+CreateScenarioController ..> Scenario
+CreateScenarioController .> Repositories
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
+Repositories --> "1" IndustryRepository : industryRepository
+Repositories --> "1" CargoRepository : cargoRepository
+Repositories --> "1" LocomotiveRepository : locomotiveRepository
+Repositories --> "1" EditorRepository : editorRepository
+
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession ..> UserSession
+
+MapRepository --> "*" Map : maps
+IndustryRepository --> "*" Industry : industries
+CargoRepository --> "*" Cargo : cargoes
+LocomotiveRepository --> "*" Locomotive : locomotives
+EditorRepository --> "*" Editor : editors
+
+Editor "1" -- "*" Scenario : creates >
+Scenario "*" -- "1" Map : uses >
+Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" Locomotive : configures >
+Industry "*" -- "*" Cargo : produces/consumes >
+
+@enduml 

@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":CreateScenarioController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+
+autonumber 3
+-> CTRL : getMaps()
+autonumber 3.1
+activate CTRL
+    group Get Maps List
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> MAP_REPO : getMaps()
+        activate MAP_REPO
+            MAP_REPO --> CTRL : mapsList
+        deactivate MAP_REPO
+    end
+
+    autonumber 4
+    <-- CTRL : mapsList
+deactivate CTRL
+
+@enduml 

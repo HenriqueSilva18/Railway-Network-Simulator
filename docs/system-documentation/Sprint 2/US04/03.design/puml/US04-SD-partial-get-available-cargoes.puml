@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":CreateScenarioController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "cargoRepository\n:CargoRepository" as CARGO_REPO
+
+autonumber 10
+-> CTRL : getAvailableCargoes()
+autonumber 10.1
+activate CTRL
+    group Get Available Cargoes
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getCargoRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: cargoRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> CARGO_REPO : getAvailableCargoes()
+        activate CARGO_REPO
+            CARGO_REPO --> CTRL : availableCargoesList
+        deactivate CARGO_REPO
+    end
+
+    autonumber 11
+    <-- CTRL : availableCargoesList
+deactivate CTRL
+
+@enduml 

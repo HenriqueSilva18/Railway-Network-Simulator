@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "scenario\n:Scenario" as SCENARIO
+
+autonumber 20
+-> CTRL: create(nameID, startDate, endDate, mapID, editor)
+
+autonumber 20.1
+activate CTRL
+    group Create Scenario
+        CTRL --> SCENARIO**: create(nameID, startDate, endDate, mapID, editor)
+
+        loop for each selectedIndustry
+            CTRL -> SCENARIO : configureIndustry(industry, generationFactor)
+            activate SCENARIO
+                SCENARIO --> CTRL : true
+            deactivate SCENARIO
+        end
+
+        loop for each port
+            CTRL -> SCENARIO : configurePortCargoes(port, imports, exports, transforms)
+            activate SCENARIO
+                SCENARIO --> CTRL : true
+            deactivate SCENARIO
+        end
+
+        loop for each selectedLocomotive
+            CTRL -> SCENARIO : configureLocomotive(locomotive)
+            activate SCENARIO
+                SCENARIO --> CTRL : true
+            deactivate SCENARIO
+        end
+    end
+
+    autonumber 21
+    <-- CTRL: scenario
+deactivate CTRL
+
+@enduml 
