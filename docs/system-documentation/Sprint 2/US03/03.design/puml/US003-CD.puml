@@ -1,0 +1,87 @@
+@startuml
+
+
+top to bottom direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US03 - Add a city
+
+class ApplicationSession {
+  -ApplicationSession()
+  +getInstance()
+  +getCurrentSession()
+}
+class UserSession {
+  +getCurrentEditor()
+}
+' Main controller class
+class AddCityController {
+  +getAvailableMaps() : List<Map>
+  +validateName(name : String) : boolean
+  +validateCoordinates(coordinates : Point) : boolean
+  +validateNumberPositive(number : int) : boolean
+  +saveCity(name : String, coordinates : Point) : boolean
+}
+
+' Controller for house blocks management
+class AddHouseBlocksController {
+  +assignBlocks(manualMode : boolean, numBlocks : int, map : Map, cityCoordinates : Point) : boolean
+}
+
+' Repository classes
+class Repositories {
+    -mapRepository : MapRepository
+  +getInstance()
+  +mapRepository()
+}
+
+class MapRepository {
+  +getMaps()
+}
+
+' Domain classes
+class City {
+  -name: String
+  -xAxis: float
+    -yAxis: float
+  -houseBlocks: List<HouseBlock>
+  +City(name , coordinate)
+  +addBlocks(blocks)
+}
+
+class Map {
+  -name : String
+  -cities : List<City>
+  +addCity(city)
+}
+
+class HouseBlock {
+    -xAxis: float
+    -yAxis: float
+ +setHouseBlockCoordinate(coordinates)
+}
+
+' UI class
+class AddCityUI {
+    +create()
+}
+
+' Relationships
+UserSession .> ApplicationSession
+ApplicationSession .> AddCityUI
+Repositories --> MapRepository : mapRepository
+AddCityController .> Repositories
+AddCityController .> City
+AddCityController .> Map
+AddHouseBlocksController .> HouseBlock
+AddHouseBlocksController .> City
+AddCityUI .> AddCityController
+AddCityUI .> AddHouseBlocksController
+Map "1" *-- "1..*" City : contains
+City "1" *-- "1..*" HouseBlock : contains
+
+@enduml

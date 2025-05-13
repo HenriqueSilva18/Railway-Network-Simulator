@@ -5,6 +5,8 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
+title SSD Diagram : US03 - Add a city
+
 actor Editor
 participant AddCityUI
 participant AddCityController
