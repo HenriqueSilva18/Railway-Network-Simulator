@@ -1,0 +1,87 @@
+@startuml us07_class_diagram
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US07 - List Stations
+
+class ListStationUI {
+  +listStations()
+  +showAvailableMaps()
+  +showStationList()
+  +showStationDetails()
+}
+
+class ListStationController {
+  +listAvailableMaps()
+  +getStations(mapId)
+  +getStationDetails(stationId)
+}
+
+class ApplicationSession {
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+}
+class UserSession {
+  +getCurrentEditor()
+}
+
+class Repositories {
+  +getInstance()
+  +mapRepository()
+}
+
+class MapRepository {
+  +getAllMaps()
+  +findMap(id)
+}
+
+class Map {
+  -nameId
+  +getCities()
+}
+
+class City {
+  -name
+  +getStations()
+}
+
+class Station {
+  -name
+  -storageCapacity
+  -buildingSlots
+    -cargoDemand
+    -cargoSupply
+  +getDetails()
+  +getBuildings()
+  +getDemandedCargo()
+  +getSupplyCargo()
+}
+
+class Building {
+  -name
+  -type
+}
+
+
+
+' Relations
+ApplicationSession <.. UserSession
+ListStationUI <.. ListStationController
+ListStationController <.. ApplicationSession
+
+ListStationController ..> MapRepository
+
+ListStationController ..> Repositories
+ListStationController ..> Map
+Repositories --> "1" MapRepository : mapRepository
+Map "1"-->"*" City
+City"*" <--"1" Station : serves
+Station "1" --> "*" Building : upgraded with
+
+@enduml
