@@ -1,0 +1,49 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram: Input City Data
+
+actor Editor
+participant AddCityUI
+participant AddCityController
+
+activate Editor
+Editor -> AddCityUI : selects a map
+activate AddCityUI
+
+AddCityUI -> Editor : asks for city name
+deactivate AddCityUI
+Editor -> AddCityUI : inputs name
+activate AddCityUI
+AddCityUI -> AddCityController : validateName(name)
+activate AddCityController
+AddCityController -> AddCityController : checkNoDigitsOrSpecialChars()
+AddCityController --> AddCityUI : true
+deactivate AddCityController
+
+AddCityUI -> Editor : asks for coordinates
+deactivate AddCityUI
+Editor -> AddCityUI : inputs coordinates
+activate AddCityUI
+AddCityUI -> AddCityController : validateCoordinates(coordinates)
+activate AddCityController
+AddCityController --> AddCityUI : true
+deactivate AddCityController
+
+AddCityUI -> Editor : asks number of house blocks
+deactivate AddCityUI
+Editor -> AddCityUI : inputs number
+activate AddCityUI
+AddCityUI -> AddCityController : validateNumberPositive()
+activate AddCityController
+AddCityController --> AddCityUI : true
+deactivate AddCityController
+
+deactivate AddCityUI
+deactivate Editor
+
+@enduml

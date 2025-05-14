@@ -5,13 +5,15 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
-title SSD Diagram : US03 - Add a city
+title System Sequence Diagram : US03 - Add a city
 
 actor Editor
 participant AddCityUI
 participant AddCityController
 participant Repositories
 participant MapRepository
+participant CurrentSession
+participant CurrentEditor
 participant AddHouseBlocksController
 participant City
 participant Map
@@ -20,17 +22,37 @@ participant HouseBlock
 activate Editor
 Editor -> AddCityUI : asks to add a city
 activate AddCityUI
-AddCityUI -> AddCityController : create()
+AddCityUI --> AddCityController : create()
 activate AddCityController
+
+' Check current session and editor first
+AddCityController -> CurrentSession : getInstance()
+activate CurrentSession
+CurrentSession --> AddCityController : currentSession
+deactivate CurrentSession
+AddCityController -> CurrentSession : getEditor()
+activate CurrentSession
+CurrentSession --> AddCityController : currentEditor
+deactivate CurrentSession
+AddCityController -> CurrentEditor : isAuthorized("addCity")
+activate CurrentEditor
+CurrentEditor --> AddCityController : true
+deactivate CurrentEditor
+
 AddCityUI -> AddCityController : getAvailableMaps()
 AddCityController -> Repositories : getInstance()
 activate Repositories
-Repositories -> MapRepository : mapRepository()
-activate MapRepository
-MapRepository -> AddCityController : getAvailableMaps()
-deactivate MapRepository
+Repositories --> AddCityController : repositories
 deactivate Repositories
-AddCityController -> AddCityUI : availableMaps
+AddCityController -> Repositories : mapRepository()
+activate Repositories
+Repositories --> AddCityController : mapRepository
+deactivate Repositories
+AddCityController -> MapRepository : getMaps()
+activate MapRepository
+MapRepository --> AddCityController : mapsList
+deactivate MapRepository
+AddCityController --> AddCityUI : mapsList
 deactivate AddCityController
 AddCityUI -> Editor : shows a list of maps
 deactivate AddCityUI
@@ -71,10 +93,12 @@ Editor -> AddCityUI : selects yes/no
 activate AddCityUI
 AddCityUI -> AddHouseBlocksController : assignBlocks(manual/auto, numBlocks, map, cityCoordinates)
 activate AddHouseBlocksController
+loop for each block
 AddHouseBlocksController -> HouseBlock : setHouseBlockCoordinate()
 activate HouseBlock
 HouseBlock --> AddHouseBlocksController : true
 deactivate HouseBlock
+end
 AddHouseBlocksController -> City : addBlocks()
 activate City
 City --> AddHouseBlocksController : true
@@ -82,9 +106,16 @@ deactivate City
 AddHouseBlocksController --> AddCityUI : true
 deactivate AddHouseBlocksController
 
-AddCityUI -> AddCityController : saveCity(name, coordinates)
+
+
+AddCityUI -> Editor : asks for confirmation
+deactivate AddCityUI
+Editor -> AddCityUI : confirms
+
+activate AddCityUI
+AddCityUI -> AddCityController : saveCity(name, coordinates, houseBlocks)
 activate AddCityController
-AddCityController -> City : create(name, coordinates)
+AddCityController -> City : create(name, coordinates, houseBlocks)
 activate City
 City --> AddCityController : cityObject
 deactivate City
@@ -92,6 +123,22 @@ AddCityController -> Map : addCity(city)
 activate Map
 Map --> AddCityController : true
 deactivate Map
+
+
+' Add saving to repository
+AddCityController -> Repositories : getInstance()
+activate Repositories
+Repositories --> AddCityController : repositories
+deactivate Repositories
+AddCityController -> Repositories : mapRepository()
+activate Repositories
+Repositories --> AddCityController : mapRepository
+deactivate Repositories
+AddCityController -> MapRepository : saveMap(map)
+activate MapRepository
+MapRepository --> AddCityController : true
+deactivate MapRepository
+
 AddCityController --> AddCityUI : true
 deactivate AddCityController
 

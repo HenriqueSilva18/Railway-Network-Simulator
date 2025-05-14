@@ -1,0 +1,56 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram: Show Available Maps
+
+actor Editor
+participant AddCityUI
+participant AddCityController
+participant Repositories
+participant MapRepository
+participant CurrentSession
+participant CurrentEditor
+
+activate Editor
+Editor -> AddCityUI : asks to add a city
+activate AddCityUI
+AddCityUI --> AddCityController : create()
+activate AddCityController
+
+AddCityController -> CurrentSession : getInstance()
+activate CurrentSession
+CurrentSession --> AddCityController : currentSession
+deactivate CurrentSession
+AddCityController -> CurrentSession : getEditor()
+activate CurrentSession
+CurrentSession --> AddCityController : currentEditor
+deactivate CurrentSession
+AddCityController -> CurrentEditor : isAuthorized("addCity")
+activate CurrentEditor
+CurrentEditor --> AddCityController : true
+deactivate CurrentEditor
+
+AddCityUI -> AddCityController : getAvailableMaps()
+AddCityController -> Repositories : getInstance()
+activate Repositories
+Repositories --> AddCityController : repositories
+deactivate Repositories
+AddCityController -> Repositories : mapRepository()
+activate Repositories
+Repositories --> AddCityController : mapRepository
+deactivate Repositories
+AddCityController -> MapRepository : getMaps()
+activate MapRepository
+MapRepository --> AddCityController : mapsList
+deactivate MapRepository
+AddCityController --> AddCityUI : mapsList
+deactivate AddCityController
+AddCityUI -> Editor : shows a list of maps
+deactivate AddCityUI
+deactivate Editor
+
+@enduml
