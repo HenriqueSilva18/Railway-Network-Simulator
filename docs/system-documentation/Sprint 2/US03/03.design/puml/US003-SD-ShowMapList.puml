@@ -23,16 +23,17 @@ activate AddCityController
 
 AddCityController -> CurrentSession : getInstance()
 activate CurrentSession
+CurrentSession --> AddCityController : appSession
+deactivate CurrentSession
+AddCityController -> CurrentSession : getCurrentSession()
+activate CurrentSession
 CurrentSession --> AddCityController : currentSession
 deactivate CurrentSession
 AddCityController -> CurrentSession : getEditor()
 activate CurrentSession
 CurrentSession --> AddCityController : currentEditor
 deactivate CurrentSession
-AddCityController -> CurrentEditor : isAuthorized("addCity")
-activate CurrentEditor
-CurrentEditor --> AddCityController : true
-deactivate CurrentEditor
+
 
 AddCityUI -> AddCityController : getAvailableMaps()
 AddCityController -> Repositories : getInstance()
