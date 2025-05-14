@@ -9,20 +9,46 @@ This module solves the problem of determining whether a train (steam, diesel, or
 ## Functional Features
 
 1. **Train route feasibility check**:
-    - Uses recursive **Depth-First Search (DFS)**.
-    - Restricts traversal based on:
-        - **Train type**: Electric trains require electrified lines.
-        - **Station type**: depot, station, terminal
-        - OR: Accepts `"any"` to allow mixed station types (flexible traversal)
 
-2. **Graph visualization**:
-    - Exports `.dot` file for use with Graphviz.
-    - Electrified lines drawn in **blue**, non-electrified in **black**.
-    - Station names and distances are labeled.
+    * Uses recursive **Depth-First Search (DFS)**.
+    * Restricts traversal based on:
+
+        * **Train type**: Electric trains require electrified lines.
+        * **Station type**: depot, station, terminal
+        * OR: Accepts `"any"` to allow mixed station types (flexible traversal)
+    * **NEW**: Accepts `"any"` for **start or end station**, allowing route checking from/to all stations
+
+2. **Graph visualization** (via **GraphStream**):
+
+    * Displays nodes (stations) with:
+
+        * **Red** for depots
+        * **Green** for terminals
+        * **Blue** for stations
+    * Node labels show station names
+    * Edges are labeled with distances and indicate electrified lines visually
+    * **NEW**: The full network is always displayed regardless of feasibility, to support connectivity analysis
 
 3. **Matrix-based algorithms**:
-    - Computes number of **walks of length _k_** via powers of the adjacency matrix `M^k`.
-    - Computes **transitive closure** using Boolean matrix summation to verify full graph connectivity.
+
+    * Computes number of **walks of length *k*** via powers of the adjacency matrix `M^k`.
+    * Computes **transitive closure** using Boolean matrix summation to verify full graph connectivity.
+
+---
+
+## Additional Features for Evaluation Requirements
+
+* Program handles user input of `'any'` for:
+
+    * Start station
+    * End station
+    * Station type
+
+* Output lists all valid origin or destination matches based on selected filters
+
+* Valid with all scenario `.csv` files using semicolon (;) separators
+
+* Matrix and graph analysis performed regardless of input feasibility
 
 ---
 
@@ -31,36 +57,37 @@ This module solves the problem of determining whether a train (steam, diesel, or
 ### 1. DFS for Route Checking
 
 ```java
-private static boolean dfs(String current, String end, TrainType trainType, String stationType, Set<String> visited);
+private static boolean dfs(String current, String end, TrainType trainType, String stationType, Set<String> visited)
 ```
 
-- Checks for a valid route:
-    - Applies electrification constraint for electric trains.
-    - Applies station-type constraint unless `"any"` is specified.
-- Fully implemented using primitive recursion and no libraries.
+* Checks for a valid route:
+
+    * Applies electrification constraint for electric trains.
+    * Applies station-type constraint unless `"any"` is specified.
+* Fully implemented using primitive recursion and no libraries.
 
 ---
 
 ### 2. Matrix Exponentiation for Walk Count
 
 ```java
-public static int[][] computeWalksMatrix(int power);
+public static int[][] computeWalksMatrix(int power)
 ```
 
-- Builds adjacency matrix from the graph.
-- Uses integer matrix multiplication to compute `M^k`.
-- Entry `(i,j)` gives number of walks of length `k` from station `i` to `j`.
+* Builds adjacency matrix from the graph.
+* Uses integer matrix multiplication to compute `M^k`.
+* Entry `(i,j)` gives number of walks of length `k` from station `i` to `j`.
 
 ---
 
 ### 3. Boolean Transitive Closure
 
 ```java
-public static boolean[][] computeTransitiveClosure();
+public static boolean[][] computeTransitiveClosure()
 ```
 
-- Combines all matrix powers using Boolean OR logic.
-- Fully connected graph has **no zero entries** in result matrix.
+* Combines all matrix powers using Boolean OR logic.
+* Fully connected graph has **no zero entries** in result matrix (Corollary 4.5).
 
 ---
 
@@ -97,7 +124,7 @@ function dfs(current, end, trainType, stationType, visited):
 
 ---
 
-### Matrix Walks – `M^k` 
+### Matrix Walks – `M^k`
 
 ```pseudo
 function computeWalksMatrix(k):
@@ -130,77 +157,65 @@ function computeTransitiveClosure():
 ```
 
 ---
-#  US13 – Test Case: Electric Train Connectivity & Matrix Walk Count
 
-## Test Objective
 
-Verify whether an **electric train** can travel between two stations using only **electrified lines** and **stations of type `"station"`**, and compute:
+# US13 – Test Cases (Scenario 1)
 
-- Number of walks of a specific length between those stations
-- The full walk count matrix (`M^k`)
-- Transitive closure of the graph
+### Test Case 1 – Diesel Train from Any Station to Any Other
 
----
+| Parameter       | Value                        |
+|----------------|------------------------------|
+| Start Station  | any                          |
+| End Station    | any                          |
+| Train Type     | DIESEL                       |
+| Station Type   | any                          |
 
-## Test Case
 
-###  Input
-
-| Parameter       | inputs                    |
-|----------------|---------------------------|
-| **Start**       | Campanha Station          |
-| **End**         | Vila Nova de Gaia Station |
-| **Train Type**  | ELECTRIC                  |
-| **Station Type**| station                   |
-| **Walk Length** | 4                         |
-
----
-
-### Program Interaction (example)
-
-```text
-Loading railway data from data/porto_railways.csv...
-Enter start station:
-Campanha Station
-
-Enter end station:
-Vila Nova de Gaia Station
-
-Enter train type (STEAM, DIESEL, ELECTRIC):
-ELECTRIC
-
-Enter station type (depot, station, terminal):
-station
-
-Train can travel!
-Exporting network to dot/network.dot
-Export complete.
-
-Enter path length to compute walk count (e.g., 4):
-4
-
-Number of walks of length 4 from Campanha Station to Vila Nova de Gaia Station: 21
-
-Walk count matrix M^4:
-20 15 21 14 10 17 
-15 20 21 17 10 14 
-21 21 30 15 16 15 
-14 17 15 19 5 17 
-10 10 16 5 10 5 
-17 14 15 17 5 19 
-
-Computing transitive closure (Boolean reachability)...
-1 1 1 1 1 1 
-1 1 1 1 1 1 
-1 1 1 1 1 1 
-1 1 1 1 1 1 
-1 1 1 1 1 1 
-1 1 1 1 1 1 
+**Expected Output:**
 ```
+- Valid paths shown between all station types
+- Full network connectivity shown on graph
+- Walk matrix and transitive closure confirm reachability
+```
+
 ---
 
-##  US13 – Train Connectivity - (some notes)
-See implementation under `src/com/mdisc/us13/`  
-DOT file in `/dot/network.dot`, CSV in `/data/`, algorithm in `/docs/us13/`
+### Test Case 2 – Electric Train from Station or Terminal to Another Station or Terminal
 
-**Implemented by student**: Yasamin Ebrahimi (1232162) 
+| Parameter       | Value                        |
+|----------------|------------------------------|
+| Start Station  | any                          |
+| End Station    | any                          |
+| Train Type     | ELECTRIC                     |
+| Station Type   | station+terminal             |
+
+
+**Expected Output:**
+```
+- Shows only electric routes
+- Respects station and terminal types
+- Network of eligible connections displayed
+```
+
+---
+
+### Test Case 3 – Electric Train from Terminal to Terminal
+
+| Parameter       | Value                        |
+|----------------|------------------------------|
+| Start Station  | any                          |
+| End Station    | T_Edinburgh                  |
+| Train Type     | ELECTRIC                     |
+| Station Type   | terminal                     |
+
+
+**Expected Output:**
+```
+- Confirms all terminals that can reach T_Edinburgh
+- Electrified connections visualized
+- Transitive closure matrix verifies terminal connectivity
+```
+
+---
+
+**Implemented by student**: Yasamin Ebrahimi (1232162)
