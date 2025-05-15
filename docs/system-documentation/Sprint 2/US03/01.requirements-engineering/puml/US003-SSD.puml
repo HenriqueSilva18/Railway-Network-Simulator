@@ -1,56 +1,54 @@
 @startuml
-title System Sequence Diagram: US03 - Add a city
+
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-
 autonumber
 
+title System Sequence Diagram : US03 - Add a city
+
 actor "Editor" as Editor
-participant ":System" as System
+participant ":System" as AddCityUI
 
 activate Editor
-Editor -> System : Asks to add city
-        activate System
-        System --> Editor: Shows a list of Mapsk
-        deactivate System
+Editor -> AddCityUI : asks to add city
+        activate AddCityUI
 
-    Editor -> System: Types industry data
-        activate System
-        System --> Editor: Asks for confirmation
-        deactivate System
 
-    Editor -> System: Confirms industry data
-        activate System
-System --> Editor : Asks if the editor wants to assign the blocks manually
-deactivate System
-Editor -> System : Selects yes or no
-activate System
+        AddCityUI --> Editor: shows a list of Maps
+        deactivate AddCityUI
+        Editor -> AddCityUI: selects a map
+        activate AddCityUI
+        AddCityUI --> Editor : asks for city name
+        deactivate AddCityUI
 
-alt answer == yes
-    loop while answer == yes
-        System --> Editor : Requests house blocks position
-        deactivate System
 
-        Editor -> System : Selects blocks position
-        activate System
-        System --> Editor : Asks if the editor wants to assign the next block manually
-        deactivate System
+    Editor -> AddCityUI: inputs name
 
-        Editor -> System : Selects yes or no
-        activate System
+        activate AddCityUI
+        AddCityUI --> Editor: asks for coordinates
+        deactivate AddCityUI
+    Editor -> AddCityUI: inputs coordinates
+        activate AddCityUI
 
-    end
-else answer == no
-    System --> Editor : Assigns house blocks automatically
-end
+        AddCityUI --> Editor: asks number of house blocks
+        deactivate AddCityUI
+    Editor -> AddCityUI: inputs number
+        activate AddCityUI
 
-activate System
+        AddCityUI --> Editor: asks if the editor wants to assign the blocks manually or automatically
+        deactivate AddCityUI
+    Editor -> AddCityUI: selects yes/no
+        activate AddCityUI
+        AddCityUI --> AddCityUI: assign blocks
+        AddCityUI --> Editor: asks for confirmation
+        deactivate AddCityUI
+        Editor -> AddCityUI: confirms
 
-System --> Editor : City added successfully
-System --> Editor : List the cities in the map
-System --> Editor : List the Details of the city that was added (name, position, number of house blocks, map)
+        activate AddCityUI
+        AddCityUI --> Editor: display city details + success
 
-deactivate System
-deactivate Editor
+        deactivate AddCityUI
+
+
 @enduml
