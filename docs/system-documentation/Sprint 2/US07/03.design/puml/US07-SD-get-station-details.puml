@@ -1,23 +1,10 @@
-@startuml us07_station_details
+@startuml
+title ref: GetStationDetails
 
-skinparam monochrome true
-skinparam packageStyle rectangle
-skinparam shadowing false
-autonumber
-
-title System Sequence Diagram: US07 - View details of a station
-
-actor Player
-participant ListStationUI
 participant ListStationController
 participant Station
-participant Building
-participant Cargo
 
-activate Player
-Player -> ListStationUI : selects a station
-activate ListStationUI
-ListStationUI -> ListStationController : getStationDetails(stationId)
+group GetStationDetails
 activate ListStationController
 
 ListStationController -> Station : getDetails()
@@ -40,10 +27,7 @@ activate Station
 Station --> ListStationController : list of supply cargo
 deactivate Station
 
-ListStationController --> ListStationUI : station details, buildings, cargo
 deactivate ListStationController
-ListStationUI -> Player : show station details
-deactivate ListStationUI
-deactivate Player
+end group
 
 @enduml

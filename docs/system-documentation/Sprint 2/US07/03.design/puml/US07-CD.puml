@@ -10,10 +10,7 @@ skinparam classAttributeIconSize 0
 title Class Diagram: US07 - List Stations
 
 class ListStationUI {
-  +listStations()
-  +showAvailableMaps()
-  +showStationList()
-  +showStationDetails()
+
 }
 
 class ListStationController {
@@ -23,12 +20,7 @@ class ListStationController {
 }
 
 class ApplicationSession {
-    - ApplicationSession()
-    + {static} getInstance()
-    + getCurrentSession()
-}
-class UserSession {
-  +getCurrentEditor()
+    + getInstance()
 }
 
 class Repositories {
@@ -37,8 +29,8 @@ class Repositories {
 }
 
 class MapRepository {
-  +getAllMaps()
-  +findMap(id)
+  +getMaps()
+  +findMap(map)
 }
 
 class Map {
@@ -71,9 +63,8 @@ class Building {
 
 
 ' Relations
-ApplicationSession <.. UserSession
-ListStationUI <.. ListStationController
-ListStationController <.. ApplicationSession
+ListStationUI ..> ListStationController
+ListStationController ..> ApplicationSession
 
 ListStationController ..> MapRepository
 

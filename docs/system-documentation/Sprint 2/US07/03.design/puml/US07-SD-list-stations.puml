@@ -1,26 +1,14 @@
-@startuml us07_list_stations
+@startuml
+title System Sequence Diagram : Ref - List Stations
 
-skinparam monochrome true
-skinparam packageStyle rectangle
-skinparam shadowing false
-autonumber
-
-title System Sequence Diagram: US07 - List all stations from a selected map
-
-actor Player
-participant ListStationUI
 participant ListStationController
 participant Repositories
 participant MapRepository
 participant Map
 participant City
-participant Station
 
-activate Player
-Player -> ListStationUI : selects map
-activate ListStationUI
-ListStationUI -> ListStationController : getStations(map)
 activate ListStationController
+group ListStations
 
 ListStationController -> Repositories : getInstance()
 activate Repositories
@@ -43,16 +31,13 @@ Map --> ListStationController : list of cities
 deactivate Map
 
 loop for each city
-  ListStationController -> City : getStations()
-  activate City
-  City --> ListStationController : list of stations
-  deactivate City
+    ListStationController -> City : getStations()
+    activate City
+    City --> ListStationController : list of stations
+    deactivate City
 end
 
-ListStationController --> ListStationUI : aggregated list of stations
+end
 deactivate ListStationController
-ListStationUI -> Player : show station list
-deactivate ListStationUI
-deactivate Player
 
 @enduml

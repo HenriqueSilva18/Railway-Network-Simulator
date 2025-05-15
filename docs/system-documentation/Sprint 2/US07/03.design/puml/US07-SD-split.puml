@@ -1,0 +1,56 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : US07 - List stations and view details
+
+actor "Player" as Player
+participant ListStationUI
+participant ListStationController
+
+activate Player
+Player -> ListStationUI : request to list stations
+activate ListStationUI
+
+ListStationUI -> ListStationController : getAvailableMaps()
+activate ListStationController
+ref over ListStationController
+    GetAvailableMaps
+end
+ListStationController --> ListStationUI : list of maps
+deactivate ListStationController
+
+ListStationUI -> Player : show map list
+deactivate ListStationUI
+
+Player -> ListStationUI : selects a map
+activate ListStationUI
+ListStationUI -> ListStationController : getStations(map)
+activate ListStationController
+ref over ListStationController
+    ListStations
+end
+ListStationController --> ListStationUI : aggregated station list
+deactivate ListStationController
+
+ListStationUI -> Player : show station list
+deactivate ListStationUI
+
+Player -> ListStationUI : selects a station
+activate ListStationUI
+ListStationUI -> ListStationController : getStationDetails(stationId)
+activate ListStationController
+ref over ListStationController
+    GetStationDetails
+end
+ListStationController --> ListStationUI : station details (name, capacity, slots, buildings, cargo)
+deactivate ListStationController
+
+ListStationUI -> Player : show station details
+deactivate ListStationUI
+deactivate Player
+
+@enduml
