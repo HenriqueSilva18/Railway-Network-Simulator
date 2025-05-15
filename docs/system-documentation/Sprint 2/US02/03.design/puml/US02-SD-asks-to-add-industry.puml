@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 2
+
+participant ":AddIndustryController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "industryRepository\n:IndustryRepository" as REPOS_IND
+
+
+-> CTRL: create()
+activate CTRL
+-> CTRL: getAvailableIndustries()
+autonumber 3.1
+group Asks to add industry
+    CTRL -> REPOS: getInstance()
+    activate REPOS
+        REPOS --> CTRL: repositories
+    deactivate REPOS
+
+    CTRL -> REPOS_SINGLETON: getIndustryRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> CTRL: industryRepository
+    deactivate REPOS_SINGLETON
+
+    CTRL -> REPOS_IND: getAvailableIndustries()
+    activate REPOS_IND
+        REPOS_IND --> CTRL: availableIndustriesList
+    deactivate REPOS_IND
+    end
+    autonumber 4
+    <-- CTRL : availableIndustriesList
+deactivate CTRL
+
+
+
+
+@enduml

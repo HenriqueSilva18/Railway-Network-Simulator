@@ -8,13 +8,15 @@ autonumber
 title System Sequence Diagram: US02 - Add an industry
 
 actor "Editor" as editor
-participant ":System" as system
+participant ":system" as system
 
 activate editor
 
     editor -> system : asks to add industry
         activate system
         system --> editor: shows all industries available in the list
+
+
         deactivate system
 
     editor -> system: selects industry type

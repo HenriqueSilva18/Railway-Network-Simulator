@@ -1,0 +1,80 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US02 - Add an Industry
+
+class AddIndustryUI {
+}
+
+class AddIndustryController {
+    + create()
+    + getAvailableIndustries() : List<Industry>
+    + validateIndustry(nameID, x, y) : boolean
+    + createIndustry(nameID, x, y) : Industry
+}
+
+class IndustryRepository {
+    + getAvailableIndustries() : List<Industry>
+}
+
+class MapRepository {
+    + getCurrentMap(session) : Map
+    + save(map) : boolean
+}
+
+class Repositories {
+    + {static} getInstance() : Repositories
+    + getIndustryRepository() : IndustryRepository
+    + getMapRepository() : MapRepository
+}
+
+class ApplicationSession {
+    + {static} getInstance() : ApplicationSession
+    + getCurrentSession() : Editor
+    + getCurrentMap() : Map
+}
+
+class Map {
+    - nameID : String
+    - size : Size
+    - industries : List<Industry>
+
+    + isCellEmpty(x: int, y: int) : boolean
+    + addIndustry(industry: Industry) : boolean
+}
+
+class Industry {
+    + {static} create(nameID: String, x: int, y: int) : Industry
+    - nameID : String
+    - x : int
+    - y : int
+}
+
+class Editor {
+    - username : String
+    - password : String
+}
+
+AddIndustryUI ..> AddIndustryController : uses
+AddIndustryController ..> IndustryRepository : uses
+AddIndustryController ..> MapRepository : uses
+AddIndustryController ..> Repositories : uses
+AddIndustryController ..> ApplicationSession : uses
+AddIndustryController ..> Map : uses
+AddIndustryController ..> Industry : uses
+
+Map "1" o-- "*" Industry : contains >
+MapRepository --> "1" Map : returns
+IndustryRepository --> "*" Industry : provides
+
+Repositories --> IndustryRepository : provides >
+Repositories --> MapRepository : provides >
+
+ApplicationSession --> Editor : holds >
+ApplicationSession --> Map : currentMap >
+
+Editor ..> AddIndustryUI : interacts with >
+
+@enduml

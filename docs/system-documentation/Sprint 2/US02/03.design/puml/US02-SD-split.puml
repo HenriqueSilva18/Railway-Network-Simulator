@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US02 - Add an industry
+
+actor "Editor" as editor
+participant ":AddIndustryUI" as UI
+participant ":AddIndustryController" as CTRL
+
+activate editor
+
+    editor -> UI : asks to add industry
+        activate UI
+
+            UI --> CTRL: create()
+            activate CTRL
+            UI --> CTRL: getIndustriesAvailable()
+
+            ref over CTRL
+            Get available industries
+            end
+                CTRL --> UI: availableIndustriesList
+            deactivate CTRL
+
+        UI --> editor: shows all industries available in the list
+        deactivate UI
+
+    editor -> UI: selects industry type
+        activate UI
+        UI --> editor: requests industry data (nameID, X and Y coordinates)
+        deactivate UI
+
+    editor -> UI: types industry data (nameID, X, Y)
+        activate UI
+        UI --> CTRL: validateIndustry(nameID, x, y)
+            activate CTRL
+
+            ref over CTRL
+            Validate industry data
+            end
+
+                CTRL --> UI: success
+            deactivate CTRL
+
+        UI --> editor: asks for confirmation
+        deactivate UI
+
+    editor -> UI: confirms industry data
+        activate UI
+            UI -> CTRL: createIndustry(nameID, x, y)
+
+            ref over CTRL
+            Create and add industry to map
+            end
+
+            activate CTRL
+
+               CTRL --> UI: success + industryDetails
+               deactivate CTRL
+
+            UI --> editor: displays operation success
+            UI --> editor: shows industry details on map
+
+        deactivate UI
+
+deactivate editor
+
+@enduml
