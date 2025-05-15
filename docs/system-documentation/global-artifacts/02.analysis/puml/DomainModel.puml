@@ -55,6 +55,18 @@ class Simulator {
   report
 }
 
+class SimulationReport {
+    startDate
+    endDate
+    simulationDuration
+    totalRevenue
+    totalExpenses
+    totalProfits
+    hitBankruptcy
+}
+
+
+
 class City {
   nameID
   productionRate
@@ -69,7 +81,6 @@ class HouseBlock {
 class Industry {
   nameID
   type
-  description
   availabilityYear
   productionRate
   suppliedCargo
@@ -81,6 +92,7 @@ class IndustrySector {
   importsExports
   generatesCargo
   consumesCargo
+  description
 }
 
 class Cargo {
@@ -105,6 +117,13 @@ class StationType {
   centerPoint
 }
 
+class TrainSchedule {
+  expectedArrivalTime
+  expectedDepartureTime
+  actualArrivalTime
+  actualDepartureTime
+}
+
 class Building {
   nameID
   type
@@ -116,8 +135,14 @@ class Building {
 class RailwayLine {
   length
   trackType
+  isElectrified
   cost
 }
+
+class RailwayNetwork{
+    nameID
+    routeList
+    }
 
 class Locomotive {
   nameID
@@ -173,6 +198,7 @@ Route "1" -- "*" Station : includes >
 Route "*" -- "*" Cargo : manages >
 Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" IndustrySector : configures >
 Scenario "1" -- "*" Station : configures >
 Route "1..*" -- "1..*" RailwayLine : contains >
 Building "1" -- "0..1" Building : evolves into >
@@ -186,11 +212,13 @@ Map "1" -- "*" Position : contains >
 City "1" -- "1..*" HouseBlock : contains >
 HouseBlock "1" -- "1" Position : has >
 IndustrySector "1" -- "*" Industry : contains >
-
 Industry "*" -- "*" Cargo : produces/consumes >
-
 Station "*" -- "1" StationType : defined by >
-
 StationType "1" -- "*" StationType : can change >
-
+TrainSchedule "*" -- "*" Train: contains >
+Station "*" -- "1" TrainSchedule: generates >
+RailwayNetwork "1" -- "*" RailwayLine : contains >
+Simulator "1" -- "*" SimulationReport : generates >
+SimulationReport "*" -- "1" Scenario : reports a >
+SimulationReport "*" -- "1" Player : belongs to >
 @enduml

@@ -13,6 +13,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Scenario (game session)
 * Simulator (game simulation)
 * Route (transportation route)
+* TrainSchedule (train arrival/departure times)
 
 ---
 
@@ -30,13 +31,13 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Locomotive (transport service with acquisition/maintenance costs)
 * Carriage (transport capacity)
 * StationType (classification of stations)
-* IndustryType (classification of industries)
+* IndustrySector (classification of industries)
 
 ---
 
 **Transaction Records**
 
-* Report (simulation results from Simulator)
+* SimulationReport (simulation results from Simulator)
 * Train (transport unit record)
 
 ---
@@ -56,7 +57,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Position (spatial location)
 * Size (map dimensions)
 * HouseBlock (city residential area)
-* Sector (industrial sector)
+* IndustrySector (industrial sector)
 
 ---
 
@@ -88,7 +89,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Cargo (goods specifications)
 * Industry (production specs)
 * StationType (station classification)
-* IndustryType (industry classification)
+* IndustrySector (industry classification)
+* SimulationReport (simulation performance report)
 
 ---
 
@@ -99,7 +101,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Available industries
 * Available scenarios
 * Station types
-* Industry types
+* Industry sectors
 
 ---
 
@@ -110,7 +112,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Map (contains cities, industries, positions)
 * Route (with stations and railway lines)
 * City (contains HouseBlocks)
-* Sector (contains industries)
+* IndustrySector (contains industries)
+* RailwayNetwork (contains railway lines and routes)
 
 ---
 
@@ -123,6 +126,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Station (part of map)
 * Position (element of map)
 * HouseBlock (part of city)
+* RailwayLine (part of railway network)
+* Route (part of railway network)
 
 ---
 
@@ -145,6 +150,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * RailwayLine construction costs
 * Locomotive acquisition/maintenance costs
 * Building evolution cost
+* SimulationReport (financial performance)
 
 ---
 
@@ -161,7 +167,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 **Documents mentioned/used to perform some work**
 
-* Simulation report
+* SimulationReport
 
 ---
 
@@ -176,53 +182,59 @@ An association is a relationship between instances of objects that indicates a r
 - **_A_** uses or manages or owns **_B_**
 - **_A_** is related to a transaction (item) of **_B_**
 
-| Concept (A)  | Association       | Concept (B)  |
-|--------------|-------------------|--------------|
-| Building     | evolves into      | Building     |
-| Carriage     | carries           | Cargo        |
-| City         | produces/consumes | Cargo        |
-| City         | located at        | Position     |
-| City         | contains          | HouseBlock   |
-| Editor       | creates           | Map          |
-| Editor       | creates           | Scenario     |
-| HouseBlock   | has               | Position     |
-| Industry     | produces/consumes | Cargo        |
-| Industry     | located at        | Position     |
-| Industry     | belongs to        | Sector       |
-| IndustryType | produces/consumes | Cargo        |
-| Locomotive   | configured in     | Scenario     |
-| Map          | contains          | City         |
-| Map          | contains          | Industry     |
-| Map          | contains          | Position     |
-| Map          | has               | Size         |
-| Player       | builds            | RailwayLine  |
-| Player       | builds            | Station      |
-| Player       | buys              | Locomotive   |
-| Player       | defines           | Route        |
-| Player       | plays             | Scenario     |
-| RailwayLine  | connects          | Station      |
-| Route        | contains          | RailwayLine  |
-| Route        | defined by        | Player       |
-| Route        | includes          | Station      |
-| Route        | manages           | Cargo        |
-| Scenario     | configures        | Industry     |
-| Scenario     | configures        | Locomotive   |
-| Scenario     | configures        | Station      |
-| Scenario     | configures        | City         |
-| Scenario     | uses              | Map          |
-| Scenario     | runs in           | Simulator    |
-| Sector       | has               | IndustryType |
-| Simulator    | generates         | Cargo        |
-| Station      | serves            | City         |
-| Station      | serves            | Industry     |
-| Station      | stores            | Cargo        |
-| Station      | upgraded with     | Building     |
-| Station      | located at        | Position     |
-| Station      | has               | StationType  |
-| StationType  | can change        | StationType  |
-| Train        | assigned to       | Route        |
-| Train        | composed of       | Carriage     |
-| Train        | powered by        | Locomotive   |
+| Concept (A)      | Association         | Concept (B)       |
+|------------------|---------------------|-------------------|
+| Building         | evolves into        | Building          |
+| Carriage         | carries             | Cargo             |
+| City             | produces/consumes   | Cargo             |
+| City             | located at          | Position          |
+| City             | contains            | HouseBlock        |
+| Editor           | creates             | Map               |
+| Editor           | creates             | Scenario          |
+| HouseBlock       | has                 | Position          |
+| Industry         | produces/consumes   | Cargo             |
+| Industry         | located at          | Position          |
+| Industry         | belongs to          | IndustrySector    |
+| IndustrySector   | contains            | Industry          |
+| Locomotive       | configured in       | Scenario          |
+| Map              | contains            | City              |
+| Map              | contains            | Industry          |
+| Map              | contains            | Position          |
+| Map              | has                 | Size              |
+| Player           | builds              | RailwayLine       |
+| Player           | builds              | Station           |
+| Player           | buys                | Locomotive        |
+| Player           | defines             | Route             |
+| Player           | plays               | Scenario          |
+| RailwayLine      | connects            | Station           |
+| RailwayNetwork   | contains            | RailwayLine       |
+| Route            | contains            | RailwayLine       |
+| Route            | defined by          | Player            |
+| Route            | includes            | Station           |
+| Route            | manages             | Cargo             |
+| Scenario         | configures          | Industry          |
+| Scenario         | configures          | IndustrySector    |
+| Scenario         | configures          | Locomotive        |
+| Scenario         | configures          | Station           |
+| Scenario         | configures          | City              |
+| Scenario         | uses                | Map               |
+| Scenario         | runs in             | Simulator         |
+| Simulator        | generates           | Cargo             |
+| Simulator        | generates           | SimulationReport  |
+| SimulationReport | reports a           | Scenario          |
+| SimulationReport | belongs to          | Player            |
+| Station          | serves              | City              |
+| Station          | serves              | Industry          |
+| Station          | stores              | Cargo             |
+| Station          | upgraded with       | Building          |
+| Station          | located at          | Position          |
+| Station          | defined by          | StationType       |
+| Station          | has                 | TrainSchedule     |
+| StationType      | can change          | StationType       |
+| Train            | assigned to         | Route             |
+| Train            | composed of         | Carriage          |
+| Train            | powered by          | Locomotive        |
+| TrainSchedule    | contains            | Train             |
 
 ## Domain Model
 
