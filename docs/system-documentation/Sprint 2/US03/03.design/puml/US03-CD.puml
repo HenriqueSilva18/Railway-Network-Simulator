@@ -15,21 +15,19 @@ class ApplicationSession {
   +getInstance()
   +getCurrentSession()
 }
-class UserSession {
-  +getCurrentEditor()
-}
+
 ' Main controller class
 class AddCityController {
   +getAvailableMaps() : List<Map>
-  +validateName(name : String) : boolean
-  +validateCoordinates(coordinates : Point) : boolean
-  +validateNumberPositive(number : int) : boolean
-  +saveCity(name : String, coordinates : Point) : boolean
+  +validateName(name : String) : string
+  +validateCoordinates(x : float, y : float) Coordinate
+  +validateNumBlocks(number : int) : int
+  +saveCity(name : String, coordinates : Point, houseBlocks : HouseBlock ) : City
 }
 
 ' Controller for house blocks management
 class AddHouseBlocksController {
-  +assignBlocks(manualMode : boolean, numBlocks : int, map : Map, cityCoordinates : Point) : boolean
+  +assignBlocks(numBlocks) : List<HouseBlock>
 }
 
 ' Repository classes
@@ -41,6 +39,8 @@ class Repositories {
 
 class MapRepository {
   +getMaps()
+  +saveMap(map : Map)
+  +getCurrentMap(cMap : Map) : Map
 }
 
 ' Domain classes
@@ -49,7 +49,7 @@ class City {
   -xAxis: float
     -yAxis: float
   -houseBlocks: List<HouseBlock>
-  +City(name , coordinate)
+  +City(name , coordinate, houseBlocks)
   +addBlocks(blocks)
 }
 
@@ -67,18 +67,16 @@ class HouseBlock {
 
 ' UI class
 class AddCityUI {
-    +create()
 }
 
 ' Relationships
-UserSession .> ApplicationSession
-ApplicationSession .> AddCityUI
+AddCityController .> ApplicationSession
 Repositories --> MapRepository : mapRepository
 AddCityController .> Repositories
 AddCityController .> City
 AddCityController .> Map
+AddCityController .> MapRepository
 AddHouseBlocksController .> HouseBlock
-AddHouseBlocksController .> City
 AddCityUI .> AddCityController
 AddCityUI .> AddHouseBlocksController
 Map "1" *-- "1..*" City : contains

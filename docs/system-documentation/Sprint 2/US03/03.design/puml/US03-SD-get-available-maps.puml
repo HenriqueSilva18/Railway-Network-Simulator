@@ -1,0 +1,39 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : Ref - Get available maps
+
+participant AddCityController
+participant Repositories
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "ApplicationSession" as APP_SESSION
+
+
+activate AddCityController
+--> AddCityController: addCity()
+--> AddCityController: getAvailableMaps()
+
+group GetAvailableMaps
+    AddCityController -> APP_SESSION: getInstance()
+    activate APP_SESSION
+        APP_SESSION --> AddCityController: appSession
+    deactivate APP_SESSION
+
+    AddCityController -> REPOS_SINGLETON: getMapRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> AddCityController: mapRepository
+    deactivate REPOS_SINGLETON
+
+    AddCityController -> REPOS_MAP: getMaps()
+    activate REPOS_MAP
+        REPOS_MAP --> AddCityController: mapsList
+    deactivate REPOS_MAP
+end
+<--AddCityController : mapsList
+deactivate AddCityController
+@enduml

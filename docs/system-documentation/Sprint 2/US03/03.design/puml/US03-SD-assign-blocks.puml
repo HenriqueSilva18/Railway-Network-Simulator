@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title ManualBlockAssignment
+
+actor Editor
+participant AddHouseBlocksController as AddBHouseBlocksController
+participant HouseBlock
+
+group Manual assignment of each block
+
+    loop for each block
+        AddBHouseBlocksController -> Editor : request coordinates
+        Editor --> AddBHouseBlocksController : coordinates
+
+        AddBHouseBlocksController -> AddBHouseBlocksController : validateCoordinatesWithinCityLimits(coordinates)
+
+        alt valid coordinates
+            AddBHouseBlocksController -> HouseBlock : setHouseBlockCoordinates(coordinates)
+            activate HouseBlock
+            HouseBlock --> AddBHouseBlocksController : success
+            deactivate HouseBlock
+        else invalid
+            AddBHouseBlocksController --> Editor : ask for new coordinates
+        end alt
+    end
+
+end group
+
+group Automatic coordinate generation
+
+    AddBHouseBlocksController -> AddBHouseBlocksController : generateRandomCoordinates(numBlocks, cityLimits)
+
+    loop for each generated coordinate
+        AddBHouseBlocksController -> HouseBlock : setHouseBlockCoordinates(coordinate)
+        activate HouseBlock
+        HouseBlock --> AddBHouseBlocksController : success
+        deactivate HouseBlock
+    end
+
+end group
+
+
+@enduml
+

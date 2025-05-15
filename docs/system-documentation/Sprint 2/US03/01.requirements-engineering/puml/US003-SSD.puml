@@ -12,7 +12,7 @@ participant ":System" as System
 activate Editor
 Editor -> System : Asks to add city
         activate System
-        System --> Editor: Requests city data (name, X and Y coordinates, number of house blocks)
+        System --> Editor: Shows a list of Mapsk
         deactivate System
 
     Editor -> System: Types industry data

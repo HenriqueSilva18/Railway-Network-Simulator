@@ -40,10 +40,10 @@ Other software classes (i.e. Pure Fabrication or Controller) identified:
 
 _In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
 
-![US003-SD](svg/US003-SD-full.svg)
+![US003-SD](svg/US03-SD-split.svg)
 
 ## 3.3. Class Diagram (CD)
 
 _In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
 
-![US003-CD](svg/US003-CD.svg)
+![US003-CD](svg/US03-CD.svg)

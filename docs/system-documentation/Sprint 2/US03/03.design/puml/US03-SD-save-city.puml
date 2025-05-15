@@ -1,0 +1,44 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title SaveCity
+
+participant AddCityController
+participant City
+participant Map
+participant Repositories
+participant MapRepository
+
+group Create and save city
+
+    AddCityController -> City : new City(name, coordinates, houseBlocks)
+    activate City
+    City --> AddCityController : cityObject
+    deactivate City
+
+    AddCityController -> Map : addCity(city)
+    activate Map
+    Map --> AddCityController : success
+    deactivate Map
+
+    AddCityController -> Repositories : getInstance()
+    activate Repositories
+    Repositories --> AddCityController : repositories
+    deactivate Repositories
+
+    AddCityController -> Repositories : mapRepository()
+    activate Repositories
+    Repositories --> AddCityController : mapRepository
+    deactivate Repositories
+
+    AddCityController -> MapRepository : save(map)
+    activate MapRepository
+    MapRepository --> AddCityController : success
+    deactivate MapRepository
+
+end group
+
+@enduml
