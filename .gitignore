@@ -1,0 +1,28 @@
+# IntelliJ IDEA files
+.idea/
+.ideia/
+*.iml
+*.iws
+*.ipr
+
+# Maven build directory
+target/
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*

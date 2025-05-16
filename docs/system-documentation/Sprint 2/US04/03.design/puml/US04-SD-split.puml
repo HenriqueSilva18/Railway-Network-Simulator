@@ -9,7 +9,6 @@ autonumber
 actor "Editor" as EDITOR
 participant ":CreateScenarioUI" as UI
 participant ":CreateScenarioController" as CTRL
-participant "scenario\n:Scenario" as SCENARIO
 
 activate EDITOR
 
@@ -65,12 +64,12 @@ activate EDITOR
 
             EDITOR -> UI : selects the cargoes the port import
             activate UI
-                UI --> EDITOR : shows a list of cargoes and asks to select the ones the port export
+                UI --> EDITOR : asks the cargoes to select the ones the port export
             deactivate UI
 
             EDITOR -> UI : selects the cargoes the port export
             activate UI
-                UI --> EDITOR : shows a list of cargoes and asks to select the ones the port transform
+                UI --> EDITOR : asks the cargoes to select the ones the port transform
             deactivate UI
 
             EDITOR -> UI : selects the cargoes the port transform
@@ -115,7 +114,7 @@ activate EDITOR
                 CTRL --> CTRL : editor
             deactivate CTRL
 
-            ref over CTRL, SCENARIO
+            ref over CTRL
                 Create Scenario
             end ref
 
