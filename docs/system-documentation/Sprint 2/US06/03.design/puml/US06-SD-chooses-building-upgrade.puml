@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 7
+
+participant ":UpgradeStationController" as CTRL
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant ":Building" as building
+participant "buildingRepository\n:BuildingRepository" as REPOS_BUILDING
+
+-> CTRL: getBuildingInfo(buildingId)
+activate CTRL
+    group Choose Building to Upgrade
+    autonumber 7.1
+            CTRL -> REPOS_SINGLETON: getBuildingRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: buildingRepository
+                deactivate REPOS_SINGLETON
+
+            CTRL -> REPOS_BUILDING: getBuilding(buildingId)
+                activate REPOS_BUILDING
+                    REPOS_BUILDING --> CTRL: building
+                deactivate REPOS_BUILDING
+
+            CTRL -> building: getInfo()
+                activate building
+                building --> CTRL: buildingInfo
+                deactivate building
+    autonumber 8
+    end
+    <-- CTRL: buildingInfo
+deactivate CTRL
+@enduml

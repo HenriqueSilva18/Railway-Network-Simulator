@@ -1,0 +1,121 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US02 - Add an industry
+
+actor "Editor" as editor
+participant ":AddIndustryUI" as UI
+participant ":AddIndustryController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "industryRepository\n:IndustryRepository" as REPOS_IND
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "map\n:Map" as MAP
+participant "Industry" as IND
+
+activate editor
+
+    editor -> UI : asks to add industry
+        activate UI
+
+            UI -> CTRL**: create()
+            UI -> CTRL: getAvailableIndustries()
+
+            activate CTRL
+                CTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> CTRL: repositories
+                deactivate REPOS
+
+                CTRL -> REPOS_SINGLETON: getIndustryRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: industryRepository
+                deactivate REPOS_SINGLETON
+
+
+
+                CTRL -> REPOS_IND: getAvailableIndustries()
+                activate REPOS_IND
+                    REPOS_IND --> CTRL: availableIndustriesList
+                deactivate REPOS_IND
+
+                CTRL --> UI: availableIndustriesList
+            deactivate CTRL
+
+        UI --> editor: shows all industries available in the list
+        deactivate UI
+
+    editor -> UI: selects industry type
+        activate UI
+        UI --> editor: requests industry data (nameID, X and Y coordinates)
+        deactivate UI
+
+    editor -> UI: types industry data (nameID, X, Y)
+        activate UI
+        UI -> CTRL: validateIndustry(nameID, x, y)
+            activate CTRL
+
+            CTRL -> APP_SESSION: getInstance()
+            activate APP_SESSION
+                APP_SESSION --> CTRL: cMap = appSession
+            deactivate APP_SESSION
+
+            CTRL -> REPOS_SINGLETON: getIMapRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: mapRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> REPOS_MAP: getCurrentMap(cMap)
+            activate REPOS_MAP
+                REPOS_MAP --> CTRL: map
+            deactivate REPOS_MAP
+
+            CTRL -> MAP: isCellEmpty(x, y)
+            activate MAP
+                MAP --> CTRL: cellIsEmpty
+            deactivate MAP
+
+
+                CTRL --> UI: success
+            deactivate CTRL
+
+        UI --> editor: asks for confirmation
+        deactivate UI
+
+    editor -> UI: confirms industry data
+        activate UI
+            UI -> CTRL: createIndustry(nameID, x, y)
+            activate CTRL
+
+            CTRL -> IND: create(nameID, x, y)
+                activate IND
+                    IND --> CTRL: newIndustry
+                deactivate IND
+
+                CTRL -> MAP: addIndustry(newIndustry)
+                activate MAP
+                    MAP --> CTRL: success
+                deactivate MAP
+
+                CTRL -> REPOS_MAP: save(currentMap)
+                activate REPOS_MAP
+                    REPOS_MAP --> CTRL: success
+                deactivate REPOS_MAP
+
+               CTRL --> UI: success + industryDetails
+               deactivate CTRL
+
+            UI --> editor: displays operation success
+            UI --> editor: shows industry details on map
+
+        deactivate UI
+
+deactivate editor
+
+@enduml

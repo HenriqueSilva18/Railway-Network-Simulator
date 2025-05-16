@@ -1,0 +1,47 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram (Partial): US06 - Get Building Information
+
+actor "Player" as player
+participant ":UpgradeStationUI" as UI
+participant ":UpgradeStationController" as CTRL
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "buildingRepository\n:BuildingRepository" as REPOS_BUILDING
+participant ":Building" as building
+
+activate player
+
+    player -> UI: chooses building to upgrade
+        activate UI
+        UI -> CTRL: getBuildingInfo(buildingId)
+            activate CTRL
+            
+            CTRL -> REPOS_SINGLETON: getBuildingRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: buildingRepository
+                deactivate REPOS_SINGLETON
+                
+            CTRL -> REPOS_BUILDING: getBuilding(buildingId)
+                activate REPOS_BUILDING
+                    REPOS_BUILDING --> CTRL: building
+                deactivate REPOS_BUILDING
+                
+            CTRL -> building: getInfo()
+                activate building
+                building --> CTRL: buildingInfo
+                deactivate building
+                
+            CTRL --> UI: buildingInfo
+            deactivate CTRL
+        UI --> player: displays building information
+        UI --> player: asks for confirmation
+        deactivate UI
+
+deactivate player
+
+@enduml 

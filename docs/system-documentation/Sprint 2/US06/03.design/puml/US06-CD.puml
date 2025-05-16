@@ -1,0 +1,77 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US06 - Upgrade a selected station with a building
+
+class UpgradeStationUI {
+}
+
+class UpgradeStationController {
+    + create()
+    + getAvailableUpgrades() : List<Building>
+    + getBuildingInfo(buildingId) : BuildingInfo
+    + upgradeStation() : boolean
+    + getStationInfo(stationId) : StationInfo
+}
+
+class StationRepository {
+    + getStation(stationId) : Station
+    + save(station) : boolean
+}
+
+class BuildingRepository {
+    + getBuilding(buildingId) : Building
+}
+
+class Repositories {
+    + {static} getInstance() : Repositories
+    + getStationRepository() : StationRepository
+    + getBuildingRepository() : BuildingRepository
+}
+
+class ApplicationSession {
+    + {static} getInstance() : ApplicationSession
+    + getCurrentStation() : Station
+}
+
+class Station {
+    - nameID: String
+    - storageCapacity: int
+    - buildingSlots: int
+    - availableCargo: int
+    - requestedCargo: int
+    
+    + getAvailableUpgrades() : List<Building>
+    + upgrade(building: Building) : boolean
+    + getInfo() : StationInfo
+}
+
+class Building {
+    - nameID: String
+    - type: String
+    - availabilityYear: int
+    - evolutionCost: int
+    - evolutionStagesLeft: int
+    
+    + getInfo() : BuildingInfo
+}
+UpgradeStationUI ..> UpgradeStationController : uses
+UpgradeStationController ..> StationRepository : uses
+UpgradeStationController ..> BuildingRepository : uses
+UpgradeStationController ..> Repositories : uses
+UpgradeStationController ..> ApplicationSession : uses
+UpgradeStationController ..> Station : uses
+UpgradeStationController ..> Building : uses
+
+Station "1" o-- "0..1" Building : has >
+StationRepository --> "1" Station : returns
+BuildingRepository --> "*" Building : provides
+
+Repositories --> StationRepository : provides >
+Repositories --> BuildingRepository : provides >
+
+ApplicationSession --> Station : currentStation >
+
+@enduml 

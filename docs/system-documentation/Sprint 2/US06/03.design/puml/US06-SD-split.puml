@@ -1,0 +1,74 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US06 - Upgrade a selected station with a building
+
+actor "Player" as player
+participant ":UpgradeStationUI" as UI
+participant ":UpgradeStationController" as CTRL
+
+activate player
+
+    player -> UI: asks to upgrade station
+        activate UI
+        UI -> CTRL**: create()
+            UI -> CTRL: getAvailableUpgrades()
+            activate CTRL
+
+            ref over CTRL
+                Get available upgrades
+            end
+
+            CTRL --> UI: availableUpgrades
+            deactivate CTRL
+        UI --> player: displays upgrade options
+        deactivate UI
+        
+    player -> UI: chooses building to upgrade
+        activate UI
+        UI -> CTRL: getBuildingInfo(buildingId)
+            activate CTRL
+
+                ref over CTRL
+                    Choose building to upgrade
+                end
+
+            CTRL --> UI: buildingInfo
+            deactivate CTRL
+        UI --> player: displays building information
+        UI --> player: asks for confirmation
+        deactivate UI
+        
+    player -> UI: confirms upgrade
+        activate UI
+        UI -> CTRL: upgradeStation()
+            activate CTRL
+
+            ref over CTRL
+                Confirm station upgrade
+            end
+
+            CTRL --> UI: success
+            deactivate CTRL
+
+        UI --> player: displays operation success
+        UI -> CTRL: getStationInfo(stationId)
+            activate CTRL
+            
+            ref over CTRL
+                Get station and building information
+            end
+            CTRL --> UI: stationInfo
+            CTRL --> UI: buildingInfo
+            deactivate CTRL
+            
+        UI --> player: displays station and building information
+        deactivate UI
+
+deactivate player
+
+@enduml

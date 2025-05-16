@@ -3,17 +3,15 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber 2
+autonumber 3
 
 participant ":AddIndustryController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "industryRepository\n:IndustryRepository" as REPOS_IND
 
-
--> CTRL: create()
-activate CTRL
 -> CTRL: getAvailableIndustries()
+activate CTRL
 autonumber 3.1
 group Asks to add industry
     CTRL -> REPOS: getInstance()

@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 12
+participant ":UpgradeStationController" as CTRL
+participant "stationRepository\n:StationRepository" as REPOS_STATION
+participant ":station\nStation" as station
+
+->CTRL: upgradeStation()
+activate CTRL
+    group Confirm station upgrade
+    autonumber 12.1
+        CTRL -> station: upgrade(building)
+            activate station
+            station --> CTRL: success
+            deactivate station
+
+        CTRL -> REPOS_STATION: save(station)
+            activate REPOS_STATION
+            REPOS_STATION --> CTRL: success
+            deactivate REPOS_STATION
+
+        autonumber 13
+    end
+    <-- CTRL: success
+deactivate CTRL
+@enduml

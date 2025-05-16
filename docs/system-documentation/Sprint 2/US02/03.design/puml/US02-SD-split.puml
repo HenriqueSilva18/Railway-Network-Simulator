@@ -16,10 +16,10 @@ activate editor
     editor -> UI : asks to add industry
         activate UI
 
-            UI --> CTRL: create()
-            activate CTRL
-            UI --> CTRL: getIndustriesAvailable()
+            UI -> CTRL**: create()
 
+            UI -> CTRL: getIndustriesAvailable()
+            activate CTRL
             ref over CTRL
             Get available industries
             end
@@ -36,7 +36,7 @@ activate editor
 
     editor -> UI: types industry data (nameID, X, Y)
         activate UI
-        UI --> CTRL: validateIndustry(nameID, x, y)
+        UI -> CTRL: validateIndustry(nameID, x, y)
             activate CTRL
 
             ref over CTRL

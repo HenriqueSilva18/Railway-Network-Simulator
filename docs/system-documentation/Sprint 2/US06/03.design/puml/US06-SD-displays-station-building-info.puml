@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":UpgradeStationController" as CTRL
+participant ":station\nStation" as station
+participant ":Building" as building
+
+autonumber 15
+
+-> CTRL: getStationInfo(stationId)
+activate CTRL
+    group Get station and building information
+    autonumber 15.1
+        CTRL -> station: getInfo()
+            activate station
+            station --> CTRL: stationInfo
+            deactivate station
+
+        CTRL -> building: getInfo()
+            activate building
+            building --> CTRL: buildingInfo
+            deactivate building
+        autonumber 16
+    end
+    <-- CTRL: stationInfo
+    <-- CTRL: buildingInfo
+
+deactivate CTRL
+@enduml
