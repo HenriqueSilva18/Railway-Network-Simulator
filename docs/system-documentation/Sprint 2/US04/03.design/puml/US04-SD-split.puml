@@ -49,13 +49,13 @@ activate EDITOR
 
     EDITOR -> UI : selects the available industries in the scenario
     activate UI
-        UI -> CTRL : getAvailableCargoes()
+        UI -> CTRL : getCargoesList()
         ref over CTRL
-            Get Available Cargoes
+            Get Cargoes List
         end ref
 
         activate CTRL
-            CTRL --> UI : availableCargoesList
+            CTRL --> UI : cargoesList
         deactivate CTRL
 
         loop for each selected industry that is a port (mixed industries)
@@ -76,7 +76,7 @@ activate EDITOR
             activate UI
         end
 
-        loop for each industry
+        loop for each selected industry
             UI --> EDITOR : requests the industry generation frequency factor
             deactivate UI
 
