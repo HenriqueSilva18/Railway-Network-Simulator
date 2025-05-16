@@ -32,7 +32,6 @@ class City {
 class Industry {
   nameID
   type
-  description
   availabilityYear
   productionRate
   suppliedCargo
@@ -44,6 +43,7 @@ class IndustrySector {
   importsExports
   generatesCargo
   consumesCargo
+  description
 }
 
 class Position {

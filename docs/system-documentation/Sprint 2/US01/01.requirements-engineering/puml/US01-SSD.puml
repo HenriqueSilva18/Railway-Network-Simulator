@@ -1,20 +1,10 @@
 @startuml
 autonumber
-title "System Sequence Diagram - US01 : Create a Map (with Login)"
+title "System Sequence Diagram - US01 : Create a Map"
 actor "Editor" as Editor
 participant ":System" as System
 
 activate Editor
-
-Editor -> System: requests to access system
-activate System
-System --> Editor: displays login screen
-deactivate System
-
-Editor -> System: provides username and password
-activate System
-System --> Editor: grants access to editor interface
-deactivate System
 
 Editor -> System: asks to create a new map
 activate System

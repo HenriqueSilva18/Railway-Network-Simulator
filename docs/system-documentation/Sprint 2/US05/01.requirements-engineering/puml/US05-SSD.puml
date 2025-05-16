@@ -1,24 +1,13 @@
 @startuml
 autonumber
 
-title "System Sequence Diagram - US05: Build a Station (Happy Path)"
+title "System Sequence Diagram - US05: Build a Station"
 
 
 actor "Player" as Player
 participant ":System" as System
 
 activate Player
-
-Player -> System: requests to access system
-activate System
-System --> Player: displays login screen
-deactivate System
-
-Player -> System: provides username and password
-activate System
-System --> Player: grants access to player interface
-deactivate System
-
 
 
 Player -> System: requests to see available maps
