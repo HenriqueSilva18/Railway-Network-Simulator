@@ -1,0 +1,55 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US01 - Create a Map
+
+actor "Editor" as editor
+participant ":CreateMapUI" as UI
+participant ":CreateMapController" as CTRL
+
+activate editor
+
+    editor -> UI : asks to create a new map
+        activate UI
+            UI -> CTRL**: create()
+            UI --> editor: requests map data (name, width, height)
+        deactivate UI
+
+    editor -> UI: inputs requested data
+        activate UI
+            UI -> CTRL: validateMapData(nameID, width, height)
+            activate CTRL
+            
+            ref over CTRL
+            Validate map data
+            end
+            
+                CTRL --> UI: valid
+            deactivate CTRL
+            
+            UI --> editor: shows map data and requests confirmation
+        deactivate UI
+
+    editor -> UI: confirms data
+        activate UI
+            UI -> CTRL: createMap(nameID, width, height)
+            
+            ref over CTRL
+            Create and save map
+            end
+            
+            activate CTRL
+                CTRL --> UI: success + mapDetails
+            deactivate CTRL
+            
+            UI --> editor: displays operation success
+            UI --> editor: displays map details
+        deactivate UI
+
+deactivate editor
+
+@enduml 

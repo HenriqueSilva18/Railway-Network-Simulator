@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":CreateMapController" as CTRL
+participant "Map" as MAP
+participant "Size" as SIZE
+
+autonumber 5
+-> CTRL: validateMapData(nameID, width, height)
+        activate CTRL
+        autonumber 5.1
+        group Validate map data
+            CTRL -> MAP: validateMapName(nameID)
+            activate MAP
+                MAP --> CTRL: valid
+            deactivate MAP
+            
+            CTRL -> SIZE: validateSize(width, height)
+            activate SIZE
+                SIZE --> CTRL: valid
+            deactivate SIZE
+        end
+        autonumber 6
+        <-- CTRL: valid
+deactivate CTRL
+
+@enduml 
