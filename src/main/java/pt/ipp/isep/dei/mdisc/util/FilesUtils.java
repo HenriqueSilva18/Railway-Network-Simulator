@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.awt.Desktop;
 
 public class FilesUtils {
 
@@ -64,5 +65,19 @@ public class FilesUtils {
         Graphviz.fromString(dotSource)
                 .render(Format.PNG)
                 .toFile(new File(pngPath));
+    }
+
+    public static void openFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new IOException("File does not exist: " + filePath);
+        }
+
+        String os = System.getProperty("os.name").toLowerCase();
+        String command = os.contains("win") ? "cmd /c start " : 
+                        os.contains("mac") ? "open " : 
+                        "xdg-open ";
+        
+        Runtime.getRuntime().exec(command + file.getAbsolutePath());
     }
 }

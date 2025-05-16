@@ -131,6 +131,12 @@ public class FleuryAlgorithm {
             return null;
         }
 
+        if (oddCount == 0) {
+            System.out.println("Graph is Eulerian (all vertices have even degree).");
+        } else {
+            System.out.println("Graph is semi-Eulerian (has exactly 2 odd-degree vertices).");
+        }
+
         String start = chooseStartStation(sc, degreeMap, stationOrder, oddCount, oddStations);
         System.out.println("Starting maintenance route at: " + start + "\n");
 
