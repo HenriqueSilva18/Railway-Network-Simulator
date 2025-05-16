@@ -1,0 +1,37 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":BuildStationController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "stationTypeRepository\n:StationTypeRepository" as REPOS_STATION_TYPE
+
+autonumber 5
+-> CTRL: getStationTypes()
+    activate CTRL
+    autonumber 5.1
+    group Get available station types
+        CTRL -> REPOS: getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+        
+        CTRL -> REPOS_SINGLETON: getStationTypeRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: stationTypeRepository
+        deactivate REPOS_SINGLETON
+        
+        CTRL -> REPOS_STATION_TYPE: getStationTypes()
+        activate REPOS_STATION_TYPE
+            REPOS_STATION_TYPE --> CTRL: stationTypes
+        deactivate REPOS_STATION_TYPE
+    end
+    autonumber 6
+    <-- CTRL: stationTypes
+deactivate CTRL
+
+@enduml 

@@ -1,0 +1,177 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US05 - Build a Station
+
+actor "Player" as player
+participant ":BuildStationUI" as UI
+participant ":BuildStationController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "stationTypeRepository\n:StationTypeRepository" as REPOS_STATION_TYPE
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "stationRepository\n:StationRepository" as REPOS_STATION
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "player\n:Player" as PLAYER
+participant "map\n:Map" as MAP
+participant "station\n:Station" as STATION
+
+activate player
+
+    player -> UI : asks to build a station
+        activate UI
+            UI -> CTRL**: create()
+            UI --> player: requests station information
+        deactivate UI
+
+    player -> UI: indicates intention to proceed
+        activate UI
+            UI -> CTRL: getStationTypes()
+            activate CTRL
+                CTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> CTRL: repositories
+                deactivate REPOS
+                
+                CTRL -> REPOS_SINGLETON: getStationTypeRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: stationTypeRepository
+                deactivate REPOS_SINGLETON
+                
+                CTRL -> REPOS_STATION_TYPE: getStationTypes()
+                activate REPOS_STATION_TYPE
+                    REPOS_STATION_TYPE --> CTRL: stationTypes
+                deactivate REPOS_STATION_TYPE
+                
+                CTRL --> UI: stationTypes
+            deactivate CTRL
+            
+            UI --> player: displays available station types
+        deactivate UI
+
+    player -> UI: selects station type
+        activate UI
+            UI -> CTRL: getMapPositions()
+            activate CTRL
+                CTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> CTRL: repositories
+                deactivate REPOS
+                
+                CTRL -> REPOS_SINGLETON: getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: mapRepository
+                deactivate REPOS_SINGLETON
+                
+                CTRL -> REPOS_MAP: getAvailablePositions()
+                activate REPOS_MAP
+                    REPOS_MAP --> CTRL: availablePositions
+                deactivate REPOS_MAP
+                
+                CTRL --> UI: availablePositions
+            deactivate CTRL
+            
+            UI --> player: displays available positions
+        deactivate UI
+
+    player -> UI: selects position and inputs station nameID
+        activate UI
+            UI -> CTRL: validatePosition(position)
+            activate CTRL
+                CTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> CTRL: repositories
+                deactivate REPOS
+                
+                CTRL -> REPOS_SINGLETON: getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: mapRepository
+                deactivate REPOS_SINGLETON
+                
+                CTRL -> REPOS_MAP: getMapByID(currentMapID)
+                activate REPOS_MAP
+                    REPOS_MAP --> CTRL: map
+                deactivate REPOS_MAP
+                
+                CTRL -> MAP: validatePosition(position)
+                activate MAP
+                    MAP --> CTRL: valid
+                deactivate MAP
+                
+                CTRL --> UI: valid
+            deactivate CTRL
+            
+            UI -> CTRL: validateBudget(stationType)
+            activate CTRL
+                CTRL -> APP_SESSION: getInstance()
+                activate APP_SESSION
+                    APP_SESSION --> CTRL: appSession
+                deactivate APP_SESSION
+                
+                CTRL -> APP_SESSION_SINGLETON: getCurrentSession()
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> CTRL: player
+                deactivate APP_SESSION_SINGLETON
+                
+                CTRL -> PLAYER: validateBudget(stationType.getCost())
+                activate PLAYER
+                    PLAYER --> CTRL: valid
+                deactivate PLAYER
+                
+                CTRL --> UI: valid
+            deactivate CTRL
+            
+            UI --> player: confirms position is valid and affordable
+        deactivate UI
+
+    player -> UI: confirms data
+        activate UI
+            UI -> CTRL: buildStation(nameID, stationType, position)
+            activate CTRL
+                CTRL -> APP_SESSION: getInstance()
+                activate APP_SESSION
+                    APP_SESSION --> CTRL: appSession
+                deactivate APP_SESSION
+                
+                CTRL -> APP_SESSION_SINGLETON: getCurrentSession()
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> CTRL: player
+                deactivate APP_SESSION_SINGLETON
+                
+                CTRL -> PLAYER: buildStation(nameID, stationType, position)
+                activate PLAYER
+                    PLAYER -> STATION**: create(nameID, stationType, position)
+                    PLAYER -> PLAYER: updateBudget(stationType.getCost())
+                    PLAYER --> CTRL: station
+                deactivate PLAYER
+                
+                CTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> CTRL: repositories
+                deactivate REPOS
+                
+                CTRL -> REPOS_SINGLETON: getStationRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: stationRepository
+                deactivate REPOS_SINGLETON
+                
+                CTRL -> REPOS_STATION: save(station)
+                activate REPOS_STATION
+                    REPOS_STATION --> CTRL: success
+                deactivate REPOS_STATION
+                
+                CTRL --> UI: success + stationDetails
+            deactivate CTRL
+            
+            UI --> player: displays operation success
+            UI --> player: displays station details
+        deactivate UI
+
+deactivate player
+
+@enduml 

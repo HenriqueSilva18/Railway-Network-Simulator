@@ -4,21 +4,22 @@
 
 ### 3.1. Rationale
 
-| Interaction ID | Question: Which class is responsible for... | Answer | Justification (with patterns) |
-|:--------------|:-------------------------------------------|:-------|:------------------------------|
-| Step 1 | ... interacting with the actor? | CreateMapUI | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
-| | ... coordinating the US? | CreateMapController | Controller |
-| | ... knowing the user using the system? | UserSession | IE: cf. A&A component documentation. |
-| | | Editor | IE: knows its own data |
-| | | Map | IE: knows its own data |
-| Step 2 | ... validating map name? | Map | IE: contains the naming rules for maps. |
-| Step 3 | ... validating map dimensions? | Size | IE: contains the dimension validation rules. |
-| Step 4 | ... creating the map object? | Editor | Creator: Editor creates Maps. |
-| | ... creating the size object? | Map | Creator: Map contains Size. |
-| Step 5 | ... persisting the created map? | MapRepository | IE: maintains all maps. |
-| Step 6 | ... informing operation success? | CreateMapUI | IE: is responsible for user interactions. |
+**The rationale grounds on the SSD interactions and the identified input/output data.**
 
-### 3.2. Systematization
+| Interaction ID | Question: Which class is responsible for... | Answer              | Justification (with patterns)                                                        |
+|:---------------|:--------------------------------------------|:--------------------|:-------------------------------------------------------------------------------------|
+| Step 1  		     | ...interacting with the user?               | CreateMapUI         | Pure Fabrication: there is no reason to assign this responsibility to a domain class |
+| Step 2  		     | ...coordinating the US?                     | CreateMapController | Controller: coordinates the use case                                                 |
+| Step 3  		     | ...receiving the map data?                  | CreateMapUI         | Pure Fabrication: UI classes are responsible for user interactions                   |
+| Step 4a  		    | ...validating the map name?                 | Map                 | Information Expert: owns its data                                                    |
+| Step 4b  		    | ...validating the map size?                 | Size                | Information Expert: owns its data                                                    |
+| Step 5a 		     | ...creating the Size?                       | CreateMapController | Creator: Controller creates Size to pass to Editor                                   |
+| Step 5b  		    | ...creating the map?                        | Editor              | Creator: Editor creates Maps according to the domain model                           |
+| Step 6  		     | ...saving the map?                          | MapRepository       | Pure Fabrication: responsible for persistence operations                             |
+| Step 7  		     | ...informing operation success?             | CreateMapUI         | Pure Fabrication: UI classes handle user feedback                                    |
+| Step 8  		     | ...displaying map details?                  | CreateMapUI         | Pure Fabrication: UI classes present information to users                            |
+
+### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
@@ -28,34 +29,18 @@ According to the taken rationale, the conceptual classes promoted to software cl
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* CreateMapUI
+* CreateMapUI  
 * CreateMapController
-* Repositories
 * MapRepository
-* ScenarioRepository
-* ApplicationSession
-* UserSession
 
-## 3.3. Sequence Diagram (SD)
+## 3.2. Sequence Diagram (SD)
 
-### Full Diagram
+_In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
 
-![Sequence Diagram - Full](svg/US01-SD-full.svg)
+![US01-SD](svg/US01-SD.svg)
 
-### Partial Diagrams
+## 3.3. Class Diagram (CD)
 
-**Request Map Creation Form**
-
-![Sequence Diagram - Partial - Request Form](svg/US01-SD-partial-request-form.svg)
-
-**Validate Map Data**
-
-![Sequence Diagram - Partial - Validate Data](svg/US01-SD-partial-validate-data.svg)
-
-**Create and Save Map**
-
-![Sequence Diagram - Partial - Create Map](svg/US01-SD-partial-create-map.svg)
-
-## 3.4. Class Diagram (CD)
+_In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
 
 ![US01-CD](svg/US01-CD.svg)
