@@ -8,6 +8,9 @@ autonumber
 title Sequence Diagram: US02 - Add an industry
 
 actor "Editor" as editor
+
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
 participant ":AddIndustryUI" as UI
 participant ":AddIndustryController" as CTRL
 participant "Repositories" as REPOS
@@ -20,6 +23,71 @@ participant "map\n:Map" as MAP
 participant "Industry" as IND
 
 activate editor
+
+    editor -> mapUI : asks to edit map
+
+            activate mapUI
+                mapUI -> mapCTRL**: create()
+                mapUI -> mapCTRL: getAvailableMaps()
+
+                activate mapCTRL
+
+                    mapCTRL -> APP_SESSION: getInstance()
+                            activate APP_SESSION
+                                APP_SESSION --> mapCTRL:appSession
+                            deactivate APP_SESSION
+
+                            mapCTRL -> APP_SESSION_SINGLETON: setCurrentMap(selectedMap)
+                            activate APP_SESSION_SINGLETON
+                                APP_SESSION_SINGLETON --> mapCTRL: success
+                            deactivate APP_SESSION_SINGLETON
+
+
+                            mapCTRL -> REPOS_MAP: getMap(selectedMap)
+                            activate REPOS_MAP
+                                REPOS_MAP --> mapCTRL: map
+                            deactivate REPOS_MAP
+
+                            mapCTRL -> MAP: getMapLayout()
+                            activate MAP
+                                MAP --> mapCTRL: mapLayout
+                            deactivate MAP
+
+                    mapCTRL --> mapUI: availableMapsList
+                deactivate mapCTRL
+
+                mapUI --> editor: shows list of available maps
+            deactivate mapUI
+
+        editor -> mapUI: selects a map
+            activate mapUI
+
+                mapUI -> mapCTRL: loadMap(selectedMap)
+                activate mapCTRL
+
+                    mapCTRL -> REPOS: getInstance()
+                        activate REPOS
+                            REPOS --> mapCTRL: repositories
+                        deactivate REPOS
+
+                        mapCTRL -> REPOS_SINGLETON: getMapRepository()
+                        activate REPOS_SINGLETON
+                            REPOS_SINGLETON --> mapCTRL: MapRepository
+                        deactivate REPOS_SINGLETON
+
+                        mapCTRL -> REPOS_MAP: getAvailableMaps()
+                        activate REPOS_MAP
+                            REPOS_MAP --> mapCTRL: availableMapsList
+                        deactivate REPOS_MAP
+
+                    mapCTRL --> mapUI: mapLayout
+
+                deactivate mapCTRL
+
+                mapUI --> editor: loads and displays the selected map
+
+
+            deactivate mapUI
 
     editor -> UI : asks to add industry
         activate UI
@@ -51,7 +119,7 @@ activate editor
         UI --> editor: shows all industries available in the list
         deactivate UI
 
-    editor -> UI: selects industry type
+    editor -> UI: selects industry
         activate UI
         UI --> editor: requests industry data (nameID, X and Y coordinates)
         deactivate UI
