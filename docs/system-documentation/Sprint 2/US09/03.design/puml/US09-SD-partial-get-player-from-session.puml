@@ -3,20 +3,20 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-participant ":CreateScenarioController" as CTRL
+participant ":BuyLocomotiveController" as CTRL
 participant "ApplicationSession" as APP_SESSION
 participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
 participant "currentSession\n:UserSession" as CURRENT_SESSION
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "editorRepository\n:EditorRepository" as EDITOR_REPO
+participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
 
-autonumber 36
--> CTRL : getEditorFromSession()
+autonumber 11
+-> CTRL : getPlayerFromSession()
 
-autonumber 36.1
+autonumber 11.1
 activate CTRL
-    group Get Editor From Session
+    group Get Player From Session
         CTRL -> APP_SESSION : getInstance()
         activate APP_SESSION
             APP_SESSION --> CTRL : appSession
@@ -37,19 +37,19 @@ activate CTRL
             REPOS --> CTRL : repositories
         deactivate REPOS
 
-        CTRL -> REPOS_SINGLETON : getEditorRepository()
+        CTRL -> REPOS_SINGLETON : getPlayerRepository()
         activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL : editorRepository
+            REPOS_SINGLETON --> CTRL : playerRepository
         deactivate REPOS_SINGLETON
 
-        CTRL -> EDITOR_REPO : getEditorByUsername(username)
-        activate EDITOR_REPO
-            EDITOR_REPO --> CTRL : editor
-        deactivate EDITOR_REPO
+        CTRL -> PLAYER_REPO : getPlayerByUsername(username)
+        activate PLAYER_REPO
+            PLAYER_REPO --> CTRL : player
+        deactivate PLAYER_REPO
     end
 
-    autonumber 37
-    <-- CTRL : editor
+    autonumber 11.13
+    <-- CTRL : player
 deactivate CTRL
 
 @enduml 

@@ -4,34 +4,34 @@
 
 ### 3.1. Rationale
 
-| Interaction ID | Question: Which class is responsible for...                         | Answer                  | Justification (with patterns)                                                                                                                                                                                                  |
-|:---------------|:--------------------------------------------------------------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1  		     | ... interacting with the actor? 	                                   | BuyLocomotiveUI         | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model.                                                                                                                  |
-|                | ... coordinating the US?                                            | BuyLocomotiveController | Controller                                                                                                                                                                                                                     |
-|                | ... knowing the user using the system?                              | UserSession             | IE: cf. A&A component documentation.                                                                                                                                                                                           |
-|                |                                                                     | Player                  | IE: knows its own data                                                                                                                                                                                                         |
-|                |                                                                     | Locomotive              | IE: knows its own data                                                                                                                                                                                                         |
-| Step 2     	   | ... knowing all existing available locomotives to show? 							     | Repositories            | IE: Repositories maintains Locomotives.                                                                                                                                                                                        |
-|                |                                                                     | LocomotiveRepository    | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility on LocomotiveRepository.<br/>IE: has the responsibility to filter locomotives based on the scenario and current date. |
-| Step 3  		     | ... saving the selected locomotive? 							                         | BuyLocomotiveUI         | IE: is responsible for keeping the selected locomotive.                                                                                                                                                                        |
-| Step 4  		     | ... showing locomotive details and requesting confirmation? 							 | BuyLocomotiveUI         | IE: is responsible for user interactions.                                                                                                                                                                                      |
-| Step 5  		     | ... validating if player can afford the locomotive?							          | Player                  | IE: knows its own current budget.                                                                                                                                                                                              |
-|                | ... adding the locomotive to player's locomotives list?             | Player                  | IE: owns all its locomotives.                                                                                                                                                                                                  |
-|                | ... changing ownership of the locomotive?                           | Locomotive              | IE: knows its own owner.                                                                                                                                                                                                       |
-|                | ... subtracting locomotive price from player's balance?             | Player                  | IE: owns its own current budget                                                                                                                                                                                                |
-| Step 6  		     | ... informing operation success? 							                            | BuyLocomotiveUI         | IE: is responsible for user interactions.                                                                                                                                                                                      |              
+| Interaction ID | Question: Which class is responsible for...        | Answer                  | Justification (with patterns)                                                                                                     |
+|:---------------|:--------------------------------------------------|:-----------------------|:--------------------------------------------------------------------------------------------------------------------------------|
+| Step 1         | ... interacting with the actor?                    | BuyLocomotiveUI        | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model.                     |
+|                | ... coordinating the US?                           | BuyLocomotiveController| Controller                                                                                                                        |
+|                | ... knowing the user using the system?             | UserSession            | IE: cf. A&A component documentation.                                                                                              |
+|                | ... getting current scenario and date?             | ApplicationSession     | IE: knows the current game state including scenario and date.                                                                     |
+|                | ... getting available locomotives?                  | Scenario               | IE: knows its available locomotives for a given date.                                                                             |
+| Step 2         | ... showing available locomotives?                  | BuyLocomotiveUI        | IE: is responsible for user interactions.                                                                                         |
+| Step 3         | ... saving the selected locomotive?                | BuyLocomotiveUI        | IE: is responsible for keeping the selected locomotive.                                                                           |
+|                | ... getting locomotive details?                    | LocomotiveRepository   | IE: knows/has access to all locomotives.                                                                                          |
+| Step 4         | ... showing locomotive details?                    | BuyLocomotiveUI        | IE: is responsible for user interactions.                                                                                         |
+| Step 5         | ... getting player information?                    | PlayerRepository       | IE: knows/has access to all players.                                                                                              |
+|                | ... validating purchase possibility?               | Player                 | IE: knows its own budget and can validate if purchase is possible.                                                                |
+|                | ... processing the purchase?                       | Player                 | Creator (Rule 1): in the DM Player owns Locomotives.                                                                              |
+|                | ... updating locomotive ownership?                 | Locomotive             | IE: knows its own data including owner.                                                                                           |
+| Step 6         | ... informing operation success?                   | BuyLocomotiveUI        | IE: is responsible for user interactions.                                                                                         |
 
 ### Systematization ##
 
-According to the taken rationale, the conceptual classes promoted to software classes are:
+According to the taken rationale, the conceptual classes promoted to software classes are: 
 
 * Player
 * Locomotive
 * Scenario
 
-Other software classes (i.e. Pure Fabrication) identified:
+Other software classes (i.e. Pure Fabrication) identified: 
 
-* BuyLocomotiveUI
+* BuyLocomotiveUI  
 * BuyLocomotiveController
 * Repositories
 * LocomotiveRepository
@@ -56,23 +56,26 @@ It uses Interaction Occurrence (a.k.a. Interaction Use).
 
 ![Sequence Diagram - split](svg/US09-SD-split.svg)
 
+**Get Current Scenario and Date**
+
+![Sequence Diagram - Partial - Get Current Scenario and Date](svg/US09-SD-partial-get-current-scenario-and-date.svg)
+
 **Get Available Locomotives**
 
 ![Sequence Diagram - Partial - Get Available Locomotives](svg/US09-SD-partial-get-available-locomotives.svg)
 
-**Get Locomotive Details**
+**Get Locomotive**
 
-![Sequence Diagram - Partial - Get Locomotive Details](svg/US09-SD-partial-get-locomotive-details.svg)
+![Sequence Diagram - Partial - Get Locomotive](svg/US09-SD-partial-get-locomotive.svg)
 
-**Get Current Player**
+**Get Player From Session**
 
-![Sequence Diagram - Partial - Get Current Player](svg/US09-SD-partial-get-current-player.svg)
+![Sequence Diagram - Partial - Get Player From Session](svg/US09-SD-partial-get-player-from-session.svg)
 
 **Purchase Locomotive**
 
 ![Sequence Diagram - Partial - Purchase Locomotive](svg/US09-SD-partial-purchase-locomotive.svg)
 
-
 ## 3.3. Class Diagram (CD)
 
-![US09-CD](svg/US09-CD.svg)
+![Class Diagram](svg/US09-CD.svg)

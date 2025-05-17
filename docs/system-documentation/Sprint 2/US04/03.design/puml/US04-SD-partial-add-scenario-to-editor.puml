@@ -6,10 +6,10 @@ skinparam shadowing false
 participant ":CreateScenarioController" as CTRL
 participant "editorRepository\n:EditorRepository" as EDITOR_REPO
 
-autonumber 37
+autonumber 39
 -> CTRL : addScenarioToEditor(editor, scenario)
 
-autonumber 37.1
+autonumber 39.1
 activate CTRL
     group Add Scenario to Editor
         CTRL -> EDITOR_REPO : addScenarioToEditor(editor, scenario)
@@ -18,7 +18,7 @@ activate CTRL
         deactivate EDITOR_REPO
     end
 
-    autonumber 38
+    autonumber 40
     <-- CTRL : true
 deactivate CTRL
 

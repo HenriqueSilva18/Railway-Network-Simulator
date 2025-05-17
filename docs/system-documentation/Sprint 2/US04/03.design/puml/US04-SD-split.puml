@@ -30,6 +30,16 @@ activate EDITOR
 
     EDITOR -> UI : selects map for the scenario
     activate UI
+
+        UI -> CTRL : getMapByID(mapID)
+        activate CTRL
+                        ref over CTRL
+                            Get Map By ID
+                        end ref
+        CTRL -> UI : selectedMap
+        deactivate CTRL
+
+
         UI --> EDITOR : requests name, start and end date (time period)
     deactivate UI
 
@@ -51,9 +61,9 @@ activate EDITOR
 
         UI -> CTRL : getCargoList()
         activate CTRL
-                        ref over CTRL
-                            Get Cargo  List
-                        end ref
+            ref over CTRL
+                Get Cargo List
+            end ref
 
             CTRL --> UI : cargoList
         deactivate CTRL

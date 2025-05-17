@@ -19,14 +19,17 @@ class Player {
   password
   initialBudget
   currentBudget
-  locomotivesList
+  ownedLocomotives
 }
 
 class Scenario {
   nameID
-  timeRestrictions
-  technologicalRestrictions
-  historicalRestrictions
+  editor
+  startDate
+  endDate
+  tweakedCityList
+  availableIndustryList
+  availableLocomotives
 }
 
 class Locomotive {

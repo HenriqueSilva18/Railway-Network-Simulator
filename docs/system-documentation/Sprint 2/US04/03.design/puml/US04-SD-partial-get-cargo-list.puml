@@ -8,10 +8,10 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "cargoRepository\n:cargoRepository" as CARGO_REPO
 
-autonumber 13
+autonumber 15
 -> CTRL : getCargoList()
 
-autonumber 13.1
+autonumber 15.1
 activate CTRL
     group Get Cargo List
         CTRL -> REPOS : getInstance()
@@ -30,7 +30,7 @@ activate CTRL
         deactivate CARGO_REPO
     end
 
-    autonumber 14
+    autonumber 16
     <-- CTRL : cargoList
 deactivate CTRL
 

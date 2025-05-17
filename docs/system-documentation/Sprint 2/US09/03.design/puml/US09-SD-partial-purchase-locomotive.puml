@@ -4,66 +4,52 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":BuyLocomotiveController" as CTRL
-participant "player\n:Player" as PLAYER
 participant "locomotive\n:Locomotive" as LOCOMOTIVE
-participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
-participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
+participant "player\n:Player" as PLAYER_OBJ
 
-autonumber 16
--> CTRL: purchaseLocomotive(locomotive, player)
+autonumber 11.14
+-> CTRL : purchaseLocomotive(locomotive)
 
-autonumber 16.1
+autonumber 11.15
 activate CTRL
     group Purchase Locomotive
-
-        CTRL -> CTRL: checkBalance(locomotive, player)
-        activate CTRL
-            CTRL -> LOCOMOTIVE: getPrice()
-            activate LOCOMOTIVE
-                LOCOMOTIVE --> CTRL: price
-            deactivate LOCOMOTIVE
-
-            CTRL -> PLAYER: getBalance()
-            activate PLAYER
-                PLAYER --> CTRL: balance
-            deactivate PLAYER
-
-            CTRL --> CTRL: true
-        deactivate CTRL
-
-        CTRL -> PLAYER: purchaseLocomotive(locomotive)
-        activate PLAYER
-            PLAYER -> PLAYER: removeBalance(price)
-            activate PLAYER
-                PLAYER --> PLAYER: true
-            deactivate PLAYER
-
-            PLAYER -> PLAYER: addLocomotive(locomotive)
-            activate PLAYER
-                PLAYER --> PLAYER: true
-            deactivate PLAYER
-
-            PLAYER --> CTRL: true
-        deactivate PLAYER
-
-        CTRL -> LOCOMOTIVE: setOwner(player)
+        CTRL -> LOCOMOTIVE : getPrice()
         activate LOCOMOTIVE
-            LOCOMOTIVE --> CTRL: true
+            LOCOMOTIVE --> CTRL : locomotivePrice
         deactivate LOCOMOTIVE
 
-        CTRL -> LOC_REPO: save(locomotive)
-        activate LOC_REPO
-            LOC_REPO --> CTRL: true
-        deactivate LOC_REPO
+        CTRL -> CTRL : checkBalance(locomotivePrice, player)
+        activate CTRL
+            CTRL -> PLAYER_OBJ : hasSufficientMoney(locomotivePrice)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> CTRL : true
+            deactivate PLAYER_OBJ
+            CTRL --> CTRL : true
+        deactivate CTRL
 
-        CTRL -> PLAYER_REPO: save(player)
-        activate PLAYER_REPO
-            PLAYER_REPO --> CTRL: true
-        deactivate PLAYER_REPO
+        CTRL -> PLAYER_OBJ : completePurchase(locomotive)
+        activate PLAYER_OBJ
+            PLAYER_OBJ -> PLAYER_OBJ : removeMoney(locomotivePrice)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> PLAYER_OBJ : true
+            deactivate PLAYER_OBJ
+
+            PLAYER_OBJ -> PLAYER_OBJ : addLocomotive(locomotive)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> PLAYER_OBJ : true
+            deactivate PLAYER_OBJ
+
+            PLAYER_OBJ --> CTRL : true
+        deactivate PLAYER_OBJ
+
+        CTRL -> LOCOMOTIVE : setOwner(player)
+        activate LOCOMOTIVE
+            LOCOMOTIVE --> CTRL : true
+        deactivate LOCOMOTIVE
     end
 
-    autonumber 17
-    <-- CTRL: true
+    autonumber 12
+    <-- CTRL : true
 deactivate CTRL
 
 @enduml 

@@ -6,73 +6,66 @@ skinparam shadowing false
 autonumber
 
 'hide footbox
-actor "Player" as PLAYER_ACTOR
-
+actor "Player" as PLAYER
 participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
 
-activate PLAYER_ACTOR
+activate PLAYER
 
-    PLAYER_ACTOR -> UI : asks to buy a locomotive
-
+    PLAYER -> UI : asks to buy a locomotive
     activate UI
-
         UI --> CTRL** : create()
         UI -> CTRL : getAvailableLocomotives()
+        
+        ref over CTRL
+            Get Current Scenario and Date
+        end ref
+
         ref over CTRL
             Get Available Locomotives
-
         end ref
 
         activate CTRL
-
             CTRL --> UI : availableLocomotives
         deactivate CTRL
 
-        UI --> PLAYER_ACTOR : shows a list of available locomotives (for the scenario and current date)
+        UI --> PLAYER : shows a list of available locomotives (for the scenario and current date)
     deactivate UI
 
-    PLAYER_ACTOR -> UI : selects a locomotive
+    PLAYER -> UI : selects a locomotive
     activate UI
+        UI -> CTRL : getLocomotive(locomotiveID)
+        
+        ref over CTRL
+            Get Locomotive
+        end ref
 
-        UI -> CTRL : getLocomotiveDetails(locomotiveID)
         activate CTRL
-            ref over CTRL
-                Get Locomotive Details
-
-            end ref
             CTRL --> UI : locomotive
         deactivate CTRL
 
-        UI --> PLAYER_ACTOR : shows locomotive details and requests confirmation
+        UI --> PLAYER : shows locomotive details and requests confirmation
     deactivate UI
 
-    PLAYER_ACTOR -> UI : confirms purchase
+    PLAYER -> UI : confirms purchase
     activate UI
+        UI -> CTRL : purchaseLocomotive(locomotive)
+        
+        ref over CTRL
+            Get Player From Session
+        end ref
 
-        UI -> CTRL : purchaseLocomotive(locomotiveID)
+        ref over CTRL
+            Purchase Locomotive
+        end ref
+
         activate CTRL
-
-            CTRL -> CTRL : getPlayerFromSession()
-            activate CTRL
-
-                ref over CTRL
-                    Get Current Player
-
-                end ref
-                CTRL --> CTRL : player
-            deactivate CTRL
-
-            ref over CTRL
-                Purchase Locomotive
-            end ref
-
             CTRL --> UI : true
         deactivate CTRL
 
-        UI --> PLAYER_ACTOR : displays operation success
+        UI --> PLAYER : displays operation success
     deactivate UI
 
-deactivate PLAYER_ACTOR
+deactivate PLAYER
 
-@enduml 
+@enduml

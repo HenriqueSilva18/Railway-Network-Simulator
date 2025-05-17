@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioUI" as UI
+participant "mapRepository\n:MapRepository" as MAP_REPO
+
+autonumber 7
+-> UI : getMapByID(mapID)
+
+autonumber 7.1
+activate UI
+    group Get Map By ID
+        UI -> MAP_REPO : getMapByID(mapID)
+        activate MAP_REPO
+            MAP_REPO --> UI : selectedMap
+        deactivate MAP_REPO
+    end
+
+    autonumber 8
+    <-- UI : selectedMap
+deactivate UI
+
+@enduml 

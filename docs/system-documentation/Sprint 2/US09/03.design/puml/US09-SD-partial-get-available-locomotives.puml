@@ -3,40 +3,23 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber
-
-'hide footbox
-
 participant ":BuyLocomotiveController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+participant "scenario\n:Scenario" as SCENARIO
 
-autonumber 3
+autonumber 3.13
+-> CTRL : getAvailableLocomotives(currentScenario, currentDate)
 
- -> CTRL : getAvailableLocomotives()
-autonumber 3.1
+autonumber 3.14
 activate CTRL
     group Get Available Locomotives
-
-            CTRL -> REPOS : getInstance()
-            activate REPOS
-                REPOS --> CTRL: repositories
-            deactivate REPOS
-
-            CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
-            activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL: locomotiveRepository
-            deactivate REPOS_SINGLETON
-
-            CTRL -> LOC_REPO : getAvailableLocomotives(currentScenario, currentDate)
-            activate LOC_REPO
-                LOC_REPO --> CTRL : availableLocomotives
-            deactivate LOC_REPO
-
+        CTRL -> SCENARIO : getAvailableLocomotives(currentScenario, currentDate)
+        activate SCENARIO
+            SCENARIO --> CTRL : availableLocomotives
+        deactivate SCENARIO
     end
+
     autonumber 4
-    <-- CTRL  : availableLocomotives
+    <-- CTRL : availableLocomotives
 deactivate CTRL
 
 @enduml 

@@ -6,10 +6,10 @@ skinparam shadowing false
 participant ":CreateScenarioController" as CTRL
 participant "map\n:Map" as MAP
 
-autonumber 23
+autonumber 25
 -> CTRL : getMapCities(selectedMap)
 
-autonumber 23.1
+autonumber 25.1
 activate CTRL
     group Get Map Cities List
         CTRL -> MAP : getCities()
@@ -18,7 +18,7 @@ activate CTRL
         deactivate MAP
     end
 
-    autonumber 24
+    autonumber 26
     <-- CTRL : cityList
 deactivate CTRL
 

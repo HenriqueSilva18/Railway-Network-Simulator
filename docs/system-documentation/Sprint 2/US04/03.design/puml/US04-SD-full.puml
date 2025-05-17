@@ -53,6 +53,16 @@ activate EDITOR
 
     EDITOR -> UI : selects map for the scenario
     activate UI
+
+        UI -> CTRL : getMapByID(mapID)
+        activate CTRL
+        CTRL -> MAP_REPO : getMapByID(mapID)
+        activate MAP_REPO
+        MAP_REPO --> CTRL : selectedMap
+        deactivate MAP_REPO
+        CTRL -> UI : selectedMap
+        deactivate CTRL
+
         UI --> EDITOR : requests name, start and end date (time period)
     deactivate UI
 

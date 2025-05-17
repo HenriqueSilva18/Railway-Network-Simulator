@@ -8,10 +8,10 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "locomotiveRepository\n:LocomotiveRepository" as LOCO_REPO
 
-autonumber 27
+autonumber 29
 -> CTRL : getLocomotiveTypes()
 
-autonumber 27.1
+autonumber 29.1
 activate CTRL
     group Get Locomotive Types List
         CTRL -> REPOS : getInstance()
@@ -30,7 +30,7 @@ activate CTRL
         deactivate LOCO_REPO
     end
 
-    autonumber 28
+    autonumber 30
     <-- CTRL : locomotiveTypeList
 deactivate CTRL
 

@@ -13,6 +13,7 @@
 | Step 2         | ... knowing all available maps to show?            | Repositories           | IE: Repositories maintains Maps.                                                                                                    |
 |                |                                                    | MapRepository          | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility to MapRepository.         |
 | Step 3         | ... saving the selected map?                       | CreateScenarioUI       | IE: is responsible for keeping the selected map.                                                                                    |
+|                | ... retrieving the selected map by ID?             | MapRepository          | IE: knows all maps and can retrieve them by ID.                                                                                     |
 | Step 4         | ... requesting name and time period data?          | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
 | Step 5         | ... saving the inputted time period data?          | CreateScenarioUI       | IE: is responsible for keeping the inputted data.                                                                                   |
 | Step 6         | ... getting map industries?                        | Map                    | IE: knows its own industries.                                                                                                       |
@@ -87,6 +88,10 @@ It uses Interaction Occurrence (a.k.a. Interaction Use).
 **Get Available Maps List Partial SD**
 
 ![Sequence Diagram - Partial - Get Available Maps List](svg/US04-SD-partial-get-available-maps.svg)
+
+**Get Map By ID**
+
+![Sequence Diagram - Partial - Get Map By ID](svg/US04-SD-partial-get-map-by-id.svg)
 
 **Get Map Industries List**
 

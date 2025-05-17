@@ -6,10 +6,10 @@ skinparam shadowing false
 participant "map\n:Map" as MAP
 participant "scenario\n:Scenario" as SCENARIO
 
-autonumber 36
+autonumber 38
 -> MAP : createScenario(nameID, editor, startDate, endDate,\n selectedIndustries, portImports, portExports, portProduces,\n genIndustryFactors, availableLocomotives, mapCityList, cityTrafficRates)
 
-autonumber 36.1
+autonumber 38.1
 activate MAP
     group Create Scenario
         MAP --> SCENARIO** : create(nameID, editor, startDate, endDate,\n selectedIndustries, availableLocomotives, mapCityList)
@@ -45,7 +45,7 @@ activate MAP
         deactivate MAP
     end
 
-    autonumber 37
+    autonumber 39
     <-- MAP : scenario
 deactivate MAP
 
