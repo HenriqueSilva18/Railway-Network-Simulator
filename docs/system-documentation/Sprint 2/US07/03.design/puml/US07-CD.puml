@@ -1,78 +1,118 @@
-@startuml us07_class_diagram
-
-left to right direction
+@startuml
 
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype polyline
 skinparam classAttributeIconSize 0
 
-title Class Diagram: US07 - List Stations
+title Class Diagram: US07 - List Stations and View Details
 
-class ListStationUI {
-
+class ApplicationSession {
+  -ApplicationSession()
+  +getInstance()
+  +getCurrentSession()
 }
 
 class ListStationController {
-  +listAvailableMaps()
-  +getStations(mapId)
-  +getStationDetails(stationId)
-}
-
-class ApplicationSession {
-    + getInstance()
+  +getAvailableMaps() : List<Map>
+  +loadMap(mapId) : Map
+  +getStations(mapId) : List<Station>
+  +getStationDetails(stationId) : StationDetails
 }
 
 class Repositories {
-  +getInstance()
-  +mapRepository()
+  -mapRepository : MapRepository
+  +getInstance() : Repositories
+  +mapRepository() : MapRepository
 }
 
 class MapRepository {
-  +getMaps()
-  +findMap(map)
+  +getMaps() : List<Map>
+  +findMap(mapId) : Map
 }
 
 class Map {
-  -nameId
-  +getCities()
+  -nameID : String
+  -cityList : List<City>
+  -industryList : List<Industry>
+  -size : Size
+  +getCities() : List<City>
 }
 
 class City {
-  -name
-  +getStations()
+  -name : String
+  -position : Position
+  -stations : List<Station>
+  +getStations() : List<Station>
+}
+
+class Size {
+  -width : int
+  -height : int
+  +getWidth() : int
+  +getHeight() : int
 }
 
 class Station {
-  -name
-  -storageCapacity
-  -buildingSlots
-    -cargoDemand
-    -cargoSupply
-  +getDetails()
-  +getBuildings()
-  +getDemandedCargo()
-  +getSupplyCargo()
+  -nameID : String
+  -storageCapacity : int
+  -buildingSlots : int
+  -availableCargo : List<Cargo>
+  -requestedCargo : List<Cargo>
+  +getDetails() : StationDetails
+  +getBuildings() : List<Building>
+  +getDemandedCargo() : List<Cargo>
+  +getSupplyCargo() : List<Cargo>
+}
+
+class StationType {
+  -name : String
+  -economicRadius : int
+  -cost : int
+  -centerPoint : Position
 }
 
 class Building {
-  -name
-  -type
+  -nameID : String
+  -type : String
+  -availabilityYear : int
+  -evolutionCost : int
+  -evolutionStagesLeft : int
+  -effect : String
 }
 
+class Cargo {
+  -name : String
+  -amount : int
+  -lifespan : int
+  -type : String
+  -productionResources : List<Resource>
+}
 
+class Position {
+  -x : int
+  -y : int
+  -occupied : boolean
+  +isOccupied() : boolean
+  +setOccupied(occupied : boolean) : void
+}
 
-' Relations
+class ListStationUI {
+}
+
+' Relationships
 ListStationUI ..> ListStationController
 ListStationController ..> ApplicationSession
-
 ListStationController ..> MapRepository
-
 ListStationController ..> Repositories
-ListStationController ..> Map
-Repositories --> "1" MapRepository : mapRepository
-Map "1"-->"*" City
-City"*" <--"1" Station : serves
-Station "1" --> "*" Building : upgraded with
+Repositories --> MapRepository : mapRepository
+Map "1" *-- "*" City : contains
+Map "1" *-- "1" Size : has
+City "1" *-- "*" Station : contains
+Station "*" --> "1" StationType : defined by
+Station "1" *-- "*" Building : contains
+Station "1" *-- "*" Cargo : stores
+Station "1" --> "1" Position : located at
+Map "1" --> "*" Position : tracks
 
 @enduml

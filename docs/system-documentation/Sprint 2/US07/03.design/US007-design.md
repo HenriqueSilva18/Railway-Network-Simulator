@@ -6,18 +6,24 @@
 
 **The rationale grounds on the SSD interactions and the identified input/output data.**
 
-| Interaction ID | Question: Which class is responsible for...                                 | Answer                 | Justification (with patterns)                                         |
-|:--------------:|:-----------------------------------------------------------------------------|:------------------------|:----------------------------------------------------------------------|
-| Step 1         | initiating the request to list available maps?                              | `ListStationUI`        | UI layer starts the use case                                          |
-| Step 2         | coordinating the request logic for available maps?                          | `ListStationController`| Applies Controller pattern, mediates between UI and model             |
-| Step 3         | maintaining the current session and editor user?                            | `ApplicationSession`   | Singleton holding current user session                                |
-| Step 4         | providing access to map data?                                                | `MapRepository`        | Responsible for persistence                |
-| Step 5         | returning cities of a map?                                                   | `Map`                  | Aggregates cities                |
-| Step 6         | returning stations for a city?                                               | `City`                 | Responsible for its stations                    |
-| Step 7         | retrieving a station's basic details?                                        | `Station`              | Information Expert over its own attributes                            |
-| Step 8         | retrieving the list of buildings in a station?                              | `Station`              | Aggregates buildings                              |
-| Step 9         | retrieving the demanded and supplied cargo for a station?                   | `Station`              | Knows its cargo needs and supplies                                    |
-| Step 10        | presenting data back to the player?                                          | `ListStationUI`        | Interface responsibility                           |
+| Interaction ID | Question: Which class is responsible for...                   | Answer                  | Justification (with patterns)                                                                                     |
+|:--------------:|:--------------------------------------------------------------|:------------------------|:------------------------------------------------------------------------------------------------------------------|
+|     Step 1     | ... interacting with the actor?                               | `ListStationUI`         | **Pure Fabrication**: There is no reason to assign this responsibility to any existing class in the Domain Model. |
+|                | ... coordinating the US?                                      | `ListStationController` | **Controller**: Coordinates the flow of the use case between UI, domain entities, and repositories.               |
+|                | ... knowing the user using the system?                        | `ApplicationSession`    | **IE**: Represents the current user in session.                                                                   |
+|                | ... getting the list of available maps?                       | `MapRepository`         | **IE**: Knows all maps in the system.                                                                             |
+|     Step 2     | ... displaying list of available maps?                        | `ListStationUI`         | **IE**: Responsible for user interaction and displaying information.                                              |
+|     Step 3     | ... processing the map selection?                             | `ListStationController` | **Controller**: Processes user input and coordinates the action.                                                  |
+|     Step 4     | ... loading and displaying the selected map?                  | `ListStationUI`         | **IE**: Responsible for user interaction and displaying information.                                              |
+|     Step 5     | ... requesting to see available stations?                     | `ListStationUI`         | **IE**: Responsible for user interaction.                                                                         |
+|     Step 6     | ... retrieving stations from the map?                         | `Map`                   | **IE**: The Map knows its cities which contain stations.                                                          |
+|                | ... getting stations from cities?                             | `City`                  | **IE**: Knows its own stations.                                                                                   |
+|     Step 7     | ... displaying list of available stations?                    | `ListStationUI`         | **IE**: Responsible for user interaction and displaying information.                                              |
+|     Step 8     | ... processing station selection?                             | `ListStationController` | **Controller**: Processes user input and coordinates the action.                                                  |
+|     Step 9     | ... retrieving a station's details?                           | `Station`               | **IE**: Information Expert over its own attributes.                                                               |
+|                | ... retrieving the list of buildings in a station?            | `Station`               | **IE**: Aggregates buildings.                                                                                     |
+|                | ... retrieving the demanded and supplied cargo for a station? | `Station`               | **IE**: Knows its cargo needs and supplies.                                                                       |
+|    Step 10     | ... presenting data back to the player?                       | `ListStationUI`         | **IE**: Responsible for user interaction and displaying information.                                              |
 
 ### Systematization
 
@@ -26,8 +32,11 @@ According to the taken rationale, the conceptual classes promoted to software cl
 * `Map`
 * `City`
 * `Station`
+* `StationType`
 * `Building`
 * `Cargo`
+* `Position`
+* `Size`
 
 Other software classes (i.e. Pure Fabrication) identified:
 
@@ -35,7 +44,7 @@ Other software classes (i.e. Pure Fabrication) identified:
 * `ListStationController`
 * `MapRepository`
 * `ApplicationSession`
-* `UserSession`
+* `Repositories`
 
 ## 3.2. Sequence Diagram (SD)
 

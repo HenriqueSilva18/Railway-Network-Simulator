@@ -5,34 +5,36 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
-title System Sequence Diagram : Ref - Get available maps
+title System Sequence Diagram : US07 - Get Available Maps
 
-participant ListStationController as AddCityController
+participant ListStationController
 participant Repositories
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "mapRepository\n:MapRepository" as REPOS_MAP
-participant "ApplicationSession" as APP_SESSION
+participant MapRepository
+participant Map
 
-
-activate AddCityController
---> AddCityController: getAvailableMaps()
-
+autonumber 2
+--> ListStationController : getAvailableMaps()
+activate ListStationController
+autonumber 2.1
 group GetAvailableMaps
-    AddCityController -> APP_SESSION: getInstance()
-    activate APP_SESSION
-        APP_SESSION --> AddCityController: appSession
-    deactivate APP_SESSION
+  ListStationController -> Repositories : getInstance()
+  activate Repositories
+  Repositories --> ListStationController : repositoriesInstance
+  deactivate Repositories
 
-    AddCityController -> REPOS_SINGLETON: getMapRepository()
-    activate REPOS_SINGLETON
-        REPOS_SINGLETON --> AddCityController: mapRepository
-    deactivate REPOS_SINGLETON
+  ListStationController -> Repositories : mapRepository()
+  activate Repositories
+  Repositories --> ListStationController : mapRepositoryInstance
+  deactivate Repositories
 
-    AddCityController -> REPOS_MAP: getMaps()
-    activate REPOS_MAP
-        REPOS_MAP --> AddCityController: mapsList
-    deactivate REPOS_MAP
+  ListStationController -> MapRepository : getMaps()
+  activate MapRepository
+  MapRepository --> ListStationController : mapsList
+  deactivate MapRepository
 end
-<--AddCityController : mapsList
-deactivate AddCityController
-@enduml
+autonumber 3
+<-- ListStationController : availableMapsList
+
+deactivate ListStationController
+
+@enduml 

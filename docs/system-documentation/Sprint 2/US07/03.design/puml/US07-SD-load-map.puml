@@ -1,0 +1,50 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : US07 - Load Map
+
+participant ListStationController
+participant Repositories
+participant MapRepository
+participant Map
+participant ApplicationSession
+
+autonumber 6
+--> ListStationController: loadMap(mapId)
+activate ListStationController
+autonumber 6.1
+group LoadMap
+  ListStationController -> Repositories : getInstance()
+  activate Repositories
+  Repositories --> ListStationController : repositoriesInstance
+  deactivate Repositories
+
+  ListStationController -> Repositories : mapRepository()
+  activate Repositories
+  Repositories --> ListStationController : mapRepositoryInstance
+  deactivate Repositories
+
+  ListStationController -> MapRepository : findMap(mapId)
+  activate MapRepository
+  MapRepository --> ListStationController : selectedMap
+  deactivate MapRepository
+
+  ListStationController -> ApplicationSession : getInstance()
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : sessionInstance
+  deactivate ApplicationSession
+
+  ListStationController -> ApplicationSession : setCurrentMap(selectedMap)
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : success
+  deactivate ApplicationSession
+end
+autonumber 7
+<-- ListStationController : selectedMap
+deactivate ListStationController
+
+@enduml 

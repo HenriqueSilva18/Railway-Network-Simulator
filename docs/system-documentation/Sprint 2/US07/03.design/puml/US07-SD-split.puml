@@ -10,47 +10,67 @@ title System Sequence Diagram : US07 - List stations and view details
 actor "Player" as Player
 participant ListStationUI
 participant ListStationController
+participant MapRepository
+participant ApplicationSession
 
 activate Player
-Player -> ListStationUI : request to list stations
-activate ListStationUI
+Player -> ListStationUI : asks to see available maps
+        activate ListStationUI
+        ListStationUI --> ListStationController : getAvailableMaps()
+        activate ListStationController
 
-ListStationUI -> ListStationController : getAvailableMaps()
-activate ListStationController
-ref over ListStationController
-    GetAvailableMaps
-end
-ListStationController --> ListStationUI : list of maps
-deactivate ListStationController
+        ref over ListStationController
+        GetAvailableMaps
+        end
+        ListStationController --> ListStationUI : availableMapsList
+        deactivate ListStationController
 
-ListStationUI -> Player : show map list
-deactivate ListStationUI
+        ListStationUI --> Player: shows list of available maps
+        deactivate ListStationUI
+        
+        Player -> ListStationUI: selects a map
+        activate ListStationUI
+        ListStationUI --> ListStationController: loadMap(mapId)
+        activate ListStationController
+        
+        ref over ListStationController
+        LoadMap
+        end
+        
+        ListStationController --> ListStationUI: selectedMap
+        deactivate ListStationController
+        ListStationUI --> Player: loads and displays the selected map
+        deactivate ListStationUI
 
-Player -> ListStationUI : selects a map
-activate ListStationUI
-ListStationUI -> ListStationController : getStations(map)
-activate ListStationController
-ref over ListStationController
-    ListStations
-end
-ListStationController --> ListStationUI : aggregated station list
-deactivate ListStationController
+Player -> ListStationUI : request to see available stations
+        activate ListStationUI
+        ListStationUI --> ListStationController: getStations(mapId)
+        activate ListStationController
+        
+        ref over ListStationController
+        GetStations
+        end
+        
+        ListStationController --> ListStationUI: stationsList
+        deactivate ListStationController
+        
+        ListStationUI --> Player : displays list of available stations
+        ListStationUI --> Player : requests to select a specific station
+        deactivate ListStationUI
 
-ListStationUI -> Player : show station list
-deactivate ListStationUI
+Player -> ListStationUI : selects a specific station
+        activate ListStationUI
+        ListStationUI --> ListStationController: getStationDetails(stationId)
+        activate ListStationController
+        
+        ref over ListStationController
+        GetStationDetails
+        end
+        
+        ListStationController --> ListStationUI: stationDetails
+        deactivate ListStationController
+        
+        ListStationUI --> Player : show station details
+        deactivate ListStationUI
 
-Player -> ListStationUI : selects a station
-activate ListStationUI
-ListStationUI -> ListStationController : getStationDetails(stationId)
-activate ListStationController
-ref over ListStationController
-    GetStationDetails
-end
-ListStationController --> ListStationUI : station details (name, capacity, slots, buildings, cargo)
-deactivate ListStationController
-
-ListStationUI -> Player : show station details
-deactivate ListStationUI
-deactivate Player
-
-@enduml
+@enduml 
