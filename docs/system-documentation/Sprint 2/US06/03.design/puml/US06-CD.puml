@@ -67,6 +67,7 @@ class Station {
     - buildingSlots: int
     - availableCargo: int
     - requestedCargo: int
+    - position: Position
     
     + getAvailableUpgrades() : List<Building>
     + upgrade(building: Building) : boolean
@@ -80,27 +81,46 @@ class Building {
     - availabilityYear: int
     - evolutionCost: int
     - evolutionStagesLeft: int
+    - effect: String
     
     + getInfo() : BuildingInfo
 }
 
 class Map {
-    - mapId: String
-    - name: String
-    - layout: MapLayout
+    - nameID: String
+    - cityList: List<City>
+    - industryList: List<Industry>
+    - size: Size
+    - positions: List<Position>
 }
 
+class Position {
+    - x: int
+    - y: int
+    - occupied: boolean
+}
+
+class StationType {
+    - name: String
+    - economicRadius: int
+    - cost: double
+    - centerPoint: Position
+}
+
+' UI Layer
 MapUI ..> MapController : uses
+ListStationUI ..> ListStationController : uses
+UpgradeStationUI ..> UpgradeStationController : uses
+
+' Controller Layer
 MapController ..> MapRepository : uses
 MapController ..> Repositories : uses
 MapController ..> Map : uses
 
-ListStationUI ..> ListStationController : uses
 ListStationController ..> StationRepository : uses
 ListStationController ..> Repositories : uses
 ListStationController ..> Station : uses
 
-UpgradeStationUI ..> UpgradeStationController : uses
 UpgradeStationController ..> StationRepository : uses
 UpgradeStationController ..> BuildingRepository : uses
 UpgradeStationController ..> Repositories : uses
@@ -108,7 +128,7 @@ UpgradeStationController ..> ApplicationSession : uses
 UpgradeStationController ..> Station : uses
 UpgradeStationController ..> Building : uses
 
-Station "1" o-- "0..1" Building : has >
+' Repository Layer
 StationRepository --> "1" Station : returns
 BuildingRepository --> "*" Building : provides
 MapRepository --> "*" Map : provides
@@ -116,6 +136,14 @@ MapRepository --> "*" Map : provides
 Repositories --> StationRepository : provides >
 Repositories --> BuildingRepository : provides >
 Repositories --> MapRepository : provides >
+
+' Domain Layer
+Station "1" o-- "0..1" Building : has >
+Station "1" -- "1" Position : located at >
+Station "*" -- "1" StationType : defined by >
+Map "1" -- "*" Position : tracks >
+Building "1" -- "0..1" Building : evolves into >
+StationType "1" -- "*" StationType : can change >
 
 ApplicationSession --> Station : currentStation >
 ApplicationSession --> Map : currentMap >
