@@ -5,19 +5,17 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
-title System Sequence Diagram : US07 - Get Station Details
-
-participant ListStationController
-participant ApplicationSession
+participant ":ListStationController" as ListStationController
+participant ":ApplicationSession" as ApplicationSession
 participant Map
 participant Station
 
 activate ListStationController
 
-autonumber 15
+autonumber 16
 --> ListStationController: getStationDetails(stationId)
 group Get station details
-    autonumber 15.1
+    autonumber 16.1
   ListStationController -> ApplicationSession : getInstance()
   activate ApplicationSession
   ApplicationSession --> ListStationController : sessionInstance
@@ -60,10 +58,10 @@ group Get station details
   ListStationController -> ListStationController : compileStationDetails()
 end
 
-autonumber 16
+autonumber 17
 
 <-- ListStationController: stationDetails
 
 deactivate ListStationController
 
-@enduml 
+@enduml

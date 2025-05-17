@@ -5,6 +5,24 @@ skinparam classAttributeIconSize 0
 
 title Class Diagram: US06 - Upgrade a selected station with a building
 
+class MapUI {
+}
+
+class MapController {
+    + create()
+    + getAvailableMaps() : List<Map>
+    + loadMap(mapId) : MapLayout
+}
+
+class ListStationUI {
+}
+
+class ListStationController {
+    + create()
+    + getAvailableStations() : List<Station>
+    + getStationDetails(stationId) : StationDetails
+}
+
 class UpgradeStationUI {
 }
 
@@ -25,15 +43,22 @@ class BuildingRepository {
     + getBuilding(buildingId) : Building
 }
 
+class MapRepository {
+    + getAvailableMaps() : List<Map>
+    + getMap(mapId) : Map
+}
+
 class Repositories {
     + {static} getInstance() : Repositories
     + getStationRepository() : StationRepository
     + getBuildingRepository() : BuildingRepository
+    + getMapRepository() : MapRepository
 }
 
 class ApplicationSession {
     + {static} getInstance() : ApplicationSession
     + getCurrentStation() : Station
+    + getCurrentMap() : Map
 }
 
 class Station {
@@ -46,6 +71,7 @@ class Station {
     + getAvailableUpgrades() : List<Building>
     + upgrade(building: Building) : boolean
     + getInfo() : StationInfo
+    + getDetails() : StationDetails
 }
 
 class Building {
@@ -57,6 +83,23 @@ class Building {
     
     + getInfo() : BuildingInfo
 }
+
+class Map {
+    - mapId: String
+    - name: String
+    - layout: MapLayout
+}
+
+MapUI ..> MapController : uses
+MapController ..> MapRepository : uses
+MapController ..> Repositories : uses
+MapController ..> Map : uses
+
+ListStationUI ..> ListStationController : uses
+ListStationController ..> StationRepository : uses
+ListStationController ..> Repositories : uses
+ListStationController ..> Station : uses
+
 UpgradeStationUI ..> UpgradeStationController : uses
 UpgradeStationController ..> StationRepository : uses
 UpgradeStationController ..> BuildingRepository : uses
@@ -68,10 +111,13 @@ UpgradeStationController ..> Building : uses
 Station "1" o-- "0..1" Building : has >
 StationRepository --> "1" Station : returns
 BuildingRepository --> "*" Building : provides
+MapRepository --> "*" Map : provides
 
 Repositories --> StationRepository : provides >
 Repositories --> BuildingRepository : provides >
+Repositories --> MapRepository : provides >
 
 ApplicationSession --> Station : currentStation >
+ApplicationSession --> Map : currentMap >
 
 @enduml 

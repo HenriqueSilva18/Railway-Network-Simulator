@@ -63,7 +63,7 @@ activate editor
                 CTRL --> UI: availableIndustriesList
             deactivate CTRL
 
-        UI --> editor: shows all industries available in the list
+        UI --> editor: shows all available industries in a list
         deactivate UI
 
     editor -> UI: selects industry
@@ -71,7 +71,7 @@ activate editor
         UI --> editor: requests industry data (nameID, X and Y coordinates)
         deactivate UI
 
-    editor -> UI: types industry data (nameID, X, Y)
+    editor -> UI: types industry data
         activate UI
         UI -> CTRL: validateIndustry(nameID, x, y)
             activate CTRL
@@ -100,7 +100,7 @@ activate editor
                deactivate CTRL
 
             UI --> editor: displays operation success
-            UI --> editor: shows industry details on map
+            UI --> editor: display industry details
 
         deactivate UI
 

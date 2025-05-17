@@ -8,65 +8,110 @@ autonumber
 title Sequence Diagram: US06 - Upgrade a selected station with a building
 
 actor "Player" as player
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
+participant ":ListStationUI" as listStationUI
+participant ":ListStationController" as listStationCTRL
 participant ":UpgradeStationUI" as UI
 participant ":UpgradeStationController" as CTRL
 
 activate player
 
+    player -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                ref over mapCTRL
+                    Get available maps
+                end
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> player: shows list of available maps to play
+        deactivate mapUI
+
+    player -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapId)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> player: loads and displays the selected map
+        deactivate mapUI
+
+    player -> listStationUI: requests to see available stations
+        activate listStationUI
+        listStationUI -> listStationCTRL**: create()
+        listStationUI -> listStationCTRL: getAvailableStations()
+            activate listStationCTRL
+                ref over listStationCTRL
+                    Get available stations
+                end
+            listStationCTRL --> listStationUI: availableStationsList
+            deactivate listStationCTRL
+        listStationUI --> player: displays list of available stations
+        deactivate listStationUI
+
+    player -> listStationUI: selects a specific station
+        activate listStationUI
+        listStationUI -> listStationCTRL: getStationDetails(stationId)
+            activate listStationCTRL
+                ref over listStationCTRL
+                    Get station details
+                end
+            listStationCTRL --> listStationUI: stationDetails
+            deactivate listStationCTRL
+        listStationUI --> player: shows station details
+        deactivate listStationUI
+
     player -> UI: asks to upgrade station
         activate UI
         UI -> CTRL**: create()
-            UI -> CTRL: getAvailableUpgrades()
+        UI -> CTRL: getAvailableUpgrades()
             activate CTRL
-
-            ref over CTRL
-                Get available upgrades
-            end
-
+                ref over CTRL
+                    Get available upgrades
+                end
             CTRL --> UI: availableUpgrades
             deactivate CTRL
-        UI --> player: displays upgrade options
+        UI --> player: shows list of available buildings for upgrading
         deactivate UI
-        
-    player -> UI: chooses building to upgrade
+
+    player -> UI: selects building
         activate UI
         UI -> CTRL: getBuildingInfo(buildingId)
             activate CTRL
-
                 ref over CTRL
                     Choose building to upgrade
                 end
-
             CTRL --> UI: buildingInfo
             deactivate CTRL
         UI --> player: displays building information
         UI --> player: asks for confirmation
         deactivate UI
-        
+
     player -> UI: confirms upgrade
         activate UI
         UI -> CTRL: upgradeStation()
             activate CTRL
-
-            ref over CTRL
-                Confirm station upgrade
-            end
-
+                ref over CTRL
+                    Confirm station upgrade
+                end
             CTRL --> UI: success
             deactivate CTRL
-
         UI --> player: displays operation success
         UI -> CTRL: getStationInfo(stationId)
             activate CTRL
-            
-            ref over CTRL
-                Get station and building information
-            end
+                ref over CTRL
+                    Get station and building information
+                end
             CTRL --> UI: stationInfo
             CTRL --> UI: buildingInfo
             deactivate CTRL
-            
-        UI --> player: displays station and building information
+        UI --> player: displays station and building new information
         deactivate UI
 
 deactivate player
