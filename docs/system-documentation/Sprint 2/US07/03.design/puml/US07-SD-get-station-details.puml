@@ -12,14 +12,13 @@ participant ApplicationSession
 participant Map
 participant City
 participant Station
-participant Building
-participant Cargo
+
 
 activate ListStationController
 
 autonumber 15
 --> ListStationController: getStationDetails(stationId)
-group GetStationDetails
+group Get station details
     autonumber 15.1
   ListStationController -> ApplicationSession : getInstance()
   activate ApplicationSession
@@ -38,10 +37,7 @@ group GetStationDetails
 
   ListStationController -> ListStationController : findStationById(stationId)
   activate ListStationController
-  note right
-    Search through each city to find
-    the station with the given id
-  end note
+
   deactivate ListStationController
 
   ListStationController -> Station : getDetails()
