@@ -20,11 +20,13 @@ class Player {
 
 class Map {
   nameID
+  cityList
+  industryList
 }
 
 class City {
   nameID
-  productionRate
+  trafficRate
   suppliedCargo
   demandedCargo
 }
