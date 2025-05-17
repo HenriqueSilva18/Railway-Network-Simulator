@@ -6,12 +6,16 @@ skinparam classAttributeIconSize 0
 title Class Diagram: US01 - Create a Map
 
 class CreateMapUI {
+    + displayRequestForMapData()
+    + displayConfirmationRequest(nameID, width, height)
+    + displaySuccess(map)
+    + displayMapDetails(map)
 }
 
 class CreateMapController {
     + create()
-    + createMap(nameID, width, height) : Map
     + validateMapData(nameID, width, height) : boolean
+    + createMap(nameID, width, height) : Map
 }
 
 class MapRepository {
@@ -32,44 +36,47 @@ class ApplicationSession {
 class Map {
     - nameID : String
     - size : Size
-    
+    - cityList : List<City>
+    - industryList : List<Industry>
+
+    + validateMapName(nameID) : boolean
     + createMap(nameID: String, size: Size) : Map
-    + validateMapName(nameID: String) : boolean
 }
 
 class Size {
     - width : int
     - height : int
-    
-    + createSize(width: int, height: int) : Size
+
     + validateSize(width: int, height: int) : boolean
+    + createSize(width: int, height: int) : Size
 }
 
 class Editor {
     - username : String
     - password : String
     - createdMaps : List<Map>
-    
+
     + createMap(nameID: String, size: Size) : Map
     + addMap(map: Map) : boolean
 }
 
-CreateMapUI ..> CreateMapController : uses
-CreateMapController ..> MapRepository : uses
-CreateMapController ..> Repositories : uses
-CreateMapController ..> ApplicationSession : uses
-CreateMapController ..> Map : uses
-CreateMapController ..> Size : creates
-CreateMapController ..> Editor : uses
+CreateMapUI ..> CreateMapController
 
-Map "1" -- "1" Size : has >
-MapRepository --> "1" Map : returns
-Editor "1" -- "*" Map : creates >
+CreateMapController ..> MapRepository
+CreateMapController ..> Repositories
+CreateMapController ..> ApplicationSession
+CreateMapController ..> Map
+CreateMapController ..> Size
+CreateMapController ..> Editor
 
-Repositories --> MapRepository : provides >
+Map "1" --> "1" Size : size
+MapRepository --> "1" Map : map
+Editor "1" --> "*" Map : createdMaps
 
-ApplicationSession --> Editor : holds >
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
 
-Editor ..> CreateMapUI : interacts with >
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession --> "1" Editor : currentSession
 
 @enduml

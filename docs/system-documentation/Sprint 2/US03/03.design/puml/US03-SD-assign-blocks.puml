@@ -10,7 +10,10 @@ actor Editor
 participant AddHouseBlocksController as AddBHouseBlocksController
 participant HouseBlock
 
+activate Editor
 group Manual assignment of each block
+
+activate AddBHouseBlocksController
 
     loop for each block
         AddBHouseBlocksController -> Editor : request coordinates
@@ -31,7 +34,6 @@ group Manual assignment of each block
 end group
 
 group Automatic coordinate generation
-
     AddBHouseBlocksController -> AddBHouseBlocksController : generateRandomCoordinates(numBlocks, cityLimits)
 
     loop for each generated coordinate
@@ -39,9 +41,12 @@ group Automatic coordinate generation
         activate HouseBlock
         HouseBlock --> AddBHouseBlocksController : success
         deactivate HouseBlock
+        deactivate AddBHouseBlocksController
     end
 
 end group
+deactivate Editor
+deactivate AddBHouseBlocksController
 
 
 @enduml

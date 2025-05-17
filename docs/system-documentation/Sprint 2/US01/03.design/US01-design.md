@@ -11,10 +11,10 @@
 | Step 1  		     | ...interacting with the user?               | CreateMapUI         | Pure Fabrication: there is no reason to assign this responsibility to a domain class |
 | Step 2  		     | ...coordinating the US?                     | CreateMapController | Controller: coordinates the use case                                                 |
 | Step 3  		     | ...receiving the map data?                  | CreateMapUI         | Pure Fabrication: UI classes are responsible for user interactions                   |
-| Step 4a  		    | ...validating the map name?                 | Map                 | Information Expert: owns its data                                                    |
-| Step 4b  		    | ...validating the map size?                 | Size                | Information Expert: owns its data                                                    |
-| Step 5a 		     | ...creating the Size?                       | CreateMapController | Creator: Controller creates Size to pass to Editor                                   |
-| Step 5b  		    | ...creating the map?                        | Editor              | Creator: Editor creates Maps according to the domain model                           |
+| Step 4   		    | ...validating the map name?                 | Map                 | Information Expert: owns its data                                                    |
+| 		             | ...validating the map size?                 | Size                | Information Expert: owns its data                                                    |
+| Step 5  		     | ...creating the Size?                       | CreateMapController | Creator: Controller creates Size to pass to Editor                                   |
+|   		           | ...creating the map?                        | Editor              | Creator: Editor creates Maps according to the domain model                           |
 | Step 6  		     | ...saving the map?                          | MapRepository       | Pure Fabrication: responsible for persistence operations                             |
 | Step 7  		     | ...informing operation success?             | CreateMapUI         | Pure Fabrication: UI classes handle user feedback                                    |
 | Step 8  		     | ...displaying map details?                  | CreateMapUI         | Pure Fabrication: UI classes present information to users                            |

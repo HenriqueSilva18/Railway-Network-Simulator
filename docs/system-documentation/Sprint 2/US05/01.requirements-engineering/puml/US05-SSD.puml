@@ -9,11 +9,10 @@ participant ":System" as System
 
 activate Player
 
-
-Player -> System: requests to see available maps
-
+Player -> System : asks to see available maps
 activate System
-System --> Player: shows list of available maps
+
+System --> Player: shows list of available maps to play
 deactivate System
 
 Player -> System: selects a map

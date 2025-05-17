@@ -1,0 +1,37 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "map\n:Map" as MAP
+participant "stationType\n:StationType" as ST_TYPE
+
+autonumber 23
+-> CTRL : previewStationPlacement(stationType, position, centerPoint)
+
+autonumber 23.1
+activate CTRL
+    group Preview Station Placement
+        ' Get preview of placement
+        CTRL -> MAP : previewStationPlacement(stationType, position, centerPoint)
+        activate MAP
+            MAP --> CTRL : preview
+        deactivate MAP
+        
+        ' Get economic radius and cost
+        CTRL -> ST_TYPE : getEconomicRadius()
+        activate ST_TYPE
+            ST_TYPE --> CTRL : economicRadius
+        deactivate ST_TYPE
+        
+        CTRL -> ST_TYPE : getCost()
+        activate ST_TYPE
+            ST_TYPE --> CTRL : cost
+        deactivate ST_TYPE
+    end
+
+    autonumber 24
+    <-- CTRL : preview, economicRadius, cost
+deactivate CTRL
+
+@enduml 

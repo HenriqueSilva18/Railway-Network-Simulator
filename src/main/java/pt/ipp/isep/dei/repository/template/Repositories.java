@@ -1,11 +1,5 @@
 package pt.ipp.isep.dei.repository.template;
 
-import pt.ipp.isep.dei.repository.EditorRepository;
-import pt.ipp.isep.dei.repository.MapRepository;
-import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
-import pt.ipp.isep.dei.repository.template.OrganizationRepository;
-import pt.ipp.isep.dei.repository.template.TaskCategoryRepository;
-
 /**
  * Inspired on https://refactoring.guru/design-patterns/singleton/java/example
  *
@@ -19,11 +13,9 @@ public class Repositories {
     private final OrganizationRepository organizationRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final AuthenticationRepository authenticationRepository;
+    
 
-    // New railway simulation repositories
-    private final EditorRepository editorRepository;
-    private final MapRepository mapRepository;
-    /* private final ScenarioRepository scenarioRepository; */
+
 
     /**
      * The Singleton's constructor should always be private to prevent direct construction calls with the new operator.
@@ -34,10 +26,7 @@ public class Repositories {
         this.taskCategoryRepository = new TaskCategoryRepository();
         this.authenticationRepository = new AuthenticationRepository();
 
-        // Initialize railway simulation repositories
-        this.editorRepository = new EditorRepository();
-        this.mapRepository = new MapRepository();
-        /* this.scenarioRepository = new ScenarioRepository(); */
+
     }
 
     /**
@@ -64,17 +53,7 @@ public class Repositories {
     public AuthenticationRepository getAuthenticationRepository() {
         return authenticationRepository;
     }
+    
 
-    // Railway simulation repository accessors
-    public EditorRepository getEditorRepository() {
-        return editorRepository;
-    }
 
-    public MapRepository getMapRepository() {
-        return mapRepository;
-    }
-
-    /* public ScenarioRepository getScenarioRepository() {
-        return scenarioRepository;
-    } */
 }

@@ -21,7 +21,7 @@ group Get available maps
 
     CTRL -> REPOS_SINGLETON: getMapRepository()
     activate REPOS_SINGLETON
-        REPOS_SINGLETON --> CTRL: MapRepository
+        REPOS_SINGLETON --> CTRL: mapRepository
     deactivate REPOS_SINGLETON
 
     CTRL -> REPOS_MAP: getAvailableMaps()

@@ -1,0 +1,58 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "map\n:Map" as MAP
+
+autonumber 17
+-> CTRL : validatePosition(position)
+
+autonumber 17.1
+activate CTRL
+    group Validate Position
+        ' Get current map from session
+        CTRL -> APP_SESSION : getInstance()
+        activate APP_SESSION
+            APP_SESSION --> CTRL : appSession
+        deactivate APP_SESSION
+        
+        CTRL -> APP_SESSION_SINGLETON : getCurrentMap()
+        activate APP_SESSION_SINGLETON
+            APP_SESSION_SINGLETON --> CTRL : currentMap
+        deactivate APP_SESSION_SINGLETON
+        
+        ' Get map repository
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL : repositories
+        deactivate REPOS
+        
+        CTRL -> REPOS_SINGLETON : getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL : mapRepository
+        deactivate REPOS_SINGLETON
+        
+        ' Get map object
+        CTRL -> MAP_REPO : getMapByID(currentMap)
+        activate MAP_REPO
+            MAP_REPO --> CTRL : map
+        deactivate MAP_REPO
+        
+        ' Check if position is valid
+        CTRL -> MAP : validatePosition(position)
+        activate MAP
+            MAP --> CTRL : valid
+        deactivate MAP
+    end
+
+    autonumber 18
+    <-- CTRL : valid
+deactivate CTRL
+
+@enduml 

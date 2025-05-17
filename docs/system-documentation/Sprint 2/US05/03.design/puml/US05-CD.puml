@@ -5,23 +5,23 @@ skinparam classAttributeIconSize 0
 
 title Class Diagram: US05 - Build a Station
 
-class BuildStationUI {
+class StationBuildingUI {
 }
 
-class BuildStationController {
-    + create()
+class StationBuildingController {
+    + getAvailableMaps()
+    + loadMap(nameID) : Map
     + getStationTypes() : List<StationType>
-    + getMapPositions() : List<Position>
-    + validatePosition(position: Position) : boolean
-    + buildStation(nameID: String, type: StationType, position: Position) : Station
-    + validateBudget(stationType: StationType) : boolean
-    + saveStation(station: Station) : boolean
+    + validatePosition(position) : boolean
+    + getClosestCity(position) : City
+    + previewStationPlacement(stationType, position, centerPoint) : boolean
+    + buildStation(stationType, position, centerPoint) : boolean
 }
 
-class StationRepository {
-    + save(station) : boolean
-    + getStationByID(nameID) : Station
-    + getStations() : List<Station>
+class MapRepository {
+    + getAvailableMaps() : List<Map>
+    + getMapByID(nameID) : Map
+    + save(map) : boolean
 }
 
 class StationTypeRepository {
@@ -29,31 +29,34 @@ class StationTypeRepository {
     + getStationTypeByName(name) : StationType
 }
 
-class MapRepository {
-    + save(map) : boolean
-    + getMapByID(nameID) : Map
-    + getPositions() : List<Position>
-    + getAvailablePositions() : List<Position>
-}
-
 class Repositories {
+    - Repositories()
     + {static} getInstance() : Repositories
-    + getStationRepository() : StationRepository
     + getMapRepository() : MapRepository
     + getStationTypeRepository() : StationTypeRepository
 }
 
 class ApplicationSession {
+    - ApplicationSession()
     + {static} getInstance() : ApplicationSession
     + getCurrentSession() : Player
+    + getCurrentMap() : String
+    + setCurrentMap(nameID) : boolean
 }
 
 class Map {
     - nameID : String
+    - size : Size
     - positions : List<Position>
+    - cities : List<City>
+    - stations : List<Station>
+    - industries : List<Industry>
     
-    + validatePosition(position: Position) : boolean
-    + addStation(station: Station) : boolean
+    + getMapLayout() : MapLayout
+    + validatePosition(position) : boolean
+    + getClosestCity(position) : City
+    + previewStationPlacement(stationType, position, centerPoint) : boolean
+    + addStation(station) : boolean
 }
 
 class Position {
@@ -65,25 +68,24 @@ class Position {
     + setOccupied(boolean) : void
 }
 
-class Player {
-    - username : String
-    - password : String
-    - initialBudget : double
-    - currentBudget : double
-    
-    + buildStation(nameID: String, type: StationType, position: Position) : Station
-    + validateBudget(cost: double) : boolean
-    + updateBudget(cost: double) : void
+class City {
+    - nameID : String
+    - position : Position
+    - productionRate : double
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
 }
 
 class Station {
     - nameID : String
-    - storageCapacity : int
-    - buildingSlots : int
     - position : Position
     - stationType : StationType
+    - storageCapacity : int
+    - buildingSlots : int
+    - availableCargo : List<Cargo>
+    - requestedCargo : List<Cargo>
     
-    + create(nameID: String, type: StationType, position: Position) : Station
+    + Station(nameID, position, stationType)
 }
 
 class StationType {
@@ -92,55 +94,57 @@ class StationType {
     - cost : double
     - centerPoint : String
     
-    + getCost() : double
+    + requiresCenterPoint() : boolean
     + getEconomicRadius() : int
-    + getName() : String
-    + getCenterPoint() : String
+    + getCost() : double
 }
 
-class City {
-    - nameID : String
-    - position : Position
+class Player {
+    - username : String
+    - initialBudget : double
+    - currentBudget : double
+    - ownedLocomotives : List<Locomotive>
+    
+    + deductFromBudget(amount) : boolean
+    + buildStation(nameID, position, stationType) : Station
 }
 
-class Industry {
-    - nameID : String
-    - type : String
-    - position : Position
+class Size {
+    - width : int
+    - height : int
 }
 
-BuildStationUI ..> BuildStationController : uses
-BuildStationController ..> StationRepository : uses
-BuildStationController ..> StationTypeRepository : uses
-BuildStationController ..> MapRepository : uses
-BuildStationController ..> Repositories : uses
-BuildStationController ..> ApplicationSession : uses
-BuildStationController ..> Station : creates
-BuildStationController ..> Player : uses
+StationBuildingUI ..> StationBuildingController
 
-Map "1" -- "*" Position : contains >
-Map "1" -- "*" Station : contains >
-Map "1" -- "*" City : contains >
-Map "1" -- "*" Industry : contains >
+StationBuildingController ..> MapRepository
+StationBuildingController ..> StationTypeRepository
+StationBuildingController ..> Repositories
+StationBuildingController ..> ApplicationSession
+StationBuildingController ..> Map
+StationBuildingController ..> Player
+StationBuildingController ..> Station
 
-Station "1" -- "1" Position : located at >
-Station "*" -- "1" StationType : defined by >
-Station "*" -- "*" City : serves >
-Station "*" -- "*" Industry : serves >
+Map "1" --> "1" Size : size
+Map "1" --> "*" Position : positions
+Map "1" --> "*" City : cities
+Map "1" --> "*" Station : stations
 
-City "1" -- "1" Position : located at >
-Industry "1" -- "1" Position : located at >
+Station "1" --> "1" Position : position
+Station "*" --> "1" StationType : stationType
+Station "*" --> "*" City : servedCities
 
-StationRepository --> "1" Station : returns
-MapRepository --> "1" Map : returns
-StationTypeRepository --> "1" StationType : returns
+City "1" --> "1" Position : position
 
-Repositories --> StationRepository : provides >
-Repositories --> MapRepository : provides >
-Repositories --> StationTypeRepository : provides >
+MapRepository --> "*" Map : maps
+StationTypeRepository --> "*" StationType : stationTypes
 
-ApplicationSession --> Player : holds >
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
+Repositories --> "1" StationTypeRepository : stationTypeRepository
 
-Player "1" -- "*" Station : builds >
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession --> "1" Player : currentSession
+
+Player "1" --> "*" Station : builtStations
 
 @enduml 
