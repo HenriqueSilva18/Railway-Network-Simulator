@@ -16,58 +16,42 @@ hide methods
 
 left to right direction
 
-title Domain Model Excerpt: US12 - Create a Simulator
+title Domain Model Excerpt: US14 - Railway Lines Maintenance Route
 
-class Simulator {
-  status
-  runTime
-  report
+class Player {
+  username
 }
-
-class City {
-  nameID
-  position
-  houseBlocks
-  suppliedCargo
-  demandedCargo
-}
-
-class Industry {
-  nameID
-  position
-  sector
-  type
-  description
-  availabilityYear
-  productionRate
-  suppliedCargo
-  demandedCargo
-}
-
-class Cargo {
-  name
-  amount
-  lifespan
-  type
-}
-
 
 class Station {
   nameID
   position
-  type
-  economicRadius
-  cost
-  storageCapacity
-  centerPoint
-  buildingSlots
-  availableCargo
-  requestedCargo
 }
 
-Simulator "1 " -- "*" Cargo : generates
-Cargo "*" -- "1" Station : stores <
-Station "1" --"*" City  : serves
-Station"1" -- "*"Industry : serves
+class RailwayLine {
+  length
+  isElectrified
+}
+
+class RailwayNetwork {
+  nameID
+}
+
+class MaintenanceRoute {
+  startStation
+  routeSequence
+}
+
+class MaintenanceType {
+  name
+  description
+}
+
+' Relationships
+RailwayNetwork "1" -- "*" RailwayLine : contains >
+RailwayLine "1" -- "2" Station : connects >
+Player "1" -- "*" MaintenanceRoute : requests >
+MaintenanceRoute "1" -- "1" MaintenanceType : follows >
+MaintenanceRoute "1" -- "*" RailwayLine : includes >
+MaintenanceRoute "1" -- "*" Station : passes through >
 
 @enduml

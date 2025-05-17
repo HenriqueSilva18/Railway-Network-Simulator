@@ -1,0 +1,47 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":MaintenanceRouteController" as CTRL
+participant ":FleuryAlgorithm" as FLEURY
+participant ":Map<String,List<Edge>>" as GRAPH
+participant "sc:Scanner" as SCANNER
+
+-> CTRL : computeMaintenanceRoute()
+activate CTRL
+
+    CTRL -> FLEURY : computeEulerianPath(maintenanceGraph, stationOrder, sc)
+    activate FLEURY
+        
+        alt graph is disconnected or non-Eulerian
+            FLEURY --> CTRL : null
+            CTRL -> CTRL : display warning message
+            activate CTRL
+                CTRL --> CTRL
+            deactivate CTRL
+            
+        else valid route found
+            FLEURY --> CTRL : route
+            
+            CTRL -> CTRL : displayRoute(route)
+            activate CTRL
+                loop for each station in route
+                    CTRL -> CTRL : print station
+                    activate CTRL
+                        CTRL --> CTRL
+                    deactivate CTRL
+                end
+                CTRL --> CTRL
+            deactivate CTRL
+        end
+        
+    deactivate FLEURY
+
+<-- CTRL
+
+deactivate CTRL
+
+@enduml 

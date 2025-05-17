@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":MaintenanceRouteController" as CTRL
+participant ":FilesUtils" as FILES
+participant ":Map<String,Station>" as STATIONS
+participant ":Map<String,List<Edge>>" as GRAPH
+participant ":Desktop" as DESKTOP
+
+-> CTRL : loadAndVisualizeNetwork()
+activate CTRL
+
+    CTRL -> FILES : loadCSV(csvPath, stations, fullGraph, stationOrder, maintenanceType)
+    activate FILES
+        FILES --> CTRL : success
+    deactivate FILES
+
+    CTRL -> FILES : exportToDOT(dotPath, fullGraph)
+    activate FILES
+        FILES --> CTRL : success
+    deactivate FILES
+
+    CTRL -> FILES : dotToPNG(dotPath, pngPath)
+    activate FILES
+        FILES --> CTRL : success
+    deactivate FILES
+
+    CTRL -> DESKTOP : openFile(pngPath)
+    activate DESKTOP
+        DESKTOP --> CTRL : success
+    deactivate DESKTOP
+
+<-- CTRL
+
+deactivate CTRL
+
+@enduml 

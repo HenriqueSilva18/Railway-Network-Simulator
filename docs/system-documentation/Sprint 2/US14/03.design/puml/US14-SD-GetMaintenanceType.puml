@@ -1,0 +1,51 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":MaintenanceRouteController" as CTRL
+participant "sc:Scanner" as SCANNER
+
+-> CTRL : chooseMaintenanceType(sc)
+activate CTRL
+
+loop while maintenanceType != 1 && maintenanceType != 2
+    CTRL -> CTRL : display maintenance type options
+    activate CTRL
+        CTRL --> CTRL
+    deactivate CTRL
+
+    CTRL -> SCANNER : nextInt()
+    activate SCANNER
+        alt valid input
+            SCANNER --> CTRL : maintenanceType
+            
+            alt invalid option
+                CTRL -> CTRL : display "Invalid option"
+                activate CTRL
+                    CTRL --> CTRL
+                deactivate CTRL
+            end
+            
+        else invalid input (InputMismatchException)
+            SCANNER --> CTRL : throws exception
+            CTRL -> CTRL : display "Please enter a valid number"
+            activate CTRL
+                CTRL --> CTRL
+            deactivate CTRL
+            
+            CTRL -> SCANNER : next()
+            activate SCANNER
+                SCANNER --> CTRL
+            deactivate SCANNER
+        end
+    deactivate SCANNER
+end
+
+<-- CTRL : maintenanceType
+
+deactivate CTRL
+
+@enduml 

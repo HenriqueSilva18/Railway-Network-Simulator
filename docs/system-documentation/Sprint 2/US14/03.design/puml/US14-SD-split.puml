@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Player" as PLAYER
+
+participant ":MaintenanceRouteUI" as UI
+participant ":MaintenanceRouteController" as CTRL
+participant "network\n:RailwayNetwork" as NETWORK
+
+activate PLAYER
+
+    PLAYER -> UI : asks to check maintenance route
+    activate UI
+        UI --> CTRL** : create()
+        UI -> CTRL : getMaintenanceTypes()
+        
+        activate CTRL
+            CTRL --> UI : maintenanceTypes
+        deactivate CTRL
+        
+        UI --> PLAYER : shows maintenance types and asks to select one
+    deactivate UI
+
+    PLAYER -> UI : selects maintenance type
+    activate UI
+        UI -> CTRL : visualizeNetwork()
+        activate CTRL
+            ref over CTRL
+                Generate Network Visualization
+            end ref
+            CTRL --> UI : networkVisualization
+        deactivate CTRL
+        
+        UI --> PLAYER : displays railway network visualization
+    deactivate UI
+
+    PLAYER -> UI : requests route calculation
+    activate UI
+        UI -> CTRL : calculateMaintenanceRoute(maintenanceType)
+        activate CTRL
+            ref over CTRL
+                Calculate Maintenance Route
+            end ref
+            
+            CTRL --> UI : maintenanceRoute
+        deactivate CTRL
+        
+        UI --> PLAYER : displays maintenance route or warning message
+    deactivate UI
+
+deactivate PLAYER
+
+@enduml

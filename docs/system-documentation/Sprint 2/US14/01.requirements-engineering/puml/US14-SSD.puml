@@ -1,74 +1,32 @@
 @startuml
-skinparam sequenceMessageAlign center
-skinparam sequenceArrowThickness 2
-skinparam roundcorner 5
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
 autonumber
 
-title System Sequence Diagram: US12 - Create a Simulator
-
-actor "Product Owner" as PO
+actor "Player" as Player
 participant ":System" as System
 
-activate PO
+activate Player
 
-    PO -> System : asks to start a simulation (for testing the simulator)
+    Player -> System : asks to check lines maintenance route
     activate System
 
-        System --> PO : shows details (map and scenario for the simulation) and asks confirmation
+        System --> Player : shows maintenance type options and asks to select one\n(all lines or only electrified lines)
     deactivate System
 
-    PO -> System : confirms simulation
+    Player -> System : selects maintenance type
     activate System
 
-        System --> PO : display operation success (simulation started)
+        System --> Player : loads and displays the railway network visualization
     deactivate System
 
-    hnote right
-        simulator generates cargoes
-        at current stations automatically
-    end note
+    Player -> System : requests maintenance route calculation
+    activate System
 
-    loop while simulation is running
-        alt user requests operation
-            PO -> System : asks for operation (buy locomotive, add railway line, etc.)
-            activate System
-
-                System --> PO : shows operation details and ask confirmation
-            deactivate System
-
-            PO -> System : confirms operation
-            activate System
-
-                System --> PO : displays operation success
-            deactivate System
-
-        else user pauses simulation
-            PO -> System : asks to pause the simulator
-            activate System
-
-                System --> PO : pauses simulation and waits for instructions to resume
-            deactivate System
-
-            PO -> System : asks to resume the simulation
-            activate System
-
-                System --> PO : resume simulation of the map and scenario
-            deactivate System
-
-        else user stops simulation
-            PO -> System : asks to stop the simulation
-            activate System
-
-                System --> PO : requests confirmation
-            deactivate System
-
-            PO -> System : confirms end of simulation
-            activate System
-
-        end
-    end
-
-        System --> PO : shows simulation results and creates a report
+        System --> Player : displays the maintenance route\n(passing once through each line)
     deactivate System
 
+deactivate Player
 @enduml
