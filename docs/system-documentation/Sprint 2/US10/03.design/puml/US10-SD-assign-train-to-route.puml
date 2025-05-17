@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber 25
+
+participant ":AssignTrainController" as CTRL
+participant "routeRepository\n:RouteRepository" as REPOS_ROUTE
+participant "train\n:Train" as TRAIN
+participant "route\n:Route" as ROUTE
+
+-> CTRL: assignTrainToRoute(selectedRoute, selectedTrain)
+activate CTRL
+autonumber 25.1
+group Assign train to route
+
+    CTRL -> TRAIN: assignToRoute(selectedRoute)
+        activate TRAIN
+            TRAIN --> CTRL: success
+        deactivate TRAIN
+
+    CTRL -> ROUTE: addTrain(train)
+        activate ROUTE
+            ROUTE --> CTRL: success
+        deactivate ROUTE
+
+    CTRL -> REPOS_ROUTE: save(route)
+        activate REPOS_ROUTE
+            REPOS_ROUTE --> CTRL: success
+        deactivate REPOS_ROUTE
+end
+autonumber 26
+
+<-- CTRL: assignmentDetails
+
+deactivate CTRL
+
+@enduml 
