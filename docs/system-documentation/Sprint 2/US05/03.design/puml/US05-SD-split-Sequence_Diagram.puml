@@ -121,7 +121,6 @@ activate PLAYER
             CTRL --> UI : success
         deactivate CTRL
 
-        UI --> PLAYER : deducts cost from Player's budget
         UI --> PLAYER : displays operation success
         UI --> PLAYER : updates map with the new station
     deactivate UI

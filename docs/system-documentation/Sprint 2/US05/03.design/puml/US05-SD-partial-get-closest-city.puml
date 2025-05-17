@@ -6,12 +6,12 @@ participant ":StationBuildingController" as CTRL
 participant "appSession\n:ApplicationSession" as APP_SESSION
 participant "map\n:Map" as MAP
 
-autonumber 17
--> CTRL : validatePosition(position)
+autonumber 21
+-> CTRL : getClosestCity(position)
 
-autonumber 17.1
+autonumber 21.1
 activate CTRL
-    group Validate Position
+    group Get Closest City
         CTRL -> APP_SESSION: getInstance()
         activate APP_SESSION
             APP_SESSION --> CTRL: sessionInstance
@@ -22,14 +22,14 @@ activate CTRL
             APP_SESSION --> CTRL: currentMap
         deactivate APP_SESSION
 
-        CTRL -> MAP: validatePosition(position)
+        CTRL -> MAP: getClosestCity(position)
         activate MAP
-            MAP --> CTRL: valid
+            MAP --> CTRL: closestCity
         deactivate MAP
     end
 
-    autonumber 18
-    <-- CTRL : valid
+    autonumber 22
+    <-- CTRL : closestCity
 deactivate CTRL
 
 @enduml 

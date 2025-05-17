@@ -52,7 +52,6 @@ deactivate System
 Player -> System: confirms station placement
 
 activate System
-System --> Player: deducts cost from Player's budget
 System --> Player: displays operation success
 System --> Player: updates map with the new station
 deactivate System

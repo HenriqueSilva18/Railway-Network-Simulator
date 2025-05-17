@@ -3,9 +3,8 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":StationBuildingController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "stationTypeRepository\n:StationTypeRepository" as ST_TYPE_REPO
+participant "repositories\n:Repositories" as REPOS
+participant "stationTypeRepository\n:StationTypeRepository" as TYPE_REPO
 
 autonumber 11
 -> CTRL : getStationTypes()
@@ -13,20 +12,20 @@ autonumber 11
 autonumber 11.1
 activate CTRL
     group Get Station Types List
-        CTRL -> REPOS : getInstance()
+        CTRL -> REPOS: getInstance()
         activate REPOS
-            REPOS --> CTRL: repositories
+            REPOS --> CTRL: repositoriesInstance
         deactivate REPOS
 
-        CTRL -> REPOS_SINGLETON : getStationTypeRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: stationTypeRepository
-        deactivate REPOS_SINGLETON
+        CTRL -> REPOS: getStationTypeRepository()
+        activate REPOS
+            REPOS --> CTRL: stationTypeRepository
+        deactivate REPOS
 
-        CTRL -> ST_TYPE_REPO : getStationTypes()
-        activate ST_TYPE_REPO
-            ST_TYPE_REPO --> CTRL : stationTypeList
-        deactivate ST_TYPE_REPO
+        CTRL -> TYPE_REPO: getStationTypes()
+        activate TYPE_REPO
+            TYPE_REPO --> CTRL: stationTypeList
+        deactivate TYPE_REPO
     end
 
     autonumber 12
