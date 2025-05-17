@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 3
+
+participant ":EditMapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+
+-> CTRL: getAvailableMaps()
+activate CTRL
+autonumber 3.1
+group Get available maps
+    CTRL -> REPOS: getInstance()
+    activate REPOS
+        REPOS --> CTRL: repositories
+    deactivate REPOS
+
+    CTRL -> REPOS_SINGLETON: getMapRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> CTRL: MapRepository
+    deactivate REPOS_SINGLETON
+
+    CTRL -> REPOS_MAP: getAvailableMaps()
+    activate REPOS_MAP
+        REPOS_MAP --> CTRL: availableMapsList
+    deactivate REPOS_MAP
+    end
+    autonumber 4
+    <-- CTRL : availableMapsList
+deactivate CTRL
+
+
+
+
+@enduml

@@ -12,17 +12,17 @@ participant "map\n:Map" as MAP
 participant "mapRepository\n:MapRepository" as REPOS_MAP
 participant "ApplicationSession" as APP_SESSION
 
-autonumber 9
+autonumber 18
 -> CTRL: validateIndustry(nameID, x, y)
         activate CTRL
-        autonumber 9.1
-        group Validate Industry Data
+        autonumber 18.1
+        group Validate industry data
             CTRL -> APP_SESSION: getInstance()
             activate APP_SESSION
                 APP_SESSION --> CTRL: cMap = appSession
             deactivate APP_SESSION
 
-            CTRL -> REPOS_SINGLETON: getIMapRepository()
+            CTRL -> REPOS_SINGLETON: getMapRepository()
             activate REPOS_SINGLETON
                 REPOS_SINGLETON --> CTRL: mapRepository
             deactivate REPOS_SINGLETON
@@ -38,7 +38,7 @@ autonumber 9
             deactivate MAP
 
         end
-        autonumber 10
+        autonumber 19
         <-- CTRL: success
 deactivate CTRL
 

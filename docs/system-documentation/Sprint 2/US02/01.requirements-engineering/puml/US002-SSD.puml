@@ -12,6 +12,16 @@ participant ":system" as system
 
 activate editor
 
+    editor -> system : asks to edit map
+        activate system
+            system --> editor: shows list of available maps
+        deactivate system
+
+    editor -> system: selects a map
+        activate system
+            system --> editor: loads and displays the selected map
+        deactivate system
+
     editor -> system : asks to add industry
         activate system
         system --> editor: shows all industries available in the list
@@ -19,7 +29,7 @@ activate editor
 
         deactivate system
 
-    editor -> system: selects industry type
+    editor -> system: selects industry
         activate system
         system --> editor: requests industry data (nameID, X and Y coordinates)
         deactivate system

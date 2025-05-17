@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber
+autonumber 22
 
 participant ":AddIndustryController" as CTRL
 participant "MapRepository" as REPOS_MAP
@@ -13,6 +13,8 @@ participant "Industry" as IND
     -> CTRL: createIndustry(nameID, x, y)
     activate CTRL
     group Create and add industry to map
+
+    autonumber 22.1
 
     CTRL -> IND: create(nameID, x, y)
         activate IND
@@ -29,7 +31,8 @@ participant "Industry" as IND
             REPOS_MAP --> CTRL: success
         deactivate REPOS_MAP
         end
-       <-- CTRL: success + industryDetails
+        autonumber 23
+       <-- CTRL: industryDetails
 
     deactivate CTRL
 

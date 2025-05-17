@@ -8,16 +8,53 @@ autonumber
 title Sequence Diagram: US02 - Add an industry
 
 actor "Editor" as editor
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
 participant ":AddIndustryUI" as UI
 participant ":AddIndustryController" as CTRL
 
 activate editor
 
+    editor -> mapUI : asks to edit map
+
+        activate mapUI
+            mapUI -> mapCTRL**: create()
+            mapUI -> mapCTRL: getAvailableMaps()
+
+            activate mapCTRL
+                ref over mapCTRL
+                Get available maps
+                end
+                mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+
+            mapUI --> editor: shows list of available maps
+        deactivate mapUI
+
+    editor -> mapUI: selects a map
+        activate mapUI
+
+            mapUI -> mapCTRL: loadMap(selectedMap)
+            activate mapCTRL
+
+                ref over mapCTRL
+                Load selected map
+                end
+
+                mapCTRL --> mapUI: mapLayout
+
+            deactivate mapCTRL
+
+            mapUI --> editor: loads and displays the selected map
+
+
+        deactivate mapUI
+
     editor -> UI : asks to add industry
         activate UI
 
-            UI -> CTRL**: create()
 
+            UI -> CTRL**: create()
             UI -> CTRL: getIndustriesAvailable()
             activate CTRL
             ref over CTRL
@@ -29,7 +66,7 @@ activate editor
         UI --> editor: shows all industries available in the list
         deactivate UI
 
-    editor -> UI: selects industry type
+    editor -> UI: selects industry
         activate UI
         UI --> editor: requests industry data (nameID, X and Y coordinates)
         deactivate UI
@@ -59,7 +96,7 @@ activate editor
 
             activate CTRL
 
-               CTRL --> UI: success + industryDetails
+               CTRL --> UI: industryDetails
                deactivate CTRL
 
             UI --> editor: displays operation success
