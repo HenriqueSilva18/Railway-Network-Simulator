@@ -29,6 +29,9 @@ class Editor {
 
 class Map {
   nameID
+  scenarios
+  cityList
+  industryList
 }
 
 class Size {
@@ -44,9 +47,12 @@ class Position {
 
 class Scenario {
   nameID
-  timeRestrictions
-  technologicalRestrictions
-  historicalRestrictions
+  editor
+  startDate
+  endDate
+  tweakedCityList
+  availableIndustryList
+  availableLocomotiveTypes
 }
 
 class Simulator {
@@ -69,7 +75,7 @@ class SimulationReport {
 
 class City {
   nameID
-  productionRate
+  trafficRate
   suppliedCargo
   demandedCargo
 }
@@ -100,6 +106,7 @@ class Cargo {
   amount
   lifespan
   type
+  productionResources
 }
 
 class Station {
@@ -208,7 +215,7 @@ Scenario "1" -- "*" City : configures >
 City "1" -- "1" Position : located at >
 Industry "1" -- "1" Position : located at >
 Station "1" -- "1" Position : located at >
-Map "1" -- "*" Position : contains >
+Map "1" -- "*" Position : tracks >
 City "1" -- "1..*" HouseBlock : contains >
 HouseBlock "1" -- "1" Position : has >
 IndustrySector "1" -- "*" Industry : contains >

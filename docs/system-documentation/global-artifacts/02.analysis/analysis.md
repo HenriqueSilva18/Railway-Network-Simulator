@@ -199,7 +199,7 @@ An association is a relationship between instances of objects that indicates a r
 | Locomotive       | configured in       | Scenario          |
 | Map              | contains            | City              |
 | Map              | contains            | Industry          |
-| Map              | contains            | Position          |
+| Map              | tracks              | Position          |
 | Map              | has                 | Size              |
 | Player           | builds              | RailwayLine       |
 | Player           | builds              | Station           |

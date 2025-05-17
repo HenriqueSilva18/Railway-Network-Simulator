@@ -14,6 +14,12 @@ activate Editor
     Editor -> System : asks to create a scenario
     activate System
 
+        System --> Editor : shows map list and asks to select one
+    deactivate System
+
+    Editor -> System : selects map for the scenario
+    activate System
+
         System --> Editor : requests name, start and end date (time period)
     deactivate System
 
@@ -24,7 +30,7 @@ activate Editor
     Editor -> System : types requested data
     activate System
 
-        System --> Editor : shows a list of industries and asks to select the ones available in the scenario
+        System --> Editor : shows list of industries in the map and asks to select the ones available
     deactivate System
 
             hnote right
@@ -34,24 +40,23 @@ activate Editor
     Editor -> System : selects the available industries in the scenario
     activate System
 
-
-    loop while port exist (mixed industries)
-            System --> Editor : shows a list of cargoes and asks to select the ones the port import
+    loop for each port (mixed industry) in the select industries
+            System --> Editor : shows a list of cargoes and asks to select the ones the port imports
         deactivate System
 
-        Editor -> System : selects the cargoes the port import
+        Editor -> System : selects the cargoes the port imports
         activate System
 
-            System --> Editor : shows a list of cargoes and asks to select the ones the port export
+            System --> Editor : asks to select the ones the port exports
         deactivate System
 
-            Editor -> System : selects the cargoes the port export
-            activate System
+        Editor -> System : selects the cargoes the port exports
+        activate System
 
-            System --> Editor : shows a list of cargoes and asks to select the ones the port transform
+            System --> Editor : asks to select the cargoes the port produces
         deactivate System
 
-            Editor -> System : selects the cargoes the port transform
+            Editor -> System : selects the cargoes the port produces
             activate System
     end
 
@@ -59,14 +64,25 @@ activate Editor
         historical restrictions
     end note
 
-    loop while generating entities exist
-            System --> Editor : requests the entities generating frequency factor
+    loop for each generating industry (primary) in the select industries
+
+            System --> Editor : requests the generation frequency factor
         deactivate System
 
-        Editor -> System : types the generating entities factor
+        Editor -> System : types the generation frequency factor
         activate System
     end
+    hnote right
+        historical restrictions
+    end note
 
+    loop for each city in the selected map
+            System --> Editor : requests the traffic rate for mail and passengers
+        deactivate System
+
+        Editor -> System : types the traffic rate for mail and passengers
+        activate System
+    end
     hnote right
         historical restrictions
     end note

@@ -58,25 +58,25 @@ activate EDITOR
             CTRL --> UI : cargoesList
         deactivate CTRL
 
-        loop for each selected industry that is a port (mixed industries)
+        loop for each port (mixed industry) in the select industries
             UI --> EDITOR : shows a list of cargoes and asks to select the ones the port import
             deactivate UI
 
             EDITOR -> UI : selects the cargoes the port import
             activate UI
-                UI --> EDITOR : asks the cargoes to select the ones the port export
+                UI --> EDITOR : asks to select the cargoes the port export
             deactivate UI
 
             EDITOR -> UI : selects the cargoes the port export
             activate UI
-                UI --> EDITOR : asks the cargoes to select the ones the port transform
+                UI --> EDITOR : asks the cargoes to select the cargoes the port transform
             deactivate UI
 
             EDITOR -> UI : selects the cargoes the port transform
             activate UI
         end
 
-        loop for each selected industry
+        loop for each generating industry in the select industries
             UI --> EDITOR : requests the industry generation frequency factor
             deactivate UI
 
@@ -103,7 +103,7 @@ activate EDITOR
 
     EDITOR -> UI : confirms data
     activate UI
-        UI -> CTRL : createScenario(nameID, startDate, endDate, mapID, selectedIndustries, \nportImports, portExports, portTransforms, industryGenerationFactors, selectedLocomotiveTypes)
+        UI -> CTRL : createScenario(mapID, nameID, startDate, endDate, selectedAvailableIndustries, \nportImports, portExports, portTransforms, industryGenerationFactors, selectedLocomotiveTypes)
         activate CTRL
             CTRL -> CTRL : getEditorFromSession()
             ref over CTRL

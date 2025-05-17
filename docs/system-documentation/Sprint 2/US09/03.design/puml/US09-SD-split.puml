@@ -10,8 +10,6 @@ actor "Player" as PLAYER_ACTOR
 
 participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
-participant "player\n:Player" as PLAYER
-participant "locomotive\n:Locomotive" as LOCOMOTIVE
 
 activate PLAYER_ACTOR
 
@@ -52,10 +50,10 @@ activate PLAYER_ACTOR
     PLAYER_ACTOR -> UI : confirms purchase
     activate UI
 
-        UI -> CTRL : purchaseLocomotive(locomotiveID, playerUsername)
+        UI -> CTRL : purchaseLocomotive(locomotiveID)
         activate CTRL
 
-            CTRL -> CTRL : getPlayerByUsername(playerUsername)
+            CTRL -> CTRL : getPlayerFromSession()
             activate CTRL
 
                 ref over CTRL
@@ -65,7 +63,7 @@ activate PLAYER_ACTOR
                 CTRL --> CTRL : player
             deactivate CTRL
 
-            ref over CTRL, PLAYER, LOCOMOTIVE
+            ref over CTRL
                 Purchase Locomotive
             end ref
 
