@@ -8,29 +8,47 @@ autonumber
 title System Sequence Diagram : US03 - Add a city
 
 actor "Editor" as Editor
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
 participant AddCityUI
 participant AddCityController
 participant AddHouseBlocksController as AddHouseBlocksController
 
 activate Editor
-Editor -> AddCityUI : asks to edit map
-        activate AddCityUI
-        activate AddCityController
-        AddCityUI --> AddCityController : getAvailableMaps()
+   Editor -> mapUI : asks to edit map
 
-        ref over AddCityController
-        GetAvailableMaps
-        end
-        AddCityController --> AddCityUI : availableMapsList
-        deactivate AddCityController
+           activate mapUI
+               mapUI -> mapCTRL**: create()
+               mapUI -> mapCTRL: getAvailableMaps()
 
-        AddCityUI --> Editor: shows list of available maps
-        deactivate AddCityUI
-        
-        Editor -> AddCityUI: selects a map
-        activate AddCityUI
-        AddCityUI --> Editor: loads and displays the selected map
-        deactivate AddCityUI
+               activate mapCTRL
+                   ref over mapCTRL
+                   Get available maps
+                   end
+                   mapCTRL --> mapUI: availableMapsList
+               deactivate mapCTRL
+
+               mapUI --> Editor: shows list of available maps
+           deactivate mapUI
+
+       Editor -> mapUI: selects a map
+           activate mapUI
+
+               mapUI -> mapCTRL: loadMap(selectedMap)
+               activate mapCTRL
+
+                   ref over mapCTRL
+                   Load selected map
+                   end
+
+                   mapCTRL --> mapUI: mapLayout
+
+               deactivate mapCTRL
+
+               mapUI --> Editor: loads and displays the selected map
+
+
+           deactivate mapUI
 
 Editor -> AddCityUI : asks to add city
         activate AddCityUI
