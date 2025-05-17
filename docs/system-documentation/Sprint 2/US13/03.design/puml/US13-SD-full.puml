@@ -1,0 +1,95 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Player" as PLAYER
+participant ":TrainConnectivityUI" as UI
+participant ":TrainConnectivityController" as CTRL
+participant "checker\n:TrainConnectivityChecker" as CHECKER
+participant "matrixUtils\n:MatrixUtils" as MATRIX
+participant ":FileSystem" as FS
+
+activate PLAYER
+
+    PLAYER -> UI : asks to verify train travel between stations
+    activate UI
+        UI --> CTRL** : create()
+
+        UI -> CTRL : loadRailwayData()
+        activate CTRL
+            CTRL -> CHECKER : loadCSV("docs/mdisc/us13/data/scenario4_lines.csv")
+            activate CHECKER
+                CHECKER -> FS : read CSV file
+                activate FS
+                    FS --> CHECKER : file contents
+                deactivate FS
+                
+                loop for each line in CSV
+                    CHECKER -> CHECKER : add stations and edges to graph
+                deactivate CHECKER
+                end
+            CTRL --> UI : data loaded
+        deactivate CTRL
+
+        UI --> PLAYER : requests start station
+    deactivate UI
+
+    PLAYER -> UI : enters start station
+    activate UI
+        UI --> PLAYER : requests end station
+    deactivate UI
+
+    PLAYER -> UI : enters end station
+    activate UI
+        UI --> PLAYER : requests train type (STEAM, DIESEL, ELECTRIC)
+    deactivate UI
+
+    PLAYER -> UI : selects train type
+    activate UI
+        UI --> PLAYER : requests station type (depot, station, terminal)
+    deactivate UI
+
+    PLAYER -> UI : selects station type
+    activate UI
+        UI -> CTRL : verifyTrainTravel(start, end, trainType, stationType)
+        activate CTRL
+            CTRL -> CHECKER : canTravel(start, end, trainType, stationType)
+            activate CHECKER
+                CHECKER -> CHECKER : dfs(start, end, trainType, stationType, visited)
+                activate CHECKER
+                    CHECKER --> CHECKER : pathExists
+                deactivate CHECKER
+                CHECKER --> CTRL : result
+            deactivate CHECKER
+
+            CTRL -> CHECKER : exportToDOT("docs/mdisc/us13/graphstream/dot/scenario4.dot")
+            activate CHECKER
+                CHECKER -> FS : write DOT file
+                activate FS
+                    FS --> CHECKER : file written
+                deactivate FS
+            deactivate CHECKER
+
+            CTRL -> MATRIX : computeWalksMatrix(length, graph, stationOrder)
+            activate MATRIX
+                MATRIX --> CTRL : walks matrix
+            deactivate MATRIX
+
+            CTRL -> MATRIX : computeTransitiveClosure(graph, stationOrder)
+            activate MATRIX
+                MATRIX --> CTRL : closure matrix
+            deactivate MATRIX
+
+            CTRL --> UI : verification results
+        deactivate CTRL
+
+        UI --> PLAYER : displays:\n- if train can travel between stations\n- network visualization\n- walk count matrix\n- transitive closure matrix
+    deactivate UI
+
+deactivate PLAYER
+
+@enduml

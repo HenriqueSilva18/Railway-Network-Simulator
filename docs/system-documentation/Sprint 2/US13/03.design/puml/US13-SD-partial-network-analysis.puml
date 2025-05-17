@@ -1,0 +1,47 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":TrainConnectivityController" as CTRL
+participant "checker\n:TrainConnectivityChecker" as CHECKER
+participant "matrixUtils\n:MatrixUtils" as MATRIX
+participant ":FileSystem" as FS
+
+activate CTRL
+    CTRL -> CHECKER : exportToDOT("docs/mdisc/us13/graphstream/dot/scenario4.dot")
+    activate CHECKER
+        CHECKER -> CHECKER : buildDOTContent()
+        activate CHECKER
+            CHECKER -> CHECKER : addNodes()
+            CHECKER -> CHECKER : addEdges()
+            CHECKER -> CHECKER : setEdgeColors()
+            CHECKER --> CHECKER : DOT content
+        deactivate CHECKER
+
+        CHECKER -> FS : write DOT file
+        activate FS
+            FS --> CHECKER : file written
+        deactivate FS
+
+        CHECKER --> CTRL : visualization exported
+    deactivate CHECKER
+
+    CTRL -> MATRIX : computeWalksMatrix(length, graph, stationOrder)
+    activate MATRIX
+        MATRIX -> MATRIX : initializeMatrix()
+        MATRIX -> MATRIX : calculatePaths()
+        MATRIX --> CTRL : walks matrix
+    deactivate MATRIX
+
+    CTRL -> MATRIX : computeTransitiveClosure(graph, stationOrder)
+    activate MATRIX
+        MATRIX -> MATRIX : warshallAlgorithm()
+        MATRIX --> CTRL : closure matrix
+    deactivate MATRIX
+
+deactivate CTRL
+
+@enduml 

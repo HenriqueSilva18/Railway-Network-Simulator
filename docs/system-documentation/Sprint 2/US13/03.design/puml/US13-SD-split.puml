@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Player" as PLAYER
+
+participant ":TrainConnectivityUI" as UI
+participant ":TrainConnectivityController" as CTRL
+participant "checker\n:TrainConnectivityChecker" as CHECKER
+
+activate PLAYER
+
+    PLAYER -> UI : asks to verify train travel between stations
+
+    activate UI
+        UI --> CTRL** : create()
+        UI -> CTRL : loadRailwayData()
+        ref over CTRL, CHECKER
+            Load Railway Data from CSV
+            1. Read CSV file
+            2. Create stations
+            3. Build graph with edges
+        end ref
+
+        activate CTRL
+            CTRL --> UI : data loaded
+        deactivate CTRL
+
+        UI --> PLAYER : requests start station
+    deactivate UI
+
+    PLAYER -> UI : enters start station
+    activate UI
+        UI --> PLAYER : requests end station
+    deactivate UI
+
+    PLAYER -> UI : enters end station
+    activate UI
+        UI --> PLAYER : requests train type (STEAM, DIESEL, ELECTRIC)
+    deactivate UI
+
+    PLAYER -> UI : selects train type
+    activate UI
+        UI --> PLAYER : requests station type (depot, station, terminal)
+    deactivate UI
+
+    PLAYER -> UI : selects station type
+    activate UI
+        UI -> CTRL : verifyTrainTravel(start, end, trainType, stationType)
+        activate CTRL
+            ref over CTRL, CHECKER
+                Verify Train Travel
+                1. Check path existence using DFS
+                2. Validate train type constraints
+                3. Validate station type requirements
+            end ref
+
+            ref over CTRL, CHECKER
+                Generate Network Visualization
+                1. Create DOT file
+                2. Add nodes and edges
+                3. Set edge colors based on electrification
+            end ref
+
+            ref over CTRL
+                Compute Network Metrics
+                1. Calculate walks matrix
+                2. Calculate transitive closure
+            end ref
+
+            CTRL --> UI : verification results
+        deactivate CTRL
+
+        UI --> PLAYER : displays:\n- if train can travel between stations\n- network visualization\n- walk count matrix\n- transitive closure matrix
+    deactivate UI
+
+deactivate PLAYER
+
+@enduml

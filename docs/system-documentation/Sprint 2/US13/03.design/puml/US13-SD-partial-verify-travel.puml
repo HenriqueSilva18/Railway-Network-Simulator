@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":TrainConnectivityController" as CTRL
+participant "checker\n:TrainConnectivityChecker" as CHECKER
+
+activate CTRL
+    CTRL -> CHECKER : canTravel(start, end, trainType, stationType)
+    activate CHECKER
+        CHECKER -> CHECKER : validateStations(start, end)
+        activate CHECKER
+            CHECKER --> CHECKER : stations valid
+        deactivate CHECKER
+
+        CHECKER -> CHECKER : validateTrainType(trainType)
+        activate CHECKER
+            CHECKER --> CHECKER : train type valid
+        deactivate CHECKER
+
+        CHECKER -> CHECKER : validateStationType(stationType)
+        activate CHECKER
+            CHECKER --> CHECKER : station type valid
+        deactivate CHECKER
+
+        CHECKER -> CHECKER : dfs(start, end, trainType, stationType, visited)
+        activate CHECKER
+            loop while path not found and unvisited nodes exist
+                CHECKER -> CHECKER : checkTrainConstraints(edge, trainType)
+                CHECKER -> CHECKER : checkStationTypeConstraints(node, stationType)
+                CHECKER -> CHECKER : markVisited(node)
+                CHECKER -> CHECKER : exploreNeighbors(node)
+            end
+            CHECKER --> CHECKER : pathExists
+        deactivate CHECKER
+
+        CHECKER --> CTRL : result
+    deactivate CHECKER
+
+deactivate CTRL
+
+@enduml 

@@ -1,73 +1,57 @@
 @startuml
-
-@startuml
 skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam class {
   BackgroundColor LightBlue
   BorderColor Blue
 }
-skinparam enum {
-  BackgroundColor LightBlue
-  BorderColor Blue
-}
 hide circle
 hide methods
 
-left to right direction
-
-title Domain Model Excerpt: US12 - Create a Simulator
-
-class Simulator {
-  status
-  runTime
-  report
+class Player {
+  username
 }
-
-class City {
-  nameID
-  position
-  houseBlocks
-  suppliedCargo
-  demandedCargo
-}
-
-class Industry {
-  nameID
-  position
-  sector
-  type
-  description
-  availabilityYear
-  productionRate
-  suppliedCargo
-  demandedCargo
-}
-
-class Cargo {
-  name
-  amount
-  lifespan
-  type
-}
-
 
 class Station {
   nameID
-  position
-  type
-  economicRadius
-  cost
-  storageCapacity
-  centerPoint
-  buildingSlots
-  availableCargo
-  requestedCargo
 }
 
-Simulator "1 " -- "*" Cargo : generates
-Cargo "*" -- "1" Station : stores <
-Station "1" --"*" City  : serves
-Station"1" -- "*"Industry : serves
+class StationType {
+  name
+  type
+}
+
+class RailwayLine {
+  isElectrified
+  length
+}
+
+class RailwayNetwork {
+  nameID
+}
+
+class Locomotive {
+  nameID
+  type
+  power
+}
+
+class Train {
+  nameID
+}
+
+' Relationships specific to US13
+Player "1" -- "*" Train : verifies travel for >
+Station "*" -- "1" StationType : defined by >
+RailwayLine "1" -- "2" Station : connects >
+Train "1" -- "1" Locomotive : powered by >
+RailwayNetwork "1" -- "*" RailwayLine : contains >
+RailwayNetwork "1" -- "*" Station : has >
+
+note "Train types:\n- Steam\n- Diesel\n- Electric" as TrainTypes
+TrainTypes .. Locomotive
+
+note "Station types:\n- Depot\n- Station\n- Terminal" as StationTypes
+StationTypes .. StationType
 
 @enduml

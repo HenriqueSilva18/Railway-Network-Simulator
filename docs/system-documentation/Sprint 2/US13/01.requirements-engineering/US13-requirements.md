@@ -1,103 +1,69 @@
-# US13 - Create a simulator
+# US13 - Verify Train Travel Between Stations
 
 ## 1. Requirements Engineering
 
 ### 1.1. User Story Description
 
-As a Product Owner, I want to create a simulator that generates cargoes at current stations, automatically, considering the cities and industries that the railway network serves.
+As a Player, given a railway with stations and lines connecting pairs of stations, I want to verify if a specific train (steam, diesel, or electric powered) can travel between two stations belonging to the rail network (or from any type of station to another of the same type).
 
 ### 1.2. Customer Specifications and Clarifications 
 
 **From the specifications document:**
 
-> The simulator will enable the manager (or in the playful perspective, the player) to create a railway network composed of stations that serve cities and industries, lines connecting those stations, and trains that transport cargo between stations, according to a route defined by the manager. It is crucial to highlight that cities and industries only generate or transform cargo if they have a station; when the cargo is generated, it is then available to be collected at the station.
+> The player should be able to verify if a specific type of train can travel between two stations in the railway network, considering the type of power (steam, diesel, or electric) and the station types (depot, station, or terminal).
 
-> In the simulator, the player/user acquires trains within the available budget and can put the train into service on a specific route.
-
-> In addition to creating the dynamic elements already described, the player/user can play or pause the simulator. During the simulator’s operation, the evolution of events should be displayed, namely the trains’ journeys (start and end).
-
-> The RailRoad Tycoon (II and later) game/simulator is particularly complete, covering the areas of gameplay, economy and engineering. Keeping in mind that this game is an inspiration for the current project, there are many topics covered by the game that will not be focused on in the project, in particular:
-> - Collision detection
-> - Timetable generation/management
-> - Calculation of train (de)accelerations
-> - Editing of line details (graphical mode), connections will be topological
+> The system should provide a visual representation of the railway network, clearly distinguishing between electrified and non-electrified lines.
 
 **From the client clarifications:**
 
-> **Question:** Should cargo generation dynamically update as the railway network expands or changes?
->
-> **Answer:** Yes; the generation is done for the industries and house blocks served by the stations present in the network.
-
-> **Question:** Will the user have customization options for cargo generation rules, or will it be fully automated?
->
-> **Answer:** Just in the edition of the scenario.
-
-> **Question:** How should cargo stockpiling be managed at stations to prevent excessive accumulation?
->
-> **Answer:** A maximum number can be considered per cargo type (e.g. 30).
-
-> **Question:** There is a limit to cargo storage?
->
-> **Answer:** 24.
-
-> **Question:** How should cargo generation be done? At fixed time intervals or based on specific events (train arrival)?
->
-> **Answer:** Accordingly to the frequency defined for the industry and house blocks by the station (the distribution along the year can be fixed or random).
-
-> **Question:** Should the simulator run in real-time or in set intervals?
->
-> **Answer:** Not in real-time.
-
-> **Question:** Can users manually adjust cargo generation rates?
->
-> **Answer:** Maybe not the player but generation should be configurable (maybe in a config file).
-
-> **Question:** Should generated cargo be influenced by train schedules?
->
-> **Answer:** There are no train schedules!
+> The implementation must focus on using primitive operations and avoid using existing Java library functions for the path-finding algorithms.
 
 ### 1.3. Acceptance Criteria
 
-* **AC1:** This simulator should provide options for start/pause.
+* **AC01:** The player should be able to choose the type of train (steam, diesel or electric) and station type (depot, station or terminal) in real time.
+* **AC02:** A visualization of the stations, and the lines connecting stations of this scenario (using, for example, Graphviz or GraphStream packages) should be displayed to the player, where electrified railway lines are drawn with a different color from the others.
+* **AC03:** All implemented procedures (except the used for graphic visualization) must use primitive operations only, and not existing functions in JAVA libraries.
+* **AC04:** The algorithm(s) implemented to solve this problem should be documented/detailed in the repository documentation (using markdown format).
 
 ### 1.4. Found out Dependencies
 
-* There is a dependency on "US01 - Create a map" as there must be at least one map created for the simulation to run.
-* There is a dependency on "US02 - Add an industry" as industries are needed to generate cargo at stations.
-* There is a dependency on "US03 - Add a city" as cities generate passenger and mail cargo at stations.
-* There is a dependency on "US04 - Create a scenario" as scenarios define the restrictions for the simulation.
-* There is a dependency on "US05 - Build station" as stations are required to serve cities and industries for cargo generation.
-* There is a dependency on "US08 - Build a railway line" as railway lines are needed to connect stations.
-* There is a dependency on "US09 - Buy a locomotive" as locomotives are needed to form trains for cargo transport.
-* There is a dependency on "US10 - Assign a train to a route" as routes are needed for trains to transport cargo between stations.
+* There is a dependency on US requirements related to building the railway network infrastructure:
+  * Building stations
+  * Creating railway lines
+  * Defining line electrification status
+  * Station type definitions
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
-
-* Typed data:
-    * n/a
 * Selected data:
-    * an operation
+    * Train type (steam, diesel, or electric)
+    * Origin station
+    * Destination station
 
 **Output Data:**
-
-* (In)Success of the operation
-* Simulation results
-* Simulation report
+* Network visualization showing:
+    * Stations
+    * Railway lines (with different colors for electrified lines)
+* Verification result:
+    * Whether the selected train can travel between the chosen stations
+    * Path information (if available)
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![US12-SSD](svg/US13-SSD.svg)
+![US13-SSD](svg/US13-SSD.svg)
 
 ### 1.7 Other Relevant Remarks
 
 **(i) special requirements:**
-- n/a
+- The implementation must use primitive operations for path-finding algorithms
+- The visualization should clearly distinguish electrified lines from non-electrified ones
 
 **(ii) data and/or technology variations:**
-- Scenario restrictions will affect the simulation.
+- Different train types (steam, diesel, electric)
+- Different station types (depot, station, terminal)
+- Electrified vs non-electrified lines
 
-**(iii) how often this US is held:**
-- The Product Owner will develop the simulator initially and maintain it throughout the project.
-- The Simulator will be used by players during gameplay.
+**(iii) frequency of occurrence:**
+- This functionality will be used frequently during gameplay to verify possible train routes
+- Critical for strategic planning of train routes and network expansion

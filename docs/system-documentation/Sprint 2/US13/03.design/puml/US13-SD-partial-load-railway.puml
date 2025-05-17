@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":TrainConnectivityController" as CTRL
+participant "checker\n:TrainConnectivityChecker" as CHECKER
+participant ":FileSystem" as FS
+
+activate CTRL
+    CTRL -> CHECKER : loadCSV("docs/mdisc/us13/data/scenario4_lines.csv")
+    activate CHECKER
+        CHECKER -> FS : read CSV file
+        activate FS
+            FS --> CHECKER : file contents
+        deactivate FS
+
+        loop for each line in CSV
+            CHECKER -> CHECKER : stations.putIfAbsent(station)
+            CHECKER -> CHECKER : stationOrder.add(station)
+            CHECKER -> CHECKER : graph.putIfAbsent(edge)
+        end
+
+        CHECKER --> CTRL : data loaded
+    deactivate CHECKER
+
+deactivate CTRL
+
+@enduml 

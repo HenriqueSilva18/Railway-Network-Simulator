@@ -1,47 +1,82 @@
-# USXXX - YYY
-
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+# US13 - Verify Train Travel Between Stations
 
 ## 3. Design
 
 ### 3.1. Rationale
 
-**The rationale grounds on the SSD interactions and the identified input/output data.**
-
-| Interaction ID | Question: Which class is responsible for... | Answer  | Justification (with patterns)  |
-|:-------------  |:--------------------- |:------------|:---------------------------- |
-| Step 1  		 |							 |             |                              |
-| Step 2  		 |							 |             |                              |
-| Step 3  		 |							 |             |                              |
-| Step 4  		 |							 |             |                              |
-| Step 5  		 |							 |             |                              |
-| Step 6  		 |							 |             |                              |              
-| Step 7  		 |							 |             |                              |
-| Step 8  		 |							 |             |                              |
-| Step 9  		 |							 |             |                              |
-| Step 10  		 |							 |             |                              |  
+| Interaction ID | Question: Which class is responsible for...        | Answer                    | Justification (with patterns)                                                                                                 |
+|:---------------|:--------------------------------------------------|:--------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
+| Step 1         | ... interacting with the actor?                    | TrainConnectivityUI      | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model.                 |
+|                | ... coordinating the US?                           | TrainConnectivityController| Controller: coordinates the interaction between UI and domain objects.                                                        |
+| Step 2         | ... loading railway data from CSV?                 | TrainConnectivityChecker | Information Expert: manages the railway network data and graph structure.                                                     |
+|                | ... storing station and edge data?                 | TrainConnectivityChecker | Creator and Information Expert: creates and manages Station and Edge objects.                                                 |
+| Step 3         | ... validating station existence?                  | TrainConnectivityChecker | Information Expert: knows all stations in the network.                                                                        |
+| Step 4         | ... validating train type?                         | TrainConnectivityChecker | Information Expert: knows valid train types and their constraints.                                                            |
+| Step 5         | ... validating station type?                       | TrainConnectivityChecker | Information Expert: knows station types and their requirements.                                                               |
+| Step 6         | ... checking path existence?                       | TrainConnectivityChecker | Information Expert: has the graph structure and algorithms for path finding.                                                  |
+| Step 7         | ... generating network visualization?              | TrainConnectivityChecker | Information Expert: knows the network structure and edge properties.                                                          |
+| Step 8         | ... computing network metrics?                     | MatrixUtils              | Pure Fabrication: separates matrix computation responsibilities for better cohesion.                                          |
+| Step 9         | ... displaying results?                            | TrainConnectivityUI      | IE: responsible for user interactions and displaying results.                                                                 |
 
 ### Systematization ##
 
-According to the taken rationale, the conceptual classes promoted to software classes are:
+According to the taken rationale, the conceptual classes promoted to software classes are: 
 
-* Class1
-* Class2
-* Class3
+* Station
+* Edge
+* StationType
+* TrainType
 
-Other software classes (i.e. Pure Fabrication) identified:
+Other software classes (i.e. Pure Fabrication) identified: 
 
-* xxxxUI  
-* xxxxController
+* TrainConnectivityUI  
+* TrainConnectivityController
+* TrainConnectivityChecker
+* MatrixUtils
 
 ## 3.2. Sequence Diagram (SD)
 
-_In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
+### Full Diagram
 
-![USXXX-SD](svg/USXXX-SD.svg)
+This diagram shows the full sequence of interactions between the classes involved in the realization of this user story.
+
+![Sequence Diagram - Full](svg/US13-SD-full.svg)
+
+### Split Diagrams
+
+The following diagram shows the same sequence of interactions between the classes involved in the realization of this user story, but it is split in partial diagrams to better illustrate the interactions between the classes.
+
+It uses Interaction Occurrence (a.k.a. Interaction Use).
+
+![Sequence Diagram - split](svg/US13-SD-split.svg)
+
+**Load Railway Data Partial SD**
+
+This diagram shows the sequence of loading railway data from CSV and building the graph structure.
+
+![Sequence Diagram - Partial - Load Railway Data](svg/US13-SD-partial-load-railway.svg)
+
+**Verify Train Travel Partial SD**
+
+This diagram shows the sequence of verifying if a train can travel between two stations.
+
+![Sequence Diagram - Partial - Verify Train Travel](svg/US13-SD-partial-verify-travel.svg)
+
+**Network Analysis Partial SD**
+
+This diagram shows the sequence of generating network visualization and computing metrics.
+
+![Sequence Diagram - Partial - Network Analysis](svg/US13-SD-partial-network-analysis.svg)
 
 ## 3.3. Class Diagram (CD)
 
-_In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
+The class diagram shows the static structure of the system, including:
+- Core domain classes (Station, Edge)
+- Enums for types (StationType, TrainType)
+- Control classes (TrainConnectivityController)
+- UI class (TrainConnectivityUI)
+- Utility class (MatrixUtils)
 
-![USXXX-CD](svg/USXXX-CD.svg)
+The relationships and dependencies between these classes are designed to support the verification of train travel between stations while maintaining high cohesion and low coupling.
+
+![Class Diagram](svg/US13-CD.svg)
