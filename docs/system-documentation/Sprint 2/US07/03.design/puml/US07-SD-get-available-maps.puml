@@ -1,40 +1,39 @@
 @startuml
-
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-autonumber
 
-title System Sequence Diagram : US07 - Get Available Maps
-
-participant ListStationController
-participant Repositories
-participant MapRepository
-participant Map
-
-autonumber 2
---> ListStationController : getAvailableMaps()
-activate ListStationController
-autonumber 2.1
-group GetAvailableMaps
-  ListStationController -> Repositories : getInstance()
-  activate Repositories
-  Repositories --> ListStationController : repositoriesInstance
-  deactivate Repositories
-
-  ListStationController -> Repositories : mapRepository()
-  activate Repositories
-  Repositories --> ListStationController : mapRepositoryInstance
-  deactivate Repositories
-
-  ListStationController -> MapRepository : getMaps()
-  activate MapRepository
-  MapRepository --> ListStationController : mapsList
-  deactivate MapRepository
-end
 autonumber 3
-<-- ListStationController : availableMapsList
 
-deactivate ListStationController
+participant ":MapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as REPOS_MAP
 
-@enduml 
+-> CTRL: getAvailableMaps()
+activate CTRL
+autonumber 3.1
+group Get available maps
+    CTRL -> REPOS: getInstance()
+    activate REPOS
+        REPOS --> CTRL: repositories
+    deactivate REPOS
+
+    CTRL -> REPOS_SINGLETON: getMapRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> CTRL: mapRepository
+    deactivate REPOS_SINGLETON
+
+    CTRL -> REPOS_MAP: getAvailableMaps()
+    activate REPOS_MAP
+        REPOS_MAP --> CTRL: availableMapsList
+    deactivate REPOS_MAP
+    end
+    autonumber 4
+    <-- CTRL : availableMapsList
+deactivate CTRL
+
+
+
+
+@enduml

@@ -8,39 +8,47 @@ autonumber
 title System Sequence Diagram : US07 - List stations and view details
 
 actor "Player" as Player
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
 participant ListStationUI
 participant ListStationController
-participant MapRepository
-participant ApplicationSession
+
 
 activate Player
-Player -> ListStationUI : asks to see available maps
-        activate ListStationUI
-        ListStationUI --> ListStationController : getAvailableMaps()
-        activate ListStationController
+Player -> mapUI : asks to edit map
 
-        ref over ListStationController
-        GetAvailableMaps
-        end
-        ListStationController --> ListStationUI : availableMapsList
-        deactivate ListStationController
+        activate mapUI
+            mapUI -> mapCTRL**: create()
+            mapUI -> mapCTRL: getAvailableMaps()
 
-        ListStationUI --> Player: shows list of available maps
-        deactivate ListStationUI
-        
-        Player -> ListStationUI: selects a map
-        activate ListStationUI
-        ListStationUI --> ListStationController: loadMap(mapId)
-        activate ListStationController
-        
-        ref over ListStationController
-        LoadMap
-        end
-        
-        ListStationController --> ListStationUI: selectedMap
-        deactivate ListStationController
-        ListStationUI --> Player: loads and displays the selected map
-        deactivate ListStationUI
+            activate mapCTRL
+                ref over mapCTRL
+                Get available maps
+                end
+                mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+
+            mapUI --> Player: shows list of available maps
+        deactivate mapUI
+
+    Player -> mapUI: selects a map
+        activate mapUI
+
+            mapUI -> mapCTRL: loadMap(selectedMap)
+            activate mapCTRL
+
+                ref over mapCTRL
+                Load selected map
+                end
+
+                mapCTRL --> mapUI: mapLayout
+
+            deactivate mapCTRL
+
+            mapUI --> Player: loads and displays the selected map
+
+
+        deactivate mapUI
 
 Player -> ListStationUI : request to see available stations
         activate ListStationUI
@@ -48,7 +56,7 @@ Player -> ListStationUI : request to see available stations
         activate ListStationController
         
         ref over ListStationController
-        GetStations
+        Get available stations
         end
         
         ListStationController --> ListStationUI: stationsList
@@ -64,7 +72,7 @@ Player -> ListStationUI : selects a specific station
         activate ListStationController
         
         ref over ListStationController
-        GetStationDetails
+        Get station details
         end
         
         ListStationController --> ListStationUI: stationDetails
