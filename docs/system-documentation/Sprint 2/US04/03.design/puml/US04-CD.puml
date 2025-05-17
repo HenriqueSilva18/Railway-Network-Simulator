@@ -9,151 +9,174 @@ skinparam classAttributeIconSize 0
 
 'left to right direction
 
-class ApplicationSession
-{
+class ApplicationSession {
     - ApplicationSession()
     + {static} getInstance()
     + getCurrentSession()
 }
 
-class UserSession
-{
+class UserSession {
     + getUsername()
 }
 
 class Editor {
     - username : String
     - password : String
-    - createdMaps
-    - createdScenarios
+    + addScenario(scenario)
+    + addMap(map)
 }
 
 class Scenario {
     - nameID : String
     - startDate : Date
     - endDate : Date
+    - tweakedCityList : List<City>
+    - availableIndustryList : List<Industry>
+    - availableLocomotives : List<Locomotive>
     
-    + Scenario(nameID, startDate, endDate, mapID, editor)
-    + configureIndustry(industry, generationFactor) : boolean
-    + configurePortCargoes(port, imports, exports, transforms) : boolean
-    + configureLocomotive(locomotive) : boolean
+    + Scenario(nameID, editor, startDate, endDate,\n    selectedIndustries, availableLocomotives, mapCityList)
+    + configurePort(port, portImports,\n    portExports, portProduces)
+    + configureGeneratingIndustry(industry,\n    genIndustryFactors)
+    + configureCity(city, cityTrafficRates)
 }
 
 class Map {
     - nameID : String
+    - cityList : List<City>
+    - industryList : List<Industry>
+    
+    + getIndustries()
+    + getCities()
+    + createScenario(nameID, editor, startDate, endDate,\n    selectedIndustries, portImports, portExports,\n    portProduces, genIndustryFactors,\n    availableLocomotives, mapCityList, cityTrafficRates)
+    + addScenario(scenario)
+    - validateScenario()
 }
 
 class Industry {
     - nameID : String
     - type : String
-    - description : String
     - availabilityYear : int
-    - productionRate : double
-    - suppliedCargo
-    - demandedCargo
+    - productionRate : int
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
+}
+
+class IndustrySector {
+    - name : String
+    - importsExports : boolean
+    - generatesCargo : boolean
+    - consumesCargo : boolean
+    - description : String
 }
 
 class Cargo {
     - name : String
-    - amount : int
+    - amount : double
     - lifespan : int
     - type : String
+    - productionResources : List<String>
+}
+
+class City {
+    - nameID : String
+    - trafficRate : int
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
 }
 
 class Locomotive {
     - nameID : String
+    - owner : String
     - type : String
     - power : double
+    - acceleration : double
     - topSpeed : double
     - startYear : int
+    - fuelCost : double
     - availabilityYear : int
+    - acquisitionPrice : double
+    - maintenancePrice : double
 }
 
 class MapRepository {
-    + getMaps() : List<Map>
-}
-
-class IndustryRepository {
-    + getAvailableIndustries(startDate, endDate) : List<Industry>
+    + getAvailableMaps()
 }
 
 class CargoRepository {
-    + getAvailableCargoes() : List<Cargo>
-}
-
-class LocomotiveRepository {
-    + getLocomotiveTypes() : List<Locomotive>
+    + getCargoList()
 }
 
 class EditorRepository {
-    + getEditorByUsername(username) : Editor
+    + getEditorByUsername(username)
+    + addScenarioToEditor(editor, scenario)
+}
+
+class LocomotiveRepository {
+    + getLocomotiveTypes()
+    + getAvailableLocomotives(selectedLocomotiveTypes,\n    endDate)
 }
 
 class Repositories {
     - Repositories()
     + {static} getInstance()
-    + getMapRepository() : MapRepository
-    + getIndustryRepository() : IndustryRepository
-    + getCargoRepository() : CargoRepository
-    + getLocomotiveRepository() : LocomotiveRepository
-    + getEditorRepository() : EditorRepository
+    + getMapRepository()
+    + getEditorRepository()
+    + getLocomotiveRepository()
+    + getCargoRepository()
 }
 
 class CreateScenarioController {
     + CreateScenarioController()
-    + getMaps() : List<Map>
-    + getAvailableIndustries(startDate, endDate) : List<Industry>
-    + getAvailableCargoes() : List<Cargo>
-    + getLocomotiveTypes() : List<Locomotive>
-    + createScenario(nameID, startDate, endDate, mapID, selectedIndustries, portImports, \nportExports, portTransforms, industryGenerationFactors, selectedLocomotiveTypes) : Scenario
-    - getEditorFromSession() : Editor
+    + getAvailableMaps()
+    + getMapIndustries(selectedMap)
+    + getMapCities(selectedMap)
+    + getLocomotiveTypes()
+    + createScenario(nameID, selectedMap, startDate, endDate,\n    selectedIndustries, portImports, portExports,\n    portProduces, genIndustryFactors,\n    selectedLocomotiveTypes, mapCityList, cityTrafficRates)
+    - getEditorFromSession()
 }
 
 class CreateScenarioUI {
 }
-
-note right of CreateScenarioController
-    Controller responsible for 
-    coordinating scenario creation
-end note
-
-note bottom of IndustryRepository
-    Filters industries based on 
-    time period restrictions
-end note
 
 CreateScenarioUI .> CreateScenarioController
 
 CreateScenarioController ..> ApplicationSession
 CreateScenarioController ..> UserSession
 CreateScenarioController ..> Map
-CreateScenarioController ..> Industry
-CreateScenarioController ..> Cargo
-CreateScenarioController ..> Locomotive
-CreateScenarioController ..> Editor
-CreateScenarioController ..> Scenario
+CreateScenarioController ..> MapRepository
+CreateScenarioController ..> EditorRepository
+CreateScenarioController ..> LocomotiveRepository
 CreateScenarioController .> Repositories
 
 Repositories -> "1" Repositories : instance
 Repositories --> "1" MapRepository : mapRepository
-Repositories --> "1" IndustryRepository : industryRepository
-Repositories --> "1" CargoRepository : cargoRepository
-Repositories --> "1" LocomotiveRepository : locomotiveRepository
 Repositories --> "1" EditorRepository : editorRepository
+Repositories --> "1" LocomotiveRepository : locomotiveRepository
+Repositories --> "1" CargoRepository : cargoRepository
 
 ApplicationSession -> "1" ApplicationSession : instance
 ApplicationSession ..> UserSession
 
 MapRepository --> "*" Map : maps
-IndustryRepository --> "*" Industry : industries
-CargoRepository --> "*" Cargo : cargoes
-LocomotiveRepository --> "*" Locomotive : locomotives
-EditorRepository --> "*" Editor : editors
 
+Map --> "*" Industry : industries
+Map --> "*" City : cities
+Map --> "*" Scenario : scenarios
+
+Editor "1" -- "*" Map : creates >
 Editor "1" -- "*" Scenario : creates >
+
+Industry "*" -- "*" Cargo : produces/consumes >
+Industry "*" -- "1" IndustrySector : belongs to >
+
 Scenario "*" -- "1" Map : uses >
 Scenario "1" -- "*" Industry : configures >
 Scenario "1" -- "*" Locomotive : configures >
-Industry "*" -- "*" Cargo : produces/consumes >
+Scenario "1" -- "*" City : configures >
 
-@enduml 
+City "*" -- "*" Cargo : produces/consumes >
+
+EditorRepository --> "*" Editor : editors
+LocomotiveRepository --> "*" Locomotive : locomotives
+
+@enduml

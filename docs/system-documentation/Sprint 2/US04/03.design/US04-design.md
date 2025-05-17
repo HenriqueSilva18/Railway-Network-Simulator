@@ -4,46 +4,57 @@
 
 ### 3.1. Rationale
 
-| Interaction ID | Question: Which class is responsible for...         | Answer                   | Justification (with patterns) |
-|:---------------|:----------------------------------------------------|:-------------------------|:------------------------------|
-| Step 1  	      | ... interacting with the actor?	                    | CreateScenarioUI         | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
-|                | ... coordinating the US?                            | CreateScenarioController | Controller                    |
-| Step 2  	      | ... requesting name, start and end date?            | CreateScenarioUI         | IE: is responsible for user interactions. |
-| Step 3  	      | ... saving the inputted data? 		                    | CreateScenarioUI         | IE: is responsible for keeping the inputted data. |
-|                | ... validating time period data? (local validation) | CreateScenarioController | Controller: validates the data before proceeding. |
-| Step 4  	      | ... knowing all existing industries to show?				 | Repositories             | IE: Repositories maintains Industries. |
-|                |                                                     | IndustryRepository       | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility. |
-| Step 5  	      | ... saving the selected industries? 							         | CreateScenarioUI         | IE: is responsible for keeping the selected industries. |
-| Step 6  	      | ... knowing all available cargoes to show?					 | Repositories             | IE: Repositories maintains Cargoes. |
-|                |                                                     | CargoRepository          | By applying HC + LC on class Repositories, it delegates the responsibility. |
-| Step 7  	      | ... saving the selected import cargoes for port?    | CreateScenarioUI         | IE: is responsible for keeping the port import operations. |
-| Step 8  	      | ... showing export cargo options for port?          | CreateScenarioUI         | IE: is responsible for user interactions. |
-| Step 9  	      | ... saving the selected export cargoes for port?    | CreateScenarioUI         | IE: is responsible for keeping the port export operations. |
-| Step 10        | ... showing transform cargo options for port?       | CreateScenarioUI         | IE: is responsible for user interactions. |
-| Step 11        | ... saving the selected transform cargoes for port? | CreateScenarioUI         | IE: is responsible for keeping the port transform operations. |
-| Step 12        | ... requesting industry generation factors?         | CreateScenarioUI         | IE: is responsible for user interactions. |
-| Step 13        | ... validating generation factors? (local validation)| CreateScenarioController | Controller: validates the historical constraints. |
-| Step 14        | ... saving the inputted generation factors?         | CreateScenarioUI         | IE: is responsible for keeping the generation factors. |
-| Step 15        | ... knowing all locomotive types to show?           | Repositories             | IE: Repositories maintains Locomotive types. |
-|                |                                                     | LocomotiveRepository     | By applying HC + LC on class Repositories, it delegates the responsibility. |
-| Step 16        | ... saving the selected locomotive types?           | CreateScenarioUI         | IE: is responsible for keeping the selected locomotive types. |
-| Step 17        | ... showing all data and requesting confirmation?   | CreateScenarioUI         | IE: is responsible for user interactions. |
-| Step 18        | ... instantiating a new Scenario?                   | CreateScenarioController | Creator: the controller coordinates the creation of the scenario. |
-|                | ... validating all data (local validation)?         | Scenario                 | IE: owns its data. |
-|                | ... configuring the scenario components?            | Scenario                 | IE: responsible for its configuration. |
-|                | ... saving the created scenario?                    | Editor                   | IE: owns/manages scenarios. |
-|                | ... informing operation success?                    | CreateScenarioUI         | IE: is responsible for user interactions. |
+| Interaction ID | Question: Which class is responsible for...        | Answer                 | Justification (with patterns)                                                                                                       |
+|:---------------|:---------------------------------------------------|:-----------------------|:------------------------------------------------------------------------------------------------------------------------------------|
+| Step 1         | ... interacting with the actor?                    | CreateScenarioUI       | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model.                       |
+|                | ... coordinating the US?                           | CreateScenarioController| Controller                                                                                                                          |
+|                | ... knowing the user using the system?             | ApplicationSession     | IE: cf. A&A component documentation.                                                                                                |
+|                |                                                    | UserSession            | IE: knows the current user's session data                                                                                           |
+| Step 2         | ... knowing all available maps to show?            | Repositories           | IE: Repositories maintains Maps.                                                                                                    |
+|                |                                                    | MapRepository          | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility to MapRepository.         |
+| Step 3         | ... saving the selected map?                       | CreateScenarioUI       | IE: is responsible for keeping the selected map.                                                                                    |
+| Step 4         | ... requesting name and time period data?          | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 5         | ... saving the inputted time period data?          | CreateScenarioUI       | IE: is responsible for keeping the inputted data.                                                                                   |
+| Step 6         | ... getting map industries?                        | Map                    | IE: knows its own industries.                                                                                                       |
+| Step 7         | ... showing list of industries?                    | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 8         | ... saving the selected industries?                | CreateScenarioUI       | IE: is responsible for keeping the selected industries.                                                                             |
+| Step 9         | ... knowing all available cargoes?                 | Repositories           | IE: Repositories maintains Cargoes.                                                                                                 |
+|                |                                                    | CargoRepository        | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility to CargoRepository.       |
+| Step 10        | ... showing available cargoes for import?          | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 11        | ... saving selected import cargoes?                | CreateScenarioUI       | IE: is responsible for keeping the selected cargoes.                                                                                |
+| Step 12        | ... showing available cargoes for export?          | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 13        | ... saving selected export cargoes?                | CreateScenarioUI       | IE: is responsible for keeping the selected cargoes.                                                                                |
+| Step 14        | ... showing available cargoes for production?      | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 15        | ... saving selected production cargoes?            | CreateScenarioUI       | IE: is responsible for keeping the selected cargoes.                                                                                |
+| Step 16        | ... requesting generation frequency factor?         | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 17        | ... saving generation frequency factor?            | CreateScenarioUI       | IE: is responsible for keeping the inputted data.                                                                                   |
+| Step 18        | ... getting map cities?                           | Map                    | IE: knows its own cities.                                                                                                          |
+| Step 19        | ... requesting traffic rates?                      | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 20        | ... saving traffic rates?                          | CreateScenarioUI       | IE: is responsible for keeping the inputted data.                                                                                   |
+| Step 21        | ... getting and showing locomotive types?          | Repositories           | IE: Repositories maintains Locomotives.                                                                                             |
+|                |                                                    | LocomotiveRepository   | By applying High Cohesion (HC) + Low Coupling (LC) on class Repositories, it delegates the responsibility to LocomotiveRepository.  |
+| Step 22        | ... saving selected locomotive types?              | CreateScenarioUI       | IE: is responsible for keeping the selected locomotive types.                                                                       |
+| Step 23        | ... showing all data and requesting confirmation?  | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
+| Step 24        | ... getting editor from session?                   | ApplicationSession     | IE: knows the current session.                                                                                                      |
+|                |                                                    | EditorRepository       | IE: knows all editors.                                                                                                              |
+| Step 25        | ... instantiating a new Scenario?                  | Map                    | Creator (Rule 1): in the DM Map has Scenarios.                                                                                      |
+|                | ... validating all data (local validation)?        | Scenario               | IE: owns its data.                                                                                                                  |
+|                | ... validating all data (global validation)?       | Map                    | IE: knows all its scenarios.                                                                                                        |
+|                | ... saving the created scenario?                   | Map                    | IE: owns all its scenarios.                                                                                                         |
+|                | ... informing operation success?                   | CreateScenarioUI       | IE: is responsible for user interactions.                                                                                           |
 
 ### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Scenario
 * Map
+* Scenario
 * Industry
-* Cargo
-* LocomotiveType
+* City
+* Locomotive
 * Editor
+* Cargo
+* IndustrySector
 
 Other software classes (i.e. Pure Fabrication) identified:
 
@@ -51,9 +62,9 @@ Other software classes (i.e. Pure Fabrication) identified:
 * CreateScenarioController
 * Repositories
 * MapRepository
-* IndustryRepository
-* CargoRepository
+* EditorRepository
 * LocomotiveRepository
+* CargoRepository
 * ApplicationSession
 * UserSession
 
@@ -63,7 +74,7 @@ Other software classes (i.e. Pure Fabrication) identified:
 
 This diagram shows the full sequence of interactions between the classes involved in the realization of this user story.
 
-![US04-SD-full](svg/US04-SD-full.svg)
+![Sequence Diagram - Full](svg/US04-SD-full.svg)
 
 ### Split Diagrams
 
@@ -71,32 +82,44 @@ The following diagram shows the same sequence of interactions between the classe
 
 It uses Interaction Occurrence (a.k.a. Interaction Use).
 
-![US04-SD-split](svg/US04-SD-split.svg)
+![Sequence Diagram - split](svg/US04-SD-split.svg)
 
-**Get Maps List**
+**Get Available Maps List Partial SD**
 
-![US04-SD-partial-get-maps](svg/US04-SD-partial-get-maps.svg)
+![Sequence Diagram - Partial - Get Available Maps List](svg/US04-SD-partial-get-available-maps.svg)
 
-**Get Available Industries**
+**Get Map Industries List**
 
-![US04-SD-partial-get-available-industries](svg/US04-SD-partial-get-available-industries.svg)
+![Sequence Diagram - Partial - Get Map Industries](svg/US04-SD-partial-get-map-industries.svg)
 
-**Get Available Cargoes**
+**Get Map Cities List**
 
-![US04-SD-partial-get-available-cargoes](svg/US04-SD-partial-get-available-cargoes.svg)
+![Sequence Diagram - Partial - Get Map Cities](svg/US04-SD-partial-get-map-cities.svg)
 
-**Get Locomotive Types**
+**Get Cargo List**
 
-![US04-SD-partial-get-locomotive-types](svg/US04-SD-partial-get-locomotive-types.svg)
+![Sequence Diagram - Partial - Get Cargo List](svg/US04-SD-partial-get-cargo-list.svg)
+
+**Get Locomotive Types List**
+
+![Sequence Diagram - Partial - Get Locomotive Types](svg/US04-SD-partial-get-locomotive-types.svg)
 
 **Get Editor From Session**
 
-![US04-SD-partial-get-editor-from-session](svg/US04-SD-partial-get-editor-from-session.svg)
+![Sequence Diagram - Partial - Get Editor From Session](svg/US04-SD-partial-get-editor-from-session.svg)
+
+**Get Available Locomotives**
+
+![Sequence Diagram - Partial - Get Available Locomotives](svg/US04-SD-partial-get-available-locomotives.svg)
 
 **Create Scenario**
 
-![US04-SD-partial-create-scenario](svg/US04-SD-partial-create-scenario.svg)
+![Sequence Diagram - Partial - Create Scenario](svg/US04-SD-partial-create-scenario.svg)
+
+**Add Scenario to Editor**
+
+![Sequence Diagram - Partial - Add Scenario to Editor](svg/US04-SD-partial-add-scenario-to-editor.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![US04-CD](svg/US04-CD.svg)
+![Class Diagram](svg/US04-CD.svg)

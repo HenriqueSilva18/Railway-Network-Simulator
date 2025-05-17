@@ -15,34 +15,44 @@ hide methods
 title Domain Model Excerpt: US04 - Create a Scenario
 
 class Editor {
-    username
-    password
-    createdMaps
-    createdScenarios
+  username
+  password
+  createdMaps
+  createdScenarios
 }
 
 class Scenario {
   nameID
-  timeRestrictions
-  technologicalRestrictions
-  historicalRestrictions
+  editor
+  startDate
+  endDate
+  tweakedCityList
+  availableIndustryList
+  availableLocomotives
 }
 
 class Map {
   nameID
-  size
+  scenarios
+  cityList
+  industryList
 }
 
 class Industry {
   nameID
-  position
-  sector
   type
-  description
   availabilityYear
   productionRate
   suppliedCargo
   demandedCargo
+}
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
 }
 
 class Cargo {
@@ -50,10 +60,12 @@ class Cargo {
   amount
   lifespan
   type
+  productionResources
 }
 
 class Locomotive {
   nameID
+  owner
   type
   power
   acceleration
@@ -67,9 +79,7 @@ class Locomotive {
 
 class City {
   nameID
-  position
-  houseBlocks
-  productionRate
+  trafficRate
   suppliedCargo
   demandedCargo
 }
@@ -83,6 +93,7 @@ Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
 City "*" -- "*" Cargo : produces/consumes >
 Map "1" -- "*" City : contains >
-Scenario "1" -- "*" City : configures >
+Scenario "1" -- "*" City : contains >
+IndustrySector "1" -- "*" Industry : contains >
 
 @enduml

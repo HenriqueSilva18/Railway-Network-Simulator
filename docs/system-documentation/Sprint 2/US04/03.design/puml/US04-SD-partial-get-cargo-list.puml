@@ -3,18 +3,17 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber
-
 participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "cargoRepository\n:CargoRepository" as CARGO_REPO
+participant "cargoRepository\n:cargoRepository" as CARGO_REPO
 
-autonumber 10
--> CTRL : getAvailableCargoes()
-autonumber 10.1
+autonumber 13
+-> CTRL : getCargoList()
+
+autonumber 13.1
 activate CTRL
-    group Get Available Cargoes
+    group Get Cargo List
         CTRL -> REPOS : getInstance()
         activate REPOS
             REPOS --> CTRL: repositories
@@ -25,14 +24,14 @@ activate CTRL
             REPOS_SINGLETON --> CTRL: cargoRepository
         deactivate REPOS_SINGLETON
 
-        CTRL -> CARGO_REPO : getAvailableCargoes()
+        CTRL -> CARGO_REPO : getCargoList()
         activate CARGO_REPO
-            CARGO_REPO --> CTRL : availableCargoesList
+            CARGO_REPO --> CTRL : cargoList
         deactivate CARGO_REPO
     end
 
-    autonumber 11
-    <-- CTRL : availableCargoesList
+    autonumber 14
+    <-- CTRL : cargoList
 deactivate CTRL
 
-@enduml 
+@enduml

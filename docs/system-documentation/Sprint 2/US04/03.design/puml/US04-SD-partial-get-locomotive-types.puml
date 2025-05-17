@@ -3,18 +3,17 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber
-
 participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "locomotiveRepository\n:LocomotiveRepository" as LOCOMOTIVE_REPO
+participant "locomotiveRepository\n:LocomotiveRepository" as LOCO_REPO
 
-autonumber 14
+autonumber 27
 -> CTRL : getLocomotiveTypes()
-autonumber 14.1
+
+autonumber 27.1
 activate CTRL
-    group Get Locomotive Types
+    group Get Locomotive Types List
         CTRL -> REPOS : getInstance()
         activate REPOS
             REPOS --> CTRL: repositories
@@ -25,13 +24,13 @@ activate CTRL
             REPOS_SINGLETON --> CTRL: locomotiveRepository
         deactivate REPOS_SINGLETON
 
-        CTRL -> LOCOMOTIVE_REPO : getLocomotiveTypes()
-        activate LOCOMOTIVE_REPO
-            LOCOMOTIVE_REPO --> CTRL : locomotiveTypeList
-        deactivate LOCOMOTIVE_REPO
+        CTRL -> LOCO_REPO : getLocomotiveTypes()
+        activate LOCO_REPO
+            LOCO_REPO --> CTRL : locomotiveTypeList
+        deactivate LOCO_REPO
     end
 
-    autonumber 15
+    autonumber 28
     <-- CTRL : locomotiveTypeList
 deactivate CTRL
 

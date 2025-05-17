@@ -52,7 +52,7 @@ class Scenario {
   endDate
   tweakedCityList
   availableIndustryList
-  availableLocomotiveTypes
+  availableLocomotives
 }
 
 class Simulator {

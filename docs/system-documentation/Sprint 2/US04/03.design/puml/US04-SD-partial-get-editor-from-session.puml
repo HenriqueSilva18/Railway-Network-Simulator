@@ -11,43 +11,44 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "editorRepository\n:EditorRepository" as EDITOR_REPO
 
-autonumber 18
+autonumber 34
 -> CTRL : getEditorFromSession()
-autonumber 18.1
+
+autonumber 34.1
 activate CTRL
     group Get Editor From Session
-        CTRL -> APP_SESSION: getInstance()
+        CTRL -> APP_SESSION : getInstance()
         activate APP_SESSION
-            APP_SESSION --> CTRL: appSession
+            APP_SESSION --> CTRL : appSession
         deactivate APP_SESSION
 
-        CTRL -> APP_SESSION_SINGLETON: getCurrentSession()
+        CTRL -> APP_SESSION_SINGLETON : getCurrentSession()
         activate APP_SESSION_SINGLETON
-            APP_SESSION_SINGLETON --> CTRL: currentSession
+            APP_SESSION_SINGLETON --> CTRL : currentSession
         deactivate APP_SESSION_SINGLETON
 
-        CTRL -> CURRENT_SESSION: getUsername()
+        CTRL -> CURRENT_SESSION : getUsername()
         activate CURRENT_SESSION
-            CURRENT_SESSION --> CTRL: username
+            CURRENT_SESSION --> CTRL : username
         deactivate CURRENT_SESSION
 
         CTRL -> REPOS : getInstance()
         activate REPOS
-            REPOS --> CTRL: repositories
+            REPOS --> CTRL : repositories
         deactivate REPOS
 
-        CTRL -> REPOS_SINGLETON: getEditorRepository()
+        CTRL -> REPOS_SINGLETON : getEditorRepository()
         activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: editorRepository
+            REPOS_SINGLETON --> CTRL : editorRepository
         deactivate REPOS_SINGLETON
 
-        CTRL -> EDITOR_REPO: getEditorByUsername(username)
+        CTRL -> EDITOR_REPO : getEditorByUsername(username)
         activate EDITOR_REPO
-            EDITOR_REPO --> CTRL: editor
+            EDITOR_REPO --> CTRL : editor
         deactivate EDITOR_REPO
     end
 
-    autonumber 19
+    autonumber 35
     <-- CTRL : editor
 deactivate CTRL
 

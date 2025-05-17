@@ -3,18 +3,17 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber
-
 participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapRepository\n:MapRepository" as MAP_REPO
 
 autonumber 3
--> CTRL : getMaps()
+-> CTRL : getAvailableMaps()
+
 autonumber 3.1
 activate CTRL
-    group Get Maps List
+    group Get Available Maps List
         CTRL -> REPOS : getInstance()
         activate REPOS
             REPOS --> CTRL: repositories
@@ -25,14 +24,14 @@ activate CTRL
             REPOS_SINGLETON --> CTRL: mapRepository
         deactivate REPOS_SINGLETON
 
-        CTRL -> MAP_REPO : getMaps()
+        CTRL -> MAP_REPO : getAvailableMaps()
         activate MAP_REPO
-            MAP_REPO --> CTRL : mapsList
+            MAP_REPO --> CTRL : mapList
         deactivate MAP_REPO
     end
 
     autonumber 4
-    <-- CTRL : mapsList
+    <-- CTRL : mapList
 deactivate CTRL
 
 @enduml 
