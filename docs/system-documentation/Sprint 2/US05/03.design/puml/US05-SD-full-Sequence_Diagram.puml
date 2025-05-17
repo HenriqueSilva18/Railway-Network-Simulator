@@ -1,0 +1,263 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US05 - Build a Station
+
+actor "Player" as PLAYER
+participant ":StationBuildingUI" as UI
+participant ":StationBuildingController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "stationTypeRepository\n:StationTypeRepository" as ST_TYPE_REPO
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "player\n:Player" as PLAYER_OBJ
+participant "map\n:Map" as MAP
+participant "station\n:Station" as STATION
+participant "stationType\n:StationType" as ST_TYPE
+
+activate PLAYER
+
+    PLAYER -> UI : asks to see available maps
+    activate UI
+        UI --> CTRL** : create()
+
+        UI -> CTRL : getAvailableMaps()
+        activate CTRL
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL: repositories
+            deactivate REPOS
+
+            CTRL -> REPOS_SINGLETON : getMapRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: mapRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> MAP_REPO : getAvailableMaps()
+            activate MAP_REPO
+                MAP_REPO --> CTRL : availableMapsList
+            deactivate MAP_REPO
+
+            CTRL --> UI : availableMapsList
+        deactivate CTRL
+
+        UI --> PLAYER : shows list of available maps
+    deactivate UI
+
+    PLAYER -> UI : selects a map
+    activate UI
+        UI -> CTRL : loadMap(nameID)
+        activate CTRL
+            CTRL -> APP_SESSION: getInstance()
+            activate APP_SESSION
+                APP_SESSION --> CTRL: appSession
+            deactivate APP_SESSION
+
+            CTRL -> APP_SESSION_SINGLETON: setCurrentMap(nameID)
+            activate APP_SESSION_SINGLETON
+                APP_SESSION_SINGLETON --> CTRL: success
+            deactivate APP_SESSION_SINGLETON
+
+            CTRL -> MAP_REPO: getMapByID(nameID)
+            activate MAP_REPO
+                MAP_REPO --> CTRL: map
+            deactivate MAP_REPO
+
+            CTRL -> MAP: getMapLayout()
+            activate MAP
+                MAP --> CTRL: mapLayout
+            deactivate MAP
+
+            CTRL --> UI : mapLayout
+        deactivate CTRL
+
+        UI --> PLAYER : loads and displays the selected map
+    deactivate UI
+
+    PLAYER -> UI : asks to build a station
+    activate UI
+        UI -> CTRL : getStationTypes()
+        activate CTRL
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL: repositories
+            deactivate REPOS
+
+            CTRL -> REPOS_SINGLETON : getStationTypeRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: stationTypeRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> ST_TYPE_REPO : getStationTypes()
+            activate ST_TYPE_REPO
+                ST_TYPE_REPO --> CTRL : stationTypeList
+            deactivate ST_TYPE_REPO
+
+            CTRL --> UI : stationTypeList
+        deactivate CTRL
+
+        UI --> PLAYER : requests station type (DEPOT, STATION, TERMINAL)
+    deactivate UI
+
+    PLAYER -> UI : selects station type
+    activate UI
+        UI --> PLAYER : requests location (Position) on map for the station
+    deactivate UI
+
+    PLAYER -> UI : provides location coordinates
+    activate UI
+        UI -> CTRL : validatePosition(position)
+        activate CTRL
+            ' Get current map from session
+            CTRL -> APP_SESSION : getInstance()
+            activate APP_SESSION
+                APP_SESSION --> CTRL : appSession
+            deactivate APP_SESSION
+            
+            CTRL -> APP_SESSION_SINGLETON : getCurrentMap()
+            activate APP_SESSION_SINGLETON
+                APP_SESSION_SINGLETON --> CTRL : currentMap
+            deactivate APP_SESSION_SINGLETON
+            
+            ' Get map repository
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL : repositories
+            deactivate REPOS
+            
+            CTRL -> REPOS_SINGLETON : getMapRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL : mapRepository
+            deactivate REPOS_SINGLETON
+            
+            ' Get map object
+            CTRL -> MAP_REPO : getMapByID(currentMap)
+            activate MAP_REPO
+                MAP_REPO --> CTRL : map
+            deactivate MAP_REPO
+            
+            ' Check if position is valid
+            CTRL -> MAP : validatePosition(position)
+            activate MAP
+                MAP --> CTRL : valid
+            deactivate MAP
+
+            CTRL --> UI : valid
+        deactivate CTRL
+
+        alt stationType.name == "STATION"
+            UI --> PLAYER : requests center point selection (NE, SE, NW, SW)
+            deactivate UI
+
+            PLAYER -> UI : selects center point
+            activate UI
+        end
+
+        UI -> CTRL : getClosestCity(position)
+        activate CTRL
+            ' Get closest city
+            CTRL -> MAP : getClosestCity(position)
+            activate MAP
+                MAP --> CTRL : closestCity
+            deactivate MAP
+            
+            CTRL --> UI : closestCity
+        deactivate CTRL
+            
+        UI -> CTRL : previewStationPlacement(stationType, position, centerPoint)    
+        activate CTRL
+            ' Get preview of placement
+            CTRL -> MAP : previewStationPlacement(stationType, position, centerPoint)
+            activate MAP
+                MAP --> CTRL : preview
+            deactivate MAP
+            
+            ' Get economic radius and cost
+            CTRL -> ST_TYPE : getEconomicRadius()
+            activate ST_TYPE
+                ST_TYPE --> CTRL : economicRadius
+            deactivate ST_TYPE
+            
+            CTRL -> ST_TYPE : getCost()
+            activate ST_TYPE
+                ST_TYPE --> CTRL : cost
+            deactivate ST_TYPE
+
+            CTRL --> UI : preview, economicRadius, cost
+        deactivate CTRL
+
+        UI --> PLAYER : proposes station name based on closest city
+        UI --> PLAYER : displays station cost and economic radius
+        UI --> PLAYER : shows preview of station placement and requests confirmation
+    deactivate UI
+
+    PLAYER -> UI : confirms station placement
+    activate UI
+        UI -> CTRL : buildStation(stationType, position, centerPoint)
+        activate CTRL
+            CTRL -> APP_SESSION : getInstance()
+            activate APP_SESSION
+                APP_SESSION --> CTRL : appSession
+            deactivate APP_SESSION
+
+            CTRL -> APP_SESSION_SINGLETON : getCurrentSession()
+            activate APP_SESSION_SINGLETON
+                APP_SESSION_SINGLETON --> CTRL : player
+            deactivate APP_SESSION_SINGLETON
+
+            CTRL -> PLAYER_OBJ : deductFromBudget(stationType.getCost())
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> CTRL : success
+            deactivate PLAYER_OBJ
+
+            ' Create station name based on closest city
+            CTRL -> MAP : getClosestCity(position)
+            activate MAP
+                MAP --> CTRL : closestCity
+            deactivate MAP
+
+            ' Create the station
+            CTRL -> PLAYER_OBJ : buildStation(stationName, position, stationType)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> STATION** : create(stationName, position, stationType)
+                PLAYER_OBJ --> CTRL : station
+            deactivate PLAYER_OBJ
+
+            ' Add station to map
+            CTRL -> MAP : addStation(station)
+            activate MAP
+                MAP --> CTRL : success
+            deactivate MAP
+
+            ' Save map with new station
+            CTRL -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> CTRL: repositories
+            deactivate REPOS
+
+            CTRL -> REPOS_SINGLETON : getMapRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> CTRL: mapRepository
+            deactivate REPOS_SINGLETON
+
+            CTRL -> MAP_REPO : save(map)
+            activate MAP_REPO
+                MAP_REPO --> CTRL : success
+            deactivate MAP_REPO
+
+            CTRL --> UI : success
+        deactivate CTRL
+
+        UI --> PLAYER : deducts cost from Player's budget
+        UI --> PLAYER : displays operation success
+        UI --> PLAYER : updates map with the new station
+    deactivate UI
+
+deactivate PLAYER
+
+@enduml

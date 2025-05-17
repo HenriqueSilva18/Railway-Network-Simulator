@@ -1,0 +1,150 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US05 - Build a Station
+
+class StationBuildingUI {
+}
+
+class StationBuildingController {
+    + getAvailableMaps()
+    + loadMap(nameID) : Map
+    + getStationTypes() : List<StationType>
+    + validatePosition(position) : boolean
+    + getClosestCity(position) : City
+    + previewStationPlacement(stationType, position, centerPoint) : boolean
+    + buildStation(stationType, position, centerPoint) : boolean
+}
+
+class MapRepository {
+    + getAvailableMaps() : List<Map>
+    + getMapByID(nameID) : Map
+    + save(map) : boolean
+}
+
+class StationTypeRepository {
+    + getStationTypes() : List<StationType>
+    + getStationTypeByName(name) : StationType
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance() : Repositories
+    + getMapRepository() : MapRepository
+    + getStationTypeRepository() : StationTypeRepository
+}
+
+class ApplicationSession {
+    - ApplicationSession()
+    + {static} getInstance() : ApplicationSession
+    + getCurrentSession() : Player
+    + getCurrentMap() : String
+    + setCurrentMap(nameID) : boolean
+}
+
+class Map {
+    - nameID : String
+    - size : Size
+    - positions : List<Position>
+    - cities : List<City>
+    - stations : List<Station>
+    - industries : List<Industry>
+    
+    + getMapLayout() : MapLayout
+    + validatePosition(position) : boolean
+    + getClosestCity(position) : City
+    + previewStationPlacement(stationType, position, centerPoint) : boolean
+    + addStation(station) : boolean
+}
+
+class Position {
+    - x : int
+    - y : int
+    - occupied : boolean
+    
+    + isOccupied() : boolean
+    + setOccupied(boolean) : void
+}
+
+class City {
+    - nameID : String
+    - position : Position
+    - productionRate : double
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
+}
+
+class Station {
+    - nameID : String
+    - position : Position
+    - stationType : StationType
+    - storageCapacity : int
+    - buildingSlots : int
+    - availableCargo : List<Cargo>
+    - requestedCargo : List<Cargo>
+    
+    + Station(nameID, position, stationType)
+}
+
+class StationType {
+    - name : String
+    - economicRadius : int
+    - cost : double
+    - centerPoint : String
+    
+    + requiresCenterPoint() : boolean
+    + getEconomicRadius() : int
+    + getCost() : double
+}
+
+class Player {
+    - username : String
+    - initialBudget : double
+    - currentBudget : double
+    - ownedLocomotives : List<Locomotive>
+    
+    + deductFromBudget(amount) : boolean
+    + buildStation(nameID, position, stationType) : Station
+}
+
+class Size {
+    - width : int
+    - height : int
+}
+
+StationBuildingUI ..> StationBuildingController
+
+StationBuildingController ..> MapRepository
+StationBuildingController ..> StationTypeRepository
+StationBuildingController ..> Repositories
+StationBuildingController ..> ApplicationSession
+StationBuildingController ..> Map
+StationBuildingController ..> Player
+StationBuildingController ..> Station
+
+Map "1" --> "1" Size : size
+Map "1" --> "*" Position : positions
+Map "1" --> "*" City : cities
+Map "1" --> "*" Station : stations
+
+Station "1" --> "1" Position : position
+Station "*" --> "1" StationType : stationType
+Station "*" --> "*" City : servedCities
+
+City "1" --> "1" Position : position
+
+MapRepository --> "*" Map : maps
+StationTypeRepository --> "*" StationType : stationTypes
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
+Repositories --> "1" StationTypeRepository : stationTypeRepository
+
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession --> "1" Player : currentSession
+
+Player "1" --> "*" Station : builtStations
+
+@enduml 
