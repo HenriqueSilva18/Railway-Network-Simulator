@@ -20,17 +20,14 @@ title Domain Model US07: - List all the stations
 class Player {
     username
     password
-    budget
+    initialBudget
+    currentBudget
+    ownedLocomotives
   }
 
 class Station {
     name
-    position
-    type
-    economicRadius
-    cost
     storageCapacity
-    centerPoint
     buildingSlots
     availableCargo
     requestedCargo
@@ -41,6 +38,7 @@ class Cargo {
    amount
    lifespan
    type
+   productionResources
   }
 
 class Building {
@@ -48,7 +46,7 @@ class Building {
     type
     availabilityYear
     evolutionCost
-    evolutionStages
+    evolutionStagesLeft
   }
 
 

@@ -14,6 +14,8 @@ participant MapRepository
 
 group Create and save city
 
+activate AddCityController
+
     AddCityController -> City : new City(name, coordinates, houseBlocks)
     activate City
     City --> AddCityController : cityObject
@@ -40,5 +42,6 @@ group Create and save city
     deactivate MapRepository
 
 end group
+deactivate AddCityController
 
 @enduml

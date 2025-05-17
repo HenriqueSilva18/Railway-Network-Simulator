@@ -71,7 +71,6 @@ alt User selects "yes" (manual)
         AssignManualBlocks()
     end
     AddBHouseBlocksController --> AddCityUI : houseBlocks
-    deactivate AddCityUI
     deactivate AddBHouseBlocksController
 
 else User selects "no" (automatic)
@@ -81,6 +80,7 @@ else User selects "no" (automatic)
         AssignAutoBlocks()
     end
     AddBHouseBlocksController --> AddCityUI : houseBlocks
+    deactivate AddCityUI
     deactivate AddBHouseBlocksController
 
 end alt
