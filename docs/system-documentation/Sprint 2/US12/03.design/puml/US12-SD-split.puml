@@ -1,0 +1,132 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Product Owner" as PO
+participant ":SimulatorUI" as UI
+participant ":SimulatorController" as CTRL
+
+
+activate PO
+
+    PO -> UI : asks to start a simulation
+    activate UI
+        UI --> CTRL** : create()
+
+        UI -> CTRL : getAvailableMaps()
+        ref over CTRL
+            Get Available Maps
+        end ref
+
+        activate CTRL
+            CTRL --> UI : mapList
+        deactivate CTRL
+
+        UI -> CTRL : getAvailableScenarios()
+        ref over CTRL
+            Get Available Scenarios
+        end ref
+
+        activate CTRL
+            CTRL --> UI : scenarioList
+        deactivate CTRL
+
+        UI --> PO : shows details (map and scenario for the simulation) and asks confirmation
+    deactivate UI
+
+    PO -> UI : confirms simulation
+    activate UI
+        UI -> CTRL : startSimulation(selectedMap, selectedScenario)
+        activate CTRL
+            ref over CTRL
+                Create and Start Simulator
+            end ref
+
+            CTRL --> UI : success
+        deactivate CTRL
+
+        UI --> PO : display operation success (simulation started)
+    deactivate UI
+
+    loop while simulation is running
+        alt user requests operation
+            PO -> UI : asks for operation (buy locomotive, add railway line, etc.)
+            activate UI
+                UI -> CTRL : getOperationDetails(operationType)
+                ref over CTRL
+                    Get Operation Details
+                end ref
+
+                activate CTRL
+                    CTRL --> UI : operationDetails
+                deactivate CTRL
+                UI --> PO : shows operation details and ask confirmation
+            deactivate UI
+
+            PO -> UI : confirms operation
+            activate UI
+                UI -> CTRL : executeOperation(operationType, parameters)
+                ref over CTRL
+                    Execute Operation
+                end ref
+
+                activate CTRL
+                    CTRL --> UI : result
+                deactivate CTRL
+                UI --> PO : displays operation success
+            deactivate UI
+
+        else user pauses simulation
+            PO -> UI : asks to pause the simulator
+            activate UI
+                UI -> CTRL : pauseSimulation()
+                ref over CTRL
+                    Pause Simulator
+                end ref
+
+                activate CTRL
+                    CTRL --> UI : success
+                deactivate CTRL
+                UI --> PO : pauses simulation and waits for instructions to resume
+            deactivate UI
+
+            PO -> UI : asks to resume the simulation
+            activate UI
+                UI -> CTRL : resumeSimulation()
+                ref over CTRL
+                    Resume Simulator
+                end ref
+
+                activate CTRL
+                    CTRL --> UI : success
+                deactivate CTRL
+                UI --> PO : resume simulation of the map and scenario
+            deactivate UI
+
+        else user stops simulation
+            PO -> UI : asks to stop the simulation
+            activate UI
+                UI --> PO : requests confirmation
+            deactivate UI
+
+            PO -> UI : confirms end of simulation
+            activate UI
+                UI -> CTRL : stopSimulation()
+                ref over CTRL
+                    Stop Simulator
+                end ref
+
+                activate CTRL
+                    CTRL --> UI : simulationReport
+                deactivate CTRL
+                UI --> PO : shows simulation results and creates a report
+            deactivate UI
+        end
+    end
+
+deactivate PO
+
+@enduml

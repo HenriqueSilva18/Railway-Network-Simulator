@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":SimulatorController" as CTRL
+participant "simulator\n:Simulator" as SIM
+
+autonumber 10
+-> CTRL : executeOperation(operationType, parameters)
+
+autonumber 10.1
+activate CTRL
+    group Execute Operation
+        CTRL -> SIM : executeOperation(operationType, parameters)
+        activate SIM
+            SIM -> SIM : validateOperation(operationType, parameters)
+            activate SIM
+                SIM --> SIM : true
+            deactivate SIM
+
+            SIM -> SIM : performOperation(operationType, parameters)
+            activate SIM
+                SIM --> SIM : result
+            deactivate SIM
+
+            SIM --> CTRL : result
+        deactivate SIM
+    end
+
+    autonumber 11
+    <-- CTRL : result
+deactivate CTRL
+
+@enduml 

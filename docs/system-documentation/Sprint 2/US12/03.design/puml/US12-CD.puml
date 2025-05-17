@@ -1,0 +1,159 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+class Simulator {
+    - status : String
+    - runTime : int
+    - report : String
+    
+    + Simulator(map, scenario)
+    + start()
+    + pause()
+    + resume()
+    + stop()
+    + executeOperation(operationType, parameters)
+    - validateOperation(operationType, parameters)
+    - performOperation(operationType, parameters)
+    - generateReport()
+}
+
+class Map {
+    - nameID : String
+    - cities : List<City>
+    - industries : List<Industry>
+    - stations : List<Station>
+}
+
+class Scenario {
+    - nameID : String
+    - startYear : int
+    - duration : int
+    - economicFactors : List<String>
+}
+
+class City {
+    - nameID : String
+    - position : Position
+    - houseBlocks : int
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
+}
+
+class Industry {
+    - nameID : String
+    - type : String
+    - availabilityYear : int
+    - productionRate : double
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
+    - position : Position
+}
+
+class Station {
+    - nameID : String
+    - storageCapacity : int
+    - buildingSlots : int
+    - availableCargo : List<Cargo>
+    - requestedCargo : List<Cargo>
+    - position : Position
+    - type : StationType
+}
+
+class Position {
+    - x : int
+    - y : int
+    - occupied : boolean
+}
+
+class StationType {
+    - name : String
+    - economicRadius : int
+    - cost : double
+    - centerPoint : Position
+}
+
+class Cargo {
+    - name : String
+    - amount : int
+    - lifespan : int
+    - type : String
+    - productionResources : List<String>
+}
+
+class SimulatorRepository {
+    + createSimulator(map, scenario)
+}
+
+class MapRepository {
+    + getAllMaps()
+}
+
+class ScenarioRepository {
+    + getAllScenarios()
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getSimulatorRepository()
+    + getMapRepository()
+    + getScenarioRepository()
+}
+
+class SimulatorController {
+    + SimulatorController()
+    + getAvailableMaps()
+    + getAvailableScenarios()
+    + startSimulation(selectedMap, selectedScenario)
+    + executeOperation(operationType, parameters)
+    + pauseSimulation()
+    + resumeSimulation()
+    + stopSimulation()
+}
+
+class SimulatorUI {
+}
+
+SimulatorUI .> SimulatorController
+
+SimulatorController ..> Simulator
+SimulatorController ..> Map
+SimulatorController ..> Scenario
+SimulatorController ..> SimulatorRepository
+SimulatorController ..> MapRepository
+SimulatorController ..> ScenarioRepository
+SimulatorController .> Repositories
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" SimulatorRepository : simulatorRepository
+Repositories --> "1" MapRepository : mapRepository
+Repositories --> "1" ScenarioRepository : scenarioRepository
+
+SimulatorRepository --> "*" Simulator : simulators
+MapRepository --> "*" Map : maps
+ScenarioRepository --> "*" Scenario : scenarios
+
+Simulator --> "1" Map : map
+Simulator --> "1" Scenario : scenario
+Simulator --> "*" Cargo : generates
+
+Map --> "*" City : cities
+Map --> "*" Industry : industries
+Map --> "*" Station : stations
+
+City --> "1" Position : position
+Industry --> "1" Position : position
+Station --> "1" Position : position
+Station --> "1" StationType : type
+
+City --> "*" Cargo : suppliedCargo
+City --> "*" Cargo : demandedCargo
+Industry --> "*" Cargo : suppliedCargo
+Industry --> "*" Cargo : demandedCargo
+Station --> "*" Cargo : availableCargo
+Station --> "*" Cargo : requestedCargo
+
+@enduml
