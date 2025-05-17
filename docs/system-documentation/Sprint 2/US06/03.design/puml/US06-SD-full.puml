@@ -15,7 +15,7 @@ participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "ApplicationSession" as APP_SESSION
 participant "stationRepository\n:StationRepository" as REPOS_STATION
 participant ":station\nStation" as station
-participant ":Building" as building
+participant "building\n:Building" as building
 participant "buildingRepository\n:BuildingRepository" as REPOS_BUILDING
 
 

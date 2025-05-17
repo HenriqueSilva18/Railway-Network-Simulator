@@ -1,0 +1,32 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber 21
+
+participant ":AssignTrainController" as CTRL
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "trainRepository\n:TrainRepository" as REPOS_TRAIN
+
+-> CTRL: getAvailableTrains()
+activate CTRL
+autonumber 21.1
+group Get Available Trains
+
+    CTRL -> REPOS_SINGLETON: getTrainRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: trainRepository
+        deactivate REPOS_SINGLETON
+
+    CTRL -> REPOS_TRAIN: getAvailableTrains()
+        activate REPOS_TRAIN
+            REPOS_TRAIN --> CTRL: availableTrainsList
+        deactivate REPOS_TRAIN
+end
+autonumber 22
+
+<-- CTRL: availableTrainsList
+
+deactivate CTRL
+
+@enduml 

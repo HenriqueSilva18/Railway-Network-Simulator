@@ -8,9 +8,9 @@
 
 | Interaction ID | Question: Which class is responsible for... | Answer              | Justification (with patterns)                                                                                 |
 |:-------------  |:--------------------------------------------|:--------------------|:--------------------------------------------------------------------------------------------------------------|
-| Step 1  		 | 	interacting with the actor?                | AddIndustryUI       | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
-|  | ... coordinating the US?                    | AddIndustryController | Controller: controls the execution of the operation                                                   |
-|  | ... knowing the user using the system?      | UserSession         | IE: cf. A&A component documentation. |
+| Step 1  		 | 	interacting with the actor?                | EditMapUI           | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
+|  | ... coordinating the US?                    | EditMapController   | Controller: controls the execution of the operation                                                   |
+|  | ... knowing the user using the system?      | ApplicationSession  | IE: cf. A&A component documentation. |
 |  |                                             | Editor              |IE: knows its own data|
 |  |                                             | Map                 |IE: knows its own data|
 | Step 2  		 | ... obtaining the list of available industries? | IndustryRepository   | IE: knows all Industry objects                                                                              |              
@@ -30,18 +30,39 @@ According to the taken rationale, the conceptual classes promoted to software cl
 
 Other software classes (i.e. Pure Fabrication) identified:
 
+* EditMapUI
+* EditMapController
 * AddIndustryUI  
 * AddIndustryController
 * IndustryRepository
 * MapRepository
 * Repositories
-* CurrentSession
+* ApplicationSession
 
 ## 3.2. Sequence Diagram (SD)
 
 _In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
 
-![US02-SD](svg/US02-SD-full.svg)
+### 3.2.1. Main Sequence Diagram
+
+![US02-SD](svg/US02-SD-split.svg)
+
+### 3.2.2. Partial Sequence Diagrams
+
+#### 3.2.2.1. Get Available Maps
+![US02-SD-get-available-maps](svg/US02-SD-get-available-maps.svg)
+
+#### 3.2.2.2. Load Map
+![US02-SD-load-map](svg/US02-SD-load-map.svg)
+
+#### 3.2.2.3. Get Available Industries
+![US02-SD-get-available-industries](svg/US02-SD-get-available-industries.svg)
+
+#### 3.2.2.4. Validate Industry Data
+![US02-SD-validate-industry-data](svg/US02-SD-validate-industry-data.svg)
+
+#### 3.2.2.5. Add Industry
+![US02-SD-add-industry](svg/US02-SD-add-industry.svg)
 
 ## 3.3. Class Diagram (CD)
 

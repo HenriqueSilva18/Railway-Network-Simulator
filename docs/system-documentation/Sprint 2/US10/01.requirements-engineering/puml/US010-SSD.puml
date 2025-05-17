@@ -12,48 +12,56 @@ participant ":System" as System
 
 activate Player
 
-Player -> System: requests to access system
-activate System
-System --> Player: displays login screen
-deactivate System
-
-Player -> System: provides username and password
-activate System
-System --> Player: grants access to player interface
-deactivate System
+ Player -> System : requests to see available maps
+        activate System
 
 
+            System --> Player : shows list of available maps
+        deactivate System
 
-Player -> System: requests to see available maps
+    Player -> System : selects a map
+        activate System
 
-activate System
-System --> Player: shows list of available maps
-deactivate System
 
-Player -> System: selects a map
-
-activate System
-System --> Player: loads and displays the selected map
-deactivate System
-
+            System --> Player : loads and displays the selected map
+        deactivate System
 
     Player -> System : asks to assign a train
         activate System
+
+
             System --> Player : displays list of available routes with valid stations
         deactivate System
 
     Player -> System : selects a route
         activate System
+
+
             System --> Player : displays route details (name, station stops)
+            System --> Player : asks for confirmation
+        deactivate System
+
+    Player -> System : confirms route selection
+        activate System
+
+
+            System --> Player : displays list of available trains
+        deactivate System
+
+    Player -> System : selects a train
+        activate System
+
+
+            System --> Player : displays train details
             System --> Player : asks for confirmation
         deactivate System
 
     Player -> System : confirms assignment
         activate System
+
+
             System --> Player : displays operation success
-            System --> Player : displays train, route and station details (including  list of cargoes to be picked up)
+            System --> Player : displays train, route and station details (including list of cargoes to be picked up)
         deactivate System
-
-
 
 @enduml

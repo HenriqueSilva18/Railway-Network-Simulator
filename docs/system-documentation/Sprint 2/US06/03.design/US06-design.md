@@ -4,6 +4,8 @@
 
 ### 3.1. Rationale
 
+**The rationale grounds on the SSD interactions and the identified input/output data.**
+
 | Interaction ID | Question: Which class is responsible for...       | Answer           | Justification (with patterns)  |
 |:---------------|:--------------------------------------------------|:-----------------|:---------------------------- |
 | Step 1  		     | ... interacting with the actor? | UpgradeStationUI | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
@@ -20,7 +22,7 @@
 | Step 9  		     | ... providing building information after upgrade? | Building | IE: knows its own data. |
 | Step 10 		     | ... displaying final information to the user? | UpgradeStationUI | IE: responsible for user interaction. |
 
-### 3.1. Systematization ##
+### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
@@ -38,24 +40,28 @@ Other software classes (i.e. Pure Fabrication) identified:
 
 ## 3.2. Sequence Diagram (SD)
 
-### Full Diagram
+_In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
 
-![US06-SD-full](svg/US06-SD-full.svg)
+### 3.2.1. Main Sequence Diagram
 
-### Partial Diagrams
+![US06-SD-split](svg/US06-SD-split.svg)
 
-**Request Available Upgrades**
+### 3.2.2. Partial Sequence Diagrams
 
-![US06-SD-partial-request-upgrades](svg/US06-SD-partial-request-upgrades.svg)
+#### 3.2.2.1. Get Available Upgrades
+![US06-SD-asks-to-upgrade-station](svg/US06-SD-asks-to-upgrade-station.svg)
 
-**Get Building Information**
+#### 3.2.2.2. Choose Building to Upgrade
+![US06-SD-chooses-building-upgrade](svg/US06-SD-chooses-building-upgrade.svg)
 
-![US06-SD-partial-building-info](svg/US06-SD-partial-building-info.svg)
+#### 3.2.2.3. Confirm Station Upgrade
+![US06-SD-confirms-station-upgrade](svg/US06-SD-confirms-station-upgrade.svg)
 
-**Upgrade Station**
-
-![US06-SD-partial-upgrade-station](svg/US06-SD-partial-upgrade-station.svg)
+#### 3.2.2.4. Get Station and Building Information
+![US06-SD-displays-station-building-info](svg/US06-SD-displays-station-building-info.svg)
 
 ## 3.3. Class Diagram (CD)
+
+_In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
 
 ![US06-CD](svg/US06-CD.svg)

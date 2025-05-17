@@ -7,7 +7,7 @@ autonumber 7
 
 participant ":UpgradeStationController" as CTRL
 participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant ":Building" as building
+participant "building\n:Building" as building
 participant "buildingRepository\n:BuildingRepository" as REPOS_BUILDING
 
 -> CTRL: getBuildingInfo(buildingId)

@@ -1,0 +1,206 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US10 - Assign a train to a route
+
+actor "Player" as player
+
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
+participant ":AssignTrainUI" as UI
+participant ":AssignTrainController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+participant "map\n:Map" as MAP
+participant "routeRepository\n:RouteRepository" as REPOS_ROUTE
+participant "trainRepository\n:TrainRepository" as REPOS_TRAIN
+participant "route\n:Route" as ROUTE
+participant "train\n:Train" as TRAIN
+
+activate player
+
+
+    player -> mapUI : requests to see available maps
+        activate mapUI
+            mapUI -> mapCTRL**: create()
+            mapUI -> mapCTRL : getAvailableMaps()
+
+            activate mapCTRL
+                mapCTRL -> REPOS : getInstance()
+                activate REPOS
+                    REPOS --> mapCTRL : repositories
+                deactivate REPOS
+
+                mapCTRL -> REPOS_SINGLETON : getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> mapCTRL : mapRepository
+                deactivate REPOS_SINGLETON
+
+                mapCTRL -> REPOS_MAP : getAvailableMaps()
+                activate REPOS_MAP
+                    REPOS_MAP --> mapCTRL : availableMapsList
+                deactivate REPOS_MAP
+
+                mapCTRL --> mapUI : availableMapsList
+            deactivate mapCTRL
+
+            mapUI --> player : shows list of available maps
+        deactivate mapUI
+
+    player -> mapUI : selects a map
+        activate mapUI
+            mapUI -> mapCTRL : loadMap(selectedMap)
+            activate mapCTRL
+                mapCTRL -> APP_SESSION : getInstance()
+                activate APP_SESSION
+                    APP_SESSION --> mapCTRL : appSession
+                deactivate APP_SESSION
+
+                mapCTRL -> APP_SESSION_SINGLETON : setCurrentMap(selectedMap)
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> mapCTRL : success
+                deactivate APP_SESSION_SINGLETON
+
+                mapCTRL -> REPOS_MAP : getMap(selectedMap)
+                activate REPOS_MAP
+                    REPOS_MAP --> mapCTRL : map
+                deactivate REPOS_MAP
+
+                mapCTRL -> MAP : getMapLayout()
+                activate MAP
+                    MAP --> mapCTRL : mapLayout
+                deactivate MAP
+
+                mapCTRL --> mapUI : mapLayout
+            deactivate mapCTRL
+
+            mapUI --> player : loads and displays the selected map
+        deactivate mapUI
+
+    player -> UI : asks to assign a train
+        activate UI
+            UI -> CTRL**: create()
+            UI -> CTRL : getAvailableRoutes()
+
+            activate CTRL
+                CTRL -> REPOS : getInstance()
+                activate REPOS
+                    REPOS --> CTRL : repositories
+                deactivate REPOS
+
+                CTRL -> REPOS_SINGLETON : getRouteRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL : routeRepository
+                deactivate REPOS_SINGLETON
+
+                CTRL -> REPOS_ROUTE : getAvailableRoutes()
+                activate REPOS_ROUTE
+                    REPOS_ROUTE --> CTRL : availableRoutesList
+                deactivate REPOS_ROUTE
+
+                CTRL --> UI : availableRoutesList
+            deactivate CTRL
+
+            UI --> player : displays list of available routes with valid stations
+        deactivate UI
+
+    player -> UI : selects a route
+        activate UI
+            UI -> CTRL : getRouteDetails(selectedRoute)
+            activate CTRL
+                CTRL -> REPOS_ROUTE : getRoute(selectedRoute)
+                activate REPOS_ROUTE
+                    REPOS_ROUTE --> CTRL : route
+                deactivate REPOS_ROUTE
+
+                CTRL -> ROUTE : getRouteDetails()
+                activate ROUTE
+                    ROUTE --> CTRL : routeDetails
+                deactivate ROUTE
+
+                CTRL --> UI : routeDetails
+            deactivate CTRL
+
+            UI --> player : displays route details (name, station stops)
+            UI --> player : asks for confirmation
+        deactivate UI
+
+    player -> UI : confirms route selection
+        activate UI
+            UI -> CTRL : getAvailableTrains()
+            activate CTRL
+
+                CTRL -> REPOS_SINGLETON : getTrainRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL : trainRepository
+                deactivate REPOS_SINGLETON
+
+                CTRL -> REPOS_TRAIN : getAvailableTrains()
+                activate REPOS_TRAIN
+                    REPOS_TRAIN --> CTRL : availableTrainsList
+                deactivate REPOS_TRAIN
+
+                CTRL --> UI : availableTrainsList
+            deactivate CTRL
+
+            UI --> player : displays list of available trains
+        deactivate UI
+
+    player -> UI : selects a train
+        activate UI
+            UI -> CTRL : getTrainDetails(selectedTrain)
+            activate CTRL
+                CTRL -> REPOS_TRAIN : getTrain(selectedTrain)
+                activate REPOS_TRAIN
+                    REPOS_TRAIN --> CTRL : train
+                deactivate REPOS_TRAIN
+
+                CTRL -> TRAIN : getTrainDetails()
+                activate TRAIN
+                    TRAIN --> CTRL : trainDetails
+                deactivate TRAIN
+
+                CTRL --> UI : trainDetails
+            deactivate CTRL
+
+            UI --> player : displays train details
+            UI --> player : asks for confirmation
+        deactivate UI
+
+    player -> UI : confirms assignment
+        activate UI
+            UI -> CTRL : assignTrainToRoute(selectedRoute, selectedTrain)
+            activate CTRL
+
+                CTRL -> TRAIN : assignToRoute(selectedRoute)
+                activate TRAIN
+                    TRAIN --> CTRL : success
+                deactivate TRAIN
+
+                CTRL -> ROUTE : addTrain(train)
+                activate ROUTE
+                    ROUTE --> CTRL : success
+                deactivate ROUTE
+
+                CTRL -> REPOS_ROUTE : save(route)
+                activate REPOS_ROUTE
+                    REPOS_ROUTE --> CTRL : success
+                deactivate REPOS_ROUTE
+
+                CTRL --> UI : assignmentDetails
+            deactivate CTRL
+
+            UI --> player : displays operation success
+            UI --> player : displays train, route and station details (including list of cargoes to be picked up)
+        deactivate UI
+
+deactivate player
+
+@enduml
