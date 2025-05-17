@@ -32,7 +32,6 @@ activate editor
         activate UI
             UI -> CTRL: validateMapData(nameID, width, height)
             activate CTRL
-                ' Order changed to validate name first, since it's input first
                 CTRL -> MAP: validateMapName(nameID)
                 activate MAP
                     MAP --> CTRL: valid

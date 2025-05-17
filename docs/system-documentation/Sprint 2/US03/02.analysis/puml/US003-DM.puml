@@ -23,21 +23,31 @@ class Editor {
 }
 
 class Map {
-   nameID
-   cityList
-   industryList
+  nameID
+  cityList
+  industryList
 }
 
 class Size {
-   width
-   height
+  width
+  height
 }
 
 class City {
-    nameID
-    productionRate
-    suppliedCargo
-    demandedCargo
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class HouseBlock {
+  automaticPlacement
+}
+
+class Position {
+  x
+  y
+  occupied
 }
 
 note left of City::houseBlocks
@@ -53,4 +63,7 @@ Editor "1" - "*" Map: creates
 
 Map "1" -- "1" Size: has
 
+Map "1" -- "*" Position : tracks >
+HouseBlock "1" -- "1" Position : has >
+City "1" -- "1" Position : located at >
 @enduml

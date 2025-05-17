@@ -39,6 +39,7 @@ stations are: telegraph (later telephone), café (small or large), customs, post
 ### 1.4. Found out Dependencies
 
 * There is a dependency on "US005 - Build a station" as there must be at least one created station in order to upgrade it.
+* There is a dependency on "US007 - List all the Stations" as the station containing the building to use as an upgraded will be chosen from a list of stations.
 
 ### 1.5 Input and Output Data
 
@@ -50,7 +51,7 @@ stations are: telegraph (later telephone), café (small or large), customs, post
 
 **Output Data:**
 
-* Success or insuccess of the operation
+* (In)Success of the operation
 * Details of the station and the building
 
 ### 1.6. System Sequence Diagram (SSD)

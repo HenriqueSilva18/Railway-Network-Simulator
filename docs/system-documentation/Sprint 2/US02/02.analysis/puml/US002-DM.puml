@@ -24,20 +24,37 @@ class Editor {
 }
 
 class Map {
-   nameID
-   size
+  nameID
+  cityList
+  industryList
 }
 
 class Industry {
   nameID
-  position
-  sector
   type
-  description
   availabilityYear
   productionRate
   suppliedCargo
   demandedCargo
+}
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class Size {
+  width
+  height
 }
 
 note right of Industry::sector
@@ -49,7 +66,12 @@ note right of Industry::type
 end note
 
 Map "1" -- "*" Industry: contains >
-Editor "1" -- "*" Industry: adds
-Editor "1" - "*" Map: creates
+Editor "1" -- "*" Industry: adds >
+Editor "1" - "*" Map: creates >
+
+Map "1" -- "*" Position : tracks >
+Industry "1" -- "1" Position : located at >
+IndustrySector "1" -- "*" Industry : contains >
+Map "*" -- "1" Size : has >
 
 @enduml

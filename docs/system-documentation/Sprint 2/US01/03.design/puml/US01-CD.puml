@@ -33,21 +33,21 @@ class ApplicationSession {
     + getCurrentSession() : Editor
 }
 
-class Map {
-    - nameID : String
-    - size : Size
-    - cityList : List<City>
-    - industryList : List<Industry>
+    class Map {
+        - nameID : String
+        - size : Size
+        - cityList : List<City>
+        - industryList : List<Industry>
 
-    + validateMapName(nameID) : boolean
-    + createMap(nameID: String, size: Size) : Map
-}
+        + {static} validateMapName(nameID) : boolean
+        + createMap(nameID: String, size: Size) : Map
+    }
 
 class Size {
     - width : int
     - height : int
 
-    + validateSize(width: int, height: int) : boolean
+    + {static} validateSize(width: int, height: int) : boolean
     + createSize(width: int, height: int) : Size
 }
 

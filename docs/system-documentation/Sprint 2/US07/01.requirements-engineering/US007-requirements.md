@@ -1,8 +1,6 @@
-# US007 - As a Player, I want to list all the stations
+# US007 - List all the Stations
 
 ## 1. Requirements Engineering
-
-As a Player, I want to list all the stations to select one to see its details.
 
 ### 1.1. User Story Description
 

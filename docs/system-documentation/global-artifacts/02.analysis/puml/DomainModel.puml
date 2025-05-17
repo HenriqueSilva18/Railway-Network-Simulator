@@ -136,6 +136,7 @@ class Building {
   availabilityYear
   evolutionCost
   evolutionStagesLeft
+  effect
 }
 
 class RailwayLine {

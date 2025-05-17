@@ -11,31 +11,24 @@ actor "Editor" as Editor
 participant ":System" as AddCityUI
 
 activate Editor
+Editor -> AddCityUI : asks to edit map
+        activate AddCityUI
+            AddCityUI --> Editor: shows list of available maps
+        deactivate AddCityUI
+
+    Editor -> AddCityUI: selects a map
+        activate AddCityUI
+            AddCityUI --> Editor: loads and displays the selected map
+        deactivate AddCityUI
+
 Editor -> AddCityUI : asks to add city
         activate AddCityUI
 
-
-        AddCityUI --> Editor: shows a list of Maps
-        deactivate AddCityUI
-        Editor -> AddCityUI: selects a map
-        activate AddCityUI
-        AddCityUI --> Editor : asks for city name
+        AddCityUI --> Editor : requests city data (nameID, X and Y coordinates, number of house blocks)
         deactivate AddCityUI
 
-
-    Editor -> AddCityUI: inputs name
-
-        activate AddCityUI
-        AddCityUI --> Editor: asks for coordinates
-        deactivate AddCityUI
-    Editor -> AddCityUI: inputs coordinates
-        activate AddCityUI
-
-        AddCityUI --> Editor: asks number of house blocks
-        deactivate AddCityUI
-    Editor -> AddCityUI: inputs number
-        activate AddCityUI
-
+        Editor --> AddCityUI : types city data
+    activate AddCityUI
         AddCityUI --> Editor: asks if the editor wants to assign the blocks manually or automatically
         deactivate AddCityUI
     Editor -> AddCityUI: selects yes/no
@@ -43,11 +36,11 @@ Editor -> AddCityUI : asks to add city
         AddCityUI --> AddCityUI: assign blocks
         AddCityUI --> Editor: asks for confirmation
         deactivate AddCityUI
-        Editor -> AddCityUI: confirms
+        Editor -> AddCityUI: confirms city data
 
         activate AddCityUI
-        AddCityUI --> Editor: display city details + success
-
+        AddCityUI --> Editor: displays operation success
+        AddCityUI --> Editor: display city details
         deactivate AddCityUI
 
 

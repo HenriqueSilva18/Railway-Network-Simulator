@@ -24,7 +24,7 @@ activate editor
 
     editor -> system : asks to add industry
         activate system
-        system --> editor: shows all industries available in the list
+        system --> editor: shows all available industries in a list
 
 
         deactivate system
@@ -42,7 +42,7 @@ activate editor
     editor -> system: confirms industry data
         activate system
         system --> editor: displays operation success
-        system --> editor: shows industry details on map
+        system --> editor: display industry details
         deactivate system
 
 
