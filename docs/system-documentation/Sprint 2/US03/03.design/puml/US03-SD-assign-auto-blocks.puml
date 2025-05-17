@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title AssignAutoBlocks
+
+participant AddHouseBlocksController
+participant HouseBlock
+participant Position
+participant Map
+
+autonumber 18
+-> AddHouseBlocksController: assignBlocks(numBlocks)
+activate AddHouseBlocksController
+
+
+group Automatic Block Assignment
+    autonumber 18.1
+    AddHouseBlocksController -> Map : getCurrentMap()
+    activate Map
+    Map --> AddHouseBlocksController : map
+    deactivate Map
+    
+    AddHouseBlocksController -> Map : getCityBoundaries()
+    activate Map
+    Map --> AddHouseBlocksController : boundaries
+    deactivate Map
+    
+    AddHouseBlocksController -> Map : getAvailablePositions(numBlocks)
+    activate Map
+    
+    create "availablePositions:List<Position>" as PosList
+    Map -> PosList : new ArrayList<>()
+    
+    Map -> Map : generateRandomPositions(numBlocks, boundaries)
+    
+    Map --> AddHouseBlocksController : availablePositions
+    deactivate Map
+    
+    create "blocksList:List<HouseBlock>" as BlocksList
+    AddHouseBlocksController -> BlocksList : new ArrayList<>()
+    
+    loop for each position in availablePositions
+        create "block:HouseBlock" as Block
+        AddHouseBlocksController -> Block : new HouseBlock(position, true)
+        activate Block
+        Block --> AddHouseBlocksController : block
+        deactivate Block
+        
+        AddHouseBlocksController -> BlocksList : add(block)
+        
+        AddHouseBlocksController -> Map : markPositionOccupied(position)
+        activate Map
+        Map --> AddHouseBlocksController : success
+        deactivate Map
+    end
+end
+
+autonumber 19
+<-- AddHouseBlocksController : houseBlocks
+deactivate AddHouseBlocksController
+
+@enduml 

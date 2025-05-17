@@ -1,8 +1,6 @@
 @startuml
 
 
-top to bottom direction
-
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype polyline
@@ -19,50 +17,78 @@ class ApplicationSession {
 ' Main controller class
 class AddCityController {
   +getAvailableMaps() : List<Map>
-  +validateName(name : String) : string
-  +validateCoordinates(x : float, y : float) Coordinate
+  +validateName(name : String) : String
+  +validateCoordinates(x : float, y : float) : Position
   +validateNumBlocks(number : int) : int
-  +saveCity(name : String, coordinates : Point, houseBlocks : HouseBlock ) : City
+  +saveCity(nameID : String, position : Position, houseBlocks : List<HouseBlock>) : City
 }
 
 ' Controller for house blocks management
 class AddHouseBlocksController {
-  +assignBlocks(numBlocks) : List<HouseBlock>
+  +assignBlocks(numBlocks : int) : List<HouseBlock>
+  +promptForCoordinates() : Point
+  +requestNewPosition() : Point
 }
 
 ' Repository classes
 class Repositories {
-    -mapRepository : MapRepository
-  +getInstance()
-  +mapRepository()
+  -mapRepository : MapRepository
+  +getInstance() : Repositories
+  +mapRepository() : MapRepository
 }
 
 class MapRepository {
-  +getMaps()
-  +saveMap(map : Map)
-  +getCurrentMap(cMap : Map) : Map
+  +getMaps() : List<Map>
+  +saveMap(map : Map) : boolean
+  +getCurrentMap() : Map
 }
 
 ' Domain classes
 class City {
-  -name: String
-  -xAxis: float
-    -yAxis: float
+  -nameID: String
+  -position: Position
   -houseBlocks: List<HouseBlock>
-  +City(name , coordinate, houseBlocks)
-  +addBlocks(blocks)
+  -trafficRate: float
+  -suppliedCargo: int
+  -demandedCargo: int
+  +City(nameID : String, position : Position, houseBlocks : List<HouseBlock>)
+  +addBlocks(blocks : List<HouseBlock>) : boolean
 }
 
 class Map {
-  -name : String
+  -nameID : String
   -cities : List<City>
-  +addCity(city)
+  -industries : List<Industry>
+  -size : Size
+  +addCity(city : City) : boolean
+  +isPositionAvailable(x : float, y : float) : boolean
+  +markPositionOccupied(position : Position) : boolean
+  +getCityBoundaries() : Rectangle
+  +getAvailablePositions(numPositions : int) : List<Position>
 }
 
 class HouseBlock {
-    -xAxis: float
-    -yAxis: float
- +setHouseBlockCoordinate(coordinates)
+  -position: Position
+  -automaticPlacement: boolean
+  +HouseBlock(position : Position, isAutomatic : boolean)
+  +setPosition(position : Position) : void
+}
+
+class Position {
+  -x: float
+  -y: float
+  -occupied: boolean
+  +Position(x : float, y : float)
+  +isOccupied() : boolean
+  +setOccupied(occupied : boolean) : void
+}
+
+class Size {
+  -width: int
+  -height: int
+  +Size(width : int, height : int)
+  +getWidth() : int
+  +getHeight() : int
 }
 
 ' UI class
@@ -77,9 +103,14 @@ AddCityController .> City
 AddCityController .> Map
 AddCityController .> MapRepository
 AddHouseBlocksController .> HouseBlock
+AddHouseBlocksController .> Map
 AddCityUI .> AddCityController
 AddCityUI .> AddHouseBlocksController
 Map "1" *-- "1..*" City : contains
 City "1" *-- "1..*" HouseBlock : contains
+Map "1" *-- "1" Size : has
+HouseBlock "1" -- "1" Position : has >
+City "1" -- "1" Position : located at >
+Map "1" -- "*" Position : tracks >
 
 @enduml
