@@ -12,11 +12,14 @@ class AddIndustryController {
     + create()
     + getAvailableIndustries() : List<Industry>
     + validateIndustry(nameID, x, y) : boolean
+    + validatePosition(x, y) : boolean
+    + validateIndustryType(nameID) : boolean
     + createIndustry(nameID, x, y) : Industry
 }
 
 class IndustryRepository {
     + getAvailableIndustries() : List<Industry>
+    + save(industry: Industry) : boolean
 }
 
 class MapRepository {
@@ -40,16 +43,44 @@ class Map {
     - nameID : String
     - size : Size
     - industries : List<Industry>
+    - positions : List<Position>
 
     + isCellEmpty(x: int, y: int) : boolean
     + addIndustry(industry: Industry) : boolean
+    + getPosition(x: int, y: int) : Position
 }
 
 class Industry {
     + {static} create(nameID: String, x: int, y: int) : Industry
     - nameID : String
+    - type : String
+    - availabilityYear : int
+    - productionRate : double
+    - suppliedCargo : List<Cargo>
+    - demandedCargo : List<Cargo>
+    - position : Position
+}
+
+class Position {
     - x : int
     - y : int
+    - occupied : boolean
+}
+
+class IndustrySector {
+    - name : String
+    - importsExports : boolean
+    - generatesCargo : List<Cargo>
+    - consumesCargo : List<Cargo>
+    - description : String
+}
+
+class Cargo {
+    - name : String
+    - amount : int
+    - lifespan : int
+    - type : String
+    - productionResources : List<String>
 }
 
 class Editor {
@@ -66,6 +97,7 @@ AddIndustryController ..> Map : uses
 AddIndustryController ..> Industry : uses
 
 Map "1" o-- "*" Industry : contains >
+Map "1" o-- "*" Position : contains >
 MapRepository --> "1" Map : returns
 IndustryRepository --> "*" Industry : provides
 
@@ -76,5 +108,9 @@ ApplicationSession --> Editor : holds >
 ApplicationSession --> Map : currentMap >
 
 Editor ..> AddIndustryUI : interacts with >
+
+Industry "1" -- "1" Position : located at >
+Industry "*" -- "1" IndustrySector : belongs to >
+Industry "*" -- "*" Cargo : produces/consumes >
 
 @enduml
