@@ -9,10 +9,10 @@ participant ":CreateMapController" as CTRL
 participant "Map" as MAP
 participant "Size" as SIZE
 
-autonumber 5
+autonumber 6
 -> CTRL: validateMapData(nameID, width, height)
         activate CTRL
-        autonumber 5.1
+        autonumber 6.1
         group Validate map data
             CTRL -> MAP: validateMapName(nameID)
             activate MAP
@@ -24,7 +24,7 @@ autonumber 5
                 SIZE --> CTRL: valid
             deactivate SIZE
         end
-        autonumber 6
+        autonumber 7
         <-- CTRL: valid
 deactivate CTRL
 

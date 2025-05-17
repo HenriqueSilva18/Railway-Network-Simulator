@@ -29,7 +29,6 @@ class Editor {
 
 class Map {
   nameID
-  scenarios
   cityList
   industryList
 }

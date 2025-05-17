@@ -6,12 +6,16 @@ skinparam classAttributeIconSize 0
 title Class Diagram: US01 - Create a Map
 
 class CreateMapUI {
+    + displayRequestForMapData()
+    + displayConfirmationRequest(nameID, width, height)
+    + displaySuccess(map)
+    + displayMapDetails(map)
 }
 
 class CreateMapController {
     + create()
-    + createMap(nameID, width, height) : Map
     + validateMapData(nameID, width, height) : boolean
+    + createMap(nameID, width, height) : Map
 }
 
 class MapRepository {
@@ -32,17 +36,19 @@ class ApplicationSession {
 class Map {
     - nameID : String
     - size : Size
-    
+    - cityList : List<City>
+    - industryList : List<Industry>
+
+    + validateMapName(nameID) : boolean
     + createMap(nameID: String, size: Size) : Map
-    + validateMapName(nameID: String) : boolean
 }
 
 class Size {
     - width : int
     - height : int
     
-    + createSize(width: int, height: int) : Size
     + validateSize(width: int, height: int) : boolean
+    + createSize(width: int, height: int) : Size
 }
 
 class Editor {

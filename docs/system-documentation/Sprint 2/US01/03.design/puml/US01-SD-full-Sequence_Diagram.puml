@@ -24,6 +24,7 @@ activate editor
     editor -> UI : asks to create a new map
         activate UI
             UI -> CTRL**: create()
+            UI -> UI: displayRequestForMapData()
             UI --> editor: requests map data (name, width, height)
         deactivate UI
 
@@ -44,6 +45,8 @@ activate editor
                 
                 CTRL --> UI: valid
             deactivate CTRL
+            
+            UI -> UI: displayConfirmationRequest(nameID, width, height)
             UI --> editor: shows map data and requests confirmation
         deactivate UI
 
@@ -63,7 +66,6 @@ activate editor
                 
                 ' Create a Size instance
                 CTRL -> SIZE**: createSize(width, height)
-
 
                 CTRL -> EDITOR: createMap(nameID, size)
                 activate EDITOR
@@ -91,6 +93,8 @@ activate editor
                 CTRL --> UI: success + mapDetails
             deactivate CTRL
             
+            UI -> UI: displaySuccess(map)
+            UI -> UI: displayMapDetails(map)
             UI --> editor: displays operation success
             UI --> editor: displays map details
         deactivate UI

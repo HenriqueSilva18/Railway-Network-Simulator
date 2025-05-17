@@ -15,10 +15,10 @@ participant "editor\n:Editor" as EDITOR
 participant "Map" as MAP
 participant "Size" as SIZE
 
-autonumber 9
+autonumber 11
 -> CTRL: createMap(nameID, width, height)
     activate CTRL
-    autonumber 9.1
+    autonumber 11.1
     group Create and save map
         CTRL -> APP_SESSION: getInstance()
         activate APP_SESSION
@@ -55,7 +55,7 @@ autonumber 9
             REPOS_MAP --> CTRL: success
         deactivate REPOS_MAP
     end
-    autonumber 10
+    autonumber 12
     <-- CTRL: success + mapDetails
 deactivate CTRL
 
