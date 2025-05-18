@@ -47,7 +47,7 @@ public class Scenario {
         return true;
     }
 
-    public boolean configureCity(City city, double cityTrafficRates) {
+    public boolean configureCity(City city, float cityTrafficRates) {
         if (city == null || !tweakedCityList.contains(city)) {
             return false;
         }

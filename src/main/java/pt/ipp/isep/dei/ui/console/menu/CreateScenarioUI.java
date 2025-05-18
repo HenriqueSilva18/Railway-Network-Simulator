@@ -113,7 +113,7 @@ public class CreateScenarioUI implements Runnable {
 
             // Configure cities
             List<City> mapCities = controller.getMapCities(selectedMap);
-            double cityTrafficRates = readTrafficRate();
+            float cityTrafficRates = readTrafficRate();
             if (cityTrafficRates < 0) return;
 
             // Select locomotive types
@@ -297,10 +297,10 @@ public class CreateScenarioUI implements Runnable {
         return 0;
     }
 
-    private double readTrafficRate() {
+    private float readTrafficRate() {
         while (true) {
             try {
-                double rate = Utils.readDoubleFromConsole(
+                float rate = Utils.readFloatFromConsole(
                         "Enter traffic rate for cities (1.0 is normal): ");
                 if (rate <= 0) {
                     System.out.println("Error: Traffic rate must be positive. Please try again.");

@@ -36,7 +36,8 @@ public class EditMapUI implements Runnable {
 
         System.out.println("\nAvailable Maps:");
         for (int i = 0; i < availableMaps.size(); i++) {
-            System.out.printf("%d. %s%n", i + 1, availableMaps.get(i).getNameID());
+            Map map = availableMaps.get(i);
+            System.out.printf("%d. %s%n", i + 1, map.getNameID());
         }
         System.out.println("\n0. Return to previous menu");
 
@@ -55,12 +56,32 @@ public class EditMapUI implements Runnable {
 
         Map selectedMap = availableMaps.get(choice - 1);
         if (controller.loadMap(selectedMap)) {
-            System.out.println("\nMap loaded successfully.");
-            showMapDetails(selectedMap);
+            System.out.println("\nMap loaded successfully!");
+            System.out.println(controller.getMapLayout());
             
-            // After loading the map, show options to add industry
-            AddIndustryUI addIndustryUI = new AddIndustryUI();
-            addIndustryUI.run();
+            while (true) {
+                System.out.println("\nEdit Map Options:");
+                System.out.println("1. Add Industry");
+                System.out.println("2. Add City");
+                System.out.println("0. Return to Main Menu");
+
+                System.out.print("\nSelect an option: ");
+                int option = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (option) {
+                    case 1:
+                        new AddIndustryUI().run();
+                        break;
+                    case 2:
+                        new AddCityUI().run();
+                        break;
+                    case 0:
+                        return;
+                    default:
+                        System.out.println("Invalid option.");
+                }
+            }
         } else {
             System.out.println("\nFailed to load map.");
         }

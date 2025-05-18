@@ -56,7 +56,7 @@ public class CreateScenarioController {
                                  List<Industry> selectedIndustries, List<Cargo> portImports,
                                  List<Cargo> portExports, List<Cargo> portProduces,
                                  double genIndustryFactors, List<String> selectedLocomotiveTypes,
-                                 List<City> mapCityList, double cityTrafficRates) {
+                                 List<City> mapCityList, float cityTrafficRates) {
         Editor editor = getEditorFromSession();
         if (editor == null) {
             throw new IllegalStateException("No editor found in session");

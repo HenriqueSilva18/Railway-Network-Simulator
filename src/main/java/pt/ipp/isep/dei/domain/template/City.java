@@ -4,43 +4,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class City {
-    private String nameID;
-    private double trafficRate;
-    private List<Cargo> suppliedCargo;
-    private List<Cargo> demandedCargo;
-    private Position position;
+    private final String nameID;
+    private final Position position;
+    private final List<HouseBlock> houseBlocks;
+    private float trafficRate;
+    private int suppliedCargo;
+    private int demandedCargo;
 
-    public City(String nameID, Position position) {
+    public City(String nameID, Position position, List<HouseBlock> houseBlocks) {
         this.nameID = nameID;
         this.position = position;
-        this.trafficRate = 1.0; // Default traffic rate
-        this.suppliedCargo = new ArrayList<>();
-        this.demandedCargo = new ArrayList<>();
+        this.houseBlocks = new ArrayList<>(houseBlocks);
+        this.trafficRate = 0.0f;
+        this.suppliedCargo = 0;
+        this.demandedCargo = 0;
     }
 
-    // Getters
     public String getNameID() {
         return nameID;
-    }
-
-    public double getTrafficRate() {
-        return trafficRate;
-    }
-
-    public List<Cargo> getSuppliedCargo() {
-        return new ArrayList<>(suppliedCargo);
-    }
-
-    public List<Cargo> getDemandedCargo() {
-        return new ArrayList<>(demandedCargo);
     }
 
     public Position getPosition() {
         return position;
     }
 
-    // Setters
-    public void setTrafficRate(double trafficRate) {
+    public List<HouseBlock> getHouseBlocks() {
+        return new ArrayList<>(houseBlocks);
+    }
+
+    public float getTrafficRate() {
+        return trafficRate;
+    }
+
+    public void setTrafficRate(float trafficRate) {
         this.trafficRate = trafficRate;
+    }
+
+    public int getSuppliedCargo() {
+        return suppliedCargo;
+    }
+
+    public void setSuppliedCargo(int suppliedCargo) {
+        this.suppliedCargo = suppliedCargo;
+    }
+
+    public int getDemandedCargo() {
+        return demandedCargo;
+    }
+
+    public void setDemandedCargo(int demandedCargo) {
+        this.demandedCargo = demandedCargo;
     }
 } 
