@@ -9,6 +9,7 @@ import java.util.List;
 public class AuthenticationController {
 
     public static final String ROLE_ADMIN = "ADMINISTRATOR";
+    public static final String ROLE_EDITOR = "EDITOR";
 
     private final AuthenticationRepository authenticationRepository;
 

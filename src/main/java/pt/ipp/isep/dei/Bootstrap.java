@@ -43,10 +43,14 @@ public class Bootstrap implements Runnable {
 
         // Add roles
         authRepo.addUserRole(AuthenticationController.ROLE_ADMIN, AuthenticationController.ROLE_ADMIN);
+        authRepo.addUserRole(AuthenticationController.ROLE_EDITOR, AuthenticationController.ROLE_EDITOR);
 
         // Add admin user
         authRepo.addUserWithRole("System Admin", "admin@railway.app", "admin123",
                 AuthenticationController.ROLE_ADMIN);
 
+        // Add editor user
+        authRepo.addUserWithRole("Map Editor", "editor@railway.app", "editor123",
+                AuthenticationController.ROLE_EDITOR);
     }
 }

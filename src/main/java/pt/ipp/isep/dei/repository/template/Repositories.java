@@ -13,6 +13,7 @@ public class Repositories {
     private final OrganizationRepository organizationRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final AuthenticationRepository authenticationRepository;
+    private final MapRepository mapRepository;
     
 
 
@@ -25,6 +26,7 @@ public class Repositories {
         this.organizationRepository = new OrganizationRepository();
         this.taskCategoryRepository = new TaskCategoryRepository();
         this.authenticationRepository = new AuthenticationRepository();
+        this.mapRepository = new MapRepository();
 
 
     }
@@ -52,6 +54,10 @@ public class Repositories {
 
     public AuthenticationRepository getAuthenticationRepository() {
         return authenticationRepository;
+    }
+
+    public MapRepository getMapRepository() {
+        return mapRepository;
     }
     
 
