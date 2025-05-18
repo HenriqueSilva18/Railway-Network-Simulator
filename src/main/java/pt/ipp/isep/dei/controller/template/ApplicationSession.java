@@ -7,6 +7,7 @@ public class ApplicationSession {
     private static ApplicationSession instance;
     private Editor currentEditor;
     private Map currentMap;
+    private UserSession currentSession;
 
     private ApplicationSession() {
         // Private constructor for singleton
@@ -33,5 +34,13 @@ public class ApplicationSession {
 
     public void setCurrentMap(Map currentMap) {
         this.currentMap = currentMap;
+    }
+
+    public UserSession getCurrentSession() {
+        return currentSession;
+    }
+
+    public void setCurrentSession(UserSession currentSession) {
+        this.currentSession = currentSession;
     }
 } 

@@ -15,6 +15,9 @@ public class Repositories {
     private final AuthenticationRepository authenticationRepository;
     private final MapRepository mapRepository;
     private final IndustryRepository industryRepository;
+    private final EditorRepository editorRepository;
+    private final LocomotiveRepository locomotiveRepository;
+    private final CargoRepository cargoRepository;
     
 
 
@@ -29,6 +32,9 @@ public class Repositories {
         this.authenticationRepository = new AuthenticationRepository();
         this.mapRepository = new MapRepository();
         this.industryRepository = new IndustryRepository();
+        this.editorRepository = new EditorRepository();
+        this.locomotiveRepository = new LocomotiveRepository();
+        this.cargoRepository = new CargoRepository();
 
 
     }
@@ -64,6 +70,18 @@ public class Repositories {
 
     public IndustryRepository getIndustryRepository() {
         return industryRepository;
+    }
+
+    public EditorRepository getEditorRepository() {
+        return editorRepository;
+    }
+
+    public LocomotiveRepository getLocomotiveRepository() {
+        return locomotiveRepository;
+    }
+
+    public CargoRepository getCargoRepository() {
+        return cargoRepository;
     }
     
 

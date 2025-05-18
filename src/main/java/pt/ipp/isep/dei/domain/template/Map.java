@@ -7,13 +7,17 @@ public class Map {
     private String nameID;
     private Size size;
     private List<Industry> industries;
+    private List<City> cities;
     private List<Position> positions;
+    private List<Scenario> scenarios;
 
     private Map(String nameID, Size size) {
         this.nameID = nameID;
         this.size = size;
         this.industries = new ArrayList<>();
+        this.cities = new ArrayList<>();
         this.positions = new ArrayList<>();
+        this.scenarios = new ArrayList<>();
         initializePositions();
     }
 
@@ -52,8 +56,16 @@ public class Map {
         return new ArrayList<>(industries);
     }
 
+    public List<City> getCities() {
+        return new ArrayList<>(cities);
+    }
+
     public List<Position> getPositions() {
         return new ArrayList<>(positions);
+    }
+
+    public List<Scenario> getScenarios() {
+        return new ArrayList<>(scenarios);
     }
 
     public boolean isCellEmpty(int x, int y) {
@@ -86,6 +98,27 @@ public class Map {
 
         position.setOccupied(true);
         return industries.add(industry);
+    }
+
+    public boolean addCity(City city) {
+        if (city == null || city.getPosition() == null) {
+            return false;
+        }
+
+        Position position = getPosition(city.getPosition().getX(), city.getPosition().getY());
+        if (position == null || position.isOccupied()) {
+            return false;
+        }
+
+        position.setOccupied(true);
+        return cities.add(city);
+    }
+
+    public boolean addScenario(Scenario scenario) {
+        if (scenario == null) {
+            return false;
+        }
+        return scenarios.add(scenario);
     }
 
     public String getMapLayout() {

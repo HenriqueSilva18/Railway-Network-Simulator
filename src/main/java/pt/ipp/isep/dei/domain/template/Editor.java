@@ -7,7 +7,7 @@ public class Editor {
     private String username;
     private String password;
     private List<Map> createdMaps;
-    private List<Map> createdScenarios;
+    private List<Scenario> createdScenarios;
 
     public Editor(String username, String password) {
         this.username = username;
@@ -28,18 +28,18 @@ public class Editor {
         return new ArrayList<>(createdMaps);
     }
 
-    public List<Map> getCreatedScenarios() {
+    public List<Scenario> getCreatedScenarios() {
         return new ArrayList<>(createdScenarios);
     }
 
-    public void addCreatedMap(Map map) {
-        if (map != null) {
+    public void addMap(Map map) {
+        if (map != null && !createdMaps.contains(map)) {
             createdMaps.add(map);
         }
     }
 
-    public void addCreatedScenario(Map scenario) {
-        if (scenario != null) {
+    public void addScenario(Scenario scenario) {
+        if (scenario != null && !createdScenarios.contains(scenario)) {
             createdScenarios.add(scenario);
         }
     }

@@ -38,7 +38,8 @@ public class AddIndustryUI implements Runnable {
         System.out.println("\nAvailable Industries:");
         for (int i = 0; i < availableIndustries.size(); i++) {
             Industry industry = availableIndustries.get(i);
-            System.out.printf("%d. %s (%s)%n", i + 1, industry.getNameID(), industry.getType());
+            System.out.printf("%d. %s - %s (%s)%n", i + 1, industry.getNameID(), 
+                    industry.getType(), industry.getSector());
         }
 
         System.out.print("\nSelect an industry to add (number): ");
@@ -56,6 +57,13 @@ public class AddIndustryUI implements Runnable {
         System.out.print("Name ID: ");
         String nameID = scanner.nextLine();
 
+        // Validate unique nameID
+        while (controller.isNameIDTaken(nameID)) {
+            System.out.println("\nError: This name ID is already in use. Please choose a different one.");
+            System.out.print("Name ID: ");
+            nameID = scanner.nextLine();
+        }
+
         Map currentMap = controller.getCurrentMap();
         int maxX = currentMap.getSize().getWidth() - 1;
         int maxY = currentMap.getSize().getHeight() - 1;
@@ -64,50 +72,56 @@ public class AddIndustryUI implements Runnable {
         int y = -1;
         boolean validX = false;
         boolean validY = false;
+        boolean positionAvailable = false;
 
-        // Get X coordinate
-        while (!validX) {
-            try {
-                System.out.printf("X coordinate (0-%d): ", maxX);
-                x = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+        while (!positionAvailable) {
+            // Get X coordinate
+            while (!validX) {
+                try {
+                    System.out.printf("X coordinate (0-%d): ", maxX);
+                    x = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
 
-                if (x < 0 || x > maxX) {
-                    System.out.println("\nError: X coordinate out of bounds!");
-                    System.out.printf("X must be between 0 and %d%n", maxX);
-                    continue;
+                    if (x < 0 || x > maxX) {
+                        System.out.println("\nError: X coordinate out of bounds!");
+                        System.out.printf("X must be between 0 and %d%n", maxX);
+                        continue;
+                    }
+                    validX = true;
+                } catch (Exception e) {
+                    System.out.println("\nError: Please enter a valid number for X coordinate.");
+                    scanner.nextLine(); // Clear the invalid input
                 }
-                validX = true;
-            } catch (Exception e) {
-                System.out.println("\nError: Please enter a valid number for X coordinate.");
-                scanner.nextLine(); // Clear the invalid input
             }
-        }
 
-        // Get Y coordinate
-        while (!validY) {
-            try {
-                System.out.printf("Y coordinate (0-%d): ", maxY);
-                y = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+            // Get Y coordinate
+            while (!validY) {
+                try {
+                    System.out.printf("Y coordinate (0-%d): ", maxY);
+                    y = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
 
-                if (y < 0 || y > maxY) {
-                    System.out.println("\nError: Y coordinate out of bounds!");
-                    System.out.printf("Y must be between 0 and %d%n", maxY);
-                    continue;
+                    if (y < 0 || y > maxY) {
+                        System.out.println("\nError: Y coordinate out of bounds!");
+                        System.out.printf("Y must be between 0 and %d%n", maxY);
+                        continue;
+                    }
+                    validY = true;
+                } catch (Exception e) {
+                    System.out.println("\nError: Please enter a valid number for Y coordinate.");
+                    scanner.nextLine(); // Clear the invalid input
                 }
-                validY = true;
-            } catch (Exception e) {
-                System.out.println("\nError: Please enter a valid number for Y coordinate.");
-                scanner.nextLine(); // Clear the invalid input
             }
-        }
 
-        // Check if position is occupied
-        if (!currentMap.isCellEmpty(x, y)) {
-            System.out.println("\nError: Position is already occupied!");
-            System.out.println("Please choose different coordinates.");
-            return;
+            // Check if position is occupied
+            if (!currentMap.isCellEmpty(x, y)) {
+                System.out.println("\nError: Position is already occupied!");
+                System.out.println("Please choose different coordinates.");
+                validX = false;
+                validY = false;
+                continue;
+            }
+            positionAvailable = true;
         }
 
         if (controller.validateIndustry(nameID, x, y)) {
@@ -118,7 +132,7 @@ public class AddIndustryUI implements Runnable {
             
             String confirmation = scanner.nextLine();
             if (confirmation.equalsIgnoreCase("y")) {
-                Industry createdIndustry = controller.createIndustry(nameID, x, y);
+                Industry createdIndustry = controller.createIndustry(nameID, x, y, selectedIndustry);
                 if (createdIndustry != null) {
                     System.out.println("\nIndustry added successfully!");
                     showIndustryDetails(createdIndustry);
@@ -146,6 +160,7 @@ public class AddIndustryUI implements Runnable {
         System.out.println("\nIndustry Details:");
         System.out.println("Name ID: " + industry.getNameID());
         System.out.println("Type: " + industry.getType());
+        System.out.println("Sector: " + industry.getSector());
         System.out.println("Position: (" + industry.getPosition().getX() + "," + industry.getPosition().getY() + ")");
         System.out.println("Production Rate: " + industry.getProductionRate());
     }

@@ -2,6 +2,7 @@ package pt.ipp.isep.dei.controller.template;
 
 import pt.ipp.isep.dei.domain.template.Industry;
 import pt.ipp.isep.dei.domain.template.Map;
+import pt.ipp.isep.dei.domain.template.Position;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.IndustryRepository;
 import pt.ipp.isep.dei.repository.template.MapRepository;
@@ -35,12 +36,12 @@ public class AddIndustryController {
         return currentMap.isCellEmpty(x, y);
     }
 
-    public Industry createIndustry(String nameID, int x, int y) {
+    public Industry createIndustry(String nameID, int x, int y, Industry selectedIndustry) {
         if (!validateIndustry(nameID, x, y)) {
             return null;
         }
 
-        Industry industry = Industry.create(nameID, x, y);
+        Industry industry = new Industry(nameID, selectedIndustry.getType(), selectedIndustry.getSector(), 1900, new Position(x, y));
         if (currentMap.addIndustry(industry)) {
             mapRepository.save(currentMap);
             return industry;
@@ -51,5 +52,13 @@ public class AddIndustryController {
 
     public Map getCurrentMap() {
         return currentMap;
+    }
+
+    public boolean isNameIDTaken(String nameID) {
+        if (currentMap == null) {
+            return false;
+        }
+        return currentMap.getIndustries().stream()
+                .anyMatch(industry -> industry.getNameID().equals(nameID));
     }
 } 

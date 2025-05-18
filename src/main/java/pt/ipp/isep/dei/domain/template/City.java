@@ -1,25 +1,46 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class City {
-    private final String name;
-    private final int x;
-    private final int y;
+    private String nameID;
+    private double trafficRate;
+    private List<Cargo> suppliedCargo;
+    private List<Cargo> demandedCargo;
+    private Position position;
 
-    public City(String name, int x, int y) {
-        this.name = name;
-        this.x = x;
-        this.y = y;
+    public City(String nameID, Position position) {
+        this.nameID = nameID;
+        this.position = position;
+        this.trafficRate = 1.0; // Default traffic rate
+        this.suppliedCargo = new ArrayList<>();
+        this.demandedCargo = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    // Getters
+    public String getNameID() {
+        return nameID;
     }
 
-    public int getX() {
-        return x;
+    public double getTrafficRate() {
+        return trafficRate;
     }
 
-    public int getY() {
-        return y;
+    public List<Cargo> getSuppliedCargo() {
+        return new ArrayList<>(suppliedCargo);
+    }
+
+    public List<Cargo> getDemandedCargo() {
+        return new ArrayList<>(demandedCargo);
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    // Setters
+    public void setTrafficRate(double trafficRate) {
+        this.trafficRate = trafficRate;
     }
 } 
