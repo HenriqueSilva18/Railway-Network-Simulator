@@ -26,6 +26,25 @@ public class PlayerRepository {
         }
     }
 
+    public boolean save(Player player) {
+        if (player == null) {
+            return false;
+        }
+        
+        // Check if player already exists
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getUsername().equals(player.getUsername())) {
+                // Update existing player
+                players.set(i, player);
+                return true;
+            }
+        }
+        
+        // Add as new player
+        players.add(player);
+        return true;
+    }
+
     public List<Player> getAllPlayers() {
         return new ArrayList<>(players);
     }

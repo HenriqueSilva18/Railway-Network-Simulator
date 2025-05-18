@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.domain.template;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Station {
@@ -12,6 +13,7 @@ public class Station {
     private final List<Cargo> availableCargo;
     private final List<Cargo> requestedCargo;
     private final List<City> servedCities;
+    private final List<Building> buildings;
 
     public Station(String nameID, Position position, StationType stationType) {
         if (nameID == null || position == null || stationType == null) {
@@ -43,6 +45,7 @@ public class Station {
         this.availableCargo = new ArrayList<>();
         this.requestedCargo = new ArrayList<>();
         this.servedCities = new ArrayList<>();
+        this.buildings = new ArrayList<>();
     }
 
     public String getNameID() {
@@ -77,10 +80,103 @@ public class Station {
         return new ArrayList<>(servedCities);
     }
 
+    public List<Building> getBuildings() {
+        return new ArrayList<>(buildings);
+    }
+
     public void addServedCity(City city) {
         if (city != null && !servedCities.contains(city)) {
             servedCities.add(city);
         }
+    }
+
+    /**
+     * Checks if a building upgrade is valid for this station
+     */
+    public boolean canUpgradeWith(Building building, int currentYear) {
+        if (building == null) {
+            return false;
+        }
+        
+        // Check if the station has available building slots
+        if (buildings.size() >= buildingSlots) {
+            return false;
+        }
+        
+        // Check if the building is available in the current year
+        if (building.getAvailabilityYear() > currentYear) {
+            return false;
+        }
+
+        // Check for replaced buildings
+        if (building.getReplacesBuilding() != null) {
+            // If this building replaces another, check if the replaced one exists
+            boolean replacedBuildingExists = false;
+            for (Building existingBuilding : buildings) {
+                if (existingBuilding.getNameID().equals(building.getReplacesBuilding())) {
+                    replacedBuildingExists = true;
+                    break;
+                }
+            }
+            if (!replacedBuildingExists) {
+                // If the building it replaces doesn't exist, it cannot be built
+                return false;
+            }
+        }
+
+        // Check for mutually exclusive buildings
+        if (building.isMutuallyExclusive()) {
+            for (Building existingBuilding : buildings) {
+                if (building.getMutuallyExclusiveWith() != null && 
+                    existingBuilding.getType().equals(building.getMutuallyExclusiveWith())) {
+                    return false;
+                }
+            }
+        }
+
+        // Check for duplicate buildings
+        for (Building existingBuilding : buildings) {
+            if (existingBuilding.getNameID().equals(building.getNameID())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Gets a list of available upgrades for this station based on the current year
+     */
+    public List<Building> getAvailableUpgrades(List<Building> availableBuildings, int currentYear) {
+        List<Building> validUpgrades = new ArrayList<>();
+        
+        for (Building building : availableBuildings) {
+            if (canUpgradeWith(building, currentYear)) {
+                validUpgrades.add(building);
+            }
+        }
+        
+        return validUpgrades;
+    }
+
+    /**
+     * Upgrades the station with a building
+     * Returns true if successful, false otherwise
+     */
+    public boolean upgrade(Building building, int currentYear) {
+        if (!canUpgradeWith(building, currentYear)) {
+            return false;
+        }
+
+        // If the building replaces another, remove the replaced building
+        if (building.getReplacesBuilding() != null) {
+            buildings.removeIf(existingBuilding -> 
+                existingBuilding.getNameID().equals(building.getReplacesBuilding()));
+        }
+
+        // Add the new building
+        buildings.add(building);
+        return true;
     }
 
     public boolean isWithinRadius(Position otherPosition) {
@@ -88,5 +184,69 @@ public class Station {
         int dx = Math.abs(position.getX() - otherPosition.getX());
         int dy = Math.abs(position.getY() - otherPosition.getY());
         return dx <= radius && dy <= radius;
+    }
+    
+    /**
+     * Returns a DTO with station information for display
+     */
+    public StationInfo getInfo() {
+        return new StationInfo(nameID, stationType.getName(), position.getX(), position.getY(), 
+                            storageCapacity, buildingSlots, buildings.size());
+    }
+    
+    /**
+     * DTO class to hold station information
+     */
+    public static class StationInfo {
+        private final String nameID;
+        private final String type;
+        private final int posX;
+        private final int posY;
+        private final int storageCapacity;
+        private final int totalBuildingSlots;
+        private final int usedBuildingSlots;
+        
+        public StationInfo(String nameID, String type, int posX, int posY, 
+                        int storageCapacity, int totalBuildingSlots, int usedBuildingSlots) {
+            this.nameID = nameID;
+            this.type = type;
+            this.posX = posX;
+            this.posY = posY;
+            this.storageCapacity = storageCapacity;
+            this.totalBuildingSlots = totalBuildingSlots;
+            this.usedBuildingSlots = usedBuildingSlots;
+        }
+        
+        public String getNameID() {
+            return nameID;
+        }
+        
+        public String getType() {
+            return type;
+        }
+        
+        public int getPosX() {
+            return posX;
+        }
+        
+        public int getPosY() {
+            return posY;
+        }
+        
+        public int getStorageCapacity() {
+            return storageCapacity;
+        }
+        
+        public int getTotalBuildingSlots() {
+            return totalBuildingSlots;
+        }
+        
+        public int getUsedBuildingSlots() {
+            return usedBuildingSlots;
+        }
+        
+        public int getAvailableBuildingSlots() {
+            return totalBuildingSlots - usedBuildingSlots;
+        }
     }
 } 

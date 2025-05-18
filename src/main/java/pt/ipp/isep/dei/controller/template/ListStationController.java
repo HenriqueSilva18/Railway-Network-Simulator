@@ -3,11 +3,18 @@ package pt.ipp.isep.dei.controller.template;
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.MapRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.ipp.isep.dei.repository.template.StationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListStationController {
+
+    private final StationRepository stationRepository;
+
+    public ListStationController() {
+        this.stationRepository = Repositories.getInstance().getStationRepository();
+    }
 
     /**
      * Gets the list of available maps from the repository
@@ -61,31 +68,36 @@ public class ListStationController {
     }
 
     /**
-     * Gets all stations from the currently loaded map
-     * @return List of all stations
+     * Gets all stations available on the current map
      */
     public List<Station> getStations() {
         Map currentMap = ApplicationSession.getInstance().getCurrentMap();
-        if (currentMap != null) {
-            return currentMap.getStations();
+        if (currentMap == null) {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
+
+        // Get stations from the map
+        List<Station> stations = currentMap.getStations();
+        
+        // Store stations in the repository for later retrieval
+        for (Station station : stations) {
+            stationRepository.add(station);
+        }
+        
+        return stations;
     }
 
     /**
-     * Gets details for a specific station by ID
-     * @param stationId The ID of the station to get details for
-     * @return The station or null if not found
+     * Gets details for a specific station
      */
     public Station getStationDetails(String stationId) {
-        Map currentMap = ApplicationSession.getInstance().getCurrentMap();
-        if (currentMap != null) {
-            List<Station> stations = currentMap.getStations();
-            return stations.stream()
-                    .filter(station -> station.getNameID().equals(stationId))
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
+        return stationRepository.getStation(stationId);
+    }
+
+    /**
+     * Get station by ID
+     */
+    public Station getStation(String stationId) {
+        return stationRepository.getStation(stationId);
     }
 } 

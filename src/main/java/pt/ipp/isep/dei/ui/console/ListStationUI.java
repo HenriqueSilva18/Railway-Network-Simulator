@@ -6,6 +6,7 @@ import pt.ipp.isep.dei.domain.template.Cargo;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Station;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
+import pt.ipp.isep.dei.ui.console.menu.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,35 @@ public class ListStationUI implements Runnable {
         int option = Utils.showAndSelectIndex(getStationOptions(stations), "\nSelect a station to view details:");
         
         if (option >= 0 && option < stations.size()) {
+            // Selected station
+            Station selectedStation = stations.get(option);
+            
+            // Set the selected station in the application session
+            ApplicationSession.getInstance().setCurrentStation(selectedStation);
+            
             // Display details for the selected station
-            displayStationDetails(stations.get(option));
+            displayStationDetails(selectedStation);
+            
+            // After viewing details, show station action menu
+            showStationActionMenu();
+        }
+    }
+    
+    private void showStationActionMenu() {
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        if (currentStation == null) {
+            return;
+        }
+        
+        List<MenuItem> options = new ArrayList<>();
+        options.add(new MenuItem("Upgrade Station", new UpgradeStationUI()));
+        options.add(new MenuItem("Return to Station List", () -> {}));
+        
+        System.out.println("\n=== Station Actions for " + currentStation.getNameID() + " ===");
+        int option = Utils.showAndSelectIndex(options, "\nChoose an action:");
+        
+        if (option >= 0 && option < options.size()) {
+            options.get(option).run();
         }
     }
     
@@ -146,8 +174,5 @@ public class ListStationUI implements Runnable {
                     cargo.getAmount(),
                     cargo.getType()));
         }
-        
-        // Wait for user confirmation before returning to the main menu
-        Utils.readLineFromConsole("\nPress Enter to continue...");
     }
 } 

@@ -20,6 +20,8 @@ public class Repositories {
     private final CargoRepository cargoRepository;
     private final StationTypeRepository stationTypeRepository;
     private final PlayerRepository playerRepository;
+    private final BuildingRepository buildingRepository;
+    private final StationRepository stationRepository;
     
 
 
@@ -39,8 +41,11 @@ public class Repositories {
         this.cargoRepository = new CargoRepository();
         this.stationTypeRepository = new StationTypeRepository();
         this.playerRepository = new PlayerRepository();
-
-
+        this.buildingRepository = new BuildingRepository();
+        this.stationRepository = new StationRepository();
+        
+        // Initialize building repository with default buildings
+        this.buildingRepository.initialize();
     }
 
     /**
@@ -96,6 +101,11 @@ public class Repositories {
         return playerRepository;
     }
     
-
-
+    public BuildingRepository getBuildingRepository() {
+        return buildingRepository;
+    }
+    
+    public StationRepository getStationRepository() {
+        return stationRepository;
+    }
 }

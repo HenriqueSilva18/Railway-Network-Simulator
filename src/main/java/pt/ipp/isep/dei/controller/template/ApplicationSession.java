@@ -3,6 +3,8 @@ package pt.ipp.isep.dei.controller.template;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Editor;
 import pt.ipp.isep.dei.domain.template.Player;
+import pt.ipp.isep.dei.domain.template.Scenario;
+import pt.ipp.isep.dei.domain.template.Station;
 
 public class ApplicationSession {
     private static ApplicationSession instance = null;
@@ -10,6 +12,8 @@ public class ApplicationSession {
     private Map currentMap;
     private UserSession currentSession;
     private Player currentPlayer;
+    private Scenario currentScenario;
+    private Station currentStation;
 
     private ApplicationSession() {
         // Private constructor for singleton
@@ -56,5 +60,21 @@ public class ApplicationSession {
             // Update the player in the current session as well
             this.currentSession = new UserSession(player.getUsername());
         }
+    }
+    
+    public Scenario getCurrentScenario() {
+        return currentScenario;
+    }
+    
+    public void setCurrentScenario(Scenario scenario) {
+        this.currentScenario = scenario;
+    }
+    
+    public Station getCurrentStation() {
+        return currentStation;
+    }
+    
+    public void setCurrentStation(Station station) {
+        this.currentStation = station;
     }
 } 
