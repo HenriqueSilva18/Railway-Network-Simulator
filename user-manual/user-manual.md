@@ -409,6 +409,8 @@ Map with RailwayLine:
 - Select from scenario-available options
 - Consider current date restrictions
 
+![CreateRoute](pngs/BuyLocomotive.png)
+
 ### 4.6 Train Route Management
 - Assign trains to routes
 - Configure cargo pickup at stations
