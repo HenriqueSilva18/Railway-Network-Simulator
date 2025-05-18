@@ -15,39 +15,42 @@ participant ListStationController
 
 
 activate Player
-Player -> mapUI : asks to edit map
 
+    Player -> mapUI: asks to see available maps
         activate mapUI
-            mapUI -> mapCTRL**: create()
-            mapUI -> mapCTRL: getAvailableMaps()
-
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
             activate mapCTRL
                 ref over mapCTRL
-                Get available maps
+                    Get available maps
                 end
-                mapCTRL --> mapUI: availableMapsList
+            mapCTRL --> mapUI: availableMapsList
             deactivate mapCTRL
-
-            mapUI --> Player: shows list of available maps
+        mapUI --> Player: shows list of available maps to play
         deactivate mapUI
 
     Player -> mapUI: selects a map
         activate mapUI
-
-            mapUI -> mapCTRL: loadMap(selectedMap)
+        mapUI -> mapCTRL: getMapScenarios(mapID)
             activate mapCTRL
-
                 ref over mapCTRL
-                Load selected map
+                    Get map scenarios
                 end
-
-                mapCTRL --> mapUI: mapLayout
-
+            mapCTRL --> mapUI: mapScenarios
             deactivate mapCTRL
+        mapUI --> Player: shows list of available scenarios to play
+        deactivate mapUI
+    Player -> mapUI: selects a scenario
 
-            mapUI --> Player: loads and displays the selected map
-
-
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> Player: loads and displays the selected map
         deactivate mapUI
 
 Player -> ListStationUI : request to see available stations

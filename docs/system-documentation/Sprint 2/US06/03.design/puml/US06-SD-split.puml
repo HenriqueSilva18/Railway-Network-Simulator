@@ -32,7 +32,19 @@ activate player
 
     player -> mapUI: selects a map
         activate mapUI
-        mapUI -> mapCTRL: loadMap(mapId)
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> player: shows list of available scenarios to play
+        deactivate mapUI
+    player -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
             activate mapCTRL
                 ref over mapCTRL
                     Load map

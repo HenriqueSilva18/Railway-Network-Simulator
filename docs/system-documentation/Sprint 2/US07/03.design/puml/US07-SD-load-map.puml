@@ -3,44 +3,43 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-autonumber 7
-
+'hide footbox
 participant ":MapController" as CTRL
-participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
 participant "map\n:Map" as MAP
-participant ":ApplicationSession" as APP_SESSION
-participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
 
--> CTRL: loadMap(selectedMap)
+autonumber 11
+-> CTRL: loadMap(mapID, scenarioID)
+
+autonumber 11.1
 activate CTRL
-autonumber 7.1
-    group Load selected map
+    group Load Map
+        CTRL -> REPOS: getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
 
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
 
-        CTRL -> APP_SESSION: getInstance()
-        activate APP_SESSION
-            APP_SESSION --> CTRL:appSession
-        deactivate APP_SESSION
+        CTRL -> MAP_REPO: getMap(mapID)
+        activate MAP_REPO
+            MAP_REPO --> CTRL: map
+        deactivate MAP_REPO
 
-        CTRL -> APP_SESSION_SINGLETON: setCurrentMap(selectedMap)
-        activate APP_SESSION_SINGLETON
-            APP_SESSION_SINGLETON --> CTRL: success
-        deactivate APP_SESSION_SINGLETON
-
-
-        CTRL -> REPOS_MAP: getMap(selectedMap)
-        activate REPOS_MAP
-            REPOS_MAP --> CTRL: map
-        deactivate REPOS_MAP
-
-        CTRL -> MAP: getMapLayout()
+        CTRL -> MAP: getMapLayout(scenarioID)
         activate MAP
             MAP --> CTRL: mapLayout
         deactivate MAP
-
     end
-    autonumber 8
-    <-- CTRL : mapLayout
+
+autonumber 12
+    <-- CTRL: mapLayout
 deactivate CTRL
+
 
 @enduml

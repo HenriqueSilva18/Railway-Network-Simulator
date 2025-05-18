@@ -8,40 +8,48 @@ autonumber
 title Sequence Diagram: US10 - Assign a train to a route
 
 actor "Player" as player
-participant ":EditMapUI" as mapUI
-participant ":EditMapController" as mapCTRL
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
 participant ":AssignTrainUI" as UI
 participant ":AssignTrainController" as CTRL
 
 activate player
 
-    player -> mapUI : requests to see available maps
+    player -> mapUI: asks to see available maps
         activate mapUI
-            mapUI -> mapCTRL**: create()
-            mapUI -> mapCTRL: getAvailableMaps()
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
             activate mapCTRL
-
-            ref over mapCTRL
-                Get available maps
-            end
-
+                ref over mapCTRL
+                    Get available maps
+                end
             mapCTRL --> mapUI: availableMapsList
             deactivate mapCTRL
-            mapUI --> player: shows list of available maps
+        mapUI --> player: shows list of available maps to play
         deactivate mapUI
 
-    player -> mapUI : selects a map
+    player -> mapUI: selects a map
         activate mapUI
-            mapUI -> mapCTRL: loadMap(selectedMap)
+        mapUI -> mapCTRL: getMapScenarios(mapID)
             activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> player: shows list of available scenarios to play
+        deactivate mapUI
+    player -> mapUI: selects a scenario
 
-            ref over mapCTRL
-                Load map
-            end
-
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
             mapCTRL --> mapUI: mapLayout
             deactivate mapCTRL
-            mapUI --> player: loads and displays the selected map
+        mapUI --> player: loads and displays the selected map
         deactivate mapUI
 
     player -> UI : asks to assign a train

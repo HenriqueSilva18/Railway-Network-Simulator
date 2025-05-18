@@ -30,8 +30,10 @@ activate PLAYER
                 
                 loop for each line in CSV
                     CHECKER -> CHECKER : add stations and edges to graph
-                deactivate CHECKER
                 end
+                CHECKER --> CTRL : data loaded
+                deactivate CHECKER
+
             CTRL --> UI : data loaded
         deactivate CTRL
 
