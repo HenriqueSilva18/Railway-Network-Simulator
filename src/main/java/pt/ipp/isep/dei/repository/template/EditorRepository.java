@@ -4,12 +4,16 @@ import pt.ipp.isep.dei.domain.template.Editor;
 import pt.ipp.isep.dei.domain.template.Scenario;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class EditorRepository {
     private final List<Editor> editors;
+    private final Map<Editor, List<Scenario>> editorScenarios;
 
     public EditorRepository() {
         this.editors = new ArrayList<>();
+        this.editorScenarios = new HashMap<>();
     }
 
     public Editor getEditorByUsername(String username) {
@@ -21,17 +25,41 @@ public class EditorRepository {
         return null;
     }
 
-    public boolean addScenarioToEditor(Editor editor, Scenario scenario) {
-        if (editor == null || scenario == null) {
+    public boolean addEditor(Editor editor) {
+        if (editor == null || editors.contains(editor)) {
             return false;
         }
-        editor.addScenario(scenario);
+        editors.add(editor);
+        editorScenarios.put(editor, new ArrayList<>());
         return true;
     }
 
-    public void addEditor(Editor editor) {
-        if (editor != null && !editors.contains(editor)) {
-            editors.add(editor);
+    public boolean addScenarioToEditor(Editor editor, Scenario scenario) {
+        if (editor == null || scenario == null || !editors.contains(editor)) {
+            return false;
         }
+        List<Scenario> scenarios = editorScenarios.get(editor);
+        if (scenarios == null) {
+            scenarios = new ArrayList<>();
+            editorScenarios.put(editor, scenarios);
+        }
+        return scenarios.add(scenario);
+    }
+
+    public List<Editor> getEditors() {
+        return new ArrayList<>(editors);
+    }
+
+    public List<Scenario> getEditorScenarios(Editor editor) {
+        List<Scenario> scenarios = editorScenarios.get(editor);
+        return scenarios != null ? new ArrayList<>(scenarios) : new ArrayList<>();
+    }
+
+    public List<Scenario> getAllScenarios() {
+        List<Scenario> allScenarios = new ArrayList<>();
+        for (List<Scenario> scenarios : editorScenarios.values()) {
+            allScenarios.addAll(scenarios);
+        }
+        return allScenarios;
     }
 } 

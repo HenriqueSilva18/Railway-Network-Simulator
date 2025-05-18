@@ -18,6 +18,8 @@ public class Repositories {
     private final EditorRepository editorRepository;
     private final LocomotiveRepository locomotiveRepository;
     private final CargoRepository cargoRepository;
+    private final StationTypeRepository stationTypeRepository;
+    private final PlayerRepository playerRepository;
     
 
 
@@ -35,6 +37,8 @@ public class Repositories {
         this.editorRepository = new EditorRepository();
         this.locomotiveRepository = new LocomotiveRepository();
         this.cargoRepository = new CargoRepository();
+        this.stationTypeRepository = new StationTypeRepository();
+        this.playerRepository = new PlayerRepository();
 
 
     }
@@ -82,6 +86,14 @@ public class Repositories {
 
     public CargoRepository getCargoRepository() {
         return cargoRepository;
+    }
+
+    public StationTypeRepository getStationTypeRepository() {
+        return stationTypeRepository;
+    }
+
+    public PlayerRepository getPlayerRepository() {
+        return playerRepository;
     }
     
 

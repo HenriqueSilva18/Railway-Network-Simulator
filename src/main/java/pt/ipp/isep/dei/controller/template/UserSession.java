@@ -1,16 +1,21 @@
 package pt.ipp.isep.dei.controller.template;
 
-public class UserSession {
-    private String username;
-    private boolean loggedIn;
+import pt.ipp.isep.dei.domain.template.Player;
 
-    public UserSession(String username) {
-        this.username = username;
+public class UserSession {
+    private final String userEmail;
+    private boolean loggedIn;
+    private final Player player;
+
+    public UserSession(String userEmail) {
+        this.userEmail = userEmail;
         this.loggedIn = true;
+        // Initialize player with default budget
+        this.player = new Player(userEmail, 500000); // Starting with 500k budget
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public boolean isLoggedIn() {
@@ -19,5 +24,9 @@ public class UserSession {
 
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
+    }
+
+    public Player getUser() {
+        return player;
     }
 } 

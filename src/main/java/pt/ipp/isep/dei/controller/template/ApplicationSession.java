@@ -2,12 +2,14 @@ package pt.ipp.isep.dei.controller.template;
 
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Editor;
+import pt.ipp.isep.dei.domain.template.Player;
 
 public class ApplicationSession {
-    private static ApplicationSession instance;
+    private static ApplicationSession instance = null;
     private Editor currentEditor;
     private Map currentMap;
     private UserSession currentSession;
+    private Player currentPlayer;
 
     private ApplicationSession() {
         // Private constructor for singleton
@@ -32,15 +34,27 @@ public class ApplicationSession {
         return currentMap;
     }
 
-    public void setCurrentMap(Map currentMap) {
-        this.currentMap = currentMap;
+    public void setCurrentMap(Map map) {
+        this.currentMap = map;
     }
 
     public UserSession getCurrentSession() {
         return currentSession;
     }
 
-    public void setCurrentSession(UserSession currentSession) {
-        this.currentSession = currentSession;
+    public void setCurrentSession(UserSession session) {
+        this.currentSession = session;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player player) {
+        this.currentPlayer = player;
+        if (this.currentSession != null) {
+            // Update the player in the current session as well
+            this.currentSession = new UserSession(player.getUsername());
+        }
     }
 } 
