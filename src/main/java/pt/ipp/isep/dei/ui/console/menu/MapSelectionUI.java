@@ -26,14 +26,7 @@ public class MapSelectionUI implements Runnable {
         System.out.println("\n=== Map Selection ===\n");
 
         // Get available maps
-        List<Map> allMaps = controller.getAvailableMaps();
-        
-        // Filter maps to only include Italy, France, and Iberian Peninsula
-        List<Map> availableMaps = allMaps.stream()
-                .filter(map -> "italy".equals(map.getNameID()) || 
-                               "france".equals(map.getNameID()) || 
-                               "iberian_peninsula".equals(map.getNameID()))
-                .collect(Collectors.toList());
+        List<Map> availableMaps = controller.getAvailableMaps();
         
         if (availableMaps.isEmpty()) {
             System.out.println("No maps available.");
@@ -64,12 +57,7 @@ public class MapSelectionUI implements Runnable {
         Map selectedMap = availableMaps.get(choice - 1);
 
         // Get scenarios for selected map
-        List<String> allScenarioIDs = controller.getMapScenarios(selectedMap.getNameID());
-        
-        // Filter to only include scenarios 1 and 2
-        List<String> scenarioIDs = allScenarioIDs.stream()
-                .filter(id -> "scenario1".equals(id) || "scenario2".equals(id))
-                .collect(Collectors.toList());
+        List<String> scenarioIDs = controller.getMapScenarios(selectedMap.getNameID());
                 
         if (scenarioIDs.isEmpty()) {
             System.out.println("No scenarios available for this map.");
