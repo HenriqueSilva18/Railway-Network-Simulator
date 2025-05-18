@@ -6,10 +6,6 @@ skinparam classAttributeIconSize 0
 title Class Diagram: US01 - Create a Map
 
 class CreateMapUI {
-    + displayRequestForMapData()
-    + displayConfirmationRequest(nameID, width, height)
-    + displaySuccess(map)
-    + displayMapDetails(map)
 }
 
 class CreateMapController {
@@ -57,7 +53,6 @@ class Editor {
     - createdMaps : List<Map>
 
     + createMap(nameID: String, size: Size) : Map
-    + addMap(map: Map) : boolean
 }
 
 CreateMapUI ..> CreateMapController

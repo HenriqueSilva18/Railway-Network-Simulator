@@ -11,20 +11,19 @@ actor "Player" as Player
 participant ":System" as System
 
 activate Player
+Player -> System: asks to see available maps
+activate System
+System --> Player: shows list of available maps to play
+deactivate System
+Player -> System: selects a map
+activate System
+System --> Player: shows list of available scenarios to play
+deactivate System
+Player -> System : selects a scenario
+activate System
 
- Player -> System : requests to see available maps
-        activate System
-
-
-            System --> Player : shows list of available maps
-        deactivate System
-
-    Player -> System : selects a map
-        activate System
-
-
-            System --> Player : loads and displays the selected map
-        deactivate System
+System --> Player: loads and displays the selected map
+deactivate System
 
     Player -> System : asks to assign a train
         activate System

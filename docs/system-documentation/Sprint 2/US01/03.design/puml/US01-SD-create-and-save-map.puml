@@ -36,7 +36,6 @@ autonumber 11
         activate EDITOR
             EDITOR -> MAP**: createMap(nameID, size)
             
-            EDITOR -> EDITOR: addMap(map)
             EDITOR --> CTRL: map
         deactivate EDITOR
         

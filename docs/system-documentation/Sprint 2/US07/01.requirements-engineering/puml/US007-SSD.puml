@@ -11,17 +11,21 @@ actor "Player" as Player
 participant ":System" as ListStationUI
 
 activate Player
-Player -> ListStationUI : asks to see available maps
+Player -> ListStationUI: asks to see available maps
 activate ListStationUI
-
 ListStationUI --> Player: shows list of available maps to play
 deactivate ListStationUI
-
 Player -> ListStationUI: selects a map
-
 activate ListStationUI
+ListStationUI --> Player: shows list of available scenarios to play
+deactivate ListStationUI
+Player -> ListStationUI : selects a scenario
+activate ListStationUI
+
 ListStationUI --> Player: loads and displays the selected map
 deactivate ListStationUI
+
+
 Player -> ListStationUI : request to see available stations
 activate ListStationUI
 

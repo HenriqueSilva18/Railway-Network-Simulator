@@ -15,9 +15,13 @@ player -> system: asks to see available maps
 activate system
 system --> player: shows list of available maps to play
 deactivate system
-
 player -> system: selects a map
 activate system
+system --> player: shows list of available scenarios to play
+deactivate system
+player -> system : selects a scenario
+activate system
+
 system --> player: loads and displays the selected map
 deactivate system
 
