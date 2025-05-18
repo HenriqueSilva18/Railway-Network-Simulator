@@ -7,42 +7,50 @@ autonumber
 title Sequence Diagram: US05 - Build a Station (Split)
 
 actor "Player" as PLAYER
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
 participant ":StationBuildingUI" as UI
 participant ":StationBuildingController" as CTRL
 
 
 activate PLAYER
 
-    PLAYER -> UI : asks to see available maps
-    activate UI
-        UI --> CTRL** : create()
-        UI -> CTRL : getAvailableMaps()
-        
-        ref over CTRL
-            Get Available Maps List
-        end ref
-        
-        activate CTRL
-            CTRL --> UI : availableMapsList
-        deactivate CTRL
-        
-        UI --> PLAYER : shows list of available maps
-    deactivate UI
+    PLAYER -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                ref over mapCTRL
+                    Get available maps
+                end
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available maps to play
+        deactivate mapUI
 
-    PLAYER -> UI : selects a map
-    activate UI
-        UI -> CTRL : loadMap(nameID)
-        
-        ref over CTRL
-            Load Selected Map
-        end ref
-        
-        activate CTRL
-            CTRL --> UI : mapLayout
-        deactivate CTRL
-        
-        UI --> PLAYER : loads and displays the selected map
-    deactivate UI
+    PLAYER -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available scenarios to play
+        deactivate mapUI
+    PLAYER -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> PLAYER: loads and displays the selected map
+        deactivate mapUI
 
     PLAYER -> UI : asks to build a station
     activate UI
