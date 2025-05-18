@@ -50,7 +50,6 @@ public class ViewScenarioLayoutUI implements Runnable {
         if (selectedMap == null) {
             return;
         }
-
         // Get scenarios for selected map
         List<String> scenarioIDs = mapController.getMapScenarios(selectedMap.getNameID());
         if (scenarioIDs.isEmpty()) {
