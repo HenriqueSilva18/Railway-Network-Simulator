@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Scenario {
     private String nameID;
+    private String displayName;
     private Editor editor;
     private Date startDate;
     private Date endDate;
@@ -14,10 +15,11 @@ public class Scenario {
     private List<Locomotive> availableLocomotives;
     private Map map;
 
-    public Scenario(String nameID, Editor editor, Date startDate, Date endDate,
+    public Scenario(String nameID, String displayName, Editor editor, Date startDate, Date endDate,
                    List<Industry> selectedIndustries, List<Locomotive> availableLocomotives,
                    List<City> mapCityList) {
         this.nameID = nameID;
+        this.displayName = displayName;
         this.editor = editor;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -61,6 +63,10 @@ public class Scenario {
         return nameID;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
     public Editor getEditor() {
         return editor;
     }
@@ -91,5 +97,10 @@ public class Scenario {
 
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    @Override
+    public String toString() {
+        return displayName + " (" + nameID + ")";
     }
 } 

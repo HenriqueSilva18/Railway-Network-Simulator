@@ -18,6 +18,10 @@ public class Repositories {
     private final EditorRepository editorRepository;
     private final LocomotiveRepository locomotiveRepository;
     private final CargoRepository cargoRepository;
+    private final StationTypeRepository stationTypeRepository;
+    private final PlayerRepository playerRepository;
+    private final BuildingRepository buildingRepository;
+    private final StationRepository stationRepository;
     
 
 
@@ -35,8 +39,13 @@ public class Repositories {
         this.editorRepository = new EditorRepository();
         this.locomotiveRepository = new LocomotiveRepository();
         this.cargoRepository = new CargoRepository();
-
-
+        this.stationTypeRepository = new StationTypeRepository();
+        this.playerRepository = new PlayerRepository();
+        this.buildingRepository = new BuildingRepository();
+        this.stationRepository = new StationRepository();
+        
+        // Initialize building repository with default buildings
+        this.buildingRepository.initialize();
     }
 
     /**
@@ -83,7 +92,20 @@ public class Repositories {
     public CargoRepository getCargoRepository() {
         return cargoRepository;
     }
+
+    public StationTypeRepository getStationTypeRepository() {
+        return stationTypeRepository;
+    }
+
+    public PlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
     
-
-
+    public BuildingRepository getBuildingRepository() {
+        return buildingRepository;
+    }
+    
+    public StationRepository getStationRepository() {
+        return stationRepository;
+    }
 }

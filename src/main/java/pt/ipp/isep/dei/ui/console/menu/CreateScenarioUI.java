@@ -152,7 +152,7 @@ public class CreateScenarioUI implements Runnable {
 
             if (Utils.confirm("Do you want to create this scenario? (y/n)")) {
                 try {
-                    Scenario scenario = controller.createScenario(nameID, selectedMap, startDate, endDate,
+                    Scenario scenario = controller.createScenario(nameID, nameID, selectedMap, startDate, endDate,
                             selectedIndustries, portImports, portExports, portProduces,
                             genIndustryFactors, selectedLocomotiveTypes, mapCities, cityTrafficRates);
                     System.out.println("\nScenario created successfully!");

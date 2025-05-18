@@ -3,6 +3,7 @@ package pt.ipp.isep.dei.controller.template;
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,14 +46,86 @@ public class CreateScenarioController {
     }
 
     private Editor getEditorFromSession() {
-        return ApplicationSession.getInstance().getCurrentEditor();
+        Editor editor = ApplicationSession.getInstance().getCurrentEditor();
+        if (editor == null) {
+            System.out.println("DEBUG: No editor in session, creating a default one");
+            editor = new Editor("default_editor", "Default Editor");
+            ApplicationSession.getInstance().setCurrentEditor(editor);
+        }
+        
+        // Make sure the editor exists in the repository
+        if (editorRepository.getEditorByUsername(editor.getUsername()) == null) {
+            System.out.println("DEBUG: Adding editor to repository: " + editor.getUsername());
+            editorRepository.addEditor(editor);
+        }
+        
+        return editor;
     }
 
-    public List<Locomotive> getAvailableLocomotives(List<String> selectedLocomotiveTypes, Date endDate) {
-        return locomotiveRepository.getAvailableLocomotives(selectedLocomotiveTypes, endDate);
+    private List<Locomotive> getAvailableLocomotives(List<String> selectedTypes, Date endDate) {
+        List<Locomotive> availableLocomotives = new ArrayList<>();
+        // Add locomotives based on selected types and availability date
+        for (String type : selectedTypes) {
+            // Default values for each locomotive type
+            double power = 0;
+            double acceleration = 0;
+            double topSpeed = 0;
+            double fuelCost = 0;
+            double acquisitionPrice = 0;
+            double maintenancePrice = 0;
+            int startYear = 1900;
+            
+            // Set specific values based on locomotive type
+            switch (type) {
+                case "Steam":
+                    power = 1000;
+                    acceleration = 0.5;
+                    topSpeed = 80;
+                    fuelCost = 50;
+                    acquisitionPrice = 10000;
+                    maintenancePrice = 1000;
+                    startYear = 1850;
+                    break;
+                case "Diesel":
+                    power = 2000;
+                    acceleration = 1.0;
+                    topSpeed = 120;
+                    fuelCost = 30;
+                    acquisitionPrice = 20000;
+                    maintenancePrice = 2000;
+                    startYear = 1920;
+                    break;
+                case "Electric":
+                    power = 3000;
+                    acceleration = 1.5;
+                    topSpeed = 160;
+                    fuelCost = 20;
+                    acquisitionPrice = 30000;
+                    maintenancePrice = 3000;
+                    startYear = 1950;
+                    break;
+            }
+            
+            // Create locomotive with the correct parameters
+            Locomotive locomotive = new Locomotive(
+                type + "_" + startYear,  // nameID
+                "Railway Co.",           // owner
+                type,                    // type
+                power,                   // power
+                acceleration,            // acceleration
+                topSpeed,                // topSpeed
+                startYear,               // startYear
+                fuelCost,                // fuelCost
+                startYear,               // availabilityYear
+                acquisitionPrice,        // acquisitionPrice
+                maintenancePrice         // maintenancePrice
+            );
+            availableLocomotives.add(locomotive);
+        }
+        return availableLocomotives;
     }
 
-    public Scenario createScenario(String nameID, Map selectedMap, Date startDate, Date endDate,
+    public Scenario createScenario(String nameID, String displayName, Map selectedMap, Date startDate, Date endDate,
                                  List<Industry> selectedIndustries, List<Cargo> portImports,
                                  List<Cargo> portExports, List<Cargo> portProduces,
                                  double genIndustryFactors, List<String> selectedLocomotiveTypes,
@@ -61,32 +134,77 @@ public class CreateScenarioController {
         if (editor == null) {
             throw new IllegalStateException("No editor found in session");
         }
+        
+        System.out.println("DEBUG: Creating scenario with editor: " + editor.getUsername());
+        System.out.println("DEBUG: Map selected: " + selectedMap.getNameID());
+        System.out.println("DEBUG: Industries count: " + selectedIndustries.size());
+
+        // Create deep copies of cities and industries to avoid modifying the originals
+        List<City> scenarioCities = new ArrayList<>();
+        for (City city : mapCityList) {
+            City newCity = new City(city.getNameID(), new Position(city.getPosition().getX(), city.getPosition().getY()), 
+                                  new ArrayList<>(city.getHouseBlocks()));
+            newCity.setTrafficRate(cityTrafficRates);
+            scenarioCities.add(newCity);
+        }
+
+        List<Industry> scenarioIndustries = new ArrayList<>();
+        for (Industry industry : selectedIndustries) {
+            Industry newIndustry = new Industry(
+                industry.getNameID(),
+                industry.getType(),
+                industry.getSector(),
+                industry.getAvailabilityYear(),
+                new Position(industry.getPosition().getX(), industry.getPosition().getY())
+            );
+            newIndustry.setProductionRate(genIndustryFactors);
+            
+            if (industry.getType().equals("Port")) {
+                newIndustry.setImportedCargo(new ArrayList<>(portImports));
+                newIndustry.setExportedCargo(new ArrayList<>(portExports));
+                newIndustry.setProducedCargo(new ArrayList<>(portProduces));
+            }
+            
+            scenarioIndustries.add(newIndustry);
+            System.out.println("DEBUG: Added industry to scenario: " + newIndustry.getNameID() + 
+                             " at position (" + newIndustry.getPosition().getX() + 
+                             "," + newIndustry.getPosition().getY() + ")");
+        }
 
         List<Locomotive> availableLocomotives = getAvailableLocomotives(selectedLocomotiveTypes, endDate);
-        Scenario scenario = new Scenario(nameID, editor, startDate, endDate,
-                selectedIndustries, availableLocomotives, mapCityList);
 
-        // Configure ports
-        for (Industry industry : selectedIndustries) {
-            if (industry.getType().equals("Port")) {
-                scenario.configurePort(industry, portImports, portExports, portProduces);
-            }
-        }
+        // Create the scenario with the copied objects
+        Scenario scenario = new Scenario(nameID, displayName, editor, startDate, endDate,
+                scenarioIndustries, availableLocomotives, scenarioCities);
 
-        // Configure generating industries
-        for (Industry industry : selectedIndustries) {
-            if (industry.getType().equals("Primary")) {
-                scenario.configureGeneratingIndustry(industry, genIndustryFactors);
-            }
-        }
-
-        // Configure cities
-        for (City city : mapCityList) {
-            scenario.configureCity(city, cityTrafficRates);
-        }
-
+        // Set the map reference
         scenario.setMap(selectedMap);
-        editorRepository.addScenarioToEditor(editor, scenario);
+        
+        // Set the current scenario in the application session
+        ApplicationSession.getInstance().setCurrentScenario(scenario);
+
+        // Add the scenario to the editor's collection
+        boolean added = editorRepository.addScenarioToEditor(editor, scenario);
+        System.out.println("DEBUG: Added scenario to editor: " + added);
+
+        // Add the scenario to the map's list of scenarios
+        selectedMap.addScenario(nameID);
+        System.out.println("DEBUG: Added scenario name to map's scenario list");
+        
+        // Save the updated map to the repository
+        mapRepository.save(selectedMap);
+        
+        // Verify scenario is in the repository
+        List<Scenario> allScenarios = editorRepository.getAllScenarios();
+        boolean found = false;
+        for (Scenario s : allScenarios) {
+            if (s.getNameID().equals(nameID)) {
+                found = true;
+                break;
+            }
+        }
+        System.out.println("DEBUG: Scenario found in repository after save: " + found);
+
         return scenario;
     }
 } 

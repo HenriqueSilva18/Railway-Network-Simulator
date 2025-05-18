@@ -3,6 +3,7 @@ package pt.ipp.isep.dei.ui.console.authorization;
 import pt.ipp.isep.dei.controller.template.AuthenticationController;
 import pt.ipp.isep.dei.ui.console.menu.AdminUI;
 import pt.ipp.isep.dei.ui.console.menu.EditorUI;
+import pt.ipp.isep.dei.ui.console.menu.PlayerUI;
 import pt.ipp.isep.dei.ui.console.menu.MenuItem;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 import pt.isep.lei.esoft.auth.mappers.dto.UserRoleDTO;
@@ -43,6 +44,7 @@ public class AuthenticationUI implements Runnable {
         List<MenuItem> rolesUI = new ArrayList<>();
         rolesUI.add(new MenuItem(AuthenticationController.ROLE_ADMIN, new AdminUI()));
         rolesUI.add(new MenuItem(AuthenticationController.ROLE_EDITOR, new EditorUI()));
+        rolesUI.add(new MenuItem(AuthenticationController.ROLE_PLAYER, new PlayerUI()));
         return rolesUI;
     }
 

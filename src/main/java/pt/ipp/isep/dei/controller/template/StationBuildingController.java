@@ -1,0 +1,140 @@
+package pt.ipp.isep.dei.controller.template;
+
+import pt.ipp.isep.dei.domain.template.*;
+import pt.ipp.isep.dei.repository.template.*;
+
+import java.util.List;
+
+public class StationBuildingController {
+    private final MapRepository mapRepository;
+    private final StationTypeRepository stationTypeRepository;
+
+    public StationBuildingController() {
+        Repositories repositories = Repositories.getInstance();
+        this.mapRepository = repositories.getMapRepository();
+        this.stationTypeRepository = repositories.getStationTypeRepository();
+    }
+
+    public List<Map> getAvailableMaps() {
+        return mapRepository.getAvailableMaps();
+    }
+
+    public Map loadMap(String nameID) {
+        return mapRepository.getMap(nameID);
+    }
+
+    public List<StationType> getStationTypes() {
+        return stationTypeRepository.getStationTypes();
+    }
+
+    public boolean validatePosition(Position position) {
+        Map currentMap = getCurrentMap();
+        if (currentMap == null) {
+            return false;
+        }
+
+        // Check if position is within map bounds and not occupied by another station
+        if (!currentMap.validatePosition(position)) {
+            return false;
+        }
+
+        // Check if position is occupied by a city
+        for (City city : currentMap.getCities()) {
+            if (city.getPosition().getX() == position.getX() && 
+                city.getPosition().getY() == position.getY()) {
+                return false;
+            }
+        }
+
+        // Check if position is occupied by an industry
+        for (Industry industry : currentMap.getIndustries()) {
+            if (industry.getPosition().getX() == position.getX() && 
+                industry.getPosition().getY() == position.getY()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public City getClosestCity(Position position) {
+        Map currentMap = getCurrentMap();
+        if (currentMap == null) {
+            return null;
+        }
+        return currentMap.getClosestCity(position);
+    }
+
+    public boolean previewStationPlacement(StationType stationType, Position position, String centerPoint) {
+        Map currentMap = getCurrentMap();
+        if (currentMap == null) {
+            return false;
+        }
+        
+        if (stationType.requiresCenterPoint()) {
+            stationType.setCenterPoint(centerPoint);
+        }
+        
+        return currentMap.previewStationPlacement(stationType, position, centerPoint);
+    }
+
+    public boolean buildStation(StationType stationType, Position position, String centerPoint) {
+        Map currentMap = getCurrentMap();
+        if (currentMap == null) {
+            return false;
+        }
+
+        Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
+        if (currentPlayer == null) {
+            return false;
+        }
+
+        // Check if player has enough budget
+        double stationCost = stationType.getCost();
+        double currentBudget = currentPlayer.getCurrentBudget();
+        if (currentBudget < stationCost) {
+            return false;
+        }
+
+        // Get closest city for station naming
+        City closestCity = currentMap.getClosestCity(position);
+        if (closestCity == null) {
+            return false;
+        }
+
+        // Set center point for station type if required
+        if (stationType.requiresCenterPoint()) {
+            stationType.setCenterPoint(centerPoint);
+        }
+
+        // Create station name
+        String stationName = closestCity.getNameID() + " " + stationType.getName();
+
+        // Create station
+        Station station = new Station(stationName, position, stationType);
+
+        // Try to deduct budget first
+        if (!currentPlayer.deductFromBudget(stationCost)) {
+            return false;
+        }
+
+        // Add station to map
+        boolean success = currentMap.addStation(station);
+        if (!success) {
+            // If adding station fails, refund the budget
+            currentPlayer.addToBudget(stationCost);
+            return false;
+        }
+
+        // Add station to player's built stations
+        currentPlayer.addStation(station);
+        
+        // Save map changes
+        mapRepository.save(currentMap);
+        return true;
+    }
+
+    private Map getCurrentMap() {
+        return ApplicationSession.getInstance().getCurrentMap();
+    }
+} 
