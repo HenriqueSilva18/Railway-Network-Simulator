@@ -22,6 +22,7 @@ public class Bootstrap implements Runnable {
         addTaskCategories();
         addOrganization();
         addUsers();
+        initializeMaps();
         addIndustries();
         addCities();
         addScenarios();
@@ -168,6 +169,17 @@ public class Bootstrap implements Runnable {
             addIndustryToMap(centralEuropeMap, "silesia_factory", factory, 14, 6);
             mapRepo.save(centralEuropeMap);
         }
+        
+        // Add industries to Japan (12x16 grid)
+        Map japanMap = mapRepo.getMap("japan");
+        if (japanMap != null) {
+            addIndustryToMap(japanMap, "tokyo_port", seaport, 8, 8);
+            addIndustryToMap(japanMap, "kyushu_mine", coalMine, 3, 13);
+            addIndustryToMap(japanMap, "kansai_factory", factory, 7, 10);
+            addIndustryToMap(japanMap, "hokkaido_forest", forest, 9, 2);
+            addIndustryToMap(japanMap, "osaka_steel", steelMill, 6, 10);
+            mapRepo.save(japanMap);
+        }
     }
 
     private void addIndustryToMap(Map map, String nameID, Industry baseIndustry, int x, int y) {
@@ -260,6 +272,18 @@ public class Bootstrap implements Runnable {
             addCityToMap(centralEuropeMap, "munich", 9, 8);
             mapRepo.save(centralEuropeMap);
         }
+        
+        // Add cities to Japan (12x16 grid)
+        Map japanMap = mapRepo.getMap("japan");
+        if (japanMap != null) {
+            addCityToMap(japanMap, "tokyo", 8, 7);
+            addCityToMap(japanMap, "osaka", 6, 10);
+            addCityToMap(japanMap, "kyoto", 7, 9);
+            addCityToMap(japanMap, "sapporo", 9, 2);
+            addCityToMap(japanMap, "nagoya", 7, 8);
+            addCityToMap(japanMap, "fukuoka", 3, 13);
+            mapRepo.save(japanMap);
+        }
     }
 
     private void addCityToMap(Map map, String nameID, int x, int y) {
@@ -310,8 +334,28 @@ public class Bootstrap implements Runnable {
         calendar.set(1990, Calendar.DECEMBER, 31);
         Date endDate4 = calendar.getTime();
 
-        // Create scenarios for each map in different time periods
+        // Check if all maps exist before proceeding
+        Map japanMap = mapRepo.getMap("japan");
+        Map scandinaviaMap = mapRepo.getMap("scandinavia");
+        Map centralEuropeMap = mapRepo.getMap("central_europe");
         Map iberianMap = mapRepo.getMap("iberian_peninsula");
+        Map franceMap = mapRepo.getMap("france");
+        Map britishMap = mapRepo.getMap("british_isles");
+        Map italyMap = mapRepo.getMap("italy");
+        Map northAmericaMap = mapRepo.getMap("north_america");
+        
+        // Debug information - Print which maps are available
+        System.out.println("Available maps for scenario creation:");
+        if (japanMap != null) System.out.println("- Japan map found");
+        if (scandinaviaMap != null) System.out.println("- Scandinavia map found");
+        if (centralEuropeMap != null) System.out.println("- Central Europe map found");
+        if (iberianMap != null) System.out.println("- Iberian Peninsula map found");
+        if (franceMap != null) System.out.println("- France map found");
+        if (britishMap != null) System.out.println("- British Isles map found");
+        if (italyMap != null) System.out.println("- Italy map found");
+        if (northAmericaMap != null) System.out.println("- North America map found");
+
+        // Create scenarios for each map in different time periods
         if (iberianMap != null) {
             createScenarioForPeriod(scenarioController, iberianMap, editor, "Iberian Early Industrial", startDate1, endDate1, 1);
             createScenarioForPeriod(scenarioController, iberianMap, editor, "Iberian Inter-War", startDate2, endDate2, 2);
@@ -319,7 +363,6 @@ public class Bootstrap implements Runnable {
             createScenarioForPeriod(scenarioController, iberianMap, editor, "Iberian Modern Era", startDate4, endDate4, 4);
         }
 
-        Map franceMap = mapRepo.getMap("france");
         if (franceMap != null) {
             createScenarioForPeriod(scenarioController, franceMap, editor, "French Belle Époque", startDate1, endDate1, 1);
             createScenarioForPeriod(scenarioController, franceMap, editor, "French Reconstruction", startDate2, endDate2, 2);
@@ -327,7 +370,6 @@ public class Bootstrap implements Runnable {
             createScenarioForPeriod(scenarioController, franceMap, editor, "French Modern Network", startDate4, endDate4, 4);
         }
 
-        Map britishMap = mapRepo.getMap("british_isles");
         if (britishMap != null) {
             createScenarioForPeriod(scenarioController, britishMap, editor, "British Edwardian Era", startDate1, endDate1, 1);
             createScenarioForPeriod(scenarioController, britishMap, editor, "British Inter-War", startDate2, endDate2, 2);
@@ -335,7 +377,6 @@ public class Bootstrap implements Runnable {
             createScenarioForPeriod(scenarioController, britishMap, editor, "British Modernisation", startDate4, endDate4, 4);
         }
 
-        Map italyMap = mapRepo.getMap("italy");
         if (italyMap != null) {
             createScenarioForPeriod(scenarioController, italyMap, editor, "Italian Giolitti Era", startDate1, endDate1, 1);
             createScenarioForPeriod(scenarioController, italyMap, editor, "Italian Inter-War", startDate2, endDate2, 2);
@@ -343,12 +384,47 @@ public class Bootstrap implements Runnable {
             createScenarioForPeriod(scenarioController, italyMap, editor, "Italian Modern Network", startDate4, endDate4, 4);
         }
 
-        Map northAmericaMap = mapRepo.getMap("north_america");
         if (northAmericaMap != null) {
             createScenarioForPeriod(scenarioController, northAmericaMap, editor, "American Progressive Era", startDate1, endDate1, 1);
             createScenarioForPeriod(scenarioController, northAmericaMap, editor, "American Roaring Twenties", startDate2, endDate2, 2);
             createScenarioForPeriod(scenarioController, northAmericaMap, editor, "American Post-War Boom", startDate3, endDate3, 3);
             createScenarioForPeriod(scenarioController, northAmericaMap, editor, "American Modern Era", startDate4, endDate4, 4);
+        }
+        
+        // Create scenarios for Japan
+        if (japanMap != null) {
+            createScenarioForPeriod(scenarioController, japanMap, editor, "Japanese Meiji Era", startDate1, endDate1, 1);
+            createScenarioForPeriod(scenarioController, japanMap, editor, "Japanese Imperial Period", startDate2, endDate2, 2);
+            createScenarioForPeriod(scenarioController, japanMap, editor, "Japanese Economic Miracle", startDate3, endDate3, 3);
+            createScenarioForPeriod(scenarioController, japanMap, editor, "Japanese Bullet Train Era", startDate4, endDate4, 4);
+            // Make sure to save the map after adding scenarios
+            mapRepo.save(japanMap);
+        } else {
+            System.out.println("Error: Japan map not found for scenario creation");
+        }
+        
+        // Create scenarios for Scandinavia
+        if (scandinaviaMap != null) {
+            createScenarioForPeriod(scenarioController, scandinaviaMap, editor, "Nordic Industrial Revolution", startDate1, endDate1, 1);
+            createScenarioForPeriod(scenarioController, scandinaviaMap, editor, "Nordic Interwar Period", startDate2, endDate2, 2);
+            createScenarioForPeriod(scenarioController, scandinaviaMap, editor, "Nordic Welfare State", startDate3, endDate3, 3);
+            createScenarioForPeriod(scenarioController, scandinaviaMap, editor, "Nordic Modern Networks", startDate4, endDate4, 4);
+            // Make sure to save the map after adding scenarios
+            mapRepo.save(scandinaviaMap);
+        } else {
+            System.out.println("Error: Scandinavia map not found for scenario creation");
+        }
+        
+        // Create scenarios for Central Europe
+        if (centralEuropeMap != null) {
+            createScenarioForPeriod(scenarioController, centralEuropeMap, editor, "Central European Industrial Age", startDate1, endDate1, 1);
+            createScenarioForPeriod(scenarioController, centralEuropeMap, editor, "Central European Reconstruction", startDate2, endDate2, 2);
+            createScenarioForPeriod(scenarioController, centralEuropeMap, editor, "Central European Rebuilding", startDate3, endDate3, 3);
+            createScenarioForPeriod(scenarioController, centralEuropeMap, editor, "Central European Modern Network", startDate4, endDate4, 4);
+            // Make sure to save the map after adding scenarios
+            mapRepo.save(centralEuropeMap);
+        } else {
+            System.out.println("Error: Central Europe map not found for scenario creation");
         }
     }
 
@@ -410,6 +486,42 @@ public class Bootstrap implements Runnable {
         }
         editorRepo.addScenarioToEditor(editor, scenario);
 
-        // Scenario created successfully
+        // Debug info to verify scenario creation
+        System.out.println("Created scenario: " + displayName + " for map: " + map.getNameID());
+    }
+
+    private void initializeMaps() {
+        MapRepository mapRepo = Repositories.getInstance().getMapRepository();
+        
+        // Verify all maps exist
+        List<Map> availableMaps = mapRepo.getAvailableMaps();
+        System.out.println("Initializing maps. Available maps:");
+        for (Map map : availableMaps) {
+            System.out.println("- " + map.getNameID());
+        }
+        
+        // Ensure Japan map exists
+        Map japanMap = mapRepo.getMap("japan");
+        if (japanMap == null) {
+            japanMap = Map.createMap("japan", Size.createSize(20, 15));
+            mapRepo.add(japanMap);
+            System.out.println("Created missing Japan map");
+        }
+        
+        // Ensure Scandinavia map exists
+        Map scandinaviaMap = mapRepo.getMap("scandinavia");
+        if (scandinaviaMap == null) {
+            scandinaviaMap = Map.createMap("scandinavia", Size.createSize(25, 30));
+            mapRepo.add(scandinaviaMap);
+            System.out.println("Created missing Scandinavia map");
+        }
+        
+        // Ensure Central Europe map exists
+        Map centralEuropeMap = mapRepo.getMap("central_europe");
+        if (centralEuropeMap == null) {
+            centralEuropeMap = Map.createMap("central_europe", Size.createSize(30, 30));
+            mapRepo.add(centralEuropeMap);
+            System.out.println("Created missing Central Europe map");
+        }
     }
 }
