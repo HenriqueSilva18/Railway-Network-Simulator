@@ -14,8 +14,8 @@ public class Locomotive {
     private double maintenancePrice;
 
     public Locomotive(String nameID, String owner, String type, double power, double acceleration,
-                     double topSpeed, int startYear, double fuelCost, int availabilityYear,
-                     double acquisitionPrice, double maintenancePrice) {
+                      double topSpeed, int startYear, double fuelCost, int availabilityYear,
+                      double acquisitionPrice, double maintenancePrice) {
         this.nameID = nameID;
         this.owner = owner;
         this.type = type;
@@ -72,5 +72,18 @@ public class Locomotive {
 
     public double getMaintenancePrice() {
         return maintenancePrice;
+    }
+
+    // Methods for US09
+    public double getPrice() {
+        return acquisitionPrice;
+    }
+
+    public boolean setOwner(Player player) {
+        if (player == null) {
+            return false;
+        }
+        this.owner = player.getUsername();
+        return true;
     }
 } 

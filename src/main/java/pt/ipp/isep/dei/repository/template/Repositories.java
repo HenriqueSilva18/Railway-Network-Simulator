@@ -22,7 +22,8 @@ public class Repositories {
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
     private final StationRepository stationRepository;
-    
+    private final ScenarioRepository scenarioRepository;
+
 
 
 
@@ -43,7 +44,8 @@ public class Repositories {
         this.playerRepository = new PlayerRepository();
         this.buildingRepository = new BuildingRepository();
         this.stationRepository = new StationRepository();
-        
+        this.scenarioRepository = new ScenarioRepository();
+
         // Initialize building repository with default buildings
         this.buildingRepository.initialize();
     }
@@ -100,12 +102,16 @@ public class Repositories {
     public PlayerRepository getPlayerRepository() {
         return playerRepository;
     }
-    
+
     public BuildingRepository getBuildingRepository() {
         return buildingRepository;
     }
-    
+
     public StationRepository getStationRepository() {
         return stationRepository;
+    }
+
+    public ScenarioRepository getScenarioRepository() {
+        return scenarioRepository;
     }
 }

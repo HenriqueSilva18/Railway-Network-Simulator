@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.domain.template;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class Scenario {
     private Map map;
 
     public Scenario(String nameID, String displayName, Editor editor, Date startDate, Date endDate,
-                   List<Industry> selectedIndustries, List<Locomotive> availableLocomotives,
-                   List<City> mapCityList) {
+                    List<Industry> selectedIndustries, List<Locomotive> availableLocomotives,
+                    List<City> mapCityList) {
         this.nameID = nameID;
         this.displayName = displayName;
         this.editor = editor;
@@ -29,7 +30,7 @@ public class Scenario {
     }
 
     public boolean configurePort(Industry port, List<Cargo> portImports,
-                               List<Cargo> portExports, List<Cargo> portProduces) {
+                                 List<Cargo> portExports, List<Cargo> portProduces) {
         if (port == null || !availableIndustryList.contains(port)) {
             return false;
         }
@@ -89,6 +90,28 @@ public class Scenario {
 
     public List<Locomotive> getAvailableLocomotives() {
         return new ArrayList<>(availableLocomotives);
+    }
+
+    public List<Locomotive> getAvailableLocomotives(Date currentDate) {
+        if (currentDate == null) {
+            return getAvailableLocomotives();
+        }
+
+        List<Locomotive> filteredLocomotives = new ArrayList<>();
+
+        // Extract year from date
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(currentDate);
+        int currentYear = cal.get(Calendar.YEAR);
+
+        // Filter locomotives by availability year
+        for (Locomotive locomotive : availableLocomotives) {
+            if (locomotive.getAvailabilityYear() <= currentYear) {
+                filteredLocomotives.add(locomotive);
+            }
+        }
+
+        return filteredLocomotives;
     }
 
     public Map getMap() {
