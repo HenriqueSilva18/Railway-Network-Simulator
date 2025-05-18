@@ -175,6 +175,7 @@ public class Bootstrap implements Runnable {
         CreateScenarioController scenarioController = new CreateScenarioController();
         MapRepository mapRepo = Repositories.getInstance().getMapRepository();
         EditorRepository editorRepo = Repositories.getInstance().getEditorRepository();
+        ScenarioRepository scenarioRepo = Repositories.getInstance().getScenarioRepository();
 
         // Create an editor for scenarios
         Editor editor = new Editor("map_editor", "editor@railway.app");
@@ -194,6 +195,11 @@ public class Bootstrap implements Runnable {
         Date startDate2 = calendar.getTime();
         calendar.set(1950, Calendar.DECEMBER, 31);
         Date endDate2 = calendar.getTime();
+        
+        // Set a default current date halfway through the first scenario period
+        calendar.set(1910, Calendar.JANUARY, 1);
+        Date currentDate = calendar.getTime();
+        scenarioRepo.setCurrentDate(currentDate);
 
         // Get maps
         Map iberianMap = mapRepo.getMap("iberian_peninsula");

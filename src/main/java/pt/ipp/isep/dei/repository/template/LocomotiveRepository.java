@@ -35,11 +35,39 @@ public class LocomotiveRepository {
         int endYear = endDate.getYear() + 1900; // Convert Date to year
 
         for (Locomotive locomotive : locomotives) {
-            if (selectedTypes.contains(locomotive.getType()) && 
-                locomotive.getAvailabilityYear() <= endYear) {
+            if (selectedTypes.contains(locomotive.getType()) &&
+                    locomotive.getAvailabilityYear() <= endYear) {
                 availableLocomotives.add(locomotive);
             }
         }
         return availableLocomotives;
+    }
+
+    public Locomotive getLocomotive(String locomotiveID) {
+        for (Locomotive locomotive : locomotives) {
+            if (locomotive.getNameID().equals(locomotiveID)) {
+                return locomotive;
+            }
+        }
+        return null;
+    }
+
+    public boolean saveLocomotive(Locomotive locomotive) {
+        if (locomotive == null) {
+            return false;
+        }
+
+        // Check if locomotive already exists
+        for (int i = 0; i < locomotives.size(); i++) {
+            if (locomotives.get(i).getNameID().equals(locomotive.getNameID())) {
+                // Update existing locomotive
+                locomotives.set(i, locomotive);
+                return true;
+            }
+        }
+
+        // Add new locomotive
+        locomotives.add(locomotive);
+        return true;
     }
 } 

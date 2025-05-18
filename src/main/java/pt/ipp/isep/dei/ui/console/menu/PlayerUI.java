@@ -4,9 +4,11 @@ import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.AuthenticationController;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.domain.template.Map;
+import pt.ipp.isep.dei.ui.console.BuyLocomotiveUI;
 import pt.ipp.isep.dei.ui.console.ListStationUI;
 import pt.ipp.isep.dei.ui.console.ShowTextUI;
 import pt.ipp.isep.dei.ui.console.StationBuildingUI;
+import pt.ipp.isep.dei.ui.console.ViewLocomotivesUI;
 import pt.ipp.isep.dei.ui.console.ViewMapUI;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
@@ -39,6 +41,8 @@ public class PlayerUI implements Runnable {
             Map currentMap = ApplicationSession.getInstance().getCurrentMap();
             if (currentMap != null) {
                 // Only show these options if a map is selected
+                options.add(new MenuItem("Buy Locomotive", new BuyLocomotiveUI()));
+                options.add(new MenuItem("View Locomotives", new ViewLocomotivesUI()));
                 options.add(new MenuItem("Build Station", new StationBuildingUI()));
                 options.add(new MenuItem("View Current Map", new ViewMapUI()));
                 options.add(new MenuItem("View Budget", new ShowTextUI("Current budget: " + getCurrentPlayerBudget())));
