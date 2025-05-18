@@ -4,6 +4,7 @@ import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.AuthenticationController;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.domain.template.Map;
+import pt.ipp.isep.dei.ui.console.ListStationUI;
 import pt.ipp.isep.dei.ui.console.ShowTextUI;
 import pt.ipp.isep.dei.ui.console.StationBuildingUI;
 import pt.ipp.isep.dei.ui.console.ViewMapUI;
@@ -41,7 +42,7 @@ public class PlayerUI implements Runnable {
                 options.add(new MenuItem("Build Station", new StationBuildingUI()));
                 options.add(new MenuItem("View Current Map", new ViewMapUI()));
                 options.add(new MenuItem("View Budget", new ShowTextUI("Current budget: " + getCurrentPlayerBudget())));
-                options.add(new MenuItem("View Stations", new ShowTextUI("Station list functionality will be implemented here.")));
+                options.add(new MenuItem("View Stations", new ListStationUI()));
                 options.add(new MenuItem("View Network Statistics", new ShowTextUI("Network statistics will be implemented here.")));
             }
             

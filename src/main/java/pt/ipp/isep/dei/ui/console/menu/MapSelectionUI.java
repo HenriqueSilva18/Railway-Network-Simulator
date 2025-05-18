@@ -70,25 +70,37 @@ public class MapSelectionUI implements Runnable {
                              selectedMap.getNameID().equals("france") ? "French Belle Époque" :
                              selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Early Industrial" :
                              selectedMap.getNameID().equals("british_isles") ? "British Edwardian Era" :
-                             selectedMap.getNameID().equals("north_america") ? "American Progressive Era" : id;
+                             selectedMap.getNameID().equals("north_america") ? "American Progressive Era" :
+                             selectedMap.getNameID().equals("japan") ? "Japanese Meiji Era" :
+                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Industrial Revolution" :
+                             selectedMap.getNameID().equals("central_europe") ? "Central European Industrial Age" : id;
             } else if (id.equals("scenario2")) {
                 displayName = selectedMap.getNameID().equals("italy") ? "Italian Inter-War" :
                              selectedMap.getNameID().equals("france") ? "French Reconstruction" :
                              selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Inter-War" :
                              selectedMap.getNameID().equals("british_isles") ? "British Inter-War" :
-                             selectedMap.getNameID().equals("north_america") ? "American Roaring Twenties" : id;
+                             selectedMap.getNameID().equals("north_america") ? "American Roaring Twenties" :
+                             selectedMap.getNameID().equals("japan") ? "Japanese Imperial Period" :
+                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Interwar Period" :
+                             selectedMap.getNameID().equals("central_europe") ? "Central European Reconstruction" : id;
             } else if (id.equals("scenario3")) {
                 displayName = selectedMap.getNameID().equals("italy") ? "Italian Economic Miracle" :
                              selectedMap.getNameID().equals("france") ? "French Les Trente Glorieuses" :
                              selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Economic Miracle" :
                              selectedMap.getNameID().equals("british_isles") ? "British Nationalisation" :
-                             selectedMap.getNameID().equals("north_america") ? "American Post-War Boom" : id;
+                             selectedMap.getNameID().equals("north_america") ? "American Post-War Boom" :
+                             selectedMap.getNameID().equals("japan") ? "Japanese Economic Miracle" :
+                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Welfare State" :
+                             selectedMap.getNameID().equals("central_europe") ? "Central European Rebuilding" : id;
             } else if (id.equals("scenario4")) {
                 displayName = selectedMap.getNameID().equals("italy") ? "Italian Modern Network" :
                              selectedMap.getNameID().equals("france") ? "French Modern Network" :
                              selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Modern Era" :
                              selectedMap.getNameID().equals("british_isles") ? "British Modernisation" :
-                             selectedMap.getNameID().equals("north_america") ? "American Modern Era" : id;
+                             selectedMap.getNameID().equals("north_america") ? "American Modern Era" :
+                             selectedMap.getNameID().equals("japan") ? "Japanese Bullet Train Era" :
+                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Modern Networks" :
+                             selectedMap.getNameID().equals("central_europe") ? "Central European Modern Network" : id;
             } else {
                 displayName = id;
             }
