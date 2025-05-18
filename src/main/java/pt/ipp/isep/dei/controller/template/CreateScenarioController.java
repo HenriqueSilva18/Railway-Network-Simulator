@@ -6,6 +6,7 @@ import pt.ipp.isep.dei.repository.template.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Calendar;
 
 public class CreateScenarioController {
     private final MapRepository mapRepository;
@@ -62,54 +63,57 @@ public class CreateScenarioController {
 
     private List<Locomotive> getAvailableLocomotives(List<String> selectedTypes, Date endDate) {
         List<Locomotive> availableLocomotives = new ArrayList<>();
-        // Add locomotives based on selected types and availability date
+        
+        // Base values for each type
+        double power = 1000;  // Base power in horsepower
+        double acceleration = 0.5;  // Base acceleration in m/s²
+        int topSpeed = 60;  // Base top speed in km/h
+        double fuelCost = 100;  // Base fuel cost per km
+        double acquisitionPrice = 10000;  // Base acquisition price
+        double maintenancePrice = 500;  // Base maintenance price per month
+        
+        // Get the end year for availability calculations
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endDate);
+        int endYear = calendar.get(Calendar.YEAR);
+        
         for (String type : selectedTypes) {
-            // Default values for each locomotive type
-            double power = 0;
-            double acceleration = 0;
-            double topSpeed = 0;
-            double fuelCost = 0;
-            double acquisitionPrice = 0;
-            double maintenancePrice = 0;
-            int startYear = 1900;
-            
-            // Set specific values based on locomotive type
-            switch (type) {
-                case "Steam":
-                    power = 1000;
-                    acceleration = 0.5;
-                    topSpeed = 80;
-                    fuelCost = 50;
-                    acquisitionPrice = 10000;
-                    maintenancePrice = 1000;
-                    startYear = 1850;
+            // Adjust values based on locomotive type
+            int startYear;
+            switch (type.toLowerCase()) {
+                case "steam":
+                    startYear = 1900;
+                    power *= 1.0;
+                    acceleration *= 1.0;
+                    topSpeed *= 1.0;
+                    fuelCost *= 1.2;
                     break;
-                case "Diesel":
-                    power = 2000;
-                    acceleration = 1.0;
-                    topSpeed = 120;
-                    fuelCost = 30;
-                    acquisitionPrice = 20000;
-                    maintenancePrice = 2000;
-                    startYear = 1920;
+                case "diesel":
+                    startYear = 1925;
+                    power *= 1.5;
+                    acceleration *= 1.2;
+                    topSpeed *= 1.3;
+                    fuelCost *= 1.0;
                     break;
-                case "Electric":
-                    power = 3000;
-                    acceleration = 1.5;
-                    topSpeed = 160;
-                    fuelCost = 20;
-                    acquisitionPrice = 30000;
-                    maintenancePrice = 3000;
+                case "electric":
                     startYear = 1950;
+                    power *= 2.0;
+                    acceleration *= 1.5;
+                    topSpeed *= 1.6;
+                    fuelCost *= 0.8;
                     break;
+                default:
+                    continue;
             }
             
-            // Create locomotive with the correct parameters
+            // Skip if the locomotive type is not available in the scenario's time period
+            if (startYear > endYear) continue;
+            
             Locomotive locomotive = new Locomotive(
                 type + "_" + startYear,  // nameID
-                "Railway Co.",           // owner
+                "System",                // owner
                 type,                    // type
-                power,                   // power
+                (int)power,              // power
                 acceleration,            // acceleration
                 topSpeed,                // topSpeed
                 startYear,               // startYear

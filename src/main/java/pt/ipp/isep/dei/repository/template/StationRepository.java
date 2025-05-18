@@ -18,6 +18,10 @@ public class StationRepository {
     public List<Station> getAllStations() {
         return new ArrayList<>(stations.values());
     }
+
+    public List<Station> getAll() {
+        return getAllStations();  // Delegate to existing getAllStations() method
+    }
     
     public boolean add(Station station) {
         if (station == null || stations.containsKey(station.getNameID())) {

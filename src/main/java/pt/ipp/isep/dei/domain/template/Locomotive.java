@@ -86,4 +86,9 @@ public class Locomotive {
         this.owner = player.getUsername();
         return true;
     }
+    
+    public String getDetails() {
+        return String.format("%s (%s) - Power: %.1f, Top Speed: %.1f km/h, Year: %d", 
+            nameID, type, power, topSpeed, startYear);
+    }
 } 

@@ -14,10 +14,10 @@ public class LocomotiveRepository {
     }
 
     private void initializeLocomotiveTypes() {
-        // Add basic locomotive types
-        locomotives.add(new Locomotive("Steam Engine", "Railway Co.", "Steam", 1000, 0.5, 80, 1850, 50, 1850, 10000, 1000));
-        locomotives.add(new Locomotive("Diesel Engine", "Railway Co.", "Diesel", 2000, 1.0, 120, 1920, 30, 1920, 20000, 2000));
-        locomotives.add(new Locomotive("Electric Engine", "Railway Co.", "Electric", 3000, 1.5, 160, 1950, 20, 1950, 30000, 3000));
+        // Add basic locomotive types with updated constructor parameters
+        locomotives.add(new Locomotive("Steam Engine", "Company", "Steam", 1000.0, 0.5, 80.0, 1850, 50.0, 1850, 10000.0, 1000.0));
+        locomotives.add(new Locomotive("Diesel Engine", "Company", "Diesel", 2000.0, 1.0, 120.0, 1920, 30.0, 1920, 20000.0, 2000.0));
+        locomotives.add(new Locomotive("Electric Engine", "Company", "Electric", 3000.0, 1.5, 160.0, 1950, 20.0, 1950, 30000.0, 3000.0));
     }
 
     public List<String> getLocomotiveTypes() {

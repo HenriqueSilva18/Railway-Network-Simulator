@@ -70,6 +70,10 @@ public class Map {
         return new ArrayList<>(scenarios);
     }
 
+    public List<String> getAvailableScenarios() {
+        return getScenarios();  // Delegate to existing getScenarios() method
+    }
+
     public boolean addScenario(String scenarioId) {
         if (scenarioId == null || scenarioId.trim().isEmpty()) {
             return false;

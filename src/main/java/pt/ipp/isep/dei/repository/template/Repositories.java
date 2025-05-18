@@ -23,6 +23,9 @@ public class Repositories {
     private final BuildingRepository buildingRepository;
     private final StationRepository stationRepository;
     private final ScenarioRepository scenarioRepository;
+    private final RailwayLineRepository railwayLineRepository;
+    private final RouteRepository routeRepository;
+    private final TrainRepository trainRepository;
 
 
 
@@ -44,10 +47,16 @@ public class Repositories {
         this.playerRepository = new PlayerRepository();
         this.buildingRepository = new BuildingRepository();
         this.stationRepository = new StationRepository();
+        this.railwayLineRepository = new RailwayLineRepository();
         this.scenarioRepository = new ScenarioRepository();
-
+        this.routeRepository = new RouteRepository();
+        this.trainRepository = new TrainRepository();
+        
         // Initialize building repository with default buildings
         this.buildingRepository.initialize();
+        
+        // Initialize train repository if needed
+        this.trainRepository.initialize();
     }
 
     /**
@@ -113,5 +122,17 @@ public class Repositories {
 
     public ScenarioRepository getScenarioRepository() {
         return scenarioRepository;
+    }
+
+    public RailwayLineRepository getRailwayLineRepository() {
+        return railwayLineRepository;
+    }
+    
+    public RouteRepository getRouteRepository() {
+        return routeRepository;
+    }
+    
+    public TrainRepository getTrainRepository() {
+        return trainRepository;
     }
 }

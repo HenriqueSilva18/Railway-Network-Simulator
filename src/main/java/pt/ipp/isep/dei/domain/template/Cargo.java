@@ -39,8 +39,31 @@ public class Cargo {
     }
 
     public void addProductionResource(String resource) {
-        if (resource != null && !resource.isEmpty()) {
+        if (resource != null && !resource.trim().isEmpty()) {
             productionResources.add(resource);
         }
+    }
+
+    public String getDetails() {
+        return String.format("%s (%s)\n" +
+                "Amount: %d units\n" +
+                "Lifespan: %d days\n" +
+                "Type: %s",
+                name, type, amount, lifespan, type);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Cargo cargo = (Cargo) obj;
+        return name != null && name.equals(cargo.name) && type != null && type.equals(cargo.type);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 } 
