@@ -14,7 +14,7 @@ public class EditorUI implements Runnable {
         List<MenuItem> options = new ArrayList<MenuItem>();
         options.add(new MenuItem("Create Map", new CreateMapUI()));
         options.add(new MenuItem("List Maps", new ShowTextUI("List of maps functionality will be implemented here.")));
-        options.add(new MenuItem("Edit Map", new ShowTextUI("Edit map functionality will be implemented here.")));
+        options.add(new MenuItem("Edit Map", new EditMapUI()));
         options.add(new MenuItem("Delete Map", new ShowTextUI("Delete map functionality will be implemented here.")));
 
         int option = 0;

@@ -1,8 +1,8 @@
 package pt.ipp.isep.dei.domain.template;
 
 public class Size {
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
 
     private Size(int width, int height) {
         this.width = width;

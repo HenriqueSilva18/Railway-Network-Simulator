@@ -20,8 +20,8 @@ public class CreateMapController {
         Size size = Size.createSize(width, height);
         Map map = Map.createMap(nameID, size);
         
-        if (!mapRepository.save(map)) {
-            throw new IllegalStateException("Failed to save map");
+        if (!mapRepository.add(map)) {
+            throw new IllegalStateException("Failed to add map");
         }
         
         return map;

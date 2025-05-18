@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
-    private final String nameID;
-    private final Size size;
-    private final List<City> cityList;
-    private final List<Industry> industryList;
+    private String nameID;
+    private Size size;
+    private List<Industry> industries;
+    private List<Position> positions;
 
     private Map(String nameID, Size size) {
         this.nameID = nameID;
         this.size = size;
-        this.cityList = new ArrayList<>();
-        this.industryList = new ArrayList<>();
+        this.industries = new ArrayList<>();
+        this.positions = new ArrayList<>();
+        initializePositions();
     }
 
     public static boolean validateMapName(String nameID) {
@@ -31,6 +32,14 @@ public class Map {
         return new Map(nameID, size);
     }
 
+    private void initializePositions() {
+        for (int x = 0; x < size.getWidth(); x++) {
+            for (int y = 0; y < size.getHeight(); y++) {
+                positions.add(new Position(x, y));
+            }
+        }
+    }
+
     public String getNameID() {
         return nameID;
     }
@@ -39,11 +48,63 @@ public class Map {
         return size;
     }
 
-    public List<City> getCityList() {
-        return new ArrayList<>(cityList);
+    public List<Industry> getIndustries() {
+        return new ArrayList<>(industries);
     }
 
-    public List<Industry> getIndustryList() {
-        return new ArrayList<>(industryList);
+    public List<Position> getPositions() {
+        return new ArrayList<>(positions);
+    }
+
+    public boolean isCellEmpty(int x, int y) {
+        if (x < 0 || x >= size.getWidth() || y < 0 || y >= size.getHeight()) {
+            return false;
+        }
+
+        Position position = getPosition(x, y);
+        return position != null && !position.isOccupied();
+    }
+
+    public Position getPosition(int x, int y) {
+        for (Position position : positions) {
+            if (position.getX() == x && position.getY() == y) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    public boolean addIndustry(Industry industry) {
+        if (industry == null || industry.getPosition() == null) {
+            return false;
+        }
+
+        Position position = getPosition(industry.getPosition().getX(), industry.getPosition().getY());
+        if (position == null || position.isOccupied()) {
+            return false;
+        }
+
+        position.setOccupied(true);
+        return industries.add(industry);
+    }
+
+    public String getMapLayout() {
+        StringBuilder layout = new StringBuilder();
+        layout.append("Map: ").append(nameID).append("\n");
+        layout.append("Size: ").append(size.getWidth()).append("x").append(size.getHeight()).append("\n\n");
+
+        for (int y = 0; y < size.getHeight(); y++) {
+            for (int x = 0; x < size.getWidth(); x++) {
+                Position position = getPosition(x, y);
+                if (position != null && position.isOccupied()) {
+                    layout.append("I "); // I for Industry
+                } else {
+                    layout.append(". "); // . for empty cell
+                }
+            }
+            layout.append("\n");
+        }
+
+        return layout.toString();
     }
 } 
