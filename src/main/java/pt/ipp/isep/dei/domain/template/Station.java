@@ -83,17 +83,48 @@ public class Station {
     public List<Building> getBuildings() {
         return new ArrayList<>(buildings);
     }
+    
+    /**
+     * Directly add a building to the station (for internal use)
+     */
+    public void addBuilding(Building building) {
+        if (building != null) {
+            buildings.add(building);
+        }
+    }
+    
+    /**
+     * Directly remove a building by ID (for internal use)
+     */
+    public boolean removeBuildingById(String buildingId) {
+        if (buildingId == null) {
+            return false;
+        }
+        return buildings.removeIf(building -> building.getNameID().equals(buildingId));
+    }
 
     public void addServedCity(City city) {
         if (city != null && !servedCities.contains(city)) {
             servedCities.add(city);
         }
     }
+    
+    /**
+     * Get a building by its nameID
+     */
+    public Building getBuilding(String buildingId) {
+        for (Building building : buildings) {
+            if (building.getNameID().equals(buildingId)) {
+                return building;
+            }
+        }
+        return null;
+    }
 
     /**
-     * Checks if a building upgrade is valid for this station
+     * Checks if a new building can be installed in this station
      */
-    public boolean canUpgradeWith(Building building, int currentYear) {
+    public boolean canInstallNewBuilding(Building building, int currentYear) {
         if (building == null) {
             return false;
         }
@@ -143,28 +174,74 @@ public class Station {
 
         return true;
     }
+    
+    /**
+     * Checks if a building can be evolved to another building
+     */
+    public boolean canEvolveBuildingTo(String buildingId, String evolutionId, int currentYear) {
+        // Get the current building
+        Building currentBuilding = getBuilding(buildingId);
+        if (currentBuilding == null || !currentBuilding.canEvolve()) {
+            return false;
+        }
+        
+        // Check if the evolution is the correct one
+        if (!currentBuilding.getEvolvesInto().equals(evolutionId)) {
+            return false;
+        }
+        
+        // Check if the evolution is available in the current year
+        Building evolution = null;
+        for (Building building : buildings) {
+            if (building.getNameID().equals(evolutionId)) {
+                evolution = building;
+                break;
+            }
+        }
+        
+        if (evolution != null && evolution.getAvailabilityYear() > currentYear) {
+            return false;
+        }
+        
+        return true;
+    }
 
     /**
-     * Gets a list of available upgrades for this station based on the current year
+     * Gets a list of new buildings that can be installed in this station
      */
-    public List<Building> getAvailableUpgrades(List<Building> availableBuildings, int currentYear) {
+    public List<Building> getAvailableNewBuildings(List<Building> availableBuildings, int currentYear) {
         List<Building> validUpgrades = new ArrayList<>();
         
         for (Building building : availableBuildings) {
-            if (canUpgradeWith(building, currentYear)) {
+            if (canInstallNewBuilding(building, currentYear)) {
                 validUpgrades.add(building);
             }
         }
         
         return validUpgrades;
     }
+    
+    /**
+     * Gets a list of buildings that can be evolved in this station
+     */
+    public List<Building.BuildingInfo> getEvolvableBuildings(int currentYear) {
+        List<Building.BuildingInfo> evolvableBuildings = new ArrayList<>();
+        
+        for (Building building : buildings) {
+            if (building.canEvolve() && building.getEvolvesInto() != null) {
+                evolvableBuildings.add(building.getInfo());
+            }
+        }
+        
+        return evolvableBuildings;
+    }
 
     /**
-     * Upgrades the station with a building
+     * Installs a new building in the station
      * Returns true if successful, false otherwise
      */
-    public boolean upgrade(Building building, int currentYear) {
-        if (!canUpgradeWith(building, currentYear)) {
+    public boolean installNewBuilding(Building building, int currentYear) {
+        if (!canInstallNewBuilding(building, currentYear)) {
             return false;
         }
 
@@ -177,6 +254,57 @@ public class Station {
         // Add the new building
         buildings.add(building);
         return true;
+    }
+    
+    /**
+     * Evolves an existing building to its next stage
+     * Returns true if successful, false otherwise
+     */
+    public boolean evolveBuilding(String buildingId, Building evolution, int currentYear) {
+        // Get the building to evolve
+        Building currentBuilding = getBuilding(buildingId);
+        if (currentBuilding == null || !currentBuilding.canEvolve()) {
+            return false;
+        }
+        
+        // Check if this is the correct evolution path
+        if (!currentBuilding.getEvolvesInto().equals(evolution.getNameID())) {
+            return false;
+        }
+        
+        // Check if the evolution is available in the current year
+        if (evolution.getAvailabilityYear() > currentYear) {
+            return false;
+        }
+        
+        // Remove the old building and add the evolved building
+        for (int i = 0; i < buildings.size(); i++) {
+            if (buildings.get(i).getNameID().equals(buildingId)) {
+                // Replace directly at the same position
+                buildings.set(i, evolution);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * General method to upgrade station with a building (either new installation or evolution)
+     */
+    public boolean upgrade(Building building, int currentYear) {
+        // First check if this is an evolution of an existing building
+        for (Building existingBuilding : buildings) {
+            if (existingBuilding.canEvolve() && 
+                existingBuilding.getEvolvesInto() != null && 
+                existingBuilding.getEvolvesInto().equals(building.getNameID())) {
+                
+                return evolveBuilding(existingBuilding.getNameID(), building, currentYear);
+            }
+        }
+        
+        // If not an evolution, try to install as a new building
+        return installNewBuilding(building, currentYear);
     }
 
     public boolean isWithinRadius(Position otherPosition) {

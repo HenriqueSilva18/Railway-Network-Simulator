@@ -9,6 +9,7 @@ import pt.ipp.isep.dei.repository.template.PlayerRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.StationRepository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UpgradeStationController {
     public int getCurrentYear() {
         Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
         if (currentScenario == null) {
-            return 1900; // Default year if no scenario
+            return 1950; // Changed from 1900 to 1950 to make more buildings available
         }
         
         Calendar calendar = Calendar.getInstance();
@@ -39,16 +40,36 @@ public class UpgradeStationController {
     }
     
     /**
-     * Gets a list of available upgrades for the current station
+     * Gets a list of new buildings available for installation
      */
-    public List<Building> getAvailableUpgrades() {
+    public List<Building> getAvailableNewBuildings() {
         Station currentStation = ApplicationSession.getInstance().getCurrentStation();
         if (currentStation == null) {
             return List.of();
         }
         
-        List<Building> allBuildings = buildingRepository.getAllBuildings();
-        return currentStation.getAvailableUpgrades(allBuildings, getCurrentYear());
+        // Use the filtered building options that exclude evolution targets
+        List<Building> newBuildingOptions = buildingRepository.getNewBuildingOptions();
+        return currentStation.getAvailableNewBuildings(newBuildingOptions, getCurrentYear());
+    }
+    
+    /**
+     * Gets a list of buildings that can be evolved
+     */
+    public List<Building.BuildingInfo> getEvolvableBuildings() {
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        if (currentStation == null) {
+            return List.of();
+        }
+        
+        return currentStation.getEvolvableBuildings(getCurrentYear());
+    }
+    
+    /**
+     * Gets evolution options for a specific building
+     */
+    public List<Building> getEvolutionOptions(String buildingId) {
+        return buildingRepository.getEvolutionOptions(buildingId, getCurrentYear());
     }
     
     /**
@@ -64,9 +85,9 @@ public class UpgradeStationController {
     }
     
     /**
-     * Upgrades the current station with the selected building
+     * Installs a new building in the station
      */
-    public boolean upgradeStation(String buildingId) {
+    public boolean installNewBuilding(String buildingId) {
         Station currentStation = ApplicationSession.getInstance().getCurrentStation();
         Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
         Building building = buildingRepository.getBuilding(buildingId);
@@ -80,8 +101,97 @@ public class UpgradeStationController {
             return false;
         }
         
-        // Attempt to upgrade the station
-        boolean success = currentStation.upgrade(building, getCurrentYear());
+        // Attempt to install the building
+        boolean success = currentStation.installNewBuilding(building, getCurrentYear());
+        
+        if (success) {
+            // Deduct the cost from player's budget
+            currentPlayer.deductFromBudget(building.getCost());
+            
+            // Save the updated station and player
+            stationRepository.save(currentStation);
+            playerRepository.save(currentPlayer);
+        }
+        
+        return success;
+    }
+    
+    /**
+     * Evolves an existing building
+     */
+    public boolean evolveBuilding(String buildingId, String evolutionId) {
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
+        Building building = buildingRepository.getBuilding(buildingId);
+        Building evolution = buildingRepository.getBuilding(evolutionId);
+        
+        if (currentStation == null || currentPlayer == null || building == null || evolution == null) {
+            return false;
+        }
+        
+        // Check if player has enough budget
+        if (currentPlayer.getCurrentBudget() < building.getEvolutionCost()) {
+            return false;
+        }
+        
+        // Use the evolveBuilding method directly in Station which properly handles the replacement
+        boolean success = currentStation.evolveBuilding(buildingId, evolution, getCurrentYear());
+        
+        if (success) {
+            // Deduct the evolution cost from player's budget
+            currentPlayer.deductFromBudget(building.getEvolutionCost());
+            
+            // Save the updated station and player
+            stationRepository.save(currentStation);
+            playerRepository.save(currentPlayer);
+            
+            // Refresh the current station reference
+            ApplicationSession.getInstance().setCurrentStation(currentStation);
+        }
+        
+        return success;
+    }
+    
+    /**
+     * General method to upgrade a station with a building
+     */
+    public boolean upgradeStation(String buildingId) {
+        Building building = buildingRepository.getBuilding(buildingId);
+        if (building == null) {
+            return false;
+        }
+        
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
+        
+        if (currentStation == null || currentPlayer == null) {
+            return false;
+        }
+        
+        // First check if this is an evolution of an existing building
+        for (Building existingBuilding : currentStation.getBuildings()) {
+            if (existingBuilding.canEvolve() && 
+                existingBuilding.getEvolvesInto() != null && 
+                existingBuilding.getEvolvesInto().equals(buildingId)) {
+                
+                // Check if player has enough budget for evolution
+                if (currentPlayer.getCurrentBudget() < existingBuilding.getEvolutionCost()) {
+                    return false;
+                }
+                
+                // Use the evolveBuilding method instead
+                return evolveBuilding(existingBuilding.getNameID(), buildingId);
+            }
+        }
+        
+        // If not an evolution, try to install as a new building
+        // Check if player has enough budget
+        if (currentPlayer.getCurrentBudget() < building.getCost()) {
+            return false;
+        }
+        
+        // Attempt to install the new building
+        boolean success = currentStation.installNewBuilding(building, getCurrentYear());
         
         if (success) {
             // Deduct the cost from player's budget
@@ -105,5 +215,22 @@ public class UpgradeStationController {
         }
         
         return currentStation.getInfo();
+    }
+    
+    /**
+     * Gets the list of buildings currently in the station
+     */
+    public List<Building.BuildingInfo> getCurrentStationBuildings() {
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        if (currentStation == null) {
+            return List.of();
+        }
+        
+        List<Building.BuildingInfo> buildingInfos = new ArrayList<>();
+        for (Building building : currentStation.getBuildings()) {
+            buildingInfos.add(building.getInfo());
+        }
+        
+        return buildingInfos;
     }
 } 
