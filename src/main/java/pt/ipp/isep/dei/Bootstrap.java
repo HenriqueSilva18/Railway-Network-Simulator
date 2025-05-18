@@ -26,7 +26,6 @@ public class Bootstrap implements Runnable {
         addCities();
         addScenarios();
     }
-
     private void addOrganization() {
         OrganizationRepository organizationRepository = Repositories.getInstance().getOrganizationRepository();
 
