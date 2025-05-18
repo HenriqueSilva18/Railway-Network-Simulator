@@ -6,10 +6,10 @@ skinparam shadowing false
 participant ":BuyLocomotiveController" as CTRL
 participant "scenario\n:Scenario" as SCENARIO
 
-autonumber 3.13
+autonumber 16.14
 -> CTRL : getAvailableLocomotives(currentScenario, currentDate)
 
-autonumber 3.14
+autonumber 16.15
 activate CTRL
     group Get Available Locomotives
         CTRL -> SCENARIO : getAvailableLocomotives(currentScenario, currentDate)
@@ -18,7 +18,7 @@ activate CTRL
         deactivate SCENARIO
     end
 
-    autonumber 4
+    autonumber 17
     <-- CTRL : availableLocomotives
 deactivate CTRL
 

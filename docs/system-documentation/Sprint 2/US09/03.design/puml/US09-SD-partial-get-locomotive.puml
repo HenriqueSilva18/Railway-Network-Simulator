@@ -6,10 +6,10 @@ skinparam shadowing false
 participant ":BuyLocomotiveController" as CTRL
 participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
 
-autonumber 7
+autonumber 20
 -> CTRL : getLocomotive(locomotiveID)
 
-autonumber 7.1
+autonumber 20.1
 activate CTRL
     group Get Locomotive
         CTRL -> LOC_REPO : getLocomotive(locomotiveID)
@@ -18,7 +18,7 @@ activate CTRL
         deactivate LOC_REPO
     end
 
-    autonumber 8
+    autonumber 21
     <-- CTRL : locomotive
 deactivate CTRL
 

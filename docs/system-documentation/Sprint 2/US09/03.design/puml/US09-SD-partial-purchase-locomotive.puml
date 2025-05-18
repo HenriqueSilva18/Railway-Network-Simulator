@@ -7,10 +7,10 @@ participant ":BuyLocomotiveController" as CTRL
 participant "locomotive\n:Locomotive" as LOCOMOTIVE
 participant "player\n:Player" as PLAYER_OBJ
 
-autonumber 11.14
+autonumber 24.14
 -> CTRL : purchaseLocomotive(locomotive)
 
-autonumber 11.15
+autonumber 24.15
 activate CTRL
     group Purchase Locomotive
         CTRL -> LOCOMOTIVE : getPrice()
@@ -48,7 +48,7 @@ activate CTRL
         deactivate LOCOMOTIVE
     end
 
-    autonumber 12
+    autonumber 25
     <-- CTRL : true
 deactivate CTRL
 

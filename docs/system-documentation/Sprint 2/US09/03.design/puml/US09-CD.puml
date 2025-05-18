@@ -33,6 +33,15 @@ class Player {
     + addLocomotive(locomotive)
 }
 
+class Map {
+    - nameID : String
+    - cityList : List<City>
+    - industryList : List<Industry>
+    - scenarios : List<Scenario>
+    
+    + getMapLayout(scenarioID)
+}
+
 class Locomotive {
     - nameID : String
     - owner : Player
@@ -58,20 +67,30 @@ class Scenario {
     - tweakedCityList : List<City>
     - availableIndustryList : List<Industry>
     - availableLocomotives : List<Locomotive>
+    - map : Map
     
-    + getAvailableLocomotives(scenario, date)
+    + getAvailableLocomotives(date)
 }
 
 class LocomotiveRepository {
     + getLocomotive(locomotiveID)
+    + saveLocomotive(locomotive)
 }
 
 class PlayerRepository {
     + getPlayerByUsername(username)
+    + savePlayer(player)
 }
 
 class ScenarioRepository {
     + getCurrentScenario()
+    + getScenario(scenarioID)
+}
+
+class MapRepository {
+    + getAvailableMaps()
+    + getMap(mapID)
+    + getScenarios(mapID)
 }
 
 class Repositories {
@@ -80,6 +99,7 @@ class Repositories {
     + getLocomotiveRepository()
     + getPlayerRepository()
     + getScenarioRepository()
+    + getMapRepository()
 }
 
 class BuyLocomotiveController {
@@ -92,34 +112,51 @@ class BuyLocomotiveController {
     - checkBalance(price, player)
 }
 
+class MapController {
+    + MapController()
+    + getAvailableMaps()
+    + getMapScenarios(mapID)
+    + loadMap(mapID, scenarioID)
+}
+
 class BuyLocomotiveUI {
 }
 
-BuyLocomotiveUI .> BuyLocomotiveController
+class MapUI {
+}
 
+' UI to Controller dependencies
+BuyLocomotiveUI .> BuyLocomotiveController
+MapUI .> MapController
+
+' Controller dependencies
 BuyLocomotiveController ..> ApplicationSession
 BuyLocomotiveController ..> UserSession
-BuyLocomotiveController ..> Locomotive
-BuyLocomotiveController ..> LocomotiveRepository
-BuyLocomotiveController ..> Player
-BuyLocomotiveController ..> PlayerRepository
-BuyLocomotiveController ..> Scenario
-BuyLocomotiveController ..> ScenarioRepository
-BuyLocomotiveController .> Repositories
+BuyLocomotiveController ..> Repositories
 
+MapController ..> Repositories
+
+' Repository singleton
 Repositories -> "1" Repositories : instance
 Repositories --> "1" LocomotiveRepository : locomotiveRepository
 Repositories --> "1" PlayerRepository : playerRepository
 Repositories --> "1" ScenarioRepository : scenarioRepository
+Repositories --> "1" MapRepository : mapRepository
 
+' Session singleton
 ApplicationSession -> "1" ApplicationSession : instance
 ApplicationSession ..> UserSession
 
+' Repository to Domain relationships
 LocomotiveRepository --> "*" Locomotive : locomotives
 PlayerRepository --> "*" Player : players
 ScenarioRepository --> "*" Scenario : scenarios
+MapRepository --> "*" Map : maps
 
+' Domain relationships
 Player --> "*" Locomotive : ownedLocomotives
 Scenario --> "*" Locomotive : availableLocomotives
+Map "1" --> "*" Scenario : scenarios
+Scenario "*" --> "1" Map : map
 
 @enduml

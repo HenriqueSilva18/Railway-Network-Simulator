@@ -20,7 +20,7 @@ activate EDITOR
         UI -> CTRL : getAvailableMaps()
         activate CTRL
             ref over CTRL
-                Get Available Maps List
+                Get Available Maps
             end ref
             CTRL --> UI : mapList
         deactivate CTRL

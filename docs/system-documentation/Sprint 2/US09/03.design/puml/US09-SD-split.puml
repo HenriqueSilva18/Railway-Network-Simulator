@@ -7,10 +7,50 @@ autonumber
 
 'hide footbox
 actor "Player" as PLAYER
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
 participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
 
 activate PLAYER
+
+    PLAYER -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                ref over mapCTRL
+                    Get available maps
+                end
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available maps to play
+        deactivate mapUI
+
+    PLAYER -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available scenarios to play
+        deactivate mapUI
+    PLAYER -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> PLAYER: loads and displays the selected map
+        deactivate mapUI
+
 
     PLAYER -> UI : asks to buy a locomotive
     activate UI

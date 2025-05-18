@@ -11,10 +11,10 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
 
-autonumber 11
+autonumber 24
 -> CTRL : getPlayerFromSession()
 
-autonumber 11.1
+autonumber 24.1
 activate CTRL
     group Get Player From Session
         CTRL -> APP_SESSION : getInstance()
@@ -48,7 +48,7 @@ activate CTRL
         deactivate PLAYER_REPO
     end
 
-    autonumber 11.13
+    autonumber 24.13
     <-- CTRL : player
 deactivate CTRL
 

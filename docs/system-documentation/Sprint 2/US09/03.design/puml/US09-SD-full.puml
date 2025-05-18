@@ -7,6 +7,8 @@ autonumber
 
 'hide footbox
 actor "Player" as PLAYER
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
 participant ":BuyLocomotiveUI" as UI
 participant ":BuyLocomotiveController" as CTRL
 participant "Repositories" as REPOS
@@ -17,11 +19,88 @@ participant "currentSession\n:UserSession" as CURRENT_SESSION
 participant "scenarioRepository\n:ScenarioRepository" as SCENARIO_REPO
 participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
 participant "playerRepository\n:PlayerRepository" as PLAYER_REPO
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "map\n:Map" as MAP
 participant "locomotive\n:Locomotive" as LOCOMOTIVE
 participant "player\n:Player" as PLAYER_OBJ
 participant "scenario\n:Scenario" as SCENARIO
 
 activate PLAYER
+
+    PLAYER -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                mapCTRL -> REPOS : getInstance()
+                activate REPOS
+                    REPOS --> mapCTRL: repositories
+                deactivate REPOS
+
+                mapCTRL -> REPOS_SINGLETON : getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> mapCTRL: mapRepository
+                deactivate REPOS_SINGLETON
+
+                mapCTRL -> MAP_REPO : getAvailableMaps()
+                activate MAP_REPO
+                    MAP_REPO --> mapCTRL : mapList
+                deactivate MAP_REPO
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available maps to play
+        deactivate mapUI
+
+    PLAYER -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                mapCTRL -> REPOS : getInstance()
+                activate REPOS
+                    REPOS --> mapCTRL: repositories
+                deactivate REPOS
+
+                mapCTRL -> REPOS_SINGLETON : getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> mapCTRL: mapRepository
+                deactivate REPOS_SINGLETON
+
+                mapCTRL -> MAP_REPO : getScenarios(mapID)
+                activate MAP_REPO
+                    MAP_REPO --> mapCTRL : mapScenarios
+                deactivate MAP_REPO
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> PLAYER: shows list of available scenarios to play
+        deactivate mapUI
+    PLAYER -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                mapCTRL -> REPOS: getInstance()
+                activate REPOS
+                    REPOS --> mapCTRL: repositories
+                deactivate REPOS
+
+                mapCTRL -> REPOS_SINGLETON: getMapRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> mapCTRL: mapRepository
+                deactivate REPOS_SINGLETON
+
+                mapCTRL -> MAP_REPO: getMap(mapID)
+                activate MAP_REPO
+                    MAP_REPO --> mapCTRL: map
+                deactivate MAP_REPO
+
+                mapCTRL -> MAP: getMapLayout(map, scenarioID)
+                activate MAP
+                    MAP --> mapCTRL: mapLayout
+                deactivate MAP
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> PLAYER: loads and displays the selected map
+        deactivate mapUI
 
     PLAYER -> UI : asks to buy a locomotive
     activate UI
@@ -61,7 +140,6 @@ activate PLAYER
 
             CTRL -> SCENARIO : getAvailableLocomotives(currentScenario, currentDate)
             activate SCENARIO
-
                 SCENARIO --> CTRL : availableLocomotives
             deactivate SCENARIO
 
@@ -73,7 +151,6 @@ activate PLAYER
 
     PLAYER -> UI : selects a locomotive
     activate UI
-
         UI -> CTRL : getLocomotive(locomotiveID)
         activate CTRL
             CTRL -> LOC_REPO : getLocomotive(locomotiveID)
@@ -89,10 +166,7 @@ activate PLAYER
 
     PLAYER -> UI : confirms purchase
     activate UI
-
         UI -> CTRL : purchaseLocomotive(locomotive)
-        activate CTRL
-
         activate CTRL
             CTRL -> CTRL : getPlayerFromSession()
             activate CTRL
@@ -129,15 +203,13 @@ activate PLAYER
                 CTRL --> CTRL : player
             deactivate CTRL
 
-                CTRL -> LOCOMOTIVE : getPrice()
-                activate LOCOMOTIVE
-                    LOCOMOTIVE --> CTRL : locomotivePrice
-                deactivate LOCOMOTIVE
-
+            CTRL -> LOCOMOTIVE : getPrice()
+            activate LOCOMOTIVE
+                LOCOMOTIVE --> CTRL : locomotivePrice
+            deactivate LOCOMOTIVE
 
             CTRL -> CTRL : checkBalance(locomotivePrice, player)
             activate CTRL
-
                 CTRL -> PLAYER_OBJ : hasSufficientMoney(locomotivePrice)
                 activate PLAYER_OBJ
                     PLAYER_OBJ --> CTRL : true
