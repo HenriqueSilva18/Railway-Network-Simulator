@@ -48,14 +48,12 @@ public class CreateScenarioController {
     private Editor getEditorFromSession() {
         Editor editor = ApplicationSession.getInstance().getCurrentEditor();
         if (editor == null) {
-            System.out.println("DEBUG: No editor in session, creating a default one");
             editor = new Editor("default_editor", "Default Editor");
             ApplicationSession.getInstance().setCurrentEditor(editor);
         }
         
         // Make sure the editor exists in the repository
         if (editorRepository.getEditorByUsername(editor.getUsername()) == null) {
-            System.out.println("DEBUG: Adding editor to repository: " + editor.getUsername());
             editorRepository.addEditor(editor);
         }
         
@@ -134,10 +132,6 @@ public class CreateScenarioController {
         if (editor == null) {
             throw new IllegalStateException("No editor found in session");
         }
-        
-        System.out.println("DEBUG: Creating scenario with editor: " + editor.getUsername());
-        System.out.println("DEBUG: Map selected: " + selectedMap.getNameID());
-        System.out.println("DEBUG: Industries count: " + selectedIndustries.size());
 
         // Create deep copies of cities and industries to avoid modifying the originals
         List<City> scenarioCities = new ArrayList<>();
@@ -166,9 +160,6 @@ public class CreateScenarioController {
             }
             
             scenarioIndustries.add(newIndustry);
-            System.out.println("DEBUG: Added industry to scenario: " + newIndustry.getNameID() + 
-                             " at position (" + newIndustry.getPosition().getX() + 
-                             "," + newIndustry.getPosition().getY() + ")");
         }
 
         List<Locomotive> availableLocomotives = getAvailableLocomotives(selectedLocomotiveTypes, endDate);
@@ -184,26 +175,13 @@ public class CreateScenarioController {
         ApplicationSession.getInstance().setCurrentScenario(scenario);
 
         // Add the scenario to the editor's collection
-        boolean added = editorRepository.addScenarioToEditor(editor, scenario);
-        System.out.println("DEBUG: Added scenario to editor: " + added);
+        editorRepository.addScenarioToEditor(editor, scenario);
 
         // Add the scenario to the map's list of scenarios
         selectedMap.addScenario(nameID);
-        System.out.println("DEBUG: Added scenario name to map's scenario list");
         
         // Save the updated map to the repository
         mapRepository.save(selectedMap);
-        
-        // Verify scenario is in the repository
-        List<Scenario> allScenarios = editorRepository.getAllScenarios();
-        boolean found = false;
-        for (Scenario s : allScenarios) {
-            if (s.getNameID().equals(nameID)) {
-                found = true;
-                break;
-            }
-        }
-        System.out.println("DEBUG: Scenario found in repository after save: " + found);
 
         return scenario;
     }

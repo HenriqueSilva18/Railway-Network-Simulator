@@ -72,24 +72,16 @@ public class EditorRepository {
      * @return Optional containing the scenario if found, empty otherwise
      */
     public Optional<Scenario> findScenarioByNameID(String nameID) {
-        System.out.println("DEBUG: Searching for scenario with ID: " + nameID);
-        System.out.println("DEBUG: Number of editors: " + editors.size());
-        
         for (Editor editor : editors) {
-            System.out.println("DEBUG: Checking editor: " + editor.getUsername());
             List<Scenario> scenarios = editorScenarios.get(editor);
             if (scenarios != null) {
-                System.out.println("DEBUG: Editor has " + scenarios.size() + " scenarios");
                 for (Scenario scenario : scenarios) {
-                    System.out.println("DEBUG: Checking scenario: " + scenario.getNameID());
                     if (scenario.getNameID().equals(nameID)) {
-                        System.out.println("DEBUG: Found scenario: " + nameID + " for editor " + editor.getUsername());
                         return Optional.of(scenario);
                     }
                 }
             }
         }
-        System.out.println("DEBUG: No scenario found with ID: " + nameID);
         return Optional.empty();
     }
 } 

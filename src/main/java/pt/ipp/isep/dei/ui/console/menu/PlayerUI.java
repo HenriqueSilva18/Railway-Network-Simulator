@@ -52,12 +52,10 @@ public class PlayerUI implements Runnable {
                 System.out.println("Logged out successfully.");
             }));
 
-            System.out.println("\n=== Player Menu ===");
             // Only show budget if a map is selected
             if (currentMap != null) {
                 System.out.println("Current Budget: " + getCurrentPlayerBudget());
             }
-            System.out.println("==================\n");
             
             option = Utils.showAndSelectIndex(options, "\n\n--- PLAYER MENU -------------------------");
 

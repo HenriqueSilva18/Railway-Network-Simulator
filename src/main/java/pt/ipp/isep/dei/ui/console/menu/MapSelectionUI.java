@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class MapSelectionUI implements Runnable {
     private final MapController controller;
@@ -25,7 +26,15 @@ public class MapSelectionUI implements Runnable {
         System.out.println("\n=== Map Selection ===\n");
 
         // Get available maps
-        List<Map> availableMaps = controller.getAvailableMaps();
+        List<Map> allMaps = controller.getAvailableMaps();
+        
+        // Filter maps to only include Italy, France, and Iberian Peninsula
+        List<Map> availableMaps = allMaps.stream()
+                .filter(map -> "italy".equals(map.getNameID()) || 
+                               "france".equals(map.getNameID()) || 
+                               "iberian_peninsula".equals(map.getNameID()))
+                .collect(Collectors.toList());
+        
         if (availableMaps.isEmpty()) {
             System.out.println("No maps available.");
             return;
@@ -55,7 +64,13 @@ public class MapSelectionUI implements Runnable {
         Map selectedMap = availableMaps.get(choice - 1);
 
         // Get scenarios for selected map
-        List<String> scenarioIDs = controller.getMapScenarios(selectedMap.getNameID());
+        List<String> allScenarioIDs = controller.getMapScenarios(selectedMap.getNameID());
+        
+        // Filter to only include scenarios 1 and 2
+        List<String> scenarioIDs = allScenarioIDs.stream()
+                .filter(id -> "scenario1".equals(id) || "scenario2".equals(id))
+                .collect(Collectors.toList());
+                
         if (scenarioIDs.isEmpty()) {
             System.out.println("No scenarios available for this map.");
             return;
@@ -68,39 +83,11 @@ public class MapSelectionUI implements Runnable {
             if (id.equals("scenario1")) {
                 displayName = selectedMap.getNameID().equals("italy") ? "Italian Giolitti Era" :
                              selectedMap.getNameID().equals("france") ? "French Belle Époque" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Early Industrial" :
-                             selectedMap.getNameID().equals("british_isles") ? "British Edwardian Era" :
-                             selectedMap.getNameID().equals("north_america") ? "American Progressive Era" :
-                             selectedMap.getNameID().equals("japan") ? "Japanese Meiji Era" :
-                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Industrial Revolution" :
-                             selectedMap.getNameID().equals("central_europe") ? "Central European Industrial Age" : id;
+                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Early Industrial" : id;
             } else if (id.equals("scenario2")) {
                 displayName = selectedMap.getNameID().equals("italy") ? "Italian Inter-War" :
                              selectedMap.getNameID().equals("france") ? "French Reconstruction" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Inter-War" :
-                             selectedMap.getNameID().equals("british_isles") ? "British Inter-War" :
-                             selectedMap.getNameID().equals("north_america") ? "American Roaring Twenties" :
-                             selectedMap.getNameID().equals("japan") ? "Japanese Imperial Period" :
-                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Interwar Period" :
-                             selectedMap.getNameID().equals("central_europe") ? "Central European Reconstruction" : id;
-            } else if (id.equals("scenario3")) {
-                displayName = selectedMap.getNameID().equals("italy") ? "Italian Economic Miracle" :
-                             selectedMap.getNameID().equals("france") ? "French Les Trente Glorieuses" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Economic Miracle" :
-                             selectedMap.getNameID().equals("british_isles") ? "British Nationalisation" :
-                             selectedMap.getNameID().equals("north_america") ? "American Post-War Boom" :
-                             selectedMap.getNameID().equals("japan") ? "Japanese Economic Miracle" :
-                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Welfare State" :
-                             selectedMap.getNameID().equals("central_europe") ? "Central European Rebuilding" : id;
-            } else if (id.equals("scenario4")) {
-                displayName = selectedMap.getNameID().equals("italy") ? "Italian Modern Network" :
-                             selectedMap.getNameID().equals("france") ? "French Modern Network" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Modern Era" :
-                             selectedMap.getNameID().equals("british_isles") ? "British Modernisation" :
-                             selectedMap.getNameID().equals("north_america") ? "American Modern Era" :
-                             selectedMap.getNameID().equals("japan") ? "Japanese Bullet Train Era" :
-                             selectedMap.getNameID().equals("scandinavia") ? "Nordic Modern Networks" :
-                             selectedMap.getNameID().equals("central_europe") ? "Central European Modern Network" : id;
+                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Inter-War" : id;
             } else {
                 displayName = id;
             }

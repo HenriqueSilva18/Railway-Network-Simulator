@@ -95,9 +95,6 @@ public class ViewScenarioLayoutController {
                 
                 layout.append("(City: ").append(cityId).append(") ");
                 labeledEntities.add(cityId);
-                
-                // Debug to track what's being labeled
-                System.out.println("DEBUG: Labeled city: " + cityId + " at row " + y);
             }
         }
 
@@ -113,9 +110,6 @@ public class ViewScenarioLayoutController {
                 
                 layout.append("(Industry: ").append(industryId).append(") ");
                 labeledEntities.add(industryId);
-                
-                // Debug to track what's being labeled
-                System.out.println("DEBUG: Labeled industry: " + industryId + " at row " + y);
             }
         }
     }

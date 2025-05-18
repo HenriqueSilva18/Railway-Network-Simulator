@@ -34,27 +34,11 @@ public class MapController {
     public boolean loadMap(String mapID, String scenarioID) {
         Map map = mapRepository.getMap(mapID);
         if (map == null) {
-            System.out.println("DEBUG: Map not found: " + mapID);
             return false;
-        }
-
-        System.out.println("DEBUG: Loading map: " + mapID + ", scenario: " + scenarioID);
-        System.out.println("DEBUG: Initial map industries: " + map.getIndustries().size());
-        for (Industry ind : map.getIndustries()) {
-            System.out.println("DEBUG: Initial industry: " + ind.getNameID() + " at (" + 
-                             ind.getPosition().getX() + "," + ind.getPosition().getY() + ")");
         }
 
         // Set current map in application session
         ApplicationSession.getInstance().setCurrentMap(map);
-        
-        // Print all available scenarios for debugging
-        System.out.println("DEBUG: All scenarios in EditorRepository:");
-        List<Scenario> allScenarios = editorRepository.getAllScenarios();
-        for (Scenario s : allScenarios) {
-            System.out.println("DEBUG: Found scenario: " + s.getNameID() + " for map: " + 
-                              (s.getMap() != null ? s.getMap().getNameID() : "null"));
-        }
         
         // Find the scenario by name using the new method
         Optional<Scenario> scenario = editorRepository.findScenarioByNameID(scenarioID);
@@ -62,7 +46,6 @@ public class MapController {
         if (scenario.isPresent()) {
             // Found scenario by name, now load it
             Scenario foundScenario = scenario.get();
-            System.out.println("DEBUG: Scenario found: " + foundScenario.getNameID());
             
             // Store the scenario in the application session
             ApplicationSession.getInstance().setCurrentScenario(foundScenario);
@@ -70,12 +53,6 @@ public class MapController {
             // Get scenario data first before clearing the map
             List<City> cities = foundScenario.getTweakedCityList();
             List<Industry> industries = foundScenario.getAvailableIndustryList();
-            
-            System.out.println("DEBUG: Scenario industries: " + industries.size());
-            for (Industry ind : industries) {
-                System.out.println("DEBUG: Scenario industry: " + ind.getNameID() + " at (" + 
-                                 ind.getPosition().getX() + "," + ind.getPosition().getY() + ")");
-            }
             
             // Clear existing map contents - remove ALL industries and cities
             map.getCities().clear();
@@ -89,7 +66,6 @@ public class MapController {
                 String key = industry.getNameID() + "@" + industry.getPosition().getX() + "," + industry.getPosition().getY();
                 
                 if (addedIndustries.containsKey(key)) {
-                    System.out.println("DEBUG: Skipping duplicate industry: " + key);
                     continue;
                 }
                 
@@ -111,11 +87,6 @@ public class MapController {
                 // Add to map
                 map.addIndustry(newIndustry);
                 addedIndustries.put(key, true);
-                
-                // Debug information
-                System.out.println("DEBUG: Added industry: " + newIndustry.getNameID() + 
-                                 " at position (" + newIndustry.getPosition().getX() + 
-                                 "," + newIndustry.getPosition().getY() + ")");
             }
             
             // Track which unique cities we've already added (by nameID and position)
@@ -126,7 +97,6 @@ public class MapController {
                 String key = city.getNameID() + "@" + city.getPosition().getX() + "," + city.getPosition().getY();
                 
                 if (addedCities.containsKey(key)) {
-                    System.out.println("DEBUG: Skipping duplicate city: " + key);
                     continue;
                 }
                 
@@ -140,14 +110,9 @@ public class MapController {
                 addedCities.put(key, true);
             }
             
-            System.out.println("DEBUG: Final map industries: " + map.getIndustries().size());
-            System.out.println("DEBUG: Final map cities: " + map.getCities().size());
             System.out.println("Map and scenario loaded successfully.");
             
             return true;
-        } else {
-            System.out.println("DEBUG: No scenario found with ID: " + scenarioID);
-            System.out.println("DEBUG: Using map directly with existing elements");
         }
         
         // If no scenario found by name, try loading using the map's loadScenario method
