@@ -1,36 +1,29 @@
-package pt.ipp.isep.dei.ui.console;
+package pt.ipp.isep.dei.controller.template;
 
-import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.City;
 import pt.ipp.isep.dei.domain.template.Industry;
+import pt.ipp.isep.dei.domain.template.Scenario;
 import pt.ipp.isep.dei.domain.template.Station;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.HashSet;
 
-public class ViewMapUI implements Runnable {
+public class ViewScenarioLayoutController {
     // ANSI color codes
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
     private static final String BLUE = "\u001B[34m";
-
-    @Override
-    public void run() {
-        Map currentMap = ApplicationSession.getInstance().getCurrentMap();
-        if (currentMap == null) {
-            System.out.println("No map selected. Please select a map and scenario first.");
-            return;
+    
+    public String renderScenarioLayout(Map map, Scenario scenario) {
+        if (map == null) {
+            return "No map loaded";
         }
 
-        displayMap(currentMap);
-    }
-
-    private void displayMap(Map map) {
         StringBuilder layout = new StringBuilder();
-        layout.append("\nCurrent Map: ").append(map.getNameID()).append("\n");
+        layout.append("Map: ").append(map.getNameID()).append("\n");
         layout.append("Size: ").append(map.getSize().getWidth())
               .append("x").append(map.getSize().getHeight()).append("\n\n");
 
@@ -49,12 +42,12 @@ public class ViewMapUI implements Runnable {
             }
             layout.append("  ");
             
-            // Add labels for cities, industries, and stations on this row
+            // Add labels for cities and industries on this row without duplication
             appendRowLabels(layout, map, y);
             layout.append("\n");
         }
 
-        System.out.println(layout.toString());
+        return layout.toString();
     }
 
     private String getCellSymbol(Map map, int x, int y) {
@@ -87,39 +80,43 @@ public class ViewMapUI implements Runnable {
     }
 
     private void appendRowLabels(StringBuilder layout, Map map, int y) {
-        // Use sets to track which names we've already added for this row
-        Set<String> addedStationLabels = new HashSet<>();
-        Set<String> addedCityLabels = new HashSet<>();
-        Set<String> addedIndustryLabels = new HashSet<>();
+        // Create a set to track unique entity IDs that have been labeled
+        Set<String> labeledEntities = new HashSet<>();
+        
+        // Add city names (no duplicates)
+        for (City city : map.getCities()) {
+            if (city.getPosition().getY() == y) {
+                String cityId = city.getNameID();
+                
+                // Skip if we've already labeled this entity
+                if (labeledEntities.contains(cityId)) {
+                    continue;
+                }
+                
+                layout.append("(City: ").append(cityId).append(") ");
+                labeledEntities.add(cityId);
+                
+                // Debug to track what's being labeled
+                System.out.println("DEBUG: Labeled city: " + cityId + " at row " + y);
+            }
+        }
 
-        // Add station names (only once per name)
-        map.getStations().stream()
-                .filter(station -> station.getPosition().getY() == y)
-                .forEach(station -> {
-                    String label = "(Station at " + station.getPosition().getX() + "," + station.getPosition().getY() + ")";
-                    if (addedStationLabels.add(label)) {
-                        layout.append(label).append(" ");
-                    }
-                });
-
-        // Add city names (only once per name)
-        map.getCities().stream()
-                .filter(city -> city.getPosition().getY() == y)
-                .forEach(city -> {
-                    String label = "(City: " + city.getNameID() + ")";
-                    if (addedCityLabels.add(label)) {
-                        layout.append(label).append(" ");
-                    }
-                });
-
-        // Add industry names (only once per name)
-        map.getIndustries().stream()
-                .filter(industry -> industry.getPosition().getY() == y)
-                .forEach(industry -> {
-                    String label = "(Industry: " + industry.getNameID() + ")";
-                    if (addedIndustryLabels.add(label)) {
-                        layout.append(label).append(" ");
-                    }
-                });
+        // Add industry names (no duplicates)
+        for (Industry industry : map.getIndustries()) {
+            if (industry.getPosition().getY() == y) {
+                String industryId = industry.getNameID();
+                
+                // Skip if we've already labeled this entity
+                if (labeledEntities.contains(industryId)) {
+                    continue;
+                }
+                
+                layout.append("(Industry: ").append(industryId).append(") ");
+                labeledEntities.add(industryId);
+                
+                // Debug to track what's being labeled
+                System.out.println("DEBUG: Labeled industry: " + industryId + " at row " + y);
+            }
+        }
     }
 } 

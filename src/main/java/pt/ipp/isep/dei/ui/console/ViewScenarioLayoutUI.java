@@ -2,6 +2,7 @@ package pt.ipp.isep.dei.ui.console;
 
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.MapController;
+import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Scenario;
 import pt.ipp.isep.dei.domain.template.City;
@@ -23,10 +24,12 @@ public class ViewScenarioLayoutUI implements Runnable {
 
     private final MapController mapController;
     private final EditorRepository editorRepository;
+    private final ViewScenarioLayoutController viewController;
 
     public ViewScenarioLayoutUI() {
         this.mapController = new MapController();
         this.editorRepository = Repositories.getInstance().getEditorRepository();
+        this.viewController = new ViewScenarioLayoutController();
     }
 
     @Override
@@ -132,18 +135,46 @@ public class ViewScenarioLayoutUI implements Runnable {
 
     private void displayScenarioLayout(Map map, String displayName) {
         System.out.println("\n=== Scenario Layout: " + displayName + " ===");
-        System.out.println("Map: " + map.getNameID());
-        System.out.println("Size: " + map.getSize().getWidth() + "x" + map.getSize().getHeight());
         
-        System.out.println("\nCities:");
-        map.getCities().forEach(city -> 
-            System.out.println("- " + city.getNameID() + " at position (" + 
-                city.getPosition().getX() + "," + city.getPosition().getY() + ")"));
+        // Get the current scenario from ApplicationSession
+        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+        
+        if (currentScenario != null) {
+            // Use the new controller to render the map with unique labels
+            String layoutText = viewController.renderScenarioLayout(map, currentScenario);
+            System.out.println(layoutText);
+            
+            // Display summary information about the scenario
+            System.out.println("\nScenario Summary:");
+            System.out.println("Date Range: " + formatYear(currentScenario.getStartDate()) + " to " + 
+                             formatYear(currentScenario.getEndDate()));
+            
+            System.out.println("\nCities: " + currentScenario.getTweakedCityList().size());
+            System.out.println("Industries: " + currentScenario.getAvailableIndustryList().size());
+            System.out.println("Available Locomotive Types: " + currentScenario.getAvailableLocomotives().size());
+        } else {
+            // Fall back to simple display if no scenario is in session
+            System.out.println("Map: " + map.getNameID());
+            System.out.println("Size: " + map.getSize().getWidth() + "x" + map.getSize().getHeight());
+            
+            System.out.println("\nCities:");
+            if (map.getCities().isEmpty()) {
+                System.out.println("No cities in this map.");
+            } else {
+                map.getCities().forEach(city -> 
+                    System.out.println("- " + city.getNameID() + " at position (" + 
+                        city.getPosition().getX() + "," + city.getPosition().getY() + ")"));
+            }
 
-        System.out.println("\nIndustries:");
-        map.getIndustries().forEach(industry -> 
-            System.out.println("- " + industry.getNameID() + " (" + industry.getType() + ") at position (" + 
-                industry.getPosition().getX() + "," + industry.getPosition().getY() + ")"));
+            System.out.println("\nIndustries:");
+            if (map.getIndustries().isEmpty()) {
+                System.out.println("No industries in this map.");
+            } else {
+                map.getIndustries().forEach(industry -> 
+                    System.out.println("- " + industry.getNameID() + " (" + industry.getType() + ") at position (" + 
+                        industry.getPosition().getX() + "," + industry.getPosition().getY() + ")"));
+            }
+        }
         
         System.out.println("\nPress Enter to continue...");
         Utils.readLineFromConsole("");

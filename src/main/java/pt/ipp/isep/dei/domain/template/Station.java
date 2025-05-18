@@ -104,7 +104,15 @@ public class Station {
     }
 
     public void addServedCity(City city) {
-        if (city != null && !servedCities.contains(city)) {
+        if (city == null) {
+            return;
+        }
+        
+        // Check if a city with the same nameID already exists in the list
+        boolean cityAlreadyExists = servedCities.stream()
+                .anyMatch(existingCity -> existingCity.getNameID().equals(city.getNameID()));
+                
+        if (!cityAlreadyExists) {
             servedCities.add(city);
         }
     }

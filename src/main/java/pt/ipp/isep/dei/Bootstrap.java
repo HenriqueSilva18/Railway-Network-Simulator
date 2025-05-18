@@ -80,10 +80,10 @@ public class Bootstrap implements Runnable {
         MapRepository mapRepo = Repositories.getInstance().getMapRepository();
 
         // Create base industry types
-        Industry coalMine = new Industry("coal_mine", "Mining", "Generating", 1900, new Position(0, 0));
-        Industry ironMine = new Industry("iron_mine", "Mining", "Generating", 1900, new Position(0, 0));
-        Industry farm = new Industry("farm", "Agriculture", "Generating", 1900, new Position(0, 0));
-        Industry forest = new Industry("forest", "Forestry", "Generating", 1900, new Position(0, 0));
+        Industry coalMine = new Industry("coal_mine", "Mining", "Primary", 1900, new Position(0, 0));
+        Industry ironMine = new Industry("iron_mine", "Mining", "Primary", 1900, new Position(0, 0));
+        Industry farm = new Industry("farm", "Agriculture", "Primary", 1900, new Position(0, 0));
+        Industry forest = new Industry("forest", "Forestry", "Primary", 1900, new Position(0, 0));
         Industry steelMill = new Industry("steel_mill", "Manufacturing", "Transforming", 1900, new Position(0, 0));
         Industry factory = new Industry("factory", "Manufacturing", "Transforming", 1900, new Position(0, 0));
         Industry seaport = new Industry("seaport", "Port", "Port", 1900, new Position(0, 0));

@@ -9,7 +9,9 @@ import pt.ipp.isep.dei.ui.console.utils.Utils;
 import pt.ipp.isep.dei.ui.console.menu.MenuItem;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ListStationUI implements Runnable {
 
@@ -140,13 +142,19 @@ public class ListStationUI implements Runnable {
         System.out.printf("Storage Capacity: %d\n", station.getStorageCapacity());
         System.out.printf("Building Slots: %d\n", station.getBuildingSlots());
         
-        // Display served cities
+        // Display served cities (prevent duplicates)
         System.out.println("\nServed Cities:");
         if (station.getServedCities().isEmpty()) {
             System.out.println("None");
         } else {
-            station.getServedCities().forEach(city -> 
-                System.out.printf("- %s\n", city.getNameID()));
+            // Use a set to track which city names have already been displayed
+            Set<String> displayedCities = new HashSet<>();
+            station.getServedCities().forEach(city -> {
+                String cityName = city.getNameID();
+                if (displayedCities.add(cityName)) {
+                    System.out.printf("- %s\n", cityName);
+                }
+            });
         }
         
         // Display available cargo
