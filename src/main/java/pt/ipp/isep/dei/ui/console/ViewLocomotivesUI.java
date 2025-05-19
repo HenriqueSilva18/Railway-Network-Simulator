@@ -32,7 +32,7 @@ public class ViewLocomotivesUI implements Runnable {
         
         int i = 1;
         for (Locomotive loco : locomotives) {
-            System.out.printf("%-4d | %-20s | %-10s | %-8.1f | %-10.1f | %-10.2f | %-15.2f%n", 
+            System.out.printf("%-4d | %-20s | %-10s | %-8d | %-10d | %-10.2f | %-15.2f%n", 
                 i++, 
                 loco.getNameID(), 
                 loco.getType(), 

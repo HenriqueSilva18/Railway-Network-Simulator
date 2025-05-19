@@ -48,6 +48,7 @@ public class PlayerUI implements Runnable {
                 options.add(new MenuItem("Build Station", new StationBuildingUI()));
                 options.add(new MenuItem("Build Railway Line", new BuildRailwayLineUI()));
                 options.add(new MenuItem("Create Route", new CreateRouteUI()));
+                options.add(new MenuItem("Assign Train to Route", new AssignTrainUI()));
                 options.add(new MenuItem("View Current Map", new ViewMapUI()));
                 options.add(new MenuItem("View Budget", new ShowTextUI("Current budget: " + getCurrentPlayerBudget())));
                 options.add(new MenuItem("View Stations", new ListStationUI()));

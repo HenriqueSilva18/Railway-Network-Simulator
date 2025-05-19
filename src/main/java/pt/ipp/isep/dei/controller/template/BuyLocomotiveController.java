@@ -7,6 +7,8 @@ import pt.ipp.isep.dei.repository.template.LocomotiveRepository;
 import pt.ipp.isep.dei.repository.template.PlayerRepository;
 import pt.ipp.isep.dei.repository.template.ScenarioRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.ipp.isep.dei.repository.template.TrainRepository;
+import pt.ipp.isep.dei.domain.template.Train;
 
 import java.util.Date;
 import java.util.List;
@@ -16,12 +18,14 @@ public class BuyLocomotiveController {
     private final LocomotiveRepository locomotiveRepository;
     private final PlayerRepository playerRepository;
     private final ScenarioRepository scenarioRepository;
+    private final TrainRepository trainRepository;
 
     public BuyLocomotiveController() {
         Repositories repositories = Repositories.getInstance();
         this.locomotiveRepository = repositories.getLocomotiveRepository();
         this.playerRepository = repositories.getPlayerRepository();
         this.scenarioRepository = repositories.getScenarioRepository();
+        this.trainRepository = repositories.getTrainRepository();
     }
 
     public List<Locomotive> getAvailableLocomotives() {
@@ -80,8 +84,17 @@ public class BuyLocomotiveController {
             return false;
         }
 
-        // Set the player as the owner of the locomotive
-        locomotive.setOwner(player);
+        // Set the player as the owner of the locomotive using the boolean method
+        if (!locomotive.setOwner(player)) {
+            // Refund if setting owner fails
+            player.addToBudget(locomotivePrice);
+            return false;
+        }
+
+        // Create a train with this locomotive
+        String trainName = "Train_" + locomotive.getNameID() + "_" + System.currentTimeMillis() % 1000;
+        Train train = new Train(trainName, locomotive);
+        trainRepository.save(train);
 
         // Save updated locomotive and player
         locomotiveRepository.saveLocomotive(locomotive);

@@ -5,6 +5,8 @@ import pt.ipp.isep.dei.domain.template.Editor;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.domain.template.Scenario;
 import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.domain.template.Train;
+import pt.ipp.isep.dei.domain.template.Route;
 
 public class ApplicationSession {
     private static ApplicationSession instance = null;
@@ -14,6 +16,8 @@ public class ApplicationSession {
     private Player currentPlayer;
     private Scenario currentScenario;
     private Station currentStation;
+    private Train currentTrain;
+    private Route currentRoute;
 
     private ApplicationSession() {
         // Private constructor for singleton
@@ -76,5 +80,21 @@ public class ApplicationSession {
     
     public void setCurrentStation(Station station) {
         this.currentStation = station;
+    }
+    
+    public Train getCurrentTrain() {
+        return currentTrain;
+    }
+    
+    public void setCurrentTrain(Train train) {
+        this.currentTrain = train;
+    }
+    
+    public Route getCurrentRoute() {
+        return currentRoute;
+    }
+    
+    public void setCurrentRoute(Route route) {
+        this.currentRoute = route;
     }
 } 

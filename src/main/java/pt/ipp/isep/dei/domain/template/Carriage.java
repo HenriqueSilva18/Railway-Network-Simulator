@@ -18,9 +18,9 @@ public class Carriage {
     }
 
     public boolean loadCargo(Cargo cargo) {
-        if (cargo == null) return false;
-        if (this.cargo != null) return false;
-        if (cargo.getAmount() > storageCapacity) return false;
+        if (cargo == null || cargo.getAmount() > storageCapacity) {
+            return false;
+        }
         
         this.cargo = cargo;
         return true;
@@ -30,6 +30,19 @@ public class Carriage {
         Cargo unloadedCargo = this.cargo;
         this.cargo = null;
         return unloadedCargo;
+    }
+
+    public boolean isLoaded() {
+        return cargo != null;
+    }
+
+    public boolean hasCapacityFor(Cargo cargo) {
+        return cargo != null && cargo.getAmount() <= storageCapacity;
+    }
+
+    @Override
+    public String toString() {
+        return "Carriage (capacity: " + storageCapacity + (isLoaded() ? ", loaded with: " + cargo.getName() : ", empty") + ")";
     }
 
     public String getDetails() {

@@ -63,6 +63,21 @@ public class CreateRouteController {
         // Create new route
         Route route = new Route(routeName, stations);
 
+        // Add railway lines to the route
+        List<RailwayLine> allRailwayLines = railwayLineRepository.getAll();
+        for (int i = 0; i < stations.size() - 1; i++) {
+            Station current = stations.get(i);
+            Station next = stations.get(i + 1);
+            
+            for (RailwayLine line : allRailwayLines) {
+                if ((line.getStartStation().equals(current) && line.getEndStation().equals(next)) || 
+                    (line.getStartStation().equals(next) && line.getEndStation().equals(current))) {
+                    route.addRailwayLine(line);
+                    break;
+                }
+            }
+        }
+
         // Validate that all stations are connected
         if (!route.validateStations()) {
             return null;

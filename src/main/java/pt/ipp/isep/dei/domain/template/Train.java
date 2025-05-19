@@ -7,13 +7,13 @@ public class Train {
     private String nameID;
     private Locomotive locomotive;
     private List<Carriage> carriages;
-    private Route currentRoute;
+    private Route assignedRoute;
 
     public Train(String nameID, Locomotive locomotive) {
         this.nameID = nameID;
         this.locomotive = locomotive;
         this.carriages = new ArrayList<>();
-        this.currentRoute = null;
+        this.assignedRoute = null;
     }
 
     public String getNameID() {
@@ -28,40 +28,55 @@ public class Train {
         return new ArrayList<>(carriages);
     }
 
+    public Route getAssignedRoute() {
+        return assignedRoute;
+    }
+    
     public Route getCurrentRoute() {
-        return currentRoute;
+        return assignedRoute;
+    }
+    
+    public boolean isAssignedToRoute() {
+        return assignedRoute != null;
     }
 
-    public boolean isAssignedToRoute() {
-        return currentRoute != null;
+    public boolean addCarriage(Carriage carriage) {
+        if (carriage == null) {
+            return false;
+        }
+        return carriages.add(carriage);
     }
 
     public boolean assignToRoute(Route route) {
-        if (route == null) return false;
-        if (isAssignedToRoute()) return false;
+        if (route == null) {
+            return false;
+        }
         
-        this.currentRoute = route;
+        // Verify if the route has valid stations
+        if (!route.validateStations()) {
+            return false;
+        }
+        
+        // Assign route to train
+        this.assignedRoute = route;
+        
         return true;
     }
 
-    public String getDetails() {
-        StringBuilder details = new StringBuilder();
-        details.append("Train: ").append(nameID).append("\n");
-        details.append("Locomotive: ").append(locomotive.getDetails()).append("\n");
-        details.append("Carriages:\n");
-        for (int i = 0; i < carriages.size(); i++) {
-            details.append(String.format("%d. %s\n", i + 1, carriages.get(i).getDetails()));
-        }
-        if (currentRoute != null) {
-            details.append("\nAssigned to route: ").append(currentRoute.getNameID());
-        }
-        return details.toString();
+    public TrainDetails getDetails() {
+        return new TrainDetails(
+            this.nameID,
+            this.locomotive.getType(),
+            this.locomotive.getPower(),
+            this.locomotive.getTopSpeed(),
+            this.carriages.size(),
+            this.assignedRoute != null ? this.assignedRoute.getNameID() : "None"
+        );
     }
 
-    public void addCarriage(Carriage carriage) {
-        if (carriage != null) {
-            carriages.add(carriage);
-        }
+    @Override
+    public String toString() {
+        return nameID;
     }
 
     @Override

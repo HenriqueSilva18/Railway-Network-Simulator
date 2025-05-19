@@ -65,12 +65,9 @@ public class CreateScenarioController {
         List<Locomotive> availableLocomotives = new ArrayList<>();
         
         // Base values for each type
-        double power = 1000;  // Base power in horsepower
-        double acceleration = 0.5;  // Base acceleration in m/s²
+        int power = 1000;  // Base power in horsepower
         int topSpeed = 60;  // Base top speed in km/h
-        double fuelCost = 100;  // Base fuel cost per km
         double acquisitionPrice = 10000;  // Base acquisition price
-        double maintenancePrice = 500;  // Base maintenance price per month
         
         // Get the end year for availability calculations
         Calendar calendar = Calendar.getInstance();
@@ -83,24 +80,21 @@ public class CreateScenarioController {
             switch (type.toLowerCase()) {
                 case "steam":
                     startYear = 1900;
-                    power *= 1.0;
-                    acceleration *= 1.0;
-                    topSpeed *= 1.0;
-                    fuelCost *= 1.2;
+                    power = 1000;
+                    topSpeed = 60;
+                    acquisitionPrice = 10000.0;
                     break;
                 case "diesel":
                     startYear = 1925;
-                    power *= 1.5;
-                    acceleration *= 1.2;
-                    topSpeed *= 1.3;
-                    fuelCost *= 1.0;
+                    power = 1500;
+                    topSpeed = 80;
+                    acquisitionPrice = 20000.0;
                     break;
                 case "electric":
                     startYear = 1950;
-                    power *= 2.0;
-                    acceleration *= 1.5;
-                    topSpeed *= 1.6;
-                    fuelCost *= 0.8;
+                    power = 2000;
+                    topSpeed = 100;
+                    acquisitionPrice = 30000.0;
                     break;
                 default:
                     continue;
@@ -109,18 +103,14 @@ public class CreateScenarioController {
             // Skip if the locomotive type is not available in the scenario's time period
             if (startYear > endYear) continue;
             
+            // Use the constructor with correct parameters
             Locomotive locomotive = new Locomotive(
                 type + "_" + startYear,  // nameID
-                "System",                // owner
                 type,                    // type
-                (int)power,              // power
-                acceleration,            // acceleration
+                power,                   // power
                 topSpeed,                // topSpeed
-                startYear,               // startYear
-                fuelCost,                // fuelCost
                 startYear,               // availabilityYear
-                acquisitionPrice,        // acquisitionPrice
-                maintenancePrice         // maintenancePrice
+                acquisitionPrice         // acquisitionPrice
             );
             availableLocomotives.add(locomotive);
         }

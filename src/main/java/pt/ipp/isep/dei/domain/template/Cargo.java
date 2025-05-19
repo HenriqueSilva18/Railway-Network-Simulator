@@ -10,12 +10,28 @@ public class Cargo {
     private String type;
     private List<String> productionResources;
 
+    public Cargo(String name, int amount, String type) {
+        this.name = name;
+        this.amount = amount;
+        this.type = type;
+        this.lifespan = 10; // Default lifespan in days
+        this.productionResources = new ArrayList<>();
+    }
+
     public Cargo(String name, int amount, int lifespan, String type) {
         this.name = name;
         this.amount = amount;
         this.lifespan = lifespan;
         this.type = type;
         this.productionResources = new ArrayList<>();
+    }
+
+    public Cargo(String name, int amount, int lifespan, String type, List<String> productionResources) {
+        this.name = name;
+        this.amount = amount;
+        this.lifespan = lifespan;
+        this.type = type;
+        this.productionResources = new ArrayList<>(productionResources);
     }
 
     public String getName() {
@@ -38,10 +54,22 @@ public class Cargo {
         return new ArrayList<>(productionResources);
     }
 
-    public void addProductionResource(String resource) {
-        if (resource != null && !resource.trim().isEmpty()) {
-            productionResources.add(resource);
+    public void setAmount(int amount) {
+        if (amount >= 0) {
+            this.amount = amount;
         }
+    }
+
+    public boolean addProductionResource(String resource) {
+        if (resource != null && !resource.isEmpty()) {
+            return productionResources.add(resource);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + amount + " tons, type: " + type + ")";
     }
 
     public String getDetails() {
