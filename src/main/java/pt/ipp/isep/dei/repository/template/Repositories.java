@@ -26,6 +26,7 @@ public class Repositories {
     private final RailwayLineRepository railwayLineRepository;
     private final RouteRepository routeRepository;
     private final TrainRepository trainRepository;
+    private final SimulatorRepository simulatorRepository;
 
 
 
@@ -51,6 +52,7 @@ public class Repositories {
         this.scenarioRepository = new ScenarioRepository();
         this.routeRepository = new RouteRepository();
         this.trainRepository = new TrainRepository();
+        this.simulatorRepository = new SimulatorRepository();
         
         // Initialize building repository with default buildings
         this.buildingRepository.initialize();
@@ -134,5 +136,9 @@ public class Repositories {
     
     public TrainRepository getTrainRepository() {
         return trainRepository;
+    }
+    
+    public SimulatorRepository getSimulatorRepository() {
+        return simulatorRepository;
     }
 }
