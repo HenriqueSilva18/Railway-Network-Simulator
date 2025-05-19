@@ -224,6 +224,40 @@ public class Map {
         return availablePositions;
     }
 
+    public boolean removeEntityAt(int x, int y) {
+        Position position = new Position(x, y);
+        boolean removed = false;
+        
+        // Remove industry if present
+        Optional<Industry> industry = industries.stream()
+                .filter(ind -> ind.getPosition().equals(position))
+                .findFirst();
+        if (industry.isPresent()) {
+            industries.remove(industry.get());
+            removed = true;
+        }
+        
+        // Remove city if present
+        Optional<City> city = cities.stream()
+                .filter(c -> c.getPosition().equals(position))
+                .findFirst();
+        if (city.isPresent()) {
+            cities.remove(city.get());
+            removed = true;
+        }
+        
+        // Remove station if present
+        Optional<Station> station = stations.stream()
+                .filter(s -> s.getPosition().equals(position))
+                .findFirst();
+        if (station.isPresent()) {
+            stations.remove(station.get());
+            removed = true;
+        }
+        
+        return removed;
+    }
+
     public void markPositionOccupied(Position position) {
         if (position != null && validatePosition(position)) {
             position.setOccupied(true);

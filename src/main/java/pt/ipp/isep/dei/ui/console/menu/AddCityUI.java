@@ -86,11 +86,30 @@ public class AddCityUI implements Runnable {
                 int x = Integer.parseInt(scanner.nextLine());
                 System.out.print("Enter Y coordinate: ");
                 int y = Integer.parseInt(scanner.nextLine());
-                return controller.validateCoordinates(x, y);
+                
+                // First validate that the position is within bounds
+                Position position = controller.validateCoordinates(x, y);
+                
+                // Then check if it's occupied and ask for replacement confirmation
+                if (controller.isPositionOccupied(x, y)) {
+                    String entityInfo = controller.getEntityInfoAt(x, y);
+                    System.out.println("\nWarning: Position (" + x + "," + y + ") is already occupied by:");
+                    System.out.println(entityInfo);
+                    System.out.print("Do you want to replace this entity? (y/n): ");
+                    String replaceChoice = scanner.nextLine();
+                    
+                    if (!replaceChoice.equalsIgnoreCase("y")) {
+                        System.out.println("Please choose different coordinates.");
+                        continue;
+                    }
+                }
+                
+                return position;
             } catch (NumberFormatException e) {
                 System.out.println("Error: Please enter valid numbers for coordinates.");
             } catch (IllegalArgumentException e) {
-                System.out.println("Error: " + e.getMessage());
+                System.out.println("\nError: " + e.getMessage());
+                System.out.println("Please choose different coordinates.");
             }
         }
     }

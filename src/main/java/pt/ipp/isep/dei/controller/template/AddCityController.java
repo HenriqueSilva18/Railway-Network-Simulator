@@ -4,10 +4,13 @@ import pt.ipp.isep.dei.domain.template.City;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Position;
 import pt.ipp.isep.dei.domain.template.HouseBlock;
+import pt.ipp.isep.dei.domain.template.Industry;
+import pt.ipp.isep.dei.domain.template.Station;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.MapRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AddCityController {
     private final MapRepository mapRepository;
@@ -36,10 +39,64 @@ public class AddCityController {
         if (currentMap == null) {
             throw new IllegalStateException("No map selected");
         }
-        if (!currentMap.isPositionAvailable(x, y)) {
-            throw new IllegalArgumentException("Position is not available");
+        
+        // Now we return the position even if it's occupied, to allow replacement
+        if (x < 0 || x >= currentMap.getSize().getWidth() || 
+            y < 0 || y >= currentMap.getSize().getHeight()) {
+            throw new IllegalArgumentException("Position (" + x + "," + y + ") is out of bounds");
         }
+        
         return new Position(x, y);
+    }
+
+    public boolean isPositionOccupied(int x, int y) {
+        return !currentMap.isCellEmpty(x, y);
+    }
+    
+    /**
+     * Gets information about what entity exists at the specified coordinates
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return Description of the entity or null if no entity exists
+     */
+    public String getEntityInfoAt(int x, int y) {
+        Position position = new Position(x, y);
+        
+        // Check industries
+        Optional<Industry> industry = currentMap.getIndustries().stream()
+                .filter(ind -> ind.getPosition().equals(position))
+                .findFirst();
+        if (industry.isPresent()) {
+            return "Industry: " + industry.get().getNameID() + " (" + industry.get().getType() + ")";
+        }
+        
+        // Check cities
+        Optional<City> city = currentMap.getCities().stream()
+                .filter(c -> c.getPosition().equals(position))
+                .findFirst();
+        if (city.isPresent()) {
+            return "City: " + city.get().getNameID();
+        }
+        
+        // Check stations
+        Optional<Station> station = currentMap.getStations().stream()
+                .filter(s -> s.getPosition().equals(position))
+                .findFirst();
+        if (station.isPresent()) {
+            return "Station: " + station.get().getNameID();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Removes any entity at the specified position
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return true if an entity was removed, false otherwise
+     */
+    public boolean removeEntityAt(int x, int y) {
+        return currentMap.removeEntityAt(x, y);
     }
 
     public int validateNumBlocks(int numBlocks) {
@@ -52,6 +109,11 @@ public class AddCityController {
     public City saveCity(String nameID, Position position, List<HouseBlock> houseBlocks) {
         if (currentMap == null) {
             throw new IllegalStateException("No map selected");
+        }
+
+        // If position is not empty, we'll remove existing entity (already confirmed in UI)
+        if (!currentMap.isCellEmpty(position.getX(), position.getY())) {
+            removeEntityAt(position.getX(), position.getY());
         }
 
         City city = new City(nameID, position, houseBlocks);

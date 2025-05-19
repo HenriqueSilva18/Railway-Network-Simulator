@@ -3,11 +3,14 @@ package pt.ipp.isep.dei.controller.template;
 import pt.ipp.isep.dei.domain.template.Industry;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Position;
+import pt.ipp.isep.dei.domain.template.City;
+import pt.ipp.isep.dei.domain.template.Station;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.IndustryRepository;
 import pt.ipp.isep.dei.repository.template.MapRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AddIndustryController {
     private final IndustryRepository industryRepository;
@@ -33,12 +36,18 @@ public class AddIndustryController {
             return false;
         }
 
-        return currentMap.isCellEmpty(x, y);
+        // We'll now allow validation even if cell is not empty to support replacement
+        return true;
     }
 
     public Industry createIndustry(String nameID, int x, int y, Industry selectedIndustry) {
         if (!validateIndustry(nameID, x, y)) {
             return null;
+        }
+
+        // If position is not empty, we've confirmed replacement in the UI
+        if (!currentMap.isCellEmpty(x, y)) {
+            removeEntityAt(x, y);
         }
 
         Industry industry = new Industry(nameID, selectedIndustry.getType(), selectedIndustry.getSector(), 1900, new Position(x, y));
@@ -60,5 +69,51 @@ public class AddIndustryController {
         }
         return currentMap.getIndustries().stream()
                 .anyMatch(industry -> industry.getNameID().equals(nameID));
+    }
+    
+    /**
+     * Gets information about what entity exists at the specified coordinates
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return Description of the entity or null if no entity exists
+     */
+    public String getEntityInfoAt(int x, int y) {
+        Position position = new Position(x, y);
+        
+        // Check industries
+        Optional<Industry> industry = currentMap.getIndustries().stream()
+                .filter(ind -> ind.getPosition().equals(position))
+                .findFirst();
+        if (industry.isPresent()) {
+            return "Industry: " + industry.get().getNameID() + " (" + industry.get().getType() + ")";
+        }
+        
+        // Check cities
+        Optional<City> city = currentMap.getCities().stream()
+                .filter(c -> c.getPosition().equals(position))
+                .findFirst();
+        if (city.isPresent()) {
+            return "City: " + city.get().getNameID();
+        }
+        
+        // Check stations
+        Optional<Station> station = currentMap.getStations().stream()
+                .filter(s -> s.getPosition().equals(position))
+                .findFirst();
+        if (station.isPresent()) {
+            return "Station: " + station.get().getNameID();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Removes any entity at the specified position
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return true if an entity was removed, false otherwise
+     */
+    public boolean removeEntityAt(int x, int y) {
+        return currentMap.removeEntityAt(x, y);
     }
 } 

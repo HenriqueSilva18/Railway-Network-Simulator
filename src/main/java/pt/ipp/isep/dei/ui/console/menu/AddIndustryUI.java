@@ -115,13 +115,25 @@ public class AddIndustryUI implements Runnable {
 
             // Check if position is occupied
             if (!currentMap.isCellEmpty(x, y)) {
-                System.out.println("\nError: Position is already occupied!");
-                System.out.println("Please choose different coordinates.");
-                validX = false;
-                validY = false;
-                continue;
+                String entityInfo = controller.getEntityInfoAt(x, y);
+                System.out.println("\nWarning: Position (" + x + "," + y + ") is already occupied by:");
+                System.out.println(entityInfo);
+                System.out.print("Do you want to replace this entity? (y/n): ");
+                String replaceChoice = scanner.nextLine();
+                
+                if (replaceChoice.equalsIgnoreCase("y")) {
+                    // User wants to replace, so we'll continue with this position
+                    positionAvailable = true;
+                } else {
+                    // User doesn't want to replace, reset coordinates
+                    System.out.println("Please choose different coordinates.");
+                    validX = false;
+                    validY = false;
+                    continue;
+                }
+            } else {
+                positionAvailable = true;
             }
-            positionAvailable = true;
         }
 
         if (controller.validateIndustry(nameID, x, y)) {
