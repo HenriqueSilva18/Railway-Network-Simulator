@@ -128,4 +128,25 @@ public class BuyLocomotiveController {
 
         return player.getCurrentBudget() >= price;
     }
+
+    /**
+     * Gets the train that uses the specified locomotive
+     * @param locomotive The locomotive to find
+     * @return The train using the locomotive, or null if not found
+     */
+    public Train getTrainForLocomotive(Locomotive locomotive) {
+        if (locomotive == null) {
+            return null;
+        }
+        
+        List<Train> allTrains = trainRepository.getAllTrains();
+        for (Train train : allTrains) {
+            if (train.getLocomotive().equals(locomotive) || 
+                train.getLocomotive().getNameID().equals(locomotive.getNameID())) {
+                return train;
+            }
+        }
+        
+        return null;
+    }
 } 
