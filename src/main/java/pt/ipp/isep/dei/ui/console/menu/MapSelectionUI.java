@@ -64,6 +64,11 @@ public class MapSelectionUI implements Runnable {
             return;
         }
 
+        // Filter out scenario3 and scenario4 for all maps
+        scenarioIDs = scenarioIDs.stream()
+            .filter(id -> !id.equals("scenario3") && !id.equals("scenario4"))
+            .collect(Collectors.toList());
+
         // Create a mapping of display names to scenario IDs
         LinkedHashMap<String, String> scenarioDisplayMap = new LinkedHashMap<>();
         for (String id : scenarioIDs) {

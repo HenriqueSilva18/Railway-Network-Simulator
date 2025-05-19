@@ -78,21 +78,17 @@ public class Bootstrap implements Runnable {
         MapRepository mapRepo = Repositories.getInstance().getMapRepository();
 
         // Create base industry types
-        Industry coalMine = new Industry("coal_mine", "Mining", "Primary", 1900, new Position(0, 0));
-        Industry ironMine = new Industry("iron_mine", "Mining", "Primary", 1900, new Position(0, 0));
-        Industry farm = new Industry("farm", "Agriculture", "Primary", 1900, new Position(0, 0));
-        Industry forest = new Industry("forest", "Forestry", "Primary", 1900, new Position(0, 0));
-        Industry steelMill = new Industry("steel_mill", "Manufacturing", "Transforming", 1900, new Position(0, 0));
-        Industry factory = new Industry("factory", "Manufacturing", "Transforming", 1900, new Position(0, 0));
+        Industry coalMine = new Industry("coal_mine", "Mine", "Primary", 1900, new Position(0, 0));
+        Industry ironMine = new Industry("iron_mine", "Mine", "Primary", 1900, new Position(0, 0));
+        Industry farm = new Industry("farm", "Farm", "Primary", 1900, new Position(0, 0));
+        Industry steelMill = new Industry("steel_mill", "Steel Mill", "Transforming", 1900, new Position(0, 0));
         Industry seaport = new Industry("seaport", "Port", "Port", 1900, new Position(0, 0));
 
         // Add base industries to repository
         industryRepo.add(coalMine);
         industryRepo.add(ironMine);
         industryRepo.add(farm);
-        industryRepo.add(forest);
         industryRepo.add(steelMill);
-        industryRepo.add(factory);
         industryRepo.add(seaport);
 
         // Add industries to Iberian Peninsula (12x9 grid)
@@ -116,7 +112,7 @@ public class Bootstrap implements Runnable {
         Map italyMap = mapRepo.getMap("italy");
         if (italyMap != null) {
             addIndustryToMap(italyMap, "genoa_port", seaport, 2, 5);
-            addIndustryToMap(italyMap, "turin_factory", factory, 1, 3);
+            addIndustryToMap(italyMap, "turin_factory", steelMill, 1, 3);
             mapRepo.save(italyMap);
         }
     }
