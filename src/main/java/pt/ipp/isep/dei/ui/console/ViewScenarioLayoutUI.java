@@ -57,6 +57,11 @@ public class ViewScenarioLayoutUI implements Runnable {
             return;
         }
 
+        // Filter out scenario3 and scenario4 for all maps
+        scenarioIDs = scenarioIDs.stream()
+            .filter(id -> !id.equals("scenario3") && !id.equals("scenario4"))
+            .collect(java.util.stream.Collectors.toList());
+
         // Create a mapping of display names to scenario IDs
         LinkedHashMap<String, String> scenarioDisplayMap = new LinkedHashMap<>();
         for (String id : scenarioIDs) {
@@ -120,9 +125,26 @@ public class ViewScenarioLayoutUI implements Runnable {
             System.out.println("Date Range: " + formatYear(currentScenario.getStartDate()) + " to " + 
                              formatYear(currentScenario.getEndDate()));
             
-            System.out.println("\nCities: " + currentScenario.getTweakedCityList().size());
-            System.out.println("Industries: " + currentScenario.getAvailableIndustryList().size());
-            System.out.println("Available Locomotive Types: " + currentScenario.getAvailableLocomotives().size());
+            // Display cities with names
+            List<City> cities = currentScenario.getTweakedCityList();
+            System.out.println("\nCities (" + cities.size() + "):");
+            for (City city : cities) {
+                System.out.println("- " + city.getNameID());
+            }
+            
+            // Display industries with names and types
+            List<Industry> industries = currentScenario.getAvailableIndustryList();
+            System.out.println("\nIndustries (" + industries.size() + "):");
+            for (Industry industry : industries) {
+                System.out.println("- " + industry.getNameID() + " (" + industry.getType() + ")");
+            }
+            
+            // Display available locomotive types
+            List<Locomotive> locomotives = currentScenario.getAvailableLocomotives();
+            System.out.println("\nAvailable Locomotive Types (" + locomotives.size() + "):");
+            for (Locomotive locomotive : locomotives) {
+                System.out.println("- " + locomotive.getType());
+            }
         } else {
             // Fall back to simple display if no scenario is in session
             System.out.println("Map: " + map.getNameID());
