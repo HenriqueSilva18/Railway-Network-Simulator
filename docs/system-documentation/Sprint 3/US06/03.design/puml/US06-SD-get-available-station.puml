@@ -1,0 +1,48 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+participant ListStationController
+participant ApplicationSession
+participant Map
+participant City
+
+activate ListStationController
+
+autonumber 12
+--> ListStationController: loadMap(mapId)
+
+group Get available stations
+autonumber 12.1
+  ListStationController -> ApplicationSession : getInstance()
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : sessionInstance
+  deactivate ApplicationSession
+
+  ListStationController -> ApplicationSession : getCurrentMap()
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : currentMap
+  deactivate ApplicationSession
+
+  ListStationController -> Map : getCities()
+  activate Map
+  Map --> ListStationController : citiesList
+  deactivate Map
+
+  loop for each city in citiesList
+    ListStationController -> City : getStations()
+    activate City
+    City --> ListStationController : cityStations
+    deactivate City
+  end
+
+  ListStationController --> ListStationController : compileStationsList()
+end
+autonumber 13
+<-- ListStationController: stationsList
+deactivate ListStationController
+
+@enduml

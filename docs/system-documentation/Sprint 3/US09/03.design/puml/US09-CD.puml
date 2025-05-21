@@ -1,0 +1,162 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ApplicationSession {
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+    + getCurrentScenario()
+    + getCurrentDate()
+}
+
+class UserSession {
+    + getUsername()
+}
+
+class Player {
+    - username : String
+    - password : String
+    - initialBudget : double
+    - currentBudget : double
+    - ownedLocomotives : List<Locomotive>
+    
+    + hasSufficientMoney(price)
+    + removeMoney(amount)
+    + addLocomotive(locomotive)
+}
+
+class Map {
+    - nameID : String
+    - cityList : List<City>
+    - industryList : List<Industry>
+    - scenarios : List<Scenario>
+    
+    + getMapLayout(scenarioID)
+}
+
+class Locomotive {
+    - nameID : String
+    - owner : Player
+    - type : String
+    - power : double
+    - acceleration : double
+    - topSpeed : double
+    - startYear : int
+    - fuelCost : double
+    - availabilityYear : int
+    - acquisitionPrice : double
+    - maintenancePrice : double
+    
+    + getPrice()
+    + setOwner(player)
+}
+
+class Scenario {
+    - nameID : String
+    - editor : Editor
+    - startDate : Date
+    - endDate : Date
+    - tweakedCityList : List<City>
+    - availableIndustryList : List<Industry>
+    - availableLocomotives : List<Locomotive>
+    - map : Map
+    
+    + getAvailableLocomotives(date)
+}
+
+class LocomotiveRepository {
+    + getLocomotive(locomotiveID)
+    + saveLocomotive(locomotive)
+}
+
+class PlayerRepository {
+    + getPlayerByUsername(username)
+    + savePlayer(player)
+}
+
+class ScenarioRepository {
+    + getCurrentScenario()
+    + getScenario(scenarioID)
+}
+
+class MapRepository {
+    + getAvailableMaps()
+    + getMap(mapID)
+    + getScenarios(mapID)
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getLocomotiveRepository()
+    + getPlayerRepository()
+    + getScenarioRepository()
+    + getMapRepository()
+}
+
+class BuyLocomotiveController {
+    + BuyLocomotiveController()
+    + getAvailableLocomotives()
+    + getLocomotive(locomotiveID)
+    + purchaseLocomotive(locomotive)
+    - getCurrentScenarioAndDate()
+    - getPlayerFromSession()
+    - checkBalance(price, player)
+}
+
+class MapController {
+    + MapController()
+    + getAvailableMaps()
+    + getMapScenarios(mapID)
+    + loadMap(mapID, scenarioID)
+}
+
+class BuyLocomotiveUI {
+}
+
+class MapUI {
+}
+
+' UI to Controller dependencies
+BuyLocomotiveUI .> BuyLocomotiveController
+MapUI .> MapController
+
+' Controller dependencies
+BuyLocomotiveController ..> ApplicationSession
+BuyLocomotiveController ..> UserSession
+BuyLocomotiveController ..> Repositories
+
+MapController ..> Repositories
+
+' Repository singleton
+Repositories -> "1" Repositories : instance
+Repositories --> "1" LocomotiveRepository : locomotiveRepository
+Repositories --> "1" PlayerRepository : playerRepository
+Repositories --> "1" ScenarioRepository : scenarioRepository
+Repositories --> "1" MapRepository : mapRepository
+
+' Session singleton
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession ..> UserSession
+
+' Repository to Domain relationships
+LocomotiveRepository --> "*" Locomotive : locomotives
+PlayerRepository --> "*" Player : players
+ScenarioRepository --> "*" Scenario : scenarios
+MapRepository --> "*" Map : maps
+
+' Domain relationships
+Player --> "*" Locomotive : ownedLocomotives
+Scenario --> "*" Locomotive : availableLocomotives
+Map "1" --> "*" Scenario : scenarios
+Scenario "*" --> "1" Map : map
+
+@enduml

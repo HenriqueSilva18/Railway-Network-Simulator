@@ -1,0 +1,44 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":SimulatorController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "simulatorRepository\n:SimulatorRepository" as SIM_REPO
+participant "simulator\n:Simulator" as SIM
+
+autonumber 7
+-> CTRL : startSimulation(selectedMap, selectedScenario)
+
+autonumber 7.1
+activate CTRL
+    group Create and Start Simulator
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getSimulatorRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: simulatorRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> SIM_REPO : createSimulator(selectedMap, selectedScenario)
+        activate SIM_REPO
+            SIM_REPO --> SIM** : create(selectedMap, selectedScenario)
+            SIM_REPO --> CTRL : simulator
+        deactivate SIM_REPO
+
+        CTRL -> SIM : start()
+        activate SIM
+            SIM --> CTRL : true
+        deactivate SIM
+    end
+
+    autonumber 8
+    <-- CTRL : success
+deactivate CTRL
+
+@enduml 

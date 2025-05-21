@@ -1,0 +1,60 @@
+@startuml
+autonumber
+
+title "System Sequence Diagram - US05: Build a Station"
+
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+Player -> System: asks to see available maps
+activate System
+System --> Player: shows list of available maps to play
+deactivate System
+Player -> System: selects a map
+activate System
+System --> Player: shows list of available scenarios to play
+deactivate System
+Player -> System : selects a scenario
+activate System
+
+System --> Player: loads and displays the selected map
+deactivate System
+
+Player -> System: asks to build a station
+
+activate System
+System --> Player: requests station type (DEPOT, STATION, TERMINAL)
+deactivate System
+
+Player -> System: selects station type
+
+activate System
+System --> Player: requests location (Position) on map for the station
+deactivate System
+
+Player -> System: provides location coordinates
+
+activate System
+alt station type is "STATION"
+    System --> Player: requests center point selection (NE, SE, NW, SW)
+    deactivate System
+
+    Player -> System: selects center point
+    activate System
+end
+
+System --> Player: proposes station name based on closest city
+System --> Player: displays station cost and economic radius
+System --> Player: shows preview of station placement and requests confirmation
+deactivate System
+
+Player -> System: confirms station placement
+
+activate System
+System --> Player: displays operation success
+System --> Player: updates map with the new station
+deactivate System
+
+@enduml

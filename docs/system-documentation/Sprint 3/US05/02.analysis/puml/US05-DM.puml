@@ -1,0 +1,132 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title "System Sequence Diagram - US05 : Build a Station"
+
+class Player {
+  username
+  password
+  initialBudget
+  currentBudget
+  ownedLocomotives
+}
+
+class Map {
+  nameID
+  cityList
+  industryList
+}
+
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class Size {
+  width
+  height
+}
+
+class Station {
+  nameID
+  storageCapacity
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class StationType {
+  name
+  economicRadius
+  cost
+  centerPoint
+}
+
+class HouseBlock {
+  automaticPlacement
+}
+
+
+note left of Station::nameID
+  Format: [Closest City Name] + [Station Type]
+end note
+
+note left of StationType::name
+  Can be: DEPOT, STATION, or TERMINAL
+end note
+
+note left of StationType::economicRadius
+  DEPOT: 3x3 radius
+  STATION: 4x4 radius
+  TERMINAL: 5x5 radius
+end note
+
+note left of StationType::cost
+  DEPOT: 50k
+  STATION: 100k
+  TERMINAL: 200k
+end note
+
+note left of StationType::centerPoint
+  For STATION type only: Can be NE, SE, NW, SW
+  For DEPOT and TERMINAL: Geometric center is used
+end note
+
+' Relationships with corrected multiplicities
+Player "1" -- "*" Station : builds >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "*" Position : contains >
+Map "1" -- "*" Station : contains >
+Map "*" -- "1" Size : has >
+Station "1" -- "*" City : serves >
+Station "1" -- "*" Industry : serves >
+Station "1" -- "1" Position : located at >
+
+City "1" -- "1..*" HouseBlock : contains >
+HouseBlock "1" -- "1" Position : has >
+
+IndustrySector "1" -- "*" Industry : contains >
+Station "*" -- "1" StationType : defined by >
+
+StationType "1" -- "*" StationType : can change >
+
+
+@enduml
+
+
+

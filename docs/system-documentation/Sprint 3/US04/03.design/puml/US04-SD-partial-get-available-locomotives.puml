@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "locomotiveRepository\n:LocomotiveRepository" as LOCO_REPO
+
+autonumber 37
+-> CTRL : getAvailableLocomotives(selectedLocomotiveTypes, endDate)
+
+autonumber 37.1
+activate CTRL
+    group Get Available Locomotives
+        CTRL -> LOCO_REPO : getAvailableLocomotives(selectedLocomotiveTypes, endDate)
+        activate LOCO_REPO
+            LOCO_REPO --> CTRL : availableLocomotives
+        deactivate LOCO_REPO
+    end
+
+    autonumber 38
+    <-- CTRL : availableLocomotives
+deactivate CTRL
+
+@enduml 

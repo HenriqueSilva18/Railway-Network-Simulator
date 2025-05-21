@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":SimulatorController" as CTRL
+participant "simulator\n:Simulator" as SIM
+
+autonumber 12
+-> CTRL : stopSimulation()
+
+autonumber 12.1
+activate CTRL
+    group Stop Simulator
+        CTRL -> SIM : stop()
+        activate SIM
+            SIM -> SIM : generateReport()
+            activate SIM
+                SIM --> SIM : simulationReport
+            deactivate SIM
+
+            SIM --> CTRL : simulationReport
+        deactivate SIM
+    end
+
+    autonumber 13
+    <-- CTRL : simulationReport
+deactivate CTRL
+
+@enduml 

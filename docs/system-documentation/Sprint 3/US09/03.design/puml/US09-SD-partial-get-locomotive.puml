@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":BuyLocomotiveController" as CTRL
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+
+autonumber 20
+-> CTRL : getLocomotive(locomotiveID)
+
+autonumber 20.1
+activate CTRL
+    group Get Locomotive
+        CTRL -> LOC_REPO : getLocomotive(locomotiveID)
+        activate LOC_REPO
+            LOC_REPO --> CTRL : locomotive
+        deactivate LOC_REPO
+    end
+
+    autonumber 21
+    <-- CTRL : locomotive
+deactivate CTRL
+
+@enduml 

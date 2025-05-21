@@ -1,0 +1,46 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+hide circle
+hide methods
+title Domain Model: US01 - Create a Map
+
+class Editor {
+  username
+  password
+  createdMaps
+  createdScenarios
+}
+
+class Map {
+  nameID
+  cityList
+  industryList
+}
+
+class Size {
+  width
+  height
+}
+
+note right of Map::nameID
+  Must be a valid file name
+end note
+
+note right of Size::width
+  Must be positive integer
+end note
+
+note right of Size::height
+  Must be positive integer
+end note
+
+Editor "1" -- "*" Map : creates >
+Map "*" -- "1" Size : has >
+
+@enduml

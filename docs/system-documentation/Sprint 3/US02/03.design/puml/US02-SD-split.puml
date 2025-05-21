@@ -1,0 +1,109 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US02 - Add an industry
+
+actor "Editor" as editor
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
+participant ":AddIndustryUI" as UI
+participant ":AddIndustryController" as CTRL
+
+activate editor
+
+    editor -> mapUI : asks to edit map
+
+        activate mapUI
+            mapUI -> mapCTRL**: create()
+            mapUI -> mapCTRL: getAvailableMaps()
+
+            activate mapCTRL
+                ref over mapCTRL
+                Get available maps
+                end
+                mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+
+            mapUI --> editor: shows list of available maps
+        deactivate mapUI
+
+    editor -> mapUI: selects a map
+        activate mapUI
+
+            mapUI -> mapCTRL: loadMap(selectedMap)
+            activate mapCTRL
+
+                ref over mapCTRL
+                Load selected map
+                end
+
+                mapCTRL --> mapUI: mapLayout
+
+            deactivate mapCTRL
+
+            mapUI --> editor: loads and displays the selected map
+
+
+        deactivate mapUI
+
+    editor -> UI : asks to add industry
+        activate UI
+
+
+            UI -> CTRL**: create()
+            UI -> CTRL: getIndustriesAvailable()
+            activate CTRL
+            ref over CTRL
+            Get available industries
+            end
+                CTRL --> UI: availableIndustriesList
+            deactivate CTRL
+
+        UI --> editor: shows all available industries in a list
+        deactivate UI
+
+    editor -> UI: selects industry
+        activate UI
+        UI --> editor: requests industry data (nameID, X and Y coordinates)
+        deactivate UI
+
+    editor -> UI: types industry data
+        activate UI
+        UI -> CTRL: validateIndustry(nameID, x, y)
+            activate CTRL
+
+            ref over CTRL
+            Validate industry data
+            end
+
+                CTRL --> UI: success
+            deactivate CTRL
+
+        UI --> editor: asks for confirmation
+        deactivate UI
+
+    editor -> UI: confirms industry data
+        activate UI
+            UI -> CTRL: createIndustry(nameID, x, y)
+
+            ref over CTRL
+            Create and add industry to map
+            end
+
+            activate CTRL
+
+               CTRL --> UI: industryDetails
+               deactivate CTRL
+
+            UI --> editor: displays operation success
+            UI --> editor: display industry details
+
+        deactivate UI
+
+deactivate editor
+
+@enduml

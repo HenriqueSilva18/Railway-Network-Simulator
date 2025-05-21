@@ -1,0 +1,67 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+participant ":ListStationController" as ListStationController
+participant ":ApplicationSession" as ApplicationSession
+participant Map
+participant Station
+
+activate ListStationController
+
+autonumber 16
+--> ListStationController: getStationDetails(stationId)
+group Get station details
+    autonumber 16.1
+  ListStationController -> ApplicationSession : getInstance()
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : sessionInstance
+  deactivate ApplicationSession
+
+  ListStationController -> ApplicationSession : getCurrentMap()
+  activate ApplicationSession
+  ApplicationSession --> ListStationController : currentMap
+  deactivate ApplicationSession
+
+  ListStationController -> Map : getCities()
+  activate Map
+  Map --> ListStationController : citiesList
+  deactivate Map
+
+  ListStationController -> ListStationController : findStationById(stationId)
+  activate ListStationController
+  deactivate ListStationController
+
+  ListStationController -> Station : getDetails()
+  activate Station
+  Station --> ListStationController : stationBasicInfo
+  deactivate Station
+
+  ListStationController -> Station : getBuildings()
+  activate Station
+  Station --> ListStationController : buildingsList
+  deactivate Station
+
+  ListStationController -> Station : getDemandedCargo()
+  activate Station
+  Station --> ListStationController : demandedCargoList
+  deactivate Station
+
+  ListStationController -> Station : getSupplyCargo()
+  activate Station
+  Station --> ListStationController : supplyCargoList
+  deactivate Station
+
+  ListStationController -> ListStationController : compileStationDetails()
+end
+
+autonumber 17
+
+<-- ListStationController: stationDetails
+
+deactivate ListStationController
+
+@enduml

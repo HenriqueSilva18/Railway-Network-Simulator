@@ -1,0 +1,91 @@
+@startuml
+
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+skinparam enum {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+left to right direction
+
+title Domain Model Excerpt: US12 - Create a Simulator
+
+class Simulator {
+  status
+  runTime
+  report
+}
+
+class City {
+  nameID
+  position
+  houseBlocks
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+  productionResources
+}
+
+
+class Station {
+  nameID
+  storageCapacity
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class IndustrySector {
+  nameID
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+class StationType {
+  name
+  economicRadius
+  cost
+  centerPoint
+}
+
+Simulator "1 " -- "*" Cargo : generates
+Cargo "*" -- "1" Station : stores <
+Station "1" --"*" City  : serves
+Station"1" -- "*"Industry : serves
+Industry "1" -- "1" Position : located
+Station "1" -- "1" Position : located
+Industry "*" -- "1" IndustrySector : contains
+Station "*" -- "1" StationType : defined by
+
+@enduml

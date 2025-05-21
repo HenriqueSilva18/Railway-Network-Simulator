@@ -1,0 +1,151 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US06 - Upgrade a selected station with a building
+
+class MapUI {
+}
+
+class MapController {
+    + create()
+    + getAvailableMaps() : List<Map>
+    + loadMap(mapId) : MapLayout
+}
+
+class ListStationUI {
+}
+
+class ListStationController {
+    + create()
+    + getAvailableStations() : List<Station>
+    + getStationDetails(stationId) : StationDetails
+}
+
+class UpgradeStationUI {
+}
+
+class UpgradeStationController {
+    + create()
+    + getAvailableUpgrades() : List<Building>
+    + getBuildingInfo(buildingId) : BuildingInfo
+    + upgradeStation() : boolean
+    + getStationInfo(stationId) : StationInfo
+}
+
+class StationRepository {
+    + getStation(stationId) : Station
+    + save(station) : boolean
+}
+
+class BuildingRepository {
+    + getBuilding(buildingId) : Building
+}
+
+class MapRepository {
+    + getAvailableMaps() : List<Map>
+    + getMap(mapId) : Map
+}
+
+class Repositories {
+    + {static} getInstance() : Repositories
+    + getStationRepository() : StationRepository
+    + getBuildingRepository() : BuildingRepository
+    + getMapRepository() : MapRepository
+}
+
+class ApplicationSession {
+    + {static} getInstance() : ApplicationSession
+    + getCurrentStation() : Station
+    + getCurrentMap() : Map
+}
+
+class Station {
+    - nameID: String
+    - storageCapacity: int
+    - buildingSlots: int
+    - availableCargo: int
+    - requestedCargo: int
+    - position: Position
+    
+    + getAvailableUpgrades() : List<Building>
+    + upgrade(building: Building) : boolean
+    + getInfo() : StationInfo
+    + getDetails() : StationDetails
+}
+
+class Building {
+    - nameID: String
+    - type: String
+    - availabilityYear: int
+    - evolutionCost: int
+    - evolutionStagesLeft: int
+    - effect: String
+    
+    + getInfo() : BuildingInfo
+}
+
+class Map {
+    - nameID: String
+    - cityList: List<City>
+    - industryList: List<Industry>
+    - size: Size
+    - positions: List<Position>
+}
+
+class Position {
+    - x: int
+    - y: int
+    - occupied: boolean
+}
+
+class StationType {
+    - name: String
+    - economicRadius: int
+    - cost: double
+    - centerPoint: Position
+}
+
+' UI Layer
+MapUI ..> MapController : uses
+ListStationUI ..> ListStationController : uses
+UpgradeStationUI ..> UpgradeStationController : uses
+
+' Controller Layer
+MapController ..> MapRepository : uses
+MapController ..> Repositories : uses
+MapController ..> Map : uses
+
+ListStationController ..> StationRepository : uses
+ListStationController ..> Repositories : uses
+ListStationController ..> Station : uses
+
+UpgradeStationController ..> StationRepository : uses
+UpgradeStationController ..> BuildingRepository : uses
+UpgradeStationController ..> Repositories : uses
+UpgradeStationController ..> ApplicationSession : uses
+UpgradeStationController ..> Station : uses
+UpgradeStationController ..> Building : uses
+
+' Repository Layer
+StationRepository --> "1" Station : returns
+BuildingRepository --> "*" Building : provides
+MapRepository --> "*" Map : provides
+
+Repositories --> StationRepository : provides >
+Repositories --> BuildingRepository : provides >
+Repositories --> MapRepository : provides >
+
+' Domain Layer
+Station "1" o-- "0..1" Building : has >
+Station "1" -- "1" Position : located at >
+Station "*" -- "1" StationType : defined by >
+Map "1" -- "*" Position : tracks >
+Building "1" -- "0..1" Building : evolves into >
+StationType "1" -- "*" StationType : can change >
+
+ApplicationSession --> Station : currentStation >
+ApplicationSession --> Map : currentMap >
+
+@enduml 

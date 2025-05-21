@@ -1,0 +1,131 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title Sequence Diagram: US10 - Assign a train to a route
+
+actor "Player" as player
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
+participant ":AssignTrainUI" as UI
+participant ":AssignTrainController" as CTRL
+
+activate player
+
+    player -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                ref over mapCTRL
+                    Get available maps
+                end
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> player: shows list of available maps to play
+        deactivate mapUI
+
+    player -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> player: shows list of available scenarios to play
+        deactivate mapUI
+    player -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> player: loads and displays the selected map
+        deactivate mapUI
+
+    player -> UI : asks to assign a train
+        activate UI
+            UI -> CTRL**: create()
+            UI -> CTRL: getAvailableRoutes()
+            activate CTRL
+
+            ref over CTRL
+                Get available routes
+            end
+
+            CTRL --> UI: availableRoutesList
+            deactivate CTRL
+            UI --> player: displays list of available routes with valid stations
+        deactivate UI
+
+    player -> UI : selects a route
+        activate UI
+            UI -> CTRL: getRouteDetails(selectedRoute)
+            activate CTRL
+
+            ref over CTRL
+                Get route details
+            end
+
+            CTRL --> UI: routeDetails
+            deactivate CTRL
+            UI --> player: displays route details (name, station stops)
+            UI --> player: asks for confirmation
+        deactivate UI
+
+    player -> UI : confirms route selection
+        activate UI
+            UI -> CTRL: getAvailableTrains()
+            activate CTRL
+
+            ref over CTRL
+                Get available trains
+            end
+
+            CTRL --> UI: availableTrainsList
+            deactivate CTRL
+            UI --> player: displays list of available trains
+        deactivate UI
+
+    player -> UI : selects a train
+        activate UI
+            UI -> CTRL: getTrainDetails(selectedTrain)
+            activate CTRL
+
+            ref over CTRL
+                Get train details
+            end
+
+            CTRL --> UI: trainDetails
+            deactivate CTRL
+            UI --> player: displays train details
+            UI --> player: asks for confirmation
+        deactivate UI
+
+    player -> UI : confirms assignment
+        activate UI
+            UI -> CTRL: assignTrainToRoute(selectedRoute, selectedTrain)
+            activate CTRL
+
+            ref over CTRL
+                Assign train to route
+            end
+
+            CTRL --> UI: assignmentDetails
+            deactivate CTRL
+            UI --> player: displays operation success
+            UI --> player: displays train, route and station details (including list of cargoes to be picked up)
+        deactivate UI
+
+deactivate player
+
+@enduml 

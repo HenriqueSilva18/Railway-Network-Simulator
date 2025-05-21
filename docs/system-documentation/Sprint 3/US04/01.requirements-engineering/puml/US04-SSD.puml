@@ -1,0 +1,109 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title System Sequence Diagram: US04 - Create a Scenario
+
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+    Editor -> System : asks to create a scenario
+    activate System
+
+        System --> Editor : shows map list and asks to select one
+    deactivate System
+
+    Editor -> System : selects map for the scenario
+    activate System
+
+        System --> Editor : requests name, start and end date (time period)
+    deactivate System
+
+        hnote right
+            time restrictions
+        end note
+
+    Editor -> System : types requested data
+    activate System
+
+        System --> Editor : shows list of industries in the map and asks to select the ones available
+    deactivate System
+
+            hnote right
+                technological restrictions
+            end note
+
+    Editor -> System : selects the available industries in the scenario
+    activate System
+
+    loop for each port (mixed industry) in the select industries
+            System --> Editor : shows a list of cargoes and asks to select the ones the port imports
+        deactivate System
+
+        Editor -> System : selects the cargoes the port imports
+        activate System
+
+            System --> Editor : asks to select the ones the port exports
+        deactivate System
+
+        Editor -> System : selects the cargoes the port exports
+        activate System
+
+            System --> Editor : asks to select the cargoes the port produces
+        deactivate System
+
+            Editor -> System : selects the cargoes the port produces
+            activate System
+    end
+
+    hnote right
+        historical restrictions
+    end note
+
+    loop for each generating industry (primary) in the select industries
+
+            System --> Editor : requests the generation frequency factor
+        deactivate System
+
+        Editor -> System : types the generation frequency factor
+        activate System
+    end
+    hnote right
+        historical restrictions
+    end note
+
+    loop for each city in the selected map
+            System --> Editor : requests the traffic rate for mail and passengers
+        deactivate System
+
+        Editor -> System : types the traffic rate for mail and passengers
+        activate System
+    end
+    hnote right
+        historical restrictions
+    end note
+
+            System --> Editor : shows a list of locomotive types and asks to select the available ones
+        deactivate System
+
+            hnote right
+                technological restrictions
+            end note
+
+        Editor -> System : selects the available locomotive types
+        activate System
+
+        System --> Editor : shows all data and requests confirmation
+    deactivate System
+
+    Editor -> System : confirms data
+    activate System
+
+        System --> Editor : displays operation success
+    deactivate System
+
+@enduml

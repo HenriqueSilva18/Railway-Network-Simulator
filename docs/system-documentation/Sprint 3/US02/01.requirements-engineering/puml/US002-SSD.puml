@@ -1,0 +1,49 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title System Sequence Diagram: US02 - Add an industry
+
+actor "Editor" as editor
+participant ":system" as system
+
+activate editor
+
+    editor -> system : asks to edit map
+        activate system
+            system --> editor: shows list of available maps
+        deactivate system
+
+    editor -> system: selects a map
+        activate system
+            system --> editor: loads and displays the selected map
+        deactivate system
+
+    editor -> system : asks to add industry
+        activate system
+        system --> editor: shows all available industries in a list
+
+
+        deactivate system
+
+    editor -> system: selects industry
+        activate system
+        system --> editor: requests industry data (nameID, X and Y coordinates)
+        deactivate system
+
+    editor -> system: types industry data
+        activate system
+        system --> editor: asks for confirmation
+        deactivate system
+
+    editor -> system: confirms industry data
+        activate system
+        system --> editor: displays operation success
+        system --> editor: display industry details
+        deactivate system
+
+
+@enduml

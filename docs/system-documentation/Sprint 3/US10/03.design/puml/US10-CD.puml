@@ -1,0 +1,213 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US10 - Assign a train to a route
+
+' UI Layer
+class EditMapUI {
+}
+
+
+class AssignTrainUI {
+}
+
+' Controller Layer
+class EditMapController {
+    + create()
+    + getAvailableMaps() : List<Map>
+    + loadMap(mapId) : MapLayout
+}
+
+
+class AssignTrainController {
+    + create()
+    + getAvailableRoutes() : List<Route>
+    + getRouteDetails(routeId) : RouteDetails
+    + getAvailableTrains() : List<Train>
+    + getTrainDetails(trainId) : TrainDetails
+    + assignTrainToRoute(trainId, routeId) : boolean
+}
+
+' Repository Layer
+class RouteRepository {
+    + getRoute(routeId) : Route
+    + save(route) : boolean
+}
+
+class TrainRepository {
+    + getTrain(trainId) : Train
+    + save(train) : boolean
+}
+
+class MapRepository {
+    + getAvailableMaps() : List<Map>
+    + getMap(mapId) : Map
+}
+
+class Repositories {
+    + {static} getInstance() : Repositories
+    + getRouteRepository() : RouteRepository
+    + getTrainRepository() : TrainRepository
+    + getMapRepository() : MapRepository
+}
+
+class ApplicationSession {
+    + {static} getInstance() : ApplicationSession
+    + getCurrentTrain() : Train
+    + getCurrentRoute() : Route
+    + getCurrentMap() : Map
+}
+
+' Domain Layer
+class Player {
+    - username: String
+    - password: String
+    - initialBudget: double
+    - currentBudget: double
+}
+
+class Train {
+    - nameID: String
+    - locomotive: Locomotive
+    - carriages: List<Carriage>
+    
+    + assignToRoute(route: Route) : boolean
+    + getDetails() : TrainDetails
+}
+
+class Locomotive {
+    - nameID: String
+    - type: String
+    - power: int
+    - acceleration: double
+    - topSpeed: int
+    - startYear: int
+    - fuelCost: double
+    - availabilityYear: int
+    - acquisitionPrice: double
+    - maintenancePrice: double
+}
+
+class Carriage {
+    - storageCapacity: int
+    - cargo: Cargo
+}
+
+class Route {
+    - nameID: String
+    - stationSequence: List<Station>
+    - cargoList: List<Cargo>
+    
+    + getDetails() : RouteDetails
+    + addTrain(train: Train) : boolean
+    + validateStations() : boolean
+}
+
+class Station {
+    - nameID: String
+    - storageCapacity: int
+    - buildingSlots: int
+    - availableCargo: int
+    - requestedCargo: int
+}
+
+class Cargo {
+    - name: String
+    - amount: int
+    - lifespan: int
+    - type: String
+    - productionResources: List<String>
+}
+
+class RailwayLine {
+    - length: double
+    - trackType: String
+    - isElectrified: boolean
+    - cost: double
+}
+
+class Map {
+    - nameID: String
+    - cityList: List<City>
+    - industryList: List<Industry>
+    - size: Size
+    - positions: List<Position>
+}
+
+class Size {
+    - width: int
+    - height: int
+}
+
+class Position {
+    - x: int
+    - y: int
+    - occupied: boolean
+}
+
+class City {
+    - nameID: String
+    - trafficRate: double
+    - suppliedCargo: List<Cargo>
+    - demandedCargo: List<Cargo>
+}
+
+class Industry {
+    - nameID: String
+    - type: String
+    - availabilityYear: int
+    - productionRate: double
+    - suppliedCargo: List<Cargo>
+    - demandedCargo: List<Cargo>
+}
+
+' UI Layer Relationships
+EditMapUI ..> EditMapController : uses
+AssignTrainUI ..> AssignTrainController : uses
+
+' Controller Layer Relationships
+EditMapController ..> MapRepository : uses
+EditMapController ..> Repositories : uses
+EditMapController ..> Map : uses
+
+
+AssignTrainController ..> RouteRepository : uses
+AssignTrainController ..> TrainRepository : uses
+AssignTrainController ..> Repositories : uses
+AssignTrainController ..> ApplicationSession : uses
+AssignTrainController ..> Train : uses
+AssignTrainController ..> Route : uses
+
+' Repository Layer Relationships
+RouteRepository --> "1" Route : returns
+TrainRepository --> "*" Train : provides
+MapRepository --> "*" Map : provides
+
+Repositories --> RouteRepository : provides >
+Repositories --> TrainRepository : provides >
+Repositories --> MapRepository : provides >
+
+' Domain Layer Relationships
+Player "1" -- "*" Train : owns >
+Train "1" -- "1" Locomotive : powered by >
+Train "1" -- "*" Carriage : composed of >
+Carriage "*" -- "1" Cargo : carries >
+Train "1" -- "*" Route : assigned to >
+Route "1" -- "*" Station : includes >
+Route "*" -- "*" Cargo : manages >
+Route "1..*" -- "1..*" RailwayLine : contains >
+Station "1" -- "*" Cargo : stores >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "1" Size : has >
+Map "1" -- "*" Position : tracks >
+City "*" -- "*" Cargo : produces/consumes >
+Industry "*" -- "*" Cargo : produces/consumes >
+
+ApplicationSession --> Train : currentTrain >
+ApplicationSession --> Route : currentRoute >
+ApplicationSession --> Map : currentMap >
+
+@enduml

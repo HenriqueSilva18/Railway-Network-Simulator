@@ -1,0 +1,73 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title AssignManualBlocks
+
+participant AddHouseBlocksController
+participant HouseBlock
+participant Position
+participant Map
+
+autonumber 18
+-> AddHouseBlocksController: assignBlocks(numBlocks)
+activate AddHouseBlocksController
+
+
+group Manual Block Assignment
+    autonumber 18.1
+    AddHouseBlocksController -> Map : getCurrentMap()
+    activate Map
+    Map --> AddHouseBlocksController : map
+    deactivate Map
+    
+    AddHouseBlocksController -> Map : getCityBoundaries()
+    activate Map
+    Map --> AddHouseBlocksController : boundaries
+    deactivate Map
+    
+    create "blocksList:List<HouseBlock>" as BlocksList
+    AddHouseBlocksController -> BlocksList : new ArrayList<>()
+
+    loop for each block (1 to numBlocks)
+        AddHouseBlocksController -> AddHouseBlocksController : promptForCoordinates()
+        
+        AddHouseBlocksController -> Map : isPositionAvailable(x, y)
+        activate Map
+        Map --> AddHouseBlocksController : isAvailable
+        deactivate Map
+        
+        alt valid position
+            create "position:Position" as Pos
+            AddHouseBlocksController -> Pos : new Position(x, y)
+            activate Pos
+            Pos --> AddHouseBlocksController : position
+            deactivate Pos
+            
+            create "block:HouseBlock" as Block
+            AddHouseBlocksController -> Block : new HouseBlock(position, false)
+            activate Block
+            Block --> AddHouseBlocksController : block
+            deactivate Block
+            
+            AddHouseBlocksController -> BlocksList : add(block)
+            
+            AddHouseBlocksController -> Map : markPositionOccupied(position)
+            activate Map
+            Map --> AddHouseBlocksController : success
+            deactivate Map
+            
+        else invalid position
+            AddHouseBlocksController -> AddHouseBlocksController : requestNewPosition()
+            note right: Repeat until a valid position is provided
+        end
+    end
+end
+
+autonumber 19
+<-- AddHouseBlocksController : houseBlocks
+deactivate AddHouseBlocksController
+
+@enduml 

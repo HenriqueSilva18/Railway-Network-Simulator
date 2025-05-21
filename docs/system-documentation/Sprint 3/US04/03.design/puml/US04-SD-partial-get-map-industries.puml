@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "map\n:Map" as MAP
+
+autonumber 11
+-> CTRL : getMapIndustries(selectedMap)
+
+autonumber 11.1
+activate CTRL
+    group Get Map Industries List
+        CTRL -> MAP : getIndustries()
+        activate MAP
+            MAP --> CTRL : industryList
+        deactivate MAP
+    end
+
+    autonumber 12
+    <-- CTRL : industryList
+deactivate CTRL
+
+@enduml 

@@ -1,0 +1,37 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveRepository\n:LocomotiveRepository" as LOCO_REPO
+
+autonumber 29
+-> CTRL : getLocomotiveTypes()
+
+autonumber 29.1
+activate CTRL
+    group Get Locomotive Types List
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON : getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: locomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> LOCO_REPO : getLocomotiveTypes()
+        activate LOCO_REPO
+            LOCO_REPO --> CTRL : locomotiveTypeList
+        deactivate LOCO_REPO
+    end
+
+    autonumber 30
+    <-- CTRL : locomotiveTypeList
+deactivate CTRL
+
+@enduml 

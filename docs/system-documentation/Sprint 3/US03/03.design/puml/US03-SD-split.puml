@@ -1,0 +1,119 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : US03 - Add a city
+
+actor "Editor" as Editor
+participant ":EditMapUI" as mapUI
+participant ":EditMapController" as mapCTRL
+participant AddCityUI
+participant AddCityController
+participant AddHouseBlocksController as AddHouseBlocksController
+
+activate Editor
+   Editor -> mapUI : asks to edit map
+
+           activate mapUI
+               mapUI -> mapCTRL**: create()
+               mapUI -> mapCTRL: getAvailableMaps()
+
+               activate mapCTRL
+                   ref over mapCTRL
+                   Get available maps
+                   end
+                   mapCTRL --> mapUI: availableMapsList
+               deactivate mapCTRL
+
+               mapUI --> Editor: shows list of available maps
+           deactivate mapUI
+
+       Editor -> mapUI: selects a map
+           activate mapUI
+
+               mapUI -> mapCTRL: loadMap(selectedMap)
+               activate mapCTRL
+
+                   ref over mapCTRL
+                   Load selected map
+                   end
+
+                   mapCTRL --> mapUI: mapLayout
+
+               deactivate mapCTRL
+
+               mapUI --> Editor: loads and displays the selected map
+
+
+           deactivate mapUI
+
+Editor -> AddCityUI : asks to add city
+        activate AddCityUI
+        AddCityUI --> Editor : requests city data (nameID, X and Y coordinates, number of house blocks)
+        deactivate AddCityUI
+
+    Editor -> AddCityUI: types city data
+        activate AddCityUI
+        AddCityUI --> AddCityController: validateName(name)
+        activate AddCityController
+        AddCityController --> AddCityUI: name
+        deactivate AddCityController
+
+        AddCityUI --> AddCityController: validateCoordinates(x, y)
+        activate AddCityController
+        ref over AddCityController
+        ValidateCoordinates()
+        end
+        AddCityController --> AddCityUI: position
+        deactivate AddCityController
+
+        AddCityUI --> AddCityController: validateNumBlocks(numBlocks)
+        activate AddCityController
+        AddCityController --> AddCityUI: numBlocks
+        deactivate AddCityController
+        
+        AddCityUI --> Editor: asks if the editor wants to assign the blocks manually or automatically
+        deactivate AddCityUI
+        
+    Editor -> AddCityUI: selects yes/no
+        activate AddCityUI
+
+alt User selects "yes" (manual)
+    AddCityUI --> AddHouseBlocksController : assignBlocks(numBlocks)
+    activate AddHouseBlocksController
+    ref over AddHouseBlocksController
+        AssignManualBlocks()
+    end
+    AddHouseBlocksController --> AddCityUI : houseBlocks
+    deactivate AddHouseBlocksController
+
+else User selects "no" (automatic)
+    AddCityUI --> AddHouseBlocksController : assignBlocks(numBlocks)
+    activate AddHouseBlocksController
+    ref over AddHouseBlocksController
+        AssignAutoBlocks()
+    end
+    AddHouseBlocksController --> AddCityUI : houseBlocks
+    deactivate AddHouseBlocksController
+end alt
+
+        AddCityUI --> Editor: asks for confirmation
+        deactivate AddCityUI
+        
+        Editor -> AddCityUI: confirms city data
+        activate AddCityUI
+        AddCityUI --> AddCityController: saveCity(nameID, position, houseBlocks)
+        activate AddCityController
+        ref over AddCityController
+        saveCity
+        end
+        AddCityController --> AddCityUI: success
+        deactivate AddCityController
+        AddCityUI --> Editor: displays operation success
+        AddCityUI --> Editor: display city details
+        deactivate AddCityUI
+
+@enduml

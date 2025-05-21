@@ -1,0 +1,77 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model: US02 - Add an industry
+
+class Editor {
+  username
+  password
+  createdMaps
+  createdScenarios
+}
+
+class Map {
+  nameID
+  cityList
+  industryList
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class Size {
+  width
+  height
+}
+
+note right of Industry::sector
+  Must be primary, transforming or mixed industry
+end note
+
+note right of Industry::type
+  Must be mine, farm, bakery or other of the kind
+end note
+
+Map "1" -- "*" Industry: contains >
+Editor "1" -- "*" Industry: adds >
+Editor "1" - "*" Map: creates >
+
+Map "1" -- "*" Position : tracks >
+Industry "1" -- "1" Position : located at >
+IndustrySector "1" -- "*" Industry : contains >
+Map "*" -- "1" Size : has >
+
+@enduml

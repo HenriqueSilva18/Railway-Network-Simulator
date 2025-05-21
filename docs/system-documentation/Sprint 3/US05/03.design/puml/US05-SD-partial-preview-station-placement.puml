@@ -1,0 +1,46 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "appSession\n:ApplicationSession" as APP_SESSION
+participant "map\n:Map" as MAP
+participant "stationType\n:StationType" as TYPE
+
+autonumber 23
+-> CTRL : previewStationPlacement(stationType, position, centerPoint)
+
+autonumber 23.1
+activate CTRL
+    group Preview Station Placement
+        CTRL -> APP_SESSION: getInstance()
+        activate APP_SESSION
+            APP_SESSION --> CTRL: sessionInstance
+        deactivate APP_SESSION
+
+        CTRL -> APP_SESSION: getCurrentMap()
+        activate APP_SESSION
+            APP_SESSION --> CTRL: currentMap
+        deactivate APP_SESSION
+
+        CTRL -> MAP: previewStationPlacement(stationType, position, centerPoint)
+        activate MAP
+            MAP --> CTRL: preview
+        deactivate MAP
+
+        CTRL -> TYPE: getEconomicRadius()
+        activate TYPE
+            TYPE --> CTRL: economicRadius
+        deactivate TYPE
+
+        CTRL -> TYPE: getCost()
+        activate TYPE
+            TYPE --> CTRL: cost
+        deactivate TYPE
+    end
+
+    autonumber 24
+    <-- CTRL : preview, economicRadius, cost
+deactivate CTRL
+
+@enduml 

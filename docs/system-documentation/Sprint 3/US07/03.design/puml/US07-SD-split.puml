@@ -1,0 +1,87 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : US07 - List stations and view details
+
+actor "Player" as Player
+participant ":MapUI" as mapUI
+participant ":MapController" as mapCTRL
+participant ListStationUI
+participant ListStationController
+
+
+activate Player
+
+    Player -> mapUI: asks to see available maps
+        activate mapUI
+        mapUI -> mapCTRL**: create()
+        mapUI -> mapCTRL: getAvailableMaps()
+            activate mapCTRL
+                ref over mapCTRL
+                    Get available maps
+                end
+            mapCTRL --> mapUI: availableMapsList
+            deactivate mapCTRL
+        mapUI --> Player: shows list of available maps to play
+        deactivate mapUI
+
+    Player -> mapUI: selects a map
+        activate mapUI
+        mapUI -> mapCTRL: getMapScenarios(mapID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Get map scenarios
+                end
+            mapCTRL --> mapUI: mapScenarios
+            deactivate mapCTRL
+        mapUI --> Player: shows list of available scenarios to play
+        deactivate mapUI
+    Player -> mapUI: selects a scenario
+
+        activate mapUI
+        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
+            activate mapCTRL
+                ref over mapCTRL
+                    Load map
+                end
+            mapCTRL --> mapUI: mapLayout
+            deactivate mapCTRL
+        mapUI --> Player: loads and displays the selected map
+        deactivate mapUI
+
+Player -> ListStationUI : request to see available stations
+        activate ListStationUI
+        ListStationUI --> ListStationController: getStations(mapId)
+        activate ListStationController
+        
+        ref over ListStationController
+        Get available stations
+        end
+        
+        ListStationController --> ListStationUI: stationsList
+        deactivate ListStationController
+        
+        ListStationUI --> Player : displays list of available stations
+        ListStationUI --> Player : requests to select a specific station
+        deactivate ListStationUI
+
+Player -> ListStationUI : selects a specific station
+        activate ListStationUI
+        ListStationUI --> ListStationController: getStationDetails(stationId)
+        activate ListStationController
+        
+        ref over ListStationController
+        Get station details
+        end
+        
+        ListStationController --> ListStationUI: stationDetails
+        deactivate ListStationController
+        
+        ListStationUI --> Player : show station details
+        deactivate ListStationUI
+
+@enduml 

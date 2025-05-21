@@ -1,0 +1,77 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+title Class Diagram: US01 - Create a Map
+
+class CreateMapUI {
+}
+
+class CreateMapController {
+    + create()
+    + validateMapData(nameID, width, height) : boolean
+    + createMap(nameID, width, height) : Map
+}
+
+class MapRepository {
+    + save(map) : boolean
+    + getMapByID(nameID) : Map
+}
+
+class Repositories {
+    + {static} getInstance() : Repositories
+    + getMapRepository() : MapRepository
+}
+
+class ApplicationSession {
+    + {static} getInstance() : ApplicationSession
+    + getCurrentSession() : Editor
+}
+
+    class Map {
+        - nameID : String
+        - size : Size
+        - cityList : List<City>
+        - industryList : List<Industry>
+
+        + {static} validateMapName(nameID) : boolean
+        + createMap(nameID: String, size: Size) : Map
+    }
+
+class Size {
+    - width : int
+    - height : int
+
+    + {static} validateSize(width: int, height: int) : boolean
+    + createSize(width: int, height: int) : Size
+}
+
+class Editor {
+    - username : String
+    - password : String
+    - createdMaps : List<Map>
+
+    + createMap(nameID: String, size: Size) : Map
+}
+
+CreateMapUI ..> CreateMapController
+
+CreateMapController ..> MapRepository
+CreateMapController ..> Repositories
+CreateMapController ..> ApplicationSession
+CreateMapController ..> Map
+CreateMapController ..> Size
+CreateMapController ..> Editor
+
+Map "1" --> "1" Size : size
+MapRepository --> "1" Map : map
+Editor "1" --> "*" Map : createdMaps
+
+Repositories -> "1" Repositories : instance
+Repositories --> "1" MapRepository : mapRepository
+
+ApplicationSession -> "1" ApplicationSession : instance
+ApplicationSession --> "1" Editor : currentSession
+
+@enduml

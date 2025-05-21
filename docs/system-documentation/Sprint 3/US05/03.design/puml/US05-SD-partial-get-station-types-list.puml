@@ -1,0 +1,35 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "repositories\n:Repositories" as REPOS
+participant "stationTypeRepository\n:StationTypeRepository" as TYPE_REPO
+
+autonumber 11
+-> CTRL : getStationTypes()
+
+autonumber 11.1
+activate CTRL
+    group Get Station Types List
+        CTRL -> REPOS: getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositoriesInstance
+        deactivate REPOS
+
+        CTRL -> REPOS: getStationTypeRepository()
+        activate REPOS
+            REPOS --> CTRL: stationTypeRepository
+        deactivate REPOS
+
+        CTRL -> TYPE_REPO: getStationTypes()
+        activate TYPE_REPO
+            TYPE_REPO --> CTRL: stationTypeList
+        deactivate TYPE_REPO
+    end
+
+    autonumber 12
+    <-- CTRL : stationTypeList
+deactivate CTRL
+
+@enduml 

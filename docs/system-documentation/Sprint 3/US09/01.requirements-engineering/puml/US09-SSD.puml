@@ -1,0 +1,47 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+title System Sequence Diagram: US09 - Buy a Locomotive
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+Player -> System: asks to see available maps
+activate System
+System --> Player: shows list of available maps to play
+deactivate System
+Player -> System: selects a map
+activate System
+System --> Player: shows list of available scenarios to play
+deactivate System
+Player -> System : selects a scenario
+activate System
+
+System --> Player: loads and displays the selected map
+deactivate System
+
+deactivate System
+    Player -> System : asks to buy a locomotive
+    activate System
+
+        System --> Player : shows a list of available locomotives (for the scenario and current date)
+    deactivate System
+
+    Player -> System : selects a locomotive
+    activate System
+
+        System --> Player : shows locomotive details and requests confirmation
+    deactivate System
+
+    Player -> System : confirms purchase
+    activate System
+
+        System --> Player : displays operation success
+    deactivate System
+
+@enduml

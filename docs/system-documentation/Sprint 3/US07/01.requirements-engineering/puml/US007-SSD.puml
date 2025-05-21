@@ -1,0 +1,42 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram : US07 - List stations and view details
+
+actor "Player" as Player
+participant ":System" as ListStationUI
+
+activate Player
+Player -> ListStationUI: asks to see available maps
+activate ListStationUI
+ListStationUI --> Player: shows list of available maps to play
+deactivate ListStationUI
+Player -> ListStationUI: selects a map
+activate ListStationUI
+ListStationUI --> Player: shows list of available scenarios to play
+deactivate ListStationUI
+Player -> ListStationUI : selects a scenario
+activate ListStationUI
+
+ListStationUI --> Player: loads and displays the selected map
+deactivate ListStationUI
+
+
+Player -> ListStationUI : request to see available stations
+activate ListStationUI
+
+ListStationUI --> Player : displays list of available stations
+ListStationUI --> Player : requests to select a specific station
+deactivate ListStationUI
+
+Player -> ListStationUI : selects a specific station
+activate ListStationUI
+
+ListStationUI --> Player : show station details
+deactivate ListStationUI
+
+@enduml

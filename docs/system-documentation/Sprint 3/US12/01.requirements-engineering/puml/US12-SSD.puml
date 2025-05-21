@@ -1,0 +1,74 @@
+@startuml
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 5
+autonumber
+
+title System Sequence Diagram: US12 - Create a Simulator
+
+actor "Product Owner" as PO
+participant ":System" as System
+
+activate PO
+
+    PO -> System : asks to start a simulation (for testing the simulator)
+    activate System
+
+        System --> PO : shows details (map and scenario for the simulation) and asks confirmation
+    deactivate System
+
+    PO -> System : confirms simulation
+    activate System
+
+        System --> PO : display operation success (simulation started)
+    deactivate System
+
+    hnote right
+        simulator generates cargoes
+        at current stations automatically
+    end note
+
+    loop while simulation is running
+        alt user requests operation
+            PO -> System : asks for operation (buy locomotive, add railway line, etc.)
+            activate System
+
+                System --> PO : shows operation details and ask confirmation
+            deactivate System
+
+            PO -> System : confirms operation
+            activate System
+
+                System --> PO : displays operation success
+            deactivate System
+
+        else user pauses simulation
+            PO -> System : asks to pause the simulator
+            activate System
+
+                System --> PO : pauses simulation and waits for instructions to resume
+            deactivate System
+
+            PO -> System : asks to resume the simulation
+            activate System
+
+                System --> PO : resume simulation of the map and scenario
+            deactivate System
+
+        else user stops simulation
+            PO -> System : asks to stop the simulation
+            activate System
+
+                System --> PO : requests confirmation
+            deactivate System
+
+            PO -> System : confirms end of simulation
+            activate System
+
+        end
+    end
+
+        System --> PO : shows simulation results and creates a report
+    deactivate System
+
+@enduml

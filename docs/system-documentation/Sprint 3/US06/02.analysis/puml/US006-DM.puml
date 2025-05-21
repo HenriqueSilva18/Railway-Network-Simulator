@@ -1,0 +1,107 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model: US06 - Upgrade a selected station with a building
+
+class Player {
+  username
+  password
+  initialBudget
+  currentBudget
+  ownedLocomotives
+}
+
+class Map {
+  nameID
+  cityList
+  industryList
+}
+
+class Size {
+  width
+  height
+}
+
+class Station {
+  nameID
+  storageCapacity
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class StationType {
+  name
+  economicRadius
+  cost
+  centerPoint
+}
+
+class Cargo {
+   name
+   amount
+   lifespan
+   type
+   productionResources
+  }
+
+  class TrainSchedule {
+    expectedArrivalTime
+    expectedDepartureTime
+    actualArrivalTime
+    actualDepartureTime
+  }
+
+class Building {
+  nameID
+  type
+  availabilityYear
+  evolutionCost
+  evolutionStagesLeft
+  effect
+}
+
+class Scenario {
+  nameID
+  editor
+  startDate
+  endDate
+  tweakedCityList
+  availableIndustryList
+  availableLocomotives
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+
+Player "1" -- "1" Station : selects >
+Station "1" -- "*" Cargo : stores >
+Station "1" -- "*" Building : upgraded with >
+Building "1" -- "0..1" Building : evolves into >
+Station "*" -- "1" TrainSchedule: generates >
+Station "*" -- "1" StationType : defined by >
+StationType "1" -- "*" StationType : can change >
+Map "1" -- "1" Size: has
+Map "1" -- "*" Position : tracks >
+Scenario "*" -- "1" Map : uses >
+Player "1" -- "*" Scenario : plays >
+Scenario "1" -- "*" Station : configures
+Station "1" -- "1" Position : located at >
+
+
+@enduml
