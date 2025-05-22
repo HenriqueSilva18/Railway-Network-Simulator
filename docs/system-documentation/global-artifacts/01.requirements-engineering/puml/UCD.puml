@@ -10,6 +10,10 @@ rectangle "Railway Simulation System" {
     Editor -- (US02 - Add an Industry)
     Editor -- (US03 - Add a City)
     Editor -- (US04 - Create a Scenario)
+    Editor -- (US19 - Save a Map)
+    Editor -- (US20 - Load a Map)
+    Editor -- (US21 - Save a Scenario)
+    Editor -- (US22 - Load a Scenario)
 
     Player -- (US05 - Build a Station)
     Player -- (US06 - Upgrade a Station)
@@ -18,15 +22,22 @@ rectangle "Railway Simulation System" {
     Player -- (US09 - Buy a Locomotive)
     Player -- (US10 - Assign a Train to Route)
     Player -- (US11 - List Trains)
+    Player -- (US12 - Play a Game)
     Player -- (US13 - Verify Train Travel)
     Player -- (US14 - View Maintenance Route)
     Player -- (US15 - Analyze Station Profit)
     Player -- (US16 - Compare Passenger Arrivals)
     Player -- (US17 - Analyze Cargo Arrivals)
     Player -- (US18 - Analyze Distribution)
+    Player -- (US23 - Save a Simulation)
+    Player -- (US24 - Load a Simulation)
+    Player -- (US25 - View Financial Results)
+    Player -- (US27 - Get Shortest Route)
+    Player -- (US31 - Analyze Cargo Revenue)
 
-    PO -- (US12 - Create a Simulator)
-
-
+    PO -- (US26 - Analyze Algorithm Efficiency)
+    PO -- (US28 - Analyze Route Algorithm Efficiency)
+    PO -- (US29 - Run Variable-Size Tests)
+    PO -- (US30 - Obtain Best-Fitting Curve)
 }
 @enduml

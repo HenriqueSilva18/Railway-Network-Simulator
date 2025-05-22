@@ -50,7 +50,7 @@ Other software classes (i.e. Pure Fabrication) identified:
 
 ## 3.2. Sequence Diagram (SD)
 
-![US05-SD](svg/US05-SD.svg)
+![US05-SD](svg/US05-SD-split-Sequence_Diagram.svg)
 
 ## 3.3. Class Diagram (CD)
 

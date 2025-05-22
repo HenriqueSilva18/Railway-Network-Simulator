@@ -1,6 +1,4 @@
-# USXXX - YYY
-
-_XXX stands for User Story number and YYY for User Story description (e.g. US006 - Create a Task)_
+# US27 - Get Shortest Route
 
 [Requirements Engineering](01.requirements-engineering/USXXX-requirements.md)
 
