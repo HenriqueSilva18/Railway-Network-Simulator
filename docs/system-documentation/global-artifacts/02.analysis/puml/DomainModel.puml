@@ -15,8 +15,6 @@ hide methods
 class Player {
   username
   password
-  initialBudget
-  currentBudget
   ownedLocomotives
 }
 
@@ -49,6 +47,8 @@ class Scenario {
   editor
   startDate
   endDate
+  initialBudget
+  currentBudget
   tweakedCityList
   availableIndustryList
   availableLocomotives
@@ -57,6 +57,8 @@ class Scenario {
 class Simulator {
   status
   runTime
+  cargoEvents
+  transportEvents
   report
 }
 
@@ -105,6 +107,7 @@ class Cargo {
   amount
   lifespan
   type
+  pricePerUnit
   productionResources
 }
 
@@ -112,6 +115,7 @@ class Station {
   nameID
   storageCapacity
   buildingSlots
+  buildingList
   availableCargo
   requestedCargo
 }
@@ -141,9 +145,14 @@ class Building {
 
 class RailwayLine {
   length
-  trackType
+  placementPrice
+  maintenancePrice
+}
+
+class TrackType{
+  typeName
+  speedDegradation
   isElectrified
-  cost
 }
 
 class RailwayNetwork{
@@ -158,6 +167,7 @@ class Locomotive {
   power
   acceleration
   topSpeed
+  actualSpeed
   startYear
   fuelCost
   availabilityYear
@@ -167,21 +177,24 @@ class Locomotive {
 
 class Train {
   nameID
+  traveledKms
 }
 
 class Carriage {
   storageCapacity
+  speedDegradation
 }
 
 class Route {
   nameID
   stationSequence
+  stationList
   cargoList
 }
 
 ' Relationships
-Editor "1" -- "*" Map : creates >
-Editor "1" -- "*" Scenario : creates >
+Editor "1" -- "*" Map : creates/saves/loads >
+Editor "1" -- "*" Scenario : creates/saves/loads >
 Scenario "*" -- "1" Map : uses >
 Player "1" -- "*" Scenario : plays >
 Scenario "*" -- "1" Simulator : runs in >
@@ -199,7 +212,7 @@ RailwayLine "1" -- "2" Station : connects >
 Player "1" -- "*" Locomotive : buys >
 Train "1" -- "1" Locomotive : powered by >
 Train "1" -- "*" Carriage : composed of >
-Carriage "*" -- "1" Cargo : carries >
+Carriage "*" -- "1" Cargo : loads >
 Train "1" -- "*" Route : assigned to >
 Route "1" -- "*" Station : includes >
 Route "*" -- "*" Cargo : manages >
@@ -228,4 +241,5 @@ RailwayNetwork "1" -- "*" RailwayLine : contains >
 Simulator "1" -- "*" SimulationReport : generates >
 SimulationReport "*" -- "1" Scenario : reports a >
 SimulationReport "*" -- "1" Player : belongs to >
+RailwayLine "*" -- "1" TrackType: has
 @enduml
