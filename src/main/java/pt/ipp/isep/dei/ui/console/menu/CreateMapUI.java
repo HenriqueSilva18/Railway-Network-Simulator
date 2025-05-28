@@ -21,6 +21,8 @@ public class CreateMapUI implements Runnable {
             if (!Map.validateMapName(nameID)) {
                 System.out.println("\nError: Invalid map name. The name must:");
                 System.out.println("- Not be empty");
+                System.out.println("- Not have just an hyphen or underscore");
+                System.out.println("- Not finish with a hyphen or underscore");
                 System.out.println("- Contain only letters, numbers, underscores, and hyphens");
                 System.out.println("Please try again.\n");
             }

@@ -27,6 +27,21 @@ public class AddIndustryController {
         return industryRepository.getAvailableIndustries();
     }
 
+    public String validateIndustryName(String nameID) {
+        if (nameID == null || nameID.trim().isEmpty()) {
+            throw new IllegalArgumentException("Industry name cannot be empty");
+        }
+        if (!nameID.matches("^[a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*$")) {
+            throw new IllegalArgumentException("Industry name contains invalid characters or format");
+        }
+
+        if (isNameIDTaken(nameID)) {
+            throw new IllegalArgumentException("Industry name already exists");
+        }
+
+        return nameID;
+    }
+
     public boolean validateIndustry(String nameID, int x, int y) {
         if (nameID == null || nameID.isEmpty()) {
             return false;

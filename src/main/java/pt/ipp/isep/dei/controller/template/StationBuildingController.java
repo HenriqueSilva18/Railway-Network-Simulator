@@ -78,7 +78,7 @@ public class StationBuildingController {
         return currentMap.previewStationPlacement(stationType, position, centerPoint);
     }
 
-    public boolean buildStation(StationType stationType, Position position, String centerPoint) {
+    public boolean buildStation(String stationName, StationType stationType, Position position, String centerPoint) {
         Map currentMap = getCurrentMap();
         if (currentMap == null) {
             return false;
@@ -107,8 +107,6 @@ public class StationBuildingController {
             stationType.setCenterPoint(centerPoint);
         }
 
-        // Create station name
-        String stationName = closestCity.getNameID() + " " + stationType.getName();
 
         // Create station
         Station station = new Station(stationName, position, stationType);
@@ -137,4 +135,32 @@ public class StationBuildingController {
     private Map getCurrentMap() {
         return ApplicationSession.getInstance().getCurrentMap();
     }
+
+    public boolean isStationNameTaken(String name) {
+        Map currentMap = getCurrentMap();
+        if (currentMap == null) {
+            return false;
+        }
+
+        return currentMap.getStations().stream()
+                .anyMatch(station -> station.getNameID().equalsIgnoreCase(name));
+    }
+
+
+    public String validateStationName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Station name cannot be empty");
+        }
+
+        if (isStationNameTaken(name)) {
+            throw new IllegalArgumentException("Station name is already taken");
+        }
+
+        if (!name.matches("^[a-zA-Z0-9]+([ _-][a-zA-Z0-9]+)*$")) {
+            throw new IllegalArgumentException("Station name contains invalid characters or format");
+        }
+
+        return name;
+    }
+
 } 
