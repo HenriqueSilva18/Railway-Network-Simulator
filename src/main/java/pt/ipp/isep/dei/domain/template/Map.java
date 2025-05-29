@@ -35,9 +35,10 @@ public class Map {
         if (nameID == null || nameID.trim().isEmpty()) {
             return false;
         }
-        // Check if nameID is a valid file name
-        return nameID.matches("^[a-zA-Z0-9_-]+$");
+        // Deve começar e terminar com letra ou número, e só pode conter hífens ou underscores entre letras ou números
+        return nameID.matches("^[a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*$");
     }
+
 
     public static Map createMap(String nameID, Size size) {
         if (!validateMapName(nameID)) {

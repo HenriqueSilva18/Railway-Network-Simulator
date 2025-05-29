@@ -6,12 +6,15 @@ import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class StationBuildingUI implements Runnable {
     private final StationBuildingController controller;
+    private final Scanner scanner ;
 
     public StationBuildingUI() {
         this.controller = new StationBuildingController();
+        this.scanner = new Scanner(System.in);
     }
 
     @Override
@@ -72,7 +75,34 @@ public class StationBuildingUI implements Runnable {
             return;
         }
 
-        String stationName = closestCity.getNameID() + " " + selectedType.getName();
+        String baseName = closestCity.getNameID() + " " + selectedType.getName();
+        String stationName = baseName;
+
+        int count = 1;
+
+        while (controller.isStationNameTaken(stationName)) {
+            count++;
+            stationName = baseName + " " + count;
+        }
+
+        System.out.println("Suggested station name: \"" + stationName + "\"");
+        System.out.print("Do you want to use this name? (y/n): ");
+        String choice = scanner.nextLine().trim().toLowerCase();
+
+
+        if (!choice.equals("y") && !choice.equals("yes")) {
+            while (true) {
+                System.out.print("Enter custom station name: ");
+                String customName = scanner.nextLine();
+                try {
+                    stationName = controller.validateStationName(customName);
+                    break;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+        }
+
         System.out.println("\nStation Details:");
         System.out.println("Name: " + stationName);
         System.out.println("Type: " + selectedType.getName());
@@ -90,7 +120,7 @@ public class StationBuildingUI implements Runnable {
         }
 
         // Build station
-        if (controller.buildStation(selectedType, position, centerPoint)) {
+        if (controller.buildStation(stationName, selectedType, position, centerPoint)) {
             System.out.println("Station built successfully!");
             System.out.printf("New Budget: %.2f%n", 
                 ApplicationSession.getInstance().getCurrentPlayer().getCurrentBudget());

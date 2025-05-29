@@ -53,9 +53,19 @@ public class AddIndustryUI implements Runnable {
 
         Industry selectedIndustry = availableIndustries.get(choice - 1);
         System.out.println("\nEnter industry details:");
-        
-        System.out.print("Name ID: ");
-        String nameID = scanner.nextLine();
+
+        String nameID = null ;
+
+        while (true) {
+            System.out.print("Name ID: ");
+            String input = scanner.nextLine();
+            try {
+                nameID = controller.validateIndustryName(input);
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
 
         // Validate unique nameID
         while (controller.isNameIDTaken(nameID)) {

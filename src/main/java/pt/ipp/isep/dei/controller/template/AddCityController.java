@@ -29,9 +29,16 @@ public class AddCityController {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("City name cannot be empty");
         }
+
+        // Regex: começa e termina com letra ou número, hífens/underscores só são permitidos entre letras/números
+        if (!name.matches("^[a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*$")) {
+            throw new IllegalArgumentException("City name contains invalid characters or format");
+        }
+
         if (currentMap.getCities().stream().anyMatch(city -> city.getNameID().equals(name))) {
             throw new IllegalArgumentException("City name already exists");
         }
+
         return name;
     }
 
