@@ -1,0 +1,43 @@
+@startuml
+skinparam componentStyle rectangle
+
+'=== Backoffice components ===
+package "Backoffice" {
+  [Map Editor] as MapEd
+  [Scenario Editor] as ScnEd
+  [Data Model]    as DataModel
+  database "Database\n(SQL Storage)" as DB
+
+  interface "Map API" as IMap
+  interface "Scenario API" as IScn
+  interface "Persistence API" as IPersist
+
+  MapEd      --> IMap
+  ScnEd      --> IScn
+  DataModel  --> IPersist
+  IPersist   --> DB : SQL
+  IMap       --> DataModel
+  IScn       --> DataModel
+}
+
+'=== Simulation components ===
+package "Simulator" {
+  [Simulation Core]               as SimCore
+  [Route Manager\n(US13,US14,US27)] as RouteMgr
+  [Train Manager]                 as TrainMgr
+  [KPI & Stats Engine\n(US15–US18,US29–US31)] as StatsEng
+
+  SimCore   --> RouteMgr : pathfinding & maintenance
+  SimCore   --> TrainMgr : spawn & schedule
+  SimCore   --> StatsEng : analytics calls
+  SimCore   --> IMap      : load map
+  SimCore   --> IScn      : load scenario
+}
+
+'=== Shared library ===
+component "Rail Network Model\n(domain classes)" as DomainModel
+DataModel  --> DomainModel
+RouteMgr   --> DomainModel
+TrainMgr   --> DomainModel
+
+@enduml

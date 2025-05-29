@@ -4,7 +4,7 @@ import pt.ipp.isep.dei.mdisc.util.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.awt.Desktop;
+// import java.awt.Desktop;
 import java.io.File;
 
 import static pt.ipp.isep.dei.mdisc.util.FilesUtils.*;
