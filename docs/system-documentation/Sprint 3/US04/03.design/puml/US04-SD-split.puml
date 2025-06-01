@@ -1,5 +1,5 @@
 @startuml
-'skinparam monochrome true
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
@@ -7,144 +7,119 @@ autonumber
 
 'hide footbox
 actor "Editor" as EDITOR
+
 participant ":CreateScenarioUI" as UI
 participant ":CreateScenarioController" as CTRL
-participant "map\n:Map" as MAP
+participant ":MapDTO" as MAP_DTO
+participant ":ScenarioDTO" as DTO
 
 activate EDITOR
 
     EDITOR -> UI : asks to create a scenario
-    activate UI
-        UI --> CTRL** : create()
 
-        UI -> CTRL : getAvailableMaps()
+    activate UI
+
+        UI --> CTRL** : create()
+        UI -> CTRL : getListOfMaps()
+        ref over CTRL
+            Get MapDTO List
+        end ref
+
         activate CTRL
-            ref over CTRL
-                Get Available Maps
-            end ref
-            CTRL --> UI : mapList
+
+            CTRL --> UI : listMapDTO
         deactivate CTRL
 
         UI --> EDITOR : shows map list and asks to select one
     deactivate UI
 
-    EDITOR -> UI : selects map for the scenario
+    EDITOR -> UI : selects a map
     activate UI
 
-        UI -> CTRL : getMapByID(mapID)
-        activate CTRL
-                        ref over CTRL
-                            Get Map By ID
-                        end ref
-        CTRL -> UI : selectedMap
-        deactivate CTRL
-
-
-        UI --> EDITOR : requests name, start and end date (time period)
+        UI --> EDITOR : requests data (name, start date, end date)
     deactivate UI
 
     EDITOR -> UI : types requested data
     activate UI
-        UI -> CTRL : getMapIndustries(selectedMap)
+
+        UI -> DTO** : createScenarioDTO(name, start date, end date)
+
+        UI -> CTRL : getListOfLocomotiveTypes()
         activate CTRL
-            ref over CTRL
-                Get Map Industries List
-            end ref
-            CTRL --> UI : industryList
-        deactivate CTRL
-
-        UI --> EDITOR : shows list of industries in the map and asks to select the ones available
-    deactivate UI
-
-    EDITOR -> UI : selects the available industries in the scenario
-    activate UI
-
-        UI -> CTRL : getCargoList()
-        activate CTRL
-            ref over CTRL
-                Get Cargo List
-            end ref
-
-            CTRL --> UI : cargoList
-        deactivate CTRL
-
-        loop for each port (mixed industry) in selected industries
-            UI --> EDITOR : shows a list of cargoes and asks to select the ones the port imports
-            EDITOR -> UI : selects the cargoes the port imports
-            UI --> EDITOR : asks to select the ones the port exports
-            EDITOR -> UI : selects the cargoes the port exports
-            UI --> EDITOR : asks to select the cargoes the port produces
-            EDITOR -> UI : selects the cargoes the port produces
-        end
-
-        loop for each generating industry (primary) in selected industries
-            UI --> EDITOR : requests the generation frequency factor
-            EDITOR -> UI : types the generation frequency factor
-        end
-
-        UI -> CTRL : getMapCities(selectedMap)
-        activate CTRL
-            ref over CTRL
-                Get Map Cities List
-            end ref
-            CTRL --> UI : cityList
-        deactivate CTRL
-
-        loop for each city in selected map
-            UI --> EDITOR : requests the traffic rate for mail and passengers
-            EDITOR -> UI : types the traffic rate for mail and passengers
-        end
-
-        UI -> CTRL : getLocomotiveTypes()
-        activate CTRL
-            ref over CTRL
-                Get Locomotive Types List
-            end ref
-            CTRL --> UI : locomotiveTypeList
-        deactivate CTRL
-
-        UI --> EDITOR : shows a list of locomotive types and asks to select the available ones
-    deactivate UI
-
-    EDITOR -> UI : selects the available locomotive types
-    activate UI
-        UI --> EDITOR : shows all data and requests confirmation
-    deactivate UI
-
-    EDITOR -> UI : confirms data
-    activate UI
-        UI -> CTRL : createScenario(nameID, selectedMap, startDate, endDate,\n selectedIndustries, portImports, portExports, portProduces,\n genIndustryFactors, selectedLocomotiveTypes, mapCityList, cityTrafficRates)
-        activate CTRL
-
-        CTRL -> CTRL : getEditorFromSession
-        activate CTRL
-            ref over CTRL
-                Get Editor From Session
-            end ref
-        CTRL --> CTRL : editor
-        deactivate CTRL
 
                 ref over CTRL
-                    Get Available Locomotives
+                    Get Locomotive Type List
                 end ref
 
-
-            CTRL -> MAP : createScenario(nameID, editor, startDate, endDate,\n selectedIndustries, portImports, portExports, portProduces,\n genIndustryFactors, availableLocomotives, mapCityList, cityTrafficRates)
-            activate MAP
-                ref over MAP
-                    Create Scenario
-                end ref
-                MAP --> CTRL : scenario
-            deactivate MAP
-
-            ref over CTRL
-                Add Scenario to Editor
-            end ref
-
-            CTRL --> UI : scenario
+        CTRL -> UI : locomotiveTypeList
         deactivate CTRL
-        UI --> EDITOR : displays operation success
+
+        UI --> EDITOR : shows a list of locomotive types\nand asks to select the available ones
     deactivate UI
+
+    EDITOR -> UI : selects available locomotive types
+    activate UI
+
+        UI -> DTO : addLocomotiveTypes(locomotiveTypes)
+
+
+
+
+
+            UI -> MAP_DTO : getListOfIndustries(mapDTO)
+            activate MAP_DTO
+
+                ref over MAP_DTO
+                    Get IndustryDTO List
+                end ref
+
+            MAP_DTO -> UI : listIndustryDTO
+            deactivate MAP_DTO
+
+        UI -> EDITOR : shows list of industries\nand requests data (available industries, \n ports behavior, generation factors)
+        deactivate UI
+
+
+    EDITOR -> UI : types requested data
+    activate UI
+
+        UI -> DTO : addIndustries(industryList, portsBehavior, generationFactors)
+        activate DTO
+
+                ref over DTO
+                    Configure Industries
+                end ref
+
+        DTO -> UI : success
+        deactivate DTO
+
+        UI -> EDITOR : show all data and requests confirmation
+        deactivate UI
+
+
+        EDITOR -> UI : confirms data
+        activate UI
+
+            UI -> CTRL : CreateScenario(scenarioDTO)
+            activate CTRL
+
+                ref over CTRL
+                    Create Scenario Object
+                end ref
+
+                ref over CTRL
+                    Add Scenario to Map
+                end ref
+
+
+            CTRL -> UI : success
+            deactivate CTRL
+
+        UI -> EDITOR : displays operation success
+        deactivate UI
+
+
+
 
 deactivate EDITOR
 
