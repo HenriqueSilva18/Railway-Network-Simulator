@@ -29,6 +29,7 @@ class Map {
   nameID
   cityList
   industryList
+  scale
 }
 
 class Size {
@@ -57,10 +58,30 @@ class Scenario {
 class Simulator {
   status
   runTime
-  cargoEvents
-  transportEvents
   report
 }
+
+class CargoGenerationEvent {
+  eventID
+  timestamp
+  generatedCargo
+  amount
+  sourceIndustry
+  storageStation
+  requiredCargoList
+  status
+}
+
+class TransportationEvent {
+    eventID
+    timestamp
+    distance
+    status
+    revenue
+    expenses
+    completionTime
+}
+
 
 class SimulationReport {
     startDate
@@ -108,7 +129,7 @@ class Cargo {
   lifespan
   type
   pricePerUnit
-  productionResources
+  requiredCargoList
 }
 
 class Station {
@@ -128,8 +149,8 @@ class StationType {
 }
 
 class TrainSchedule {
-  expectedArrivalTime
-  expectedDepartureTime
+  calculatedArrivalTime
+  calculatedDepartureTime
   actualArrivalTime
   actualDepartureTime
 }
@@ -146,7 +167,7 @@ class Building {
 class RailwayLine {
   length
   placementPrice
-  maintenancePrice
+  maintenanceCostPerKm
 }
 
 class TrackType{
@@ -169,10 +190,13 @@ class Locomotive {
   topSpeed
   actualSpeed
   startYear
-  fuelCost
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
   availabilityYear
   acquisitionPrice
-  maintenancePrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor 
 }
 
 class Train {
@@ -181,16 +205,20 @@ class Train {
 }
 
 class Carriage {
+  carriageID
   storageCapacity
+  isFull
   speedDegradation
 }
 
 class Route {
   nameID
   stationSequence
-  stationList
-  cargoList
+  routePointList
+  cargoPickUpList
 }
+
+
 
 ' Relationships
 Editor "1" -- "*" Map : creates/saves/loads >
@@ -223,7 +251,6 @@ Scenario "1" -- "*" Station : configures >
 Route "1..*" -- "1..*" RailwayLine : contains >
 Building "1" -- "0..1" Building : evolves into >
 Player "1" -- "*" Route : defines >
-Simulator "1" --> "*" Cargo : generates >
 Scenario "1" -- "*" City : configures >
 City "1" -- "1" Position : located at >
 Industry "1" -- "1" Position : located at >
@@ -242,4 +269,12 @@ Simulator "1" -- "*" SimulationReport : generates >
 SimulationReport "*" -- "1" Scenario : reports a >
 SimulationReport "*" -- "1" Player : belongs to >
 RailwayLine "*" -- "1" TrackType: has
+Simulator "1" -- "*" CargoGenerationEvent : handles >
+CargoGenerationEvent "*" -- "1" Cargo : generates >
+Simulator "1" -- "*" TransportationEvent : handles >
+TransportationEvent "*" -- "1" Train : involves >
+TransportationEvent "*" -- "1" Station : starts/ends at >
+TransportationEvent "*" -- "*" Cargo : transports >
+TransportationEvent "*" -- "1" TrainSchedule : follows >
+
 @enduml
