@@ -15,57 +15,57 @@
                 <!-- Barra de Menu Estilizada -->
                 <MenuBar style="-fx-background-color: transparent; -fx-border-width: 0;">
                     <menus>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="📁 File">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="File">
                             <items>
-                                <MenuItem fx:id="selectMapScenarioMenuItem" mnemonicParsing="false" onAction="#handleSelectMapScenario" text="🗺️ Select Map and Scenario..." />
+                                <MenuItem fx:id="selectMapScenarioMenuItem" mnemonicParsing="false" onAction="#handleSelectMapScenario" text="Select Map and Scenario..." />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="saveGameMenuItem" mnemonicParsing="false" onAction="#handleSaveGame" text="💾 Save Game" />
-                                <MenuItem fx:id="loadGameMenuItem" mnemonicParsing="false" onAction="#handleLoadGame" text="📂 Load Game" />
+                                <MenuItem fx:id="saveGameMenuItem" mnemonicParsing="false" onAction="#handleSaveGame" text="Save Game" />
+                                <MenuItem fx:id="loadGameMenuItem" mnemonicParsing="false" onAction="#handleLoadGame" text="Load Game" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="logoutMenuItem" mnemonicParsing="false" onAction="#handleLogout" text="🚪 Logout" />
+                                <MenuItem fx:id="logoutMenuItem" mnemonicParsing="false" onAction="#handleLogout" text="Logout" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="🔧 Manage">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Manage">
                             <items>
-                                <MenuItem fx:id="buildStationMenuItem" mnemonicParsing="false" onAction="#handleBuildStation" text="🏗️ Build Station..." />
-                                <MenuItem fx:id="upgradeStationMenuItem" mnemonicParsing="false" onAction="#handleUpgradeStation" text="⬆️ Upgrade Station..." />
-                                <MenuItem fx:id="buildRailwayLineMenuItem" mnemonicParsing="false" onAction="#handleBuildRailwayLine" text="🛤️ Build Railway Line..." />
+                                <MenuItem fx:id="buildStationMenuItem" mnemonicParsing="false" onAction="#handleBuildStation" text="Build Station..." />
+                                <MenuItem fx:id="upgradeStationMenuItem" mnemonicParsing="false" onAction="#handleUpgradeStation" text="Upgrade Station..." />
+                                <MenuItem fx:id="buildRailwayLineMenuItem" mnemonicParsing="false" onAction="#handleBuildRailwayLine" text="Build Railway Line..." />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="buyLocomotiveMenuItem" mnemonicParsing="false" onAction="#handleBuyLocomotive" text="🚂 Buy Locomotive..." />
-                                <MenuItem fx:id="createRouteMenuItem" mnemonicParsing="false" onAction="#handleCreateRoute" text="🗺️ Create Route..." />
-                                <MenuItem fx:id="assignTrainMenuItem" mnemonicParsing="false" onAction="#handleAssignTrainToRoute" text="🔗 Assign Train to Route..." />
+                                <MenuItem fx:id="buyLocomotiveMenuItem" mnemonicParsing="false" onAction="#handleBuyLocomotive" text="Buy Locomotive..." />
+                                <MenuItem fx:id="createRouteMenuItem" mnemonicParsing="false" onAction="#handleCreateRoute" text="Create Route..." />
+                                <MenuItem fx:id="assignTrainMenuItem" mnemonicParsing="false" onAction="#handleAssignTrainToRoute" text="Assign Train to Route..." />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="👁️ View">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="View">
                             <items>
-                                <MenuItem fx:id="viewCurrentMapMenuItem" mnemonicParsing="false" onAction="#handleViewCurrentMap" text="🗺️ View Current Map" />
-                                <MenuItem fx:id="listStationsMenuItem" mnemonicParsing="false" onAction="#handleListStations" text="🏢 View Stations Details" />
-                                <MenuItem fx:id="listTrainsMenuItem" mnemonicParsing="false" onAction="#handleListTrains" text="🚆 View Trains" />
+                                <MenuItem fx:id="viewCurrentMapMenuItem" mnemonicParsing="false" onAction="#handleViewCurrentMap" text="View Current Map" />
+                                <MenuItem fx:id="listStationsMenuItem" mnemonicParsing="false" onAction="#handleListStations" text="View Stations Details" />
+                                <MenuItem fx:id="listTrainsMenuItem" mnemonicParsing="false" onAction="#handleListTrains" text="View Trains" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="viewConnectivityMenuItem" mnemonicParsing="false" onAction="#handleViewConnectivity" text="🔗 Check Network Connectivity..." />
-                                <MenuItem fx:id="viewMaintenanceRouteMenuItem" mnemonicParsing="false" onAction="#handleViewMaintenanceRoute" text="🔧 View Maintenance Route..." />
-                                <MenuItem fx:id="viewShortestRouteMenuItem" mnemonicParsing="false" onAction="#handleViewShortestRoute" text="📍 Find Shortest Route..." />
+                                <MenuItem fx:id="viewConnectivityMenuItem" mnemonicParsing="false" onAction="#handleViewConnectivity" text="Check Network Connectivity..." />
+                                <MenuItem fx:id="viewMaintenanceRouteMenuItem" mnemonicParsing="false" onAction="#handleViewMaintenanceRoute" text="View Maintenance Route..." />
+                                <MenuItem fx:id="viewShortestRouteMenuItem" mnemonicParsing="false" onAction="#handleViewShortestRoute" text="Find Shortest Route..." />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="viewFinancialResultsMenuItem" mnemonicParsing="false" onAction="#handleViewFinancialResults" text="💰 View Year Financial Results" />
+                                <MenuItem fx:id="viewFinancialResultsMenuItem" mnemonicParsing="false" onAction="#handleViewFinancialResults" text="View Year Financial Results" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="▶️ Simulator">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Simulator">
                             <items>
-                                <MenuItem fx:id="runPauseSimulatorMenuItem" mnemonicParsing="false" onAction="#handleRunPauseSimulator" text="⏯️ Play/Pause Simulator" />
+                                <MenuItem fx:id="runPauseSimulatorMenuItem" mnemonicParsing="false" onAction="#handleRunPauseSimulator" text="Play/Pause Simulator" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="📊 Statistics">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Statistics">
                             <items>
-                                <MenuItem fx:id="stationProfitAnalysisMenuItem" mnemonicParsing="false" onAction="#handleStationProfitAnalysis" text="💹 Station Profit Analysis..." />
-                                <MenuItem fx:id="passengerArrivalsAnalysisMenuItem" mnemonicParsing="false" onAction="#handlePassengerArrivalsAnalysis" text="👥 Passenger Arrivals Analysis..." />
-                                <MenuItem fx:id="cargoArrivalsAnalysisMenuItem" mnemonicParsing="false" onAction="#handleCargoArrivalsAnalysis" text="📦 Cargo Arrivals Analysis..." />
-                                <MenuItem fx:id="distributionAnalysisMenuItem" mnemonicParsing="false" onAction="#handleDistributionAnalysis" text="📈 Distribution Analysis..." />
-                                <MenuItem fx:id="cargoRevenueAnalysisMenuItem" mnemonicParsing="false" onAction="#handleCargoRevenueAnalysis" text="💰 Cargo Revenue Correlation..." />
+                                <MenuItem fx:id="stationProfitAnalysisMenuItem" mnemonicParsing="false" onAction="#handleStationProfitAnalysis" text="Station Profit Analysis..." />
+                                <MenuItem fx:id="passengerArrivalsAnalysisMenuItem" mnemonicParsing="false" onAction="#handlePassengerArrivalsAnalysis" text="Passenger Arrivals Analysis..." />
+                                <MenuItem fx:id="cargoArrivalsAnalysisMenuItem" mnemonicParsing="false" onAction="#handleCargoArrivalsAnalysis" text="Cargo Arrivals Analysis..." />
+                                <MenuItem fx:id="distributionAnalysisMenuItem" mnemonicParsing="false" onAction="#handleDistributionAnalysis" text="Distribution Analysis..." />
+                                <MenuItem fx:id="cargoRevenueAnalysisMenuItem" mnemonicParsing="false" onAction="#handleCargoRevenueAnalysis" text="Cargo Revenue Correlation..." />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="❓ Help">
+                        <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Help">
                             <items>
-                                <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#handleAbout" text="ℹ️ About" />
+                                <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#handleAbout" text="About" />
                             </items>
                         </Menu>
                     </menus>
@@ -77,7 +77,7 @@
                         <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                     </padding>
                     <children>
-                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="🚂 Railway Management System" />
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Railway Management System" />
                         <Pane HBox.hgrow="ALWAYS" />
                         <VBox alignment="CENTER_RIGHT" spacing="5.0">
                             <children>
@@ -100,8 +100,7 @@
                         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
                     </padding>
                     <children>
-                        <!-- Cards de Ações Principais -->
-                        <GridPane alignment="CENTER" hgap="20.0" prefHeight="400.0" prefWidth="1858.0" vgap="20.0">
+                        <GridPane alignment="CENTER" hgap="20.0" prefHeight="400.0" prefWidth="1858.0" vgap="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" prefWidth="300.0" />
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" prefWidth="300.0" />
@@ -111,91 +110,112 @@
                                 <RowConstraints minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
                             </rowConstraints>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
 
-                            <!-- Card 1: Manage Infrastructure -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <VBox fx:id="infrastructureCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                  onMouseClicked="#handleInfrastructureCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/worker.png"/>                                        </image>
+                                            <Image url="@../images/worker.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Manage Infrastructure" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Build stations, upgrade facilities, and expand your railway network" textAlignment="CENTER" wrapText="true" />
                                 </children>
                             </VBox>
 
-                            <!-- Card 2: Fleet Management -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <VBox fx:id="operationsCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  onMouseClicked="#handleOperationsCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/train1.png"/>                                        </image>
+                                            <Image url="@../images/train1.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Fleet Management" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Purchase locomotives, create routes, and manage train assignments" textAlignment="CENTER" wrapText="true" />
                                 </children>
                             </VBox>
 
-                            <!-- Card 3: Network Analysis -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <VBox fx:id="viewCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="0"
+                                  onMouseClicked="#handleViewCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/world_map.png"/>                                     </image>
+                                            <Image url="@../images/world_map.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Network Analysis" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="View maps, check connectivity, and find optimal routes" textAlignment="CENTER" wrapText="true" />
                                 </children>
                             </VBox>
 
-                            <!-- Card 4: Simulation Control -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <VBox fx:id="simulationCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                  onMouseClicked="#handleSimulationCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/start_pause.png"/>                                        </image>
+                                            <Image url="@../images/start_pause.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Simulation Control" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Start, pause, and control the railway simulation system" textAlignment="CENTER" wrapText="true" />
                                 </children>
                             </VBox>
 
-                            <!-- Card 5: Financial Reports -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <VBox fx:id="financialCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  onMouseClicked="#handleFinancialCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/bag_money.png"/>                                        </image>
+                                            <Image url="@../images/bag_money.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Financial Reports" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="View financial results and analyze business performance" textAlignment="CENTER" wrapText="true" />
                                 </children>
                             </VBox>
 
-                            <!-- Card 6: Statistics & Analytics -->
-                            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                                          -fx-background-radius: 15px;                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);                                          -fx-cursor: hand;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <VBox fx:id="statisticsCard" alignment="CENTER" spacing="10.0"
+                                  style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5); -fx-cursor: hand;"
+                                  GridPane.columnIndex="2" GridPane.rowIndex="1"
+                                  onMouseClicked="#handleStatisticsCardClick">
                                 <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
                                         <image>
-                                            <Image url="@../images/chart.png"/>                                        </image>
+                                            <Image url="@../images/chart.png"/>
+                                        </image>
                                     </ImageView>
                                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Statistics and Analytics" />
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Analyze performance metrics, passenger flows, and revenue data" textAlignment="CENTER" wrapText="true" />
@@ -233,7 +253,7 @@
                 <!-- Budget Section -->
                 <HBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-background-color: rgba(102, 126, 234, 0.1);                              -fx-background-radius: 20px;                              -fx-padding: 8px 15px;">
                     <children>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
                             <image>
                                 <Image url="@../images/bag_money.png"/>
                             </image>
@@ -248,7 +268,7 @@
                 <!-- Simulator Time Section -->
                 <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-background-color: rgba(118, 75, 162, 0.1);                              -fx-background-radius: 20px;                              -fx-padding: 8px 15px;">
                     <children>
-                        <ImageView fitHeight="36.0" fitWidth="36.0" preserveRatio="true">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
                             <image>
                                 <Image url="@../images/clock.png"/>                                        </image>
                         </ImageView>

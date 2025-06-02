@@ -4,19 +4,21 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import pt.ipp.isep.dei.application.session.ApplicationSession;
-// Substitua por a sua classe ApplicationSession ou equivalente
-// import pt.ipp.isep.dei.controller.template.ApplicationSession;
-// import pt.ipp.isep.dei.domain.template.Map; // Ou a sua classe de Map
-// import pt.ipp.isep.dei.domain.template.Player; // Ou a sua classe de Player
+import pt.ipp.isep.dei.controller.template.ApplicationSession;
+import pt.ipp.isep.dei.domain.template.Map;
+import pt.ipp.isep.dei.domain.template.Player;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,6 +29,7 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     private BorderPane playerMainPane;
 
+    // Main Menu Items
     @FXML
     private MenuItem selectMapScenarioMenuItem;
     @FXML
@@ -37,48 +40,46 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem logoutMenuItem;
 
     @FXML
-    private MenuItem buildStationMenuItem;
+    private MenuItem buildStationMenuItem; // Main menu
     @FXML
-    private MenuItem upgradeStationMenuItem;
+    private MenuItem upgradeStationMenuItem; // Main menu
     @FXML
-    private MenuItem buildRailwayLineMenuItem;
+    private MenuItem buildRailwayLineMenuItem; // Main menu
     @FXML
-    private MenuItem buyLocomotiveMenuItem;
+    private MenuItem buyLocomotiveMenuItem; // Main menu
     @FXML
-    private MenuItem createRouteMenuItem;
+    private MenuItem createRouteMenuItem; // Main menu
     @FXML
-    private MenuItem assignTrainMenuItem;
+    private MenuItem assignTrainMenuItem; // Main menu
 
     @FXML
-    private MenuItem viewCurrentMapMenuItem;
+    private MenuItem viewCurrentMapMenuItem; // Main menu
     @FXML
-    private MenuItem listStationsMenuItem;
+    private MenuItem listStationsMenuItem; // Main menu
     @FXML
-    private MenuItem listTrainsMenuItem;
+    private MenuItem listTrainsMenuItem; // Main menu
     @FXML
-    private MenuItem viewConnectivityMenuItem;
+    private MenuItem viewConnectivityMenuItem; // Main menu
     @FXML
-    private MenuItem viewMaintenanceRouteMenuItem;
+    private MenuItem viewMaintenanceRouteMenuItem; // Main menu
     @FXML
-    private MenuItem viewShortestRouteMenuItem;
+    private MenuItem viewShortestRouteMenuItem; // Main menu
     @FXML
-    private MenuItem viewFinancialResultsMenuItem;
-
-
-    @FXML
-    private MenuItem runPauseSimulatorMenuItem;
+    private MenuItem viewFinancialResultsMenuItem; // Main menu
 
     @FXML
-    private MenuItem stationProfitAnalysisMenuItem;
-    @FXML
-    private MenuItem passengerArrivalsAnalysisMenuItem;
-    @FXML
-    private MenuItem cargoArrivalsAnalysisMenuItem;
-    @FXML
-    private MenuItem distributionAnalysisMenuItem;
-    @FXML
-    private MenuItem cargoRevenueAnalysisMenuItem;
+    private MenuItem runPauseSimulatorMenuItem; // Main menu
 
+    @FXML
+    private MenuItem stationProfitAnalysisMenuItem; // Main menu
+    @FXML
+    private MenuItem passengerArrivalsAnalysisMenuItem; // Main menu
+    @FXML
+    private MenuItem cargoArrivalsAnalysisMenuItem; // Main menu
+    @FXML
+    private MenuItem distributionAnalysisMenuItem; // Main menu
+    @FXML
+    private MenuItem cargoRevenueAnalysisMenuItem; // Main menu
 
     @FXML
     private MenuItem aboutMenuItem;
@@ -91,46 +92,443 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     private Label simulatorTimeLabel;
 
-    // TODO: Descomentar e adaptar quando tiver a sua ApplicationSession
+    // Cards VBox elements from FXML
+    @FXML
+    private VBox infrastructureCard;
+    @FXML
+    private VBox operationsCard;
+    @FXML
+    private VBox viewCard;
+    @FXML
+    private VBox simulationCard; // Added for "Simulation Control" card
+    @FXML
+    private VBox financialCard;  // Added for "Financial Reports" card
+    @FXML
+    private VBox statisticsCard;
+
+
+    // Context Menu Items - Instance variables to hold references
+    // Infrastructure Card
+    private MenuItem cardBuildStationItem;
+    private MenuItem cardUpgradeStationItem;
+    private MenuItem cardBuildRailwayItem;
+
+    // Operations Card
+    private MenuItem cardBuyLocomotiveItem;
+    private MenuItem cardCreateRouteItem;
+    private MenuItem cardAssignTrainItem;
+    private MenuItem cardRunSimulatorItem;
+
+    // View Card
+    private MenuItem cardViewMapItem;
+    private MenuItem cardListStationsItem;
+    private MenuItem cardListTrainsItem;
+    private MenuItem cardViewConnectivityItem;
+    private MenuItem cardMaintenanceRouteItem;
+    private MenuItem cardShortestRouteItem;
+    private MenuItem cardFinancialResultsItem;
+
+    // Simulation Card (New - placeholders)
+    private MenuItem cardSimControlRunPauseItem;
+    private MenuItem cardSimAdvanceTimeItem;
+
+
+    // Financial Card (New - placeholders)
+    private MenuItem cardFinViewReportItem;
+    private MenuItem cardFinExportDataỊtem;
+
+
+    // Statistics Card
+    private MenuItem cardStationProfitItem;
+    private MenuItem cardPassengerArrivalsItem;
+    private MenuItem cardCargoArrivalsItem;
+    private MenuItem cardDistributionItem;
+    private MenuItem cardCargoRevenueItem;
+
+
     private ApplicationSession appSession = ApplicationSession.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Configurar estado inicial da UI
         updateBudgetDisplay();
-        updateSimulatorTimeDisplay("Paused"); // Estado inicial do simulador
-        updateMenuItemsState(); // Habilitar/desabilitar itens com base no estado (ex: mapa carregado)
+        updateSimulatorTimeDisplay("Paused");
 
+        setupCardContextMenus(); // This now includes simulation and financial cards
+        updateMenuItemsState();  // This updates both main menu and card context menus
     }
 
+    private void setupCardContextMenus() {
+        setupInfrastructureCardMenu();
+        setupOperationsCardMenu();
+        setupViewCardMenu();
+        setupSimulationCardMenu();   // New Call
+        setupFinancialCardMenu();    // New Call
+        setupStatisticsCardMenu();
+    }
+
+    // --- Handlers for FXML onMouseClicked (can be simple or delegate) ---
+
+    @FXML
+    void handleInfrastructureCardClick() {
+        System.out.println("Infrastructure card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    @FXML
+    void handleOperationsCardClick() {
+        System.out.println("Operations card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    @FXML
+    void handleViewCardClick() {
+        System.out.println("View card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    @FXML
+    void handleSimulationCardClick() { // NEWLY ADDED
+        System.out.println("Simulation Control card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    @FXML
+    void handleFinancialCardClick() { // NEWLY ADDED
+        System.out.println("Financial Reports card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    @FXML
+    void handleStatisticsCardClick() {
+        System.out.println("Statistics card clicked - context menu should show via setOnMouseClicked");
+    }
+
+    // --- Setup methods for each card's context menu ---
+
+    private void setupInfrastructureCardMenu() {
+        if (infrastructureCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            cardBuildStationItem = new MenuItem("Build Station");
+            cardBuildStationItem.setOnAction(this::handleBuildStation);
+
+            cardUpgradeStationItem = new MenuItem("Upgrade Station");
+            cardUpgradeStationItem.setOnAction(this::handleUpgradeStation);
+
+            cardBuildRailwayItem = new MenuItem("Build Railway Line");
+            cardBuildRailwayItem.setOnAction(this::handleBuildRailwayLine);
+
+            contextMenu.getItems().addAll(cardBuildStationItem, cardUpgradeStationItem,
+                    new SeparatorMenuItem(), cardBuildRailwayItem);
+
+            setupCardHoverEffect(infrastructureCard);
+            infrastructureCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(infrastructureCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+    private void setupOperationsCardMenu() {
+        if (operationsCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            cardBuyLocomotiveItem = new MenuItem("Buy Locomotive");
+            cardBuyLocomotiveItem.setOnAction(this::handleBuyLocomotive);
+
+            cardCreateRouteItem = new MenuItem("Create Route");
+            cardCreateRouteItem.setOnAction(this::handleCreateRoute);
+
+            cardAssignTrainItem = new MenuItem("Assign Train to Route");
+            cardAssignTrainItem.setOnAction(this::handleAssignTrainToRoute);
+
+            // Note: This item also exists on the main menu bar.
+            // And potentially on the new "Simulation Control" card.
+            // Ensure consistent behavior or specific actions as needed.
+            cardRunSimulatorItem = new MenuItem("Run/Pause Simulator (Ops)");
+            cardRunSimulatorItem.setOnAction(this::handleRunPauseSimulator);
+
+            contextMenu.getItems().addAll(cardBuyLocomotiveItem, cardCreateRouteItem, cardAssignTrainItem,
+                    new SeparatorMenuItem(), cardRunSimulatorItem);
+
+            setupCardHoverEffect(operationsCard);
+            operationsCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(operationsCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+    private void setupViewCardMenu() {
+        if (viewCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            cardViewMapItem = new MenuItem("View Current Map");
+            cardViewMapItem.setOnAction(this::handleViewCurrentMap);
+
+            cardListStationsItem = new MenuItem("List Stations");
+            cardListStationsItem.setOnAction(this::handleListStations);
+
+            cardListTrainsItem = new MenuItem("List Trains");
+            cardListTrainsItem.setOnAction(this::handleListTrains);
+
+            cardViewConnectivityItem = new MenuItem("Network Connectivity");
+            cardViewConnectivityItem.setOnAction(this::handleViewConnectivity);
+
+            cardMaintenanceRouteItem = new MenuItem("Maintenance Route");
+            cardMaintenanceRouteItem.setOnAction(this::handleViewMaintenanceRoute);
+
+            cardShortestRouteItem = new MenuItem("Shortest Route");
+            cardShortestRouteItem.setOnAction(this::handleViewShortestRoute);
+
+            // Note: This item also exists on the main menu bar.
+            // And potentially on the new "Financial Reports" card.
+            cardFinancialResultsItem = new MenuItem("Financial Results (View)");
+            cardFinancialResultsItem.setOnAction(this::handleViewFinancialResults);
+
+            contextMenu.getItems().addAll(
+                    cardViewMapItem, new SeparatorMenuItem(),
+                    cardListStationsItem, cardListTrainsItem, new SeparatorMenuItem(),
+                    cardViewConnectivityItem, cardMaintenanceRouteItem, cardShortestRouteItem,
+                    new SeparatorMenuItem(), cardFinancialResultsItem
+            );
+
+            setupCardHoverEffect(viewCard);
+            viewCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(viewCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+    /**
+     * Configura o menu de contexto para o card de Simulation Control (NOVO)
+     */
+    private void setupSimulationCardMenu() {
+        if (simulationCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            // Example: Reusing the main run/pause simulator action
+            cardSimControlRunPauseItem = new MenuItem("Run/Pause Simulation");
+            cardSimControlRunPauseItem.setOnAction(this::handleRunPauseSimulator); // Reuses main handler
+
+            cardSimAdvanceTimeItem = new MenuItem("Advance Time by 1 Step");
+            cardSimAdvanceTimeItem.setOnAction(event -> showAlert("Not Implemented", "Advance Time (US_SIM_X) not implemented."));
+
+            // Add more simulation-specific actions here
+            contextMenu.getItems().addAll(cardSimControlRunPauseItem, cardSimAdvanceTimeItem);
+
+            setupCardHoverEffect(simulationCard);
+            simulationCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(simulationCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+    /**
+     * Configura o menu de contexto para o card de Financial Reports (NOVO)
+     */
+    private void setupFinancialCardMenu() {
+        if (financialCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            // Example: Reusing the main financial results view action
+            cardFinViewReportItem = new MenuItem("View Annual Financial Report");
+            cardFinViewReportItem.setOnAction(this::handleViewFinancialResults); // Reuses main handler
+
+            cardFinExportDataỊtem = new MenuItem("Export Financial Data");
+            cardFinExportDataỊtem.setOnAction(event -> showAlert("Not Implemented", "Export Financial Data (US_FIN_X) not implemented."));
+
+
+            // Add more financial-specific actions here
+            contextMenu.getItems().addAll(cardFinViewReportItem, cardFinExportDataỊtem);
+
+            setupCardHoverEffect(financialCard);
+            financialCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(financialCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+
+    private void setupStatisticsCardMenu() {
+        if (statisticsCard != null) {
+            ContextMenu contextMenu = new ContextMenu();
+
+            cardStationProfitItem = new MenuItem("Station Profit Analysis");
+            cardStationProfitItem.setOnAction(this::handleStationProfitAnalysis);
+
+            cardPassengerArrivalsItem = new MenuItem("Passenger Arrivals Analysis");
+            cardPassengerArrivalsItem.setOnAction(this::handlePassengerArrivalsAnalysis);
+
+            cardCargoArrivalsItem = new MenuItem("Cargo Arrivals Analysis");
+            cardCargoArrivalsItem.setOnAction(this::handleCargoArrivalsAnalysis);
+
+            cardDistributionItem = new MenuItem("Distribution Analysis");
+            cardDistributionItem.setOnAction(this::handleDistributionAnalysis);
+
+            cardCargoRevenueItem = new MenuItem("Cargo Revenue Analysis");
+            cardCargoRevenueItem.setOnAction(this::handleCargoRevenueAnalysis);
+
+            contextMenu.getItems().addAll(cardStationProfitItem, cardPassengerArrivalsItem, cardCargoArrivalsItem,
+                    new SeparatorMenuItem(), cardDistributionItem, cardCargoRevenueItem);
+
+            setupCardHoverEffect(statisticsCard);
+            statisticsCard.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(statisticsCard, event.getScreenX(), event.getScreenY());
+                }
+            });
+        }
+    }
+
+    private ImageView createMenuIcon(String iconPath) {
+        try {
+            // Ensure the path is absolute from the classpath root
+            String correctedPath = iconPath.startsWith("/") ? iconPath : "/" + iconPath;
+            URL resourceUrl = getClass().getResource(correctedPath);
+            if (resourceUrl == null) {
+                System.err.println("Warning: Icon resource not found at " + correctedPath);
+                return null;
+            }
+            ImageView icon = new ImageView(new Image(resourceUrl.toExternalForm()));
+            icon.setFitWidth(16);
+            icon.setFitHeight(16);
+            icon.setPreserveRatio(true);
+            return icon;
+        } catch (Exception e) {
+            System.err.println("Error loading icon: " + iconPath + " - " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void setupCardHoverEffect(VBox card) {
+        if (card != null) {
+            String originalStyle = card.getStyle();
+            if (originalStyle == null) originalStyle = ""; // Ensure not null
+
+            final String finalOriginalStyle = originalStyle; // For use in lambda
+
+            card.setOnMouseEntered(event -> {
+                String hoverStyle = finalOriginalStyle +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8); " +
+                        "-fx-scale-x: 1.02; -fx-scale-y: 1.02;";
+                card.setStyle(hoverStyle);
+            });
+
+            card.setOnMouseExited(event -> {
+                card.setStyle(finalOriginalStyle);
+            });
+
+            card.setOnMousePressed(event -> {
+                String clickStyle = finalOriginalStyle +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 25, 0, 0, 10); " +
+                        "-fx-scale-x: 0.98; -fx-scale-y: 0.98;";
+                card.setStyle(clickStyle);
+            });
+
+            card.setOnMouseReleased(event -> {
+                if (card.isHover()) {
+                    String hoverStyle = finalOriginalStyle +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8); " +
+                            "-fx-scale-x: 1.02; -fx-scale-y: 1.02;";
+                    card.setStyle(hoverStyle);
+                } else {
+                    card.setStyle(finalOriginalStyle);
+                }
+            });
+        }
+    }
+
+    /**
+     * Updates the state of context menu items based on the current game state.
+     */
+    private void updateCardMenusState() {
+        // Assuming appSession.isMapLoaded() is the correct way to check
+        boolean mapLoaded = true;
+        // If appSession doesn't have isMapLoaded(), use a placeholder for now:
+        // boolean mapLoaded = false; // or true, for testing
+
+        // Infrastructure Card Items
+        if (cardBuildStationItem != null) cardBuildStationItem.setDisable(!mapLoaded);
+        if (cardUpgradeStationItem != null) cardUpgradeStationItem.setDisable(!mapLoaded);
+        if (cardBuildRailwayItem != null) cardBuildRailwayItem.setDisable(!mapLoaded);
+
+        // Operations Card Items
+        if (cardBuyLocomotiveItem != null) cardBuyLocomotiveItem.setDisable(!mapLoaded);
+        if (cardCreateRouteItem != null) cardCreateRouteItem.setDisable(!mapLoaded);
+        if (cardAssignTrainItem != null) cardAssignTrainItem.setDisable(!mapLoaded);
+        if (cardRunSimulatorItem != null) cardRunSimulatorItem.setDisable(!mapLoaded);
+
+        // View Card Items
+        if (cardViewMapItem != null) cardViewMapItem.setDisable(!mapLoaded);
+        if (cardListStationsItem != null) cardListStationsItem.setDisable(!mapLoaded);
+        if (cardListTrainsItem != null) cardListTrainsItem.setDisable(!mapLoaded);
+        if (cardViewConnectivityItem != null) cardViewConnectivityItem.setDisable(!mapLoaded);
+        if (cardMaintenanceRouteItem != null) cardMaintenanceRouteItem.setDisable(!mapLoaded);
+        if (cardShortestRouteItem != null) cardShortestRouteItem.setDisable(!mapLoaded);
+        if (cardFinancialResultsItem != null) cardFinancialResultsItem.setDisable(!mapLoaded);
+
+        // Simulation Card Items (NEW)
+        if (cardSimControlRunPauseItem != null) cardSimControlRunPauseItem.setDisable(!mapLoaded);
+        if (cardSimAdvanceTimeItem != null) cardSimAdvanceTimeItem.setDisable(!mapLoaded); // Or other conditions
+
+        // Financial Card Items (NEW)
+        if (cardFinViewReportItem != null) cardFinViewReportItem.setDisable(!mapLoaded);
+        if (cardFinExportDataỊtem != null) cardFinExportDataỊtem.setDisable(!mapLoaded); // Or other conditions
+
+
+        // Statistics Card Items - These might be always enabled or depend on other factors
+        // For now, let's assume they don't depend on mapLoaded, or if they do:
+        if (cardStationProfitItem != null) cardStationProfitItem.setDisable(!mapLoaded); // Example
+        if (cardPassengerArrivalsItem != null) cardPassengerArrivalsItem.setDisable(!mapLoaded); // Example
+        if (cardCargoArrivalsItem != null) cardCargoArrivalsItem.setDisable(!mapLoaded); // Example
+        if (cardDistributionItem != null) cardDistributionItem.setDisable(!mapLoaded); // Example
+        if (cardCargoRevenueItem != null) cardCargoRevenueItem.setDisable(!mapLoaded); // Example
+    }
+
+
     private void updateBudgetDisplay() {
-        // TODO: Obter o orçamento do jogador atual da ApplicationSession
-        // Player currentPlayer = appSession.getCurrentPlayer();
-        // if (currentPlayer != null) {
-        //    budgetLabel.setText(String.format("$%.2f", currentPlayer.getCurrentBudget()));
-        // } else {
-        //    budgetLabel.setText("N/A");
-        // }
-        budgetLabel.setText("$1,000,000.00"); // Placeholder
+        Player currentPlayer = appSession.getCurrentPlayer();
+        if (currentPlayer != null && appSession.getCurrentMap() != null) { // Check if map is also loaded
+            // Assuming budget is linked to a scenario which is part of a map context
+            budgetLabel.setText(String.format("$%.2f", currentPlayer.getCurrentBudget()));
+        } else {
+            budgetLabel.setText("N/A");
+        }
     }
 
     private void updateSimulatorTimeDisplay(String time) {
+        // TODO: Fetch actual simulator time/status from appSession or game state
+        // simulatorTimeLabel.setText(appSession.getSimulatorTime());
         simulatorTimeLabel.setText(time);
+
     }
 
     private void updateMenuItemsState() {
-        // TODO: Verificar se um mapa está carregado na ApplicationSession
-        // boolean mapLoaded = appSession.getCurrentMap() != null;
-        boolean mapLoaded = false; // Placeholder - assuma que nenhum mapa está carregado inicialmente
+        boolean mapLoaded = true;
+        // If appSession doesn't have isMapLoaded(), use a placeholder for now:
+        // boolean mapLoaded = false; // or true, for testing
 
-        // Itens que dependem de um mapa/cenário carregado
+        // File Menu
+        selectMapScenarioMenuItem.setDisable(mapLoaded); // Typically disable if a map is already loaded
+        loadGameMenuItem.setDisable(mapLoaded); // Similar logic might apply
         saveGameMenuItem.setDisable(!mapLoaded);
+
+        // Infrastructure Menu (Main Menu Bar)
         buildStationMenuItem.setDisable(!mapLoaded);
         upgradeStationMenuItem.setDisable(!mapLoaded);
         buildRailwayLineMenuItem.setDisable(!mapLoaded);
+
+        // Operations Menu (Main Menu Bar)
         buyLocomotiveMenuItem.setDisable(!mapLoaded);
         createRouteMenuItem.setDisable(!mapLoaded);
         assignTrainMenuItem.setDisable(!mapLoaded);
+        runPauseSimulatorMenuItem.setDisable(!mapLoaded);
+
+        // View Menu (Main Menu Bar)
         viewCurrentMapMenuItem.setDisable(!mapLoaded);
         listStationsMenuItem.setDisable(!mapLoaded);
         listTrainsMenuItem.setDisable(!mapLoaded);
@@ -138,226 +536,214 @@ public class PlayerMenuGUIController implements Initializable {
         viewMaintenanceRouteMenuItem.setDisable(!mapLoaded);
         viewShortestRouteMenuItem.setDisable(!mapLoaded);
         viewFinancialResultsMenuItem.setDisable(!mapLoaded);
-        runPauseSimulatorMenuItem.setDisable(!mapLoaded);
 
-        // As análises estatísticas podem ou não depender de um jogo ativo/mapa, ajuste conforme necessário
-        // Se usarem dados de um ficheiro CSV fixo como em US15-18, podem estar sempre habilitadas
-        // Se usarem dados do jogo atual, então:
-        // stationProfitAnalysisMenuItem.setDisable(!mapLoaded);
-        // passengerArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
-        // cargoArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
-        // distributionAnalysisMenuItem.setDisable(!mapLoaded);
-        // cargoRevenueAnalysisMenuItem.setDisable(!mapLoaded);
+        // Statistics Menu (Main Menu Bar) - Assuming these also depend on a map being loaded
+        stationProfitAnalysisMenuItem.setDisable(!mapLoaded);
+        passengerArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
+        cargoArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
+        distributionAnalysisMenuItem.setDisable(!mapLoaded);
+        cargoRevenueAnalysisMenuItem.setDisable(!mapLoaded);
 
+        // Update context menus for cards as well
+        updateCardMenusState();
     }
 
-
-    // --- Manipuladores de Ação do Menu "File" ---
+    // --- Main Menu Item Handlers ---
     @FXML
     void handleSelectMapScenario(ActionEvent event) {
         System.out.println("Select Map and Scenario clicked");
-        // TODO: Abrir um diálogo para o utilizador selecionar um mapa e cenário.
-        // Após a seleção, atualizar appSession e chamar updateMenuItemsState() e carregar visualização do mapa.
-        // Exemplo: loadView("/fxml/SelectMapScenarioDialog.fxml", "Select Map & Scenario");
-        // Se um mapa for carregado com sucesso:
-        // appSession.setCurrentMap(selectedMap); // Atualizar sessão
-        // updateMenuItemsState();
-        // loadMapVisualization(); // Método para mostrar o mapa em contentArea
-        showAlert("Not Implemented", "Select Map and Scenario functionality is not yet implemented.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectMapScenarioDialog.fxml"));
+            Parent dialogRoot = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Select Map & Scenario");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(((Stage) playerMainPane.getScene().getWindow()));
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+
+            // Show the dialog and wait for it to be closed
+            dialogStage.showAndWait();
+
+            // After the dialog is closed, check if a map was loaded
+            if (appSession.getCurrentMap() != null) {
+                System.out.println("Map and scenario selected. Updating UI.");
+                updateMenuItemsState();
+                updateBudgetDisplay();
+                loadMapVisualization(); // Display the map
+            } else {
+                System.out.println("No map and scenario selected or dialog cancelled.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error Loading Dialog", "Could not load the Select Map & Scenario dialog: " + e.getMessage());
+        }
     }
 
     @FXML
     void handleSaveGame(ActionEvent event) {
-        System.out.println("Save Game clicked"); //
-        // TODO: Implementar lógica para guardar o estado atual do jogo (US23)
+        System.out.println("Save Game clicked");
         showAlert("Not Implemented", "Save Game (US23) functionality is not yet implemented.");
     }
 
     @FXML
     void handleLoadGame(ActionEvent event) {
-        System.out.println("Load Game clicked"); //
-        // TODO: Implementar lógica para carregar um jogo guardado (US24)
-        // Após carregar, atualizar appSession, updateMenuItemsState() e a UI
+        System.out.println("Load Game clicked");
+        // TODO: Implement US24 - Load a saved game
+        // This should set mapLoaded to true and update UI
         showAlert("Not Implemented", "Load Game (US24) functionality is not yet implemented.");
+        // After successful load:
+        // appSession.setMapLoaded(true); // Or your equivalent logic
+        // updateMenuItemsState();
     }
 
     @FXML
     void handleLogout(ActionEvent event) {
         System.out.println("Logout clicked");
-        // TODO: Chamar o AuthenticationController para fazer logout
-        // authController.doLogout();
-        // Fechar esta janela e voltar ao ecrã de login
-        // Exemplo: ((Stage) playerMainPane.getScene().getWindow()).close();
-        // new LoginScreen().start(new Stage()); // Ou similar para mostrar o login
-        showAlert("Not Implemented", "Logout functionality is not yet implemented.");
         try {
-            Stage currentStage = (Stage) playerMainPane.getScene().getWindow();
-            // Assumindo que o FXML do login é LoginMenuGUI.fxml e está no mesmo path relativo
-            Parent loginRoot = FXMLLoader.load(getClass().getResource("/pt/ipp/isep/dei/ui/gui/fxml/LoginMenuGUI.fxml"));
-            Scene loginScene = new Scene(loginRoot);
-            currentStage.setScene(loginScene);
-            currentStage.setTitle("Login - Railway Management System");
-            currentStage.show();
+            switchMenusGUI(event, "loginmenu", "Railway App");
+            showAlert("Logout sucessfull", "You have successfully logged out of the Railway System Management.");
         } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Error", "Could not load the login screen.");
-        }
-    }
+            e.printStackTrace(); // Para debug
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not open main menu: " + e.getMessage());
+        }    }
 
-    // --- Manipuladores de Ação do Menu "Manage" ---
     @FXML
     void handleBuildStation(ActionEvent event) {
-        System.out.println("Build Station clicked"); // Referência a US05
-        // TODO: Abrir UI para construir estação (US05)
+        System.out.println("Build Station clicked");
         showAlert("Not Implemented", "Build Station (US05) functionality is not yet implemented.");
+        // loadViewToContentArea("/pt/ipp/isep/dei/ui/gui/fxml/us05_BuildStation.fxml");
     }
 
     @FXML
     void handleUpgradeStation(ActionEvent event) {
-        System.out.println("Upgrade Station clicked"); // Referência a US06
-        // TODO: Abrir UI para fazer upgrade de estação (US06)
+        System.out.println("Upgrade Station clicked");
         showAlert("Not Implemented", "Upgrade Station (US06) functionality is not yet implemented.");
     }
 
-
     @FXML
     void handleBuildRailwayLine(ActionEvent event) {
-        System.out.println("Build Railway Line clicked"); // Referência a US08
-        // TODO: Abrir UI para construir linha férrea (US08)
+        System.out.println("Build Railway Line clicked");
         showAlert("Not Implemented", "Build Railway Line (US08) functionality is not yet implemented.");
     }
 
     @FXML
     void handleBuyLocomotive(ActionEvent event) {
-        System.out.println("Buy Locomotive clicked"); // Referência a US09
-        // TODO: Abrir UI para comprar locomotiva (US09)
+        System.out.println("Buy Locomotive clicked");
         showAlert("Not Implemented", "Buy Locomotive (US09) functionality is not yet implemented.");
     }
 
     @FXML
     void handleCreateRoute(ActionEvent event) {
-        System.out.println("Create Route clicked"); // Referência a US10
-        // TODO: Abrir UI para criar rota (US10)
+        System.out.println("Create Route clicked");
         showAlert("Not Implemented", "Create Route (US10) functionality is not yet implemented.");
     }
 
     @FXML
     void handleAssignTrainToRoute(ActionEvent event) {
-        System.out.println("Assign Train to Route clicked"); // Referência a US10
-        // TODO: Abrir UI para atribuir comboio a rota (parte de US10)
+        System.out.println("Assign Train to Route clicked");
         showAlert("Not Implemented", "Assign Train to Route functionality is not yet implemented.");
     }
 
-    // --- Manipuladores de Ação do Menu "View" ---
     @FXML
     void handleViewCurrentMap(ActionEvent event) {
         System.out.println("View Current Map clicked");
-        // TODO: Carregar/atualizar a visualização do mapa no contentArea
-        Label mapLabel = new Label("Map visualization will be shown here.");
-        contentArea.getChildren().setAll(mapLabel); // Substitui conteúdo anterior
-        showAlert("Not Implemented", "View Current Map functionality is not yet implemented.");
+        if (appSession.getCurrentMap() != null) {
+            loadMapVisualization();
+        } else {
+            showAlert("No Map", "Please select a map and scenario first.");
+        }
     }
 
     @FXML
     void handleListStations(ActionEvent event) {
-        System.out.println("View Stations Details clicked"); // Referência a US07
-        // TODO: Mostrar detalhes das estações (US07), possivelmente numa nova janela/vista
+        System.out.println("View Stations Details clicked");
         showAlert("Not Implemented", "View Stations Details (US07) functionality is not yet implemented.");
+        // loadViewToContentArea("/pt/ipp/isep/dei/ui/gui/fxml/us07_ListStations.fxml");
     }
 
     @FXML
     void handleListTrains(ActionEvent event) {
-        System.out.println("View Trains clicked"); // Referência a US11
-        // TODO: Mostrar lista de comboios (US11)
+        System.out.println("View Trains clicked");
         showAlert("Not Implemented", "View Trains (US11) functionality is not yet implemented.");
     }
 
     @FXML
     void handleViewConnectivity(ActionEvent event) {
-        System.out.println("Check Network Connectivity clicked"); // Referência a US13
-        // TODO: Implementar UI para US13
+        System.out.println("Check Network Connectivity clicked");
         showAlert("Not Implemented", "Check Network Connectivity (US13) functionality is not yet implemented.");
     }
 
     @FXML
     void handleViewMaintenanceRoute(ActionEvent event) {
-        System.out.println("View Maintenance Route clicked"); // Referência a US14
-        // TODO: Implementar UI para US14
+        System.out.println("View Maintenance Route clicked");
         showAlert("Not Implemented", "View Maintenance Route (US14) functionality is not yet implemented.");
     }
 
     @FXML
     void handleViewShortestRoute(ActionEvent event) {
-        System.out.println("Find Shortest Route clicked"); // Referência a US27
-        // TODO: Implementar UI para US27
+        System.out.println("Find Shortest Route clicked");
         showAlert("Not Implemented", "Find Shortest Route (US27) functionality is not yet implemented.");
     }
 
     @FXML
     void handleViewFinancialResults(ActionEvent event) {
-        System.out.println("View Year Financial Results clicked"); // Referência a US25
-        // TODO: Implementar UI para US25
+        System.out.println("View Year Financial Results clicked");
         showAlert("Not Implemented", "View Year Financial Results (US25) functionality is not yet implemented.");
     }
 
+    private boolean isSimulatorRunning = false; // Basic state for toggle
 
-    // --- Manipuladores de Ação do Menu "Simulator" ---
     @FXML
     void handleRunPauseSimulator(ActionEvent event) {
-        System.out.println("Play/Pause Simulator clicked"); // Referência a US12
-        // TODO: Lógica para iniciar/pausar o simulador (US12)
-        // Atualizar o texto do simulatorTimeLabel e possivelmente o texto do menu item
-        showAlert("Not Implemented", "Play/Pause Simulator (US12) functionality is not yet implemented.");
+        isSimulatorRunning = !isSimulatorRunning; // Toggle state
+        String status = isSimulatorRunning ? "Running" : "Paused";
+        System.out.println("Play/Pause Simulator clicked. Status: " + status);
+        updateSimulatorTimeDisplay(status); // Update label
+        // TODO: Add actual simulator start/pause logic (US12)
+        showAlert("Simulator Control", "Simulator is now " + status + " (US12 - Basic Toggle).");
     }
 
-    // --- Manipuladores de Ação do Menu "Statistics" (Python/Jupyter Notebooks) ---
-    // Estas US (15-18, 31) são para serem desenvolvidas em Python/Jupyter.
-    // A integração pode ser abrir o ficheiro Jupyter Notebook ou exibir resultados pré-gerados.
+    // Statistics Handlers (Python/Jupyter tasks)
     @FXML
-    void handleStationProfitAnalysis(ActionEvent event) { // US15
+    void handleStationProfitAnalysis(ActionEvent event) {
         System.out.println("Station Profit Analysis clicked");
         showAlert("Python/Jupyter Task", "US15: Perform statistical analysis of average annual profit (Python).");
     }
 
     @FXML
-    void handlePassengerArrivalsAnalysis(ActionEvent event) { // US16
+    void handlePassengerArrivalsAnalysis(ActionEvent event) {
         System.out.println("Passenger Arrivals Analysis clicked");
         showAlert("Python/Jupyter Task", "US16: Perform comparative analysis of passenger arrivals (Python).");
     }
 
     @FXML
-    void handleCargoArrivalsAnalysis(ActionEvent event) { // US17
+    void handleCargoArrivalsAnalysis(ActionEvent event) {
         System.out.println("Cargo Arrivals Analysis clicked");
         showAlert("Python/Jupyter Task", "US17: Perform analysis of cargo arriving at each station (Python).");
     }
 
     @FXML
-    void handleDistributionAnalysis(ActionEvent event) { // US18
+    void handleDistributionAnalysis(ActionEvent event) {
         System.out.println("Train/Passenger/Mail Distribution clicked");
         showAlert("Python/Jupyter Task", "US18: Perform analysis of train, passenger, and mail distribution (Python).");
     }
+
     @FXML
-    void handleCargoRevenueAnalysis(ActionEvent event) { // US31
+    void handleCargoRevenueAnalysis(ActionEvent event) {
         System.out.println("Cargo Revenue Correlation clicked");
         showAlert("Python/Jupyter Task", "US31: Perform statistical analysis for cargo revenue correlation (Python).");
     }
 
-
-    // --- Manipuladores de Ação do Menu "Help" ---
     @FXML
     void handleAbout(ActionEvent event) {
         System.out.println("About clicked");
-        // TODO: Mostrar uma janela "Sobre" com informações da aplicação
         showAlert("About", "Railway Management System\nVersion: 1.0 (PI Sem2 2024-25)\nDeveloped by: Group 112");
     }
 
-
-    // --- Métodos Utilitários ---
-
-    /**
-     * Carrega uma nova vista (FXML) na área de conteúdo principal.
-     * @param fxmlPath Caminho para o ficheiro FXML.
-     */
+    // --- Utility Methods ---
     private void loadViewToContentArea(String fxmlPath) {
         try {
             Parent viewRoot = FXMLLoader.load(getClass().getResource(fxmlPath));
@@ -369,10 +755,26 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     /**
-     * Abre uma nova janela (Stage) como um diálogo modal.
-     * @param fxmlPath Caminho para o ficheiro FXML do diálogo.
-     * @param title Título da janela do diálogo.
+     * Carrega a visualização do mapa na área de conteúdo.
+     * TODO: Implementar a lógica real de visualização do mapa.
      */
+    private void loadMapVisualization() {
+        if (appSession.getCurrentMap() != null) {
+            // Placeholder: Just display the map name and some info
+            Map currentMap = appSession.getCurrentMap();
+            String mapInfo = String.format("Map: %s\nScenario: %s\n(Map visualization placeholder)",
+                    currentMap.getNameID(),
+                    appSession.getCurrentScenario() != null ? appSession.getCurrentScenario().getNameID() : "N/A");
+            Label mapLabel = new Label(mapInfo);
+            contentArea.getChildren().setAll(mapLabel);
+            System.out.println("Map visualization loaded for: " + currentMap.getNameID());
+        } else {
+            Label noMapLabel = new Label("No map selected. Please select a map and scenario via 'File > Select Map & Scenario'.");
+            contentArea.getChildren().setAll(noMapLabel);
+            System.out.println("No map to visualize.");
+        }
+    }
+
     private void openModalDialog(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -381,15 +783,11 @@ public class PlayerMenuGUIController implements Initializable {
             Stage dialogStage = new Stage();
             dialogStage.setTitle(title);
             dialogStage.initModality(Modality.WINDOW_MODAL);
-            // dialogStage.initOwner(((Stage) playerMainPane.getScene().getWindow())); // Define o proprietário se necessário
+            // dialogStage.initOwner(playerMainPane.getScene().getWindow()); // Set owner if needed
+
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
-
-            // Aqui você pode passar dados para o controlador do diálogo se necessário
-            // Exemplo: YourDialogController controller = loader.getController();
-            // controller.setData(...);
-
-            dialogStage.showAndWait(); // Mostra e espera que seja fechado
+            dialogStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -397,19 +795,77 @@ public class PlayerMenuGUIController implements Initializable {
         }
     }
 
-
     private void showAlert(String title, String message) {
-        // TODO: Usar um Alert do JavaFX em vez de System.out para melhor UI
-        // Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        // alert.setTitle(title);
-        // alert.setHeaderText(null);
-        // alert.setContentText(message);
-        // alert.showAndWait();
-        System.out.println("[" + title + "] " + message); // Placeholder
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        // System.out.println("[" + title + "] " + message); // Keep console log if desired
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+        alert.setHeaderText(null); // No header text
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null); // Removido header text para melhor aparência
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * Switch menus gui - VERSÃO CORRIGIDA
+     *
+     * @param event    the event
+     * @param fileName the file name
+     * @param menuName the menu name
+     * @throws IOException the io exception
+     */
+    public void switchMenusGUI(ActionEvent event, String fileName, String menuName) throws IOException {
+        String fxmlFileNameWithExtension = fileName + ".fxml";
+        String resourcePath = "/fxml/" + fxmlFileNameWithExtension;
+
+        URL fxmlUrl = getClass().getResource(resourcePath);
+
+        Parent newRoot = FXMLLoader.load(fxmlUrl);
+
+        // Get the current stage
+        Stage currentStage = (Stage) playerMainPane.getScene().getWindow();
+
+        // Criar nova Scene com as dimensões corretas
+        Scene newScene;
+
+        if (fileName.equals("loginmenu")) {
+            newScene = new Scene(newRoot); // A Scene tentará usar o tamanho preferido do newRoot
+            currentStage.setScene(newScene);
+            currentStage.setTitle(menuName);
+
+            // Redimensionar explicitamente o STAGE para a tela de login
+            currentStage.setWidth(450);    // Largura definida no FXML do Login
+            currentStage.setHeight(500);   // Altura definida no FXML do Login
+            currentStage.setMinWidth(450);
+            currentStage.setMinHeight(500);
+            currentStage.setMaximized(false);
+            currentStage.setResizable(false);
+
+        } else {
+            newScene = new Scene(newRoot, 1920, 1080);
+
+            currentStage.setMinWidth(1000);
+            currentStage.setMinHeight(700);
+        }
+
+        // Definir o título
+        currentStage.setTitle(menuName);
+
+        // Definir a nova Scene
+        currentStage.setScene(newScene);
+
+        // Tornar a janela redimensionável
+        currentStage.setResizable(true);
+
+        // Mostrar a janela
+        currentStage.show();
+
+        System.out.println("Navegação para '" + menuName + "' concluída com sucesso.");
     }
 }
