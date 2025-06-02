@@ -10,7 +10,7 @@
 <BorderPane fx:id="root" prefHeight="500.0" prefWidth="450.0" style="-fx-background-color: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.LoginMenuGUIController">
 
     <center>
-        <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                       -fx-background-radius: 20px;                       -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 5);" BorderPane.alignment="CENTER">
+        <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: rgba(255, 255, 255, 0.95);                       -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 5);" BorderPane.alignment="CENTER">
             <children>
                 <!-- Header Section -->
                 <VBox alignment="CENTER" spacing="5.0">
@@ -32,12 +32,58 @@
                         </VBox>
 
                         <!-- Password Field Container -->
-                        <VBox maxWidth="280.0" spacing="8.0">
+                        <VBox spacing="8.0" maxWidth="280.0">
                             <children>
-                                <Label style="-fx-font-size: 12px;                                                -fx-font-weight: bold;                                                -fx-text-fill: #34495e;                                               -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" text="Password" />
-                                <PasswordField fx:id="passwordField" promptText="Enter your password" style="-fx-background-color: #f8f9fa;                                                      -fx-border-color: #e9ecef;                                                      -fx-border-radius: 8px;                                                      -fx-background-radius: 8px;                                                      -fx-border-width: 1.5px;                                                      -fx-padding: 12px 16px;                                                      -fx-font-size: 14px;                                                      -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" />
+                                <Label text="Password"
+                                       style="-fx-font-size: 12px;
+                                              -fx-font-weight: bold;
+                                              -fx-text-fill: #34495e;
+                                              -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" />
+                                <StackPane>
+                                    <children>
+                                        <PasswordField fx:id="passwordField"
+                                                       promptText="Enter your password"
+                                                       style="-fx-background-color: #f8f9fa;
+                                                             -fx-border-color: #e9ecef;
+                                                             -fx-border-radius: 8px;
+                                                             -fx-background-radius: 8px;
+                                                             -fx-border-width: 1.5px;
+                                                             -fx-padding: 12px 45px 12px 16px;
+                                                             -fx-font-size: 14px;
+                                                             -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" />
+                                        <TextField fx:id="passwordTextField"
+                                                   promptText="Enter your password"
+                                                   visible="false"
+                                                   style="-fx-background-color: #f8f9fa;
+                                                         -fx-border-color: #e9ecef;
+                                                         -fx-border-radius: 8px;
+                                                         -fx-background-radius: 8px;
+                                                         -fx-border-width: 1.5px;
+                                                         -fx-padding: 12px 45px 12px 16px;
+                                                         -fx-font-size: 14px;
+                                                         -fx-font-family: 'Segoe UI', 'Arial', sans-serif;
+                                                         -fx-text-fill: #2c3e50;" />
+                                        <Button fx:id="showPasswordButton"
+                                                text="👁"
+                                                onAction="#togglePasswordVisibility"
+                                                StackPane.alignment="CENTER_RIGHT"
+                                                style="-fx-background-color: transparent;
+                                                      -fx-border-color: transparent;
+                                                      -fx-font-size: 16px;
+                                                      -fx-cursor: hand;
+                                                      -fx-padding: 8px 12px;
+                                                      -fx-background-radius: 4px;"
+                                                onMouseEntered="#onPasswordButtonHover"
+                                                onMouseExited="#onPasswordButtonExit">
+                                            <StackPane.margin>
+                                                <Insets right="8.0" />
+                                            </StackPane.margin>
+                                        </Button>
+                                    </children>
+                                </StackPane>
                             </children>
                         </VBox>
+
 
                         <!-- Login Button -->
                         <Button fx:id="loginButton" maxWidth="280.0" onAction="#handleLoginButton" prefHeight="45.0" style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2);                                       -fx-text-fill: white;                                       -fx-font-size: 16px;                                       -fx-font-weight: bold;                                       -fx-background-radius: 8px;                                       -fx-border-radius: 8px;                                       -fx-cursor: hand;                                       -fx-font-family: 'Segoe UI', 'Arial', sans-serif;                                       -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.4), 8, 0, 0, 2);" text="Sign In" />

@@ -1,0 +1,45 @@
+package pt.ipp.isep.dei.ui.gui.controller;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.EventObject;
+import java.util.ResourceBundle;
+
+public class SwitchMenuGUI implements Initializable {
+
+    public void switchMenusGUI(ActionEvent event, String fileName, String menuName) throws IOException
+
+    {
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/fxml/" + fileName + ".fxml"));
+
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        Scene newScene;
+        if (fileName.equals("playermenu")) {
+            // O PlayerMenuGUI.fxml foi definido com prefWidth="1000" prefHeight="700"
+            newScene = new Scene(newRoot, 1000, 700);
+        } else if (fileName.equals("VFMMenu") || fileName.equals("MyAgenda")) { // Seus outros casos
+            newScene = new Scene(newRoot, 900, 600);
+        } else {
+            // Para outros menus, pode usar um tamanho default ou deixar o FXML ditar.
+            // Se o FXML tiver prefWidth/prefHeight definidos, new Scene(newRoot) usá-los-á.
+            newScene = new Scene(newRoot); // Cria a cena com o tamanho preferido do FXML
+        }
+        currentStage.setScene(newScene);
+        currentStage.setTitle(menuName); // O título já inclui "Menu"
+        currentStage.centerOnScreen(); // Opcional: recentralizar a janela
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    }
+}

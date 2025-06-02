@@ -13,9 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.application.controller.authorization.AuthenticationController;
 
-
 import java.io.IOException;
-import java.util.List;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 /**
@@ -47,28 +46,36 @@ public class LoginMenuGUIController {
     @FXML
     private Button exitButton;
 
+    @FXML
+    private TextField passwordTextField;
+    @FXML
+    private Button showPasswordButton;
+
+    private boolean isPasswordVisible = false;
+
     private final AuthenticationController controller = new AuthenticationController();
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.-]+@[\\w.-]+$");
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z].*[A-Z].*[A-Z])(?=.*\\d.*\\d)[A-Za-z\\d!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]{7,}$");
 
     private boolean doLogin() {
         String id = emailField.getText();
-        String pwd = passwordField.getText();
+        String pwd = getCurrentPassword();
 
         if (!isValidEmail(id)) {
             showAlert(Alert.AlertType.ERROR, "Login Error", "Invalid Email format.");
             return false;
         }
 
-        if (!isValidPassword(pwd)) {
-            showAlert(Alert.AlertType.ERROR, "Login Error", "The password must have at least seven alphanumeric characters, including three capital letters and two digits.");
-            return false;
-        }
         boolean success = controller.doLogin(id, pwd);
+
         if (!success) {
             showAlert(Alert.AlertType.ERROR, "Login Error", "Invalid credentials.");
+            passwordField.clear();
+            if (passwordTextField != null && isPasswordVisible) {
+                passwordTextField.clear();
+            }
         }
+
         return success;
     }
 
@@ -76,15 +83,16 @@ public class LoginMenuGUIController {
     private void handleLoginButton(ActionEvent event) {
         if (doLogin()) {
             try {
-                switchMenusGUI(event, "mainMenu", "Main");
+                switchMenusGUI(event, "playermenu", "Player Menu");
             } catch (IOException e) {
-                showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not open main menu.");
+                e.printStackTrace(); // Para debug
+                showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not open main menu: " + e.getMessage());
             }
         }
     }
 
     /**
-     * Switch menus gui.
+     * Switch menus gui - VERSÃO CORRIGIDA
      *
      * @param event    the event
      * @param fileName the file name
@@ -92,18 +100,55 @@ public class LoginMenuGUIController {
      * @throws IOException the io exception
      */
     public void switchMenusGUI(ActionEvent event, String fileName, String menuName) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/fxml/" + fileName + ".fxml"));
+        String fxmlFileNameWithExtension = fileName + ".fxml";
+        String resourcePath = "/fxml/" + fxmlFileNameWithExtension;
+
+        URL fxmlUrl = getClass().getResource(resourcePath);
+
+        Parent newRoot = FXMLLoader.load(fxmlUrl);
+
         // Get the current stage
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        if (fileName.equals("VFMMenu") || fileName.equals("MyAgenda")){
-            stage.setScene(new Scene(root, 900, 600));
-        }else{
-            stage.setScene(new Scene(root, 400, 400));
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        // Criar nova Scene com as dimensões corretas
+        Scene newScene;
+
+        if (fileName.equals("playermenu")) {
+            // Player menu - criar scene com tamanho base
+            newScene = new Scene(newRoot, 1920, 1080);
+
+            // Definir tamanho mínimo
+            currentStage.setMinWidth(1000);
+            currentStage.setMinHeight(700);
+
+
+        } else if (fileName.equals("VFMMenu") || fileName.equals("MyAgenda")) {
+            newScene = new Scene(newRoot, 900, 600);
+            currentStage.setMinWidth(800);
+            currentStage.setMinHeight(500);
+            currentStage.setMaximized(false); // Não maximizar estas janelas
+
+        } else {
+            // Janelas menores (login, etc.)
+            newScene = new Scene(newRoot, 400, 400);
+            currentStage.setMinWidth(400);
+            currentStage.setMinHeight(400);
+            currentStage.setMaximized(false); // Não maximizar login
         }
 
-        stage.setTitle(menuName + " Menu");
-        // Set the new scene or update the current scene with the new root
-        stage.getScene().setRoot(root);
+        // Definir o título
+        currentStage.setTitle(menuName);
+
+        // Definir a nova Scene
+        currentStage.setScene(newScene);
+
+        // Tornar a janela redimensionável
+        currentStage.setResizable(true);
+
+        // Mostrar a janela
+        currentStage.show();
+
+        System.out.println("Navegação para '" + menuName + "' concluída com sucesso.");
     }
 
     /**
@@ -117,17 +162,61 @@ public class LoginMenuGUIController {
     }
 
     private boolean isValidEmail(String email) {
-        return EMAIL_PATTERN.matcher(email).matches();
-    }
-
-    private boolean isValidPassword(String password) {
-        return PASSWORD_PATTERN.matcher(password).matches();
+        return email != null && !email.trim().isEmpty() && EMAIL_PATTERN.matcher(email).matches();
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
-        alert.setHeaderText(message);
+        alert.setHeaderText(null); // Removido header text para melhor aparência
+        alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Esconder password
+            passwordField.setText(passwordTextField.getText());
+            passwordField.setVisible(true);
+            passwordTextField.setVisible(false);
+            showPasswordButton.setText("👁");
+            isPasswordVisible = false;
+
+            // Manter o foco no campo de password
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        } else {
+            // Mostrar password
+            passwordTextField.setText(passwordField.getText());
+            passwordField.setVisible(false);
+            passwordTextField.setVisible(true);
+            showPasswordButton.setText("🙈");
+            isPasswordVisible = true;
+
+            // Manter o foco no campo de texto
+            passwordTextField.requestFocus();
+            passwordTextField.positionCaret(passwordTextField.getText().length());
+        }
+    }
+
+    @FXML
+    private void onPasswordButtonHover() {
+        showPasswordButton.setStyle(showPasswordButton.getStyle() +
+                "-fx-background-color: rgba(0,0,0,0.1);");
+    }
+
+    @FXML
+    private void onPasswordButtonExit() {
+        String currentStyle = showPasswordButton.getStyle();
+        if (currentStyle.contains("-fx-background-color: rgba(0,0,0,0.1);")) {
+            showPasswordButton.setStyle(currentStyle.replace(
+                    "-fx-background-color: rgba(0,0,0,0.1);", ""));
+        }
+    }
+
+    // Método para obter a password atual
+    private String getCurrentPassword() {
+        return isPasswordVisible ? passwordTextField.getText() : passwordField.getText();
     }
 }
