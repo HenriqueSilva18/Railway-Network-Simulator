@@ -9,6 +9,8 @@ import pt.ipp.isep.dei.domain.template.Station;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewScenarioLayoutController {
     // ANSI color codes
@@ -125,7 +127,7 @@ public class ViewScenarioLayoutController {
         layout.append("Map: ").append(map.getNameID()).append("\n");
         if (scenario != null) {
             layout.append("Scenario: ").append(scenario.getNameID()).append("\n");
-            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("MMM yyyy");
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("MMM dd, yyyy");
             String startDate = dateFormat.format(scenario.getStartDate());
             String endDate = dateFormat.format(scenario.getEndDate());
             layout.append("Period: ").append(startDate).append(" - ").append(endDate).append("\n");
@@ -141,16 +143,12 @@ public class ViewScenarioLayoutController {
 
         // Map content - build each row carefully for JavaFX parsing
         for (int y = 0; y < map.getSize().getHeight(); y++) {
-            // Build the map row with proper spacing
+            // Use a list and String.join for robust row creation
+            List<String> symbols = new ArrayList<>();
             for (int x = 0; x < map.getSize().getWidth(); x++) {
-                String symbol = getCellSymbol(map, x, y, false);
-                layout.append(symbol);
-
-                // Add space after each symbol except the last one in the row
-                if (x < map.getSize().getWidth() - 1) {
-                    layout.append(" ");
-                }
+                symbols.add(getCellSymbol(map, x, y, false));
             }
+            layout.append(String.join(" ", symbols));
 
             // Add row information if available
             String info = getRowInfo(map, y, scenario);

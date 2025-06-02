@@ -6,66 +6,66 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.TextFlow; // Import adicionado
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.MapController;
 import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
-import pt.ipp.isep.dei.domain.template.Map;
-import pt.ipp.isep.dei.domain.template.Player;
-import pt.ipp.isep.dei.domain.template.Scenario;
+import pt.ipp.isep.dei.domain.template.*; // Import para City, Industry, etc.
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import java.util.Set;
+import java.util.HashSet;
 
 public class SelectMapScenarioDialogController {
 
+    // ... (variáveis @FXML existentes) ...
     @FXML
     private ChoiceBox<String> mapChoiceBox;
-
     @FXML
     private ChoiceBox<String> scenarioChoiceBox;
-
     @FXML
     private Button confirmButton;
-
     @FXML
     private Button cancelButton;
-
     @FXML
     private Label messageLabel;
-
     @FXML
-    private TextFlow mapPreviewArea;
+    private GridPane mapGridPane;
+    @FXML
+    private Label mapNameLabel;
+    @FXML
+    private Label scenarioNameLabel;
+    @FXML
+    private Label periodLabel;
+    @FXML
+    private Label sizeLabel;
+
+    // --- NOVO ELEMENTO FXML PARA A LEGENDA ---
+    @FXML
+    private TextFlow legendTextFlow;
 
     private MapController mapController;
     private ViewScenarioLayoutController layoutController;
     private ApplicationSession appSession;
     private List<Map> availableMaps;
-    private LinkedHashMap<String, String> scenarioDisplayMap; // To store display name -> scenario ID
+    private LinkedHashMap<String, String> scenarioDisplayMap;
 
     public void initialize() {
         mapController = new MapController();
         layoutController = new ViewScenarioLayoutController();
         appSession = ApplicationSession.getInstance();
 
-        // Initialize mapPreviewArea with default text
-        if (mapPreviewArea != null) {
-            Text defaultText = new Text("Select a map to view preview...");
-            mapPreviewArea.getChildren().add(defaultText);
-
-            // Set monospace font for better text alignment
-            mapPreviewArea.setStyle("-fx-font-family: 'Courier New'; -fx-font-size: 12px;");
-        } else {
-            System.err.println("Warning: mapPreviewArea not injected by FXML loader!");
-        }
-
+        clearPreview();
+        buildLegend(); // Constrói a legenda colorida no início
         loadMaps();
 
         mapChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldMapName, newMapName) -> {
@@ -76,14 +76,14 @@ public class SelectMapScenarioDialogController {
                         .orElse(null);
                 if (selectedMap != null) {
                     loadScenarios(selectedMap);
-                    updateMapPreview(selectedMap, null); // Show map without scenario initially
+                    // Alteração: Passa null para o nome do cenário
+                    updateMapPreview(selectedMap, null, null);
                 }
             } else {
                 scenarioChoiceBox.getItems().clear();
                 scenarioChoiceBox.setDisable(true);
                 confirmButton.setDisable(true);
-                Text defaultText = new Text("Select a map to view preview...");
-                mapPreviewArea.getChildren().setAll(defaultText);
+                clearPreview();
             }
         });
 
@@ -99,7 +99,8 @@ public class SelectMapScenarioDialogController {
                 if (selectedMap != null) {
                     String scenarioId = scenarioDisplayMap.get(newScenario);
                     Scenario scenario = mapController.getScenario(scenarioId);
-                    updateMapPreview(selectedMap, scenario);
+                    // Alteração: Passa o nome do cenário (newScenario) para a pré-visualização
+                    updateMapPreview(selectedMap, scenario, newScenario);
                 }
             }
         });
@@ -109,123 +110,147 @@ public class SelectMapScenarioDialogController {
         messageLabel.setText("");
     }
 
-    private void updateMapPreview(Map map, Scenario scenario) {
-        if (mapPreviewArea == null) {
-            System.err.println("Error: mapPreviewArea is null!");
+    // --- NOVO MÉTODO PARA CONSTRUIR A LEGENDA ---
+    private void buildLegend() {
+        if (legendTextFlow == null) return;
+        legendTextFlow.getChildren().clear();
+
+        Text cSymbol = new Text("C");
+        cSymbol.setFill(Color.RED);
+        cSymbol.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+        Text cText = new Text("-Cidade   ");
+        cText.setFont(Font.font("System", 12));
+
+        Text iSymbol = new Text("I");
+        iSymbol.setFill(Color.BLUE);
+        iSymbol.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+        Text iText = new Text("-Indústria   ");
+        iText.setFont(Font.font("System", 12));
+
+        Text sSymbol = new Text("S");
+        sSymbol.setFill(Color.GREEN);
+        sSymbol.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+        Text sText = new Text("-Estação");
+        sText.setFont(Font.font("System", 12));
+
+        legendTextFlow.getChildren().addAll(cSymbol, cText, iSymbol, iText, sSymbol, sText);
+    }
+
+
+    // --- MÉTODO ATUALIZADO para receber o nome do cenário ---
+    private void updateMapPreview(Map map, Scenario scenario, String scenarioDisplayName) {
+        clearPreview();
+        if (map == null) return;
+
+        ViewScenarioLayoutController.MapLayoutData layoutData = layoutController.getMapLayoutData(map, scenario);
+        if (layoutData == null) {
+            mapNameLabel.setText("Erro ao renderizar os dados do mapa.");
             return;
         }
 
-        mapPreviewArea.getChildren().clear();
+        mapNameLabel.setText("Mapa: " + layoutData.mapName);
+        sizeLabel.setText("Tamanho: " + layoutData.width + "x" + layoutData.height);
 
-        // Set monospace font and increase size for better readability
-        mapPreviewArea.setStyle("-fx-font-family: 'Courier New'; -fx-font-size: 14px; -fx-padding: 10px;");
-
-        if (map != null) {
-            try {
-                String layout = layoutController.renderSimpleScenarioLayout(map, scenario);
-                String[] lines = layout.split("\n");
-
-                for (String line : lines) {
-                    // Check if this line contains map symbols that need coloring
-                    if (containsMapSymbols(line)) {
-                        TextFlow coloredLine = createColoredMapLine(line);
-                        mapPreviewArea.getChildren().add(coloredLine);
-                    } else {
-                        // Regular text line (header, legend, etc.)
-                        Text lineText = new Text(line + "\n");
-                        lineText.setFont(Font.font("Courier New", 14));
-                        lineText.setFill(Color.BLACK);
-                        mapPreviewArea.getChildren().add(lineText);
-                    }
-                }
-
-            } catch (Exception e) {
-                System.err.println("Error rendering map layout: " + e.getMessage());
-                e.printStackTrace();
-                Text errorText = new Text("Error rendering map preview: " + e.getMessage());
-                errorText.setFill(Color.RED);
-                mapPreviewArea.getChildren().add(errorText);
-            }
+        // Alteração: Usa o nome descritivo do cenário
+        if (scenarioDisplayName != null) {
+            scenarioNameLabel.setText("Cenário: " + scenarioDisplayName);
+            periodLabel.setText("Período: " + layoutData.startDate + " - " + layoutData.endDate);
         } else {
-            Text defaultText = new Text("Select a map to view preview...");
-            defaultText.setFont(Font.font("Courier New", 14));
-            mapPreviewArea.getChildren().add(defaultText);
+            scenarioNameLabel.setText("Selecione um cenário");
+            periodLabel.setText("");
         }
-    }
 
-    private boolean containsMapSymbols(String line) {
-        // Check if line contains map symbols (but not legend lines)
-        return (line.contains("C") || line.contains("I") || line.contains("S") || line.contains("."))
-                && !line.trim().startsWith("C -")
-                && !line.trim().startsWith("I -")
-                && !line.trim().startsWith("S -")
-                && !line.trim().startsWith("Legend:")
-                && !line.trim().startsWith(". -")
-                && !line.trim().startsWith("Map:")
-                && !line.trim().startsWith("Scenario:")
-                && !line.trim().startsWith("Period:")
-                && !line.trim().startsWith("Size:");
-    }
-
-    private TextFlow createColoredMapLine(String line) {
-        TextFlow textFlow = new TextFlow();
-
-        // Split the line at the " | " separator if it exists
-        String[] parts = line.split(" \\| ", 2);
-        String mapPart = parts[0];
-        String infoPart = parts.length > 1 ? parts[1] : "";
-
-        // Process the map symbols part
-        for (int i = 0; i < mapPart.length(); i++) {
-            char c = mapPart.charAt(i);
-            Text charText = new Text(String.valueOf(c));
-
-            switch (c) {
-                case 'C':
-                    charText.setFill(Color.RED);
-                    charText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
-                    break;
-                case 'I':
-                    charText.setFill(Color.BLUE);
-                    charText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
-                    break;
-                case 'S':
-                    charText.setFill(Color.GREEN);
-                    charText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
-                    break;
-                default:
-                    charText.setFill(Color.BLACK);
-                    charText.setFont(Font.font("Courier New", 14)); // Normal weight for non-symbols
-                    break;
+        // O resto do método permanece igual...
+        for (int y = 0; y < layoutData.height; y++) {
+            for (int x = 0; x < layoutData.width; x++) {
+                ViewScenarioLayoutController.CellData cellData = layoutData.grid[y][x];
+                Text cellText = new Text(cellData.symbol);
+                cellText.setFont(Font.font("Courier New", FontWeight.NORMAL, 14));
+                switch (cellData.type) {
+                    case CITY:
+                        cellText.setFill(Color.RED);
+                        cellText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+                        break;
+                    case INDUSTRY:
+                        cellText.setFill(Color.BLUE);
+                        cellText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+                        break;
+                    case STATION:
+                        cellText.setFill(Color.GREEN);
+                        cellText.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+                        break;
+                    default:
+                        cellText.setFill(Color.BLACK);
+                        break;
+                }
+                mapGridPane.add(cellText, x, y);
             }
-            textFlow.getChildren().add(charText);
         }
 
-        // Add the info part if it exists
-        if (!infoPart.isEmpty()) {
-            Text separator = new Text(" | ");
-            separator.setFont(Font.font("Courier New", 14));
-            separator.setFill(Color.BLACK);
-            textFlow.getChildren().add(separator);
-
-            Text info = new Text(infoPart);
-            info.setFont(Font.font("Courier New", 14));
-            info.setFill(Color.DARKGRAY);
-            textFlow.getChildren().add(info);
+        for (int y = 0; y < layoutData.height; y++) {
+            String info = getRowInfo(map, y, scenario);
+            if (info != null && !info.isEmpty()) {
+                Text infoText = new Text("  | " + info);
+                infoText.setFont(Font.font("Courier New", 12));
+                infoText.setFill(Color.DARKGRAY);
+                mapGridPane.add(infoText, layoutData.width, y);
+            }
         }
+    }
 
-        // Add newline
-        Text newline = new Text("\n");
-        textFlow.getChildren().add(newline);
+    // ... (resto dos métodos: clearPreview, getRowInfo, loadMaps, loadScenarios, etc. permanecem iguais) ...
+    private void clearPreview() {
+        if (mapGridPane != null) {
+            mapGridPane.getChildren().clear();
+            mapGridPane.getColumnConstraints().clear();
+            mapGridPane.getRowConstraints().clear();
+        }
+        mapNameLabel.setText("Selecione um mapa para ver a pré-visualização...");
+        scenarioNameLabel.setText("");
+        periodLabel.setText("");
+        sizeLabel.setText("");
+    }
 
-        return textFlow;
+    private String getRowInfo(Map map, int y, Scenario scenario) {
+        StringBuilder info = new StringBuilder();
+        Set<String> entitiesLabeled = new HashSet<>();
+        for (City city : map.getCities()) {
+            if (city.getPosition().getY() == y) {
+                String cityKey = "C_" + city.getNameID();
+                if (!entitiesLabeled.contains(cityKey)) {
+                    if (info.length() > 0) {
+                        info.append("; ");
+                    }
+                    info.append("Cidade ").append(city.getNameID());
+                    if (scenario != null) {
+                        info.append(" (D:").append(city.getDemandedCargo()).append(", S:").append(city.getSuppliedCargo()).append(")");
+                    }
+                    entitiesLabeled.add(cityKey);
+                }
+            }
+        }
+        for (Industry industry : map.getIndustries()) {
+            if (industry.getPosition().getY() == y) {
+                String industryKey = "I_" + industry.getNameID();
+                if (!entitiesLabeled.contains(industryKey)) {
+                    if (info.length() > 0) {
+                        info.append("; ");
+                    }
+                    info.append("Indústria ").append(industry.getNameID());
+                    if (scenario != null) {
+                        info.append(" (Tipo:").append(industry.getType()).append(")");
+                    }
+                    entitiesLabeled.add(industryKey);
+                }
+            }
+        }
+        return info.toString();
     }
 
     private void loadMaps() {
         availableMaps = mapController.getAvailableMaps();
-        System.out.println("Available maps: " + availableMaps.size()); // Debug print
         if (availableMaps.isEmpty()) {
-            messageLabel.setText("No maps available.");
+            messageLabel.setText("Não há mapas disponíveis.");
             mapChoiceBox.setDisable(true);
             return;
         }
@@ -233,29 +258,20 @@ public class SelectMapScenarioDialogController {
                 availableMaps.stream().map(Map::getNameID).collect(Collectors.toList())
         ));
         mapChoiceBox.setDisable(false);
-
-        // Remove auto-selection of first map
-        // mapChoiceBox.getSelectionModel().selectFirst();
     }
 
     private void loadScenarios(Map selectedMap) {
         List<String> scenarioIDs = mapController.getMapScenarios(selectedMap.getNameID());
-        System.out.println("Loading scenarios for map: " + selectedMap.getNameID());
-        System.out.println("Available scenarios: " + scenarioIDs);
-
         if (scenarioIDs.isEmpty()) {
-            messageLabel.setText("No scenarios available for this map.");
+            messageLabel.setText("Não há cenários para este mapa.");
             scenarioChoiceBox.getItems().clear();
             scenarioChoiceBox.setDisable(true);
             return;
         }
 
-        // Filter out scenario3 and scenario4 for all maps
         List<String> filteredScenarioIDs = scenarioIDs.stream()
                 .filter(id -> !id.equals("scenario3") && !id.equals("scenario4"))
                 .collect(Collectors.toList());
-
-        System.out.println("Filtered scenarios: " + filteredScenarioIDs);
 
         scenarioDisplayMap = new LinkedHashMap<>();
         for (String id : filteredScenarioIDs) {
@@ -272,7 +288,6 @@ public class SelectMapScenarioDialogController {
                 displayName = id;
             }
             scenarioDisplayMap.put(displayName, id);
-            System.out.println("Added scenario: " + displayName + " -> " + id);
         }
 
         scenarioChoiceBox.setItems(FXCollections.observableArrayList(new ArrayList<>(scenarioDisplayMap.keySet())));
@@ -286,24 +301,21 @@ public class SelectMapScenarioDialogController {
         String selectedScenarioDisplayName = scenarioChoiceBox.getValue();
 
         if (selectedMapName == null || selectedScenarioDisplayName == null) {
-            messageLabel.setText("Please select both a map and a scenario.");
+            messageLabel.setText("Por favor, selecione um mapa e um cenário.");
             return;
         }
 
         String selectedScenarioID = scenarioDisplayMap.get(selectedScenarioDisplayName);
-        System.out.println("Loading map: " + selectedMapName + " with scenario: " + selectedScenarioID);
 
         if (mapController.loadMap(selectedMapName, selectedScenarioID)) {
             Player currentPlayer = appSession.getCurrentPlayer();
             if (currentPlayer != null) {
                 currentPlayer.initializeScenarioBudget(selectedScenarioID);
-                System.out.println("Player budget initialized for scenario: " + selectedScenarioID);
             }
-            messageLabel.setText("Map and scenario loaded successfully!");
+            messageLabel.setText("Mapa e cenário carregados com sucesso!");
             closeDialog();
         } else {
-            messageLabel.setText("Failed to load map and scenario.");
-            System.err.println("Failed to load map: " + selectedMapName + " with scenario: " + selectedScenarioID);
+            messageLabel.setText("Falha ao carregar o mapa e o cenário.");
         }
     }
 
