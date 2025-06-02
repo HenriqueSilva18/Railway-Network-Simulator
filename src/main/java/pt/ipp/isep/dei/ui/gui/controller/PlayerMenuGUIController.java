@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,14 +12,21 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
+import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Player;
+import pt.ipp.isep.dei.domain.template.Scenario;
+
+import javafx.scene.control.ScrollPane; // Certifique-se que este import existe
+import javafx.geometry.Insets;
 
 import java.io.IOException;
 import java.net.URL;
@@ -106,6 +114,10 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     private VBox statisticsCard;
 
+    @FXML
+    private Label mapInfoPlaceholder; // Certifique-se que este fx:id existe no FXML
+
+
 
     // Context Menu Items - Instance variables to hold references
     // Infrastructure Card
@@ -147,14 +159,19 @@ public class PlayerMenuGUIController implements Initializable {
 
 
     private ApplicationSession appSession = ApplicationSession.getInstance();
+    private ViewScenarioLayoutController viewLayoutController; // Controller para obter dados do mapa
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.viewLayoutController = new ViewScenarioLayoutController(); // Inicializar o controller de layout
+
         updateBudgetDisplay();
         updateSimulatorTimeDisplay("Paused");
-
-        setupCardContextMenus(); // This now includes simulation and financial cards
-        updateMenuItemsState();  // This updates both main menu and card context menus
+        setupCardContextMenus();
+        updateMenuItemsState();
+        updateMapInfoPlaceholderLabel(); // Atualiza o placeholder no início
+        loadMapVisualization();          // Tenta carregar a visualização do mapa no início
     }
 
     private void setupCardContextMenus() {
@@ -492,25 +509,40 @@ public class PlayerMenuGUIController implements Initializable {
 
     private void updateBudgetDisplay() {
         Player currentPlayer = appSession.getCurrentPlayer();
-        if (currentPlayer != null && appSession.getCurrentMap() != null) { // Check if map is also loaded
-            // Assuming budget is linked to a scenario which is part of a map context
+        if (currentPlayer != null && appSession.getCurrentMap() != null && appSession.getCurrentScenario() != null) {
             budgetLabel.setText(String.format("$%.2f", currentPlayer.getCurrentBudget()));
         } else {
             budgetLabel.setText("N/A");
         }
     }
 
-    private void updateSimulatorTimeDisplay(String time) {
-        // TODO: Fetch actual simulator time/status from appSession or game state
-        // simulatorTimeLabel.setText(appSession.getSimulatorTime());
-        simulatorTimeLabel.setText(time);
+    private String getScenarioDisplayName(String mapId, String scenarioId) {
+        if (scenarioId == null) return "N/A";
 
+        // Esta lógica é baseada no seu SelectMapScenarioDialogController
+        // O ideal seria ter esta informação de forma mais centralizada/configurável
+        if ("scenario1".equals(scenarioId)) {
+            if ("italy".equals(mapId)) return "Italian Giolitti Era";
+            if ("france".equals(mapId)) return "French Belle Époque";
+            if ("iberian_peninsula".equals(mapId)) return "Iberian Early Industrial";
+        } else if ("scenario2".equals(scenarioId)) {
+            if ("italy".equals(mapId)) return "Italian Inter-War";
+            if ("france".equals(mapId)) return "French Reconstruction";
+            if ("iberian_peninsula".equals(mapId)) return "Iberian Inter-War";
+        }
+        return scenarioId; // Retorna o ID se não houver nome descritivo mapeado
+    }
+
+
+
+    private void updateSimulatorTimeDisplay(String time) {
+        simulatorTimeLabel.setText(time);
     }
 
     private void updateMenuItemsState() {
         // TODO: Verificar se um mapa está carregado na ApplicationSession
         // boolean mapLoaded = appSession.getCurrentMap() != null;
-        boolean mapLoaded = false; // Placeholder - assuma que nenhum mapa está carregado inicialmente
+        boolean mapLoaded = appSession.getCurrentMap() != null && appSession.getCurrentScenario() != null;
 
         // File Menu
         selectMapScenarioMenuItem.setDisable(mapLoaded); // Typically disable if a map is already loaded
@@ -564,15 +596,16 @@ public class PlayerMenuGUIController implements Initializable {
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
 
-            // Show the dialog and wait for it to be closed
             dialogStage.showAndWait();
 
-            // After the dialog is closed, check if a map was loaded
+            // Atualiza tudo após o fecho da janela
+            updateMenuItemsState();
+            updateBudgetDisplay();
+            updateMapInfoPlaceholderLabel(); // Atualiza o placeholder com o nome correto do cenário
+            loadMapVisualization();          // Carrega a visualização gráfica do mapa
+
             if (appSession.getCurrentMap() != null) {
-                System.out.println("Map and scenario selected. Updating UI.");
-                updateMenuItemsState();
-                updateBudgetDisplay();
-                loadMapVisualization(); // Display the map
+                System.out.println("Map and scenario selected. UI Updated.");
             } else {
                 System.out.println("No map and scenario selected or dialog cancelled.");
             }
@@ -582,6 +615,26 @@ public class PlayerMenuGUIController implements Initializable {
             showAlert("Error Loading Dialog", "Could not load the Select Map & Scenario dialog: " + e.getMessage());
         }
     }
+
+    private void updateMapInfoPlaceholderLabel() {
+        if (mapInfoPlaceholder != null) {
+            Map currentMap = appSession.getCurrentMap();
+            Scenario currentScenario = appSession.getCurrentScenario();
+
+            if (currentMap != null && currentScenario != null) {
+                String mapName = currentMap.getNameID();
+                String scenarioDisplayName = getScenarioDisplayName(mapName, currentScenario.getNameID()); // Usa o helper
+                mapInfoPlaceholder.setText(mapName + " (" + scenarioDisplayName + ")");
+                mapInfoPlaceholder.setStyle("-fx-text-fill: #667eea; -fx-font-weight: bold;");
+            } else {
+                mapInfoPlaceholder.setText("Nenhum Mapa Selecionado");
+                mapInfoPlaceholder.setStyle("-fx-text-fill: #7f8c8d; -fx-font-style: italic;");
+            }
+        }
+    }
+
+
+
 
     @FXML
     void handleSaveGame(ActionEvent event) {
@@ -755,24 +808,85 @@ public class PlayerMenuGUIController implements Initializable {
         }
     }
 
-    /**
-     * Carrega a visualização do mapa na área de conteúdo.
-     * TODO: Implementar a lógica real de visualização do mapa.
-     */
     private void loadMapVisualization() {
-        if (appSession.getCurrentMap() != null) {
-            // Placeholder: Just display the map name and some info
-            Map currentMap = appSession.getCurrentMap();
-            String mapInfo = String.format("Map: %s\nScenario: %s\n(Map visualization placeholder)",
-                    currentMap.getNameID(),
-                    appSession.getCurrentScenario() != null ? appSession.getCurrentScenario().getNameID() : "N/A");
-            Label mapLabel = new Label(mapInfo);
-            contentArea.getChildren().setAll(mapLabel);
-            System.out.println("Map visualization loaded for: " + currentMap.getNameID());
+        contentArea.getChildren().clear();
+
+        Map currentMap = appSession.getCurrentMap();
+        Scenario currentScenario = appSession.getCurrentScenario();
+
+        if (currentMap != null && currentScenario != null) {
+            if (this.viewLayoutController == null) {
+                this.viewLayoutController = new ViewScenarioLayoutController();
+            }
+            ViewScenarioLayoutController.MapLayoutData layoutData = viewLayoutController.getMapLayoutData(currentMap, currentScenario);
+
+            if (layoutData == null) {
+                Label errorLabel = new Label("Erro ao gerar dados do mapa para visualização.");
+                errorLabel.setStyle("-fx-text-fill: red;");
+                contentArea.getChildren().add(errorLabel);
+                StackPane.setAlignment(errorLabel, Pos.CENTER);
+                return;
+            }
+
+            GridPane mapGrid = new GridPane();
+            mapGrid.setHgap(2);
+            mapGrid.setVgap(2);
+            mapGrid.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);");
+            mapGrid.setPadding(new Insets(20)); // Padding generoso para a "caixa"
+
+            // Fonte maior para que o conteúdo do mapa seja maior
+            Font baseFont = Font.font("Courier New", FontWeight.NORMAL, 18);
+            Font boldFont = Font.font("Courier New", FontWeight.BOLD, 18);
+
+            for (int y = 0; y < layoutData.height; y++) {
+                for (int x = 0; x < layoutData.width; x++) {
+                    ViewScenarioLayoutController.CellData cellData = layoutData.grid[y][x];
+                    Text cellText = new Text(cellData.symbol + "  ");
+
+                    cellText.setFont(baseFont);
+                    switch (cellData.type) {
+                        case CITY: cellText.setFill(Color.RED); cellText.setFont(boldFont); break;
+                        case INDUSTRY: cellText.setFill(Color.BLUE); cellText.setFont(boldFont); break;
+                        case STATION: cellText.setFill(Color.GREEN); cellText.setFont(boldFont); break;
+                        default: cellText.setFill(Color.GRAY); break;
+                    }
+                    mapGrid.add(cellText, x, y);
+                }
+            }
+
+            // O mapGrid agora irá calcular o seu tamanho preferido com base no conteúdo (fonte, padding, gaps).
+            // Este tamanho será o tamanho da "caixa branca".
+
+            ScrollPane scrollPane = new ScrollPane(mapGrid);
+            // Para que o mapa (mapGrid) seja mostrado no seu tamanho natural dentro do ScrollPane.
+            // Se o mapGrid for maior que o viewport do ScrollPane, as barras de scroll aparecem.
+            scrollPane.setFitToWidth(false);
+            scrollPane.setFitToHeight(false);
+
+            scrollPane.setStyle("-fx-background-color:transparent; -fx-background:transparent;");
+
+            // Para que o ScrollPane (a "caixa" do mapa) não se expanda para além do seu conteúdo
+            // E assim possa ser centrado corretamente pelo StackPane (contentArea).
+            // Isto significa que a "caixa" terá o tamanho exato do mapGrid (incluindo padding).
+            scrollPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+
+            contentArea.getChildren().add(scrollPane);
+            StackPane.setAlignment(scrollPane, Pos.CENTER); // Centra o ScrollPane (com o mapa)
+
+            System.out.println("Visualização gráfica do mapa carregada para: " + currentMap.getNameID());
+
         } else {
-            Label noMapLabel = new Label("No map selected. Please select a map and scenario via 'File > Select Map & Scenario'.");
-            contentArea.getChildren().setAll(noMapLabel);
-            System.out.println("No map to visualize.");
+            VBox noMapContainer = new VBox(15);
+            noMapContainer.setAlignment(Pos.CENTER);
+            Label noMapLabel = new Label("Nenhum mapa selecionado.");
+            noMapLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
+            Label instructionLabel = new Label("Por favor, selecione um mapa e cenário através do menu 'File > Select Map & Scenario'.");
+            instructionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            noMapContainer.getChildren().addAll(noMapLabel, instructionLabel);
+            contentArea.getChildren().add(noMapContainer);
+            StackPane.setAlignment(noMapContainer, Pos.CENTER);
+            System.out.println("Nenhum mapa para visualizar.");
         }
     }
 
