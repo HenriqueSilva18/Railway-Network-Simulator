@@ -508,9 +508,9 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     private void updateMenuItemsState() {
-        boolean mapLoaded = true;
-        // If appSession doesn't have isMapLoaded(), use a placeholder for now:
-        // boolean mapLoaded = false; // or true, for testing
+        // TODO: Verificar se um mapa está carregado na ApplicationSession
+        // boolean mapLoaded = appSession.getCurrentMap() != null;
+        boolean mapLoaded = false; // Placeholder - assuma que nenhum mapa está carregado inicialmente
 
         // File Menu
         selectMapScenarioMenuItem.setDisable(mapLoaded); // Typically disable if a map is already loaded
@@ -562,6 +562,7 @@ public class PlayerMenuGUIController implements Initializable {
             dialogStage.initOwner(((Stage) playerMainPane.getScene().getWindow()));
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
 
             // Show the dialog and wait for it to be closed
             dialogStage.showAndWait();

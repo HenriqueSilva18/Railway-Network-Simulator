@@ -74,6 +74,11 @@ public class MapController {
         return false;
     }
 
+    public Scenario getScenario(String scenarioID) {
+        Optional<Scenario> scenarioOpt = editorRepository.findScenarioByNameID(scenarioID);
+        return scenarioOpt.orElse(null);
+    }
+
     public String getMapLayout(String mapID, String scenarioID) {
         Map map = mapRepository.getMap(mapID);
         if (map == null) {
