@@ -86,7 +86,8 @@
 
 
                         <!-- Login Button -->
-                        <Button fx:id="loginButton" maxWidth="280.0" onAction="#handleLoginButton" prefHeight="45.0" style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2);                                       -fx-text-fill: white;                                       -fx-font-size: 16px;                                       -fx-font-weight: bold;                                       -fx-background-radius: 8px;                                       -fx-border-radius: 8px;                                       -fx-cursor: hand;                                       -fx-font-family: 'Segoe UI', 'Arial', sans-serif;                                       -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.4), 8, 0, 0, 2);" text="Sign In" />
+                        <Button fx:id="loginButton" defaultButton="true" maxWidth="280.0" onAction="#handleLoginButton" prefHeight="45.0" style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2);                                       -fx-text-fill: white;                                       -fx-font-size: 16px;                                       -fx-font-weight: bold;                                       -fx-background-radius: 8px;                                       -fx-border-radius: 8px;                                       -fx-cursor: hand;                                       -fx-font-family: 'Segoe UI', 'Arial', sans-serif;                                       -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.4), 8, 0, 0, 2);" text="Sign In" />
+
                     </children>
                 </VBox>
             </children>

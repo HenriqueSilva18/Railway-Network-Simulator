@@ -2,6 +2,7 @@ package pt.ipp.isep.dei.application.controller.authorization;
 
 import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.isep.lei.esoft.auth.mappers.dto.UserRoleDTO;
 
 import java.util.List;
 
@@ -10,10 +11,9 @@ import java.util.List;
  */
 public class AuthenticationController {
 
-    public static final String ROLE_HRM = "HRM";
-    public static final String ROLE_VFM = "VFM";
-    public static final String ROLE_GSM = "GSM";
-    public static final String ROLE_COL = "COL";
+    public static final String ROLE_ADMIN = "ADMINISTRATOR";
+    public static final String ROLE_EDITOR = "EDITOR";
+    public static final String ROLE_PLAYER = "PLAYER";
 
     //private final ApplicationSession applicationSession;
     private final AuthenticationRepository authenticationRepository;
@@ -53,10 +53,19 @@ public class AuthenticationController {
         }
     }
 
+
+
     /**
      * Logs out the current user.
      */
     public void doLogout() {
         authenticationRepository.doLogout();
+    }
+
+    public List<UserRoleDTO> getUserRoles() {
+        if (authenticationRepository.getCurrentUserSession().isLoggedIn()) {
+            return authenticationRepository.getCurrentUserSession().getUserRoles();
+        }
+        return null;
     }
 }

@@ -12,9 +12,19 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.application.controller.authorization.AuthenticationController;
+import pt.ipp.isep.dei.ui.console.menu.AdminUI;
+import pt.ipp.isep.dei.ui.console.menu.EditorUI;
+import pt.ipp.isep.dei.ui.console.menu.MenuItem;
+import pt.ipp.isep.dei.ui.console.menu.PlayerUI;
+import pt.ipp.isep.dei.ui.console.utils.Utils;
+import pt.isep.lei.esoft.auth.mappers.dto.UserRoleDTO;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -57,7 +67,7 @@ public class LoginMenuGUIController {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.-]+@[\\w.-]+$");
 
-    private boolean doLogin() {
+    private boolean doLogin(ActionEvent event) {
         String id = emailField.getText();
         String pwd = getCurrentPassword();
 
@@ -68,28 +78,80 @@ public class LoginMenuGUIController {
 
         boolean success = controller.doLogin(id, pwd);
 
+        System.out.println("Login attempt for user: " + id + " - Success: " + success);
+
         if (!success) {
             showAlert(Alert.AlertType.ERROR, "Login Error", "Invalid credentials.");
             passwordField.clear();
             if (passwordTextField != null && isPasswordVisible) {
                 passwordTextField.clear();
             }
+            return false;
         }
 
-        return success;
+        List<UserRoleDTO> roles = controller.getUserRoles();
+        if ((roles == null) || (roles.isEmpty())) {
+            showAlert(Alert.AlertType.ERROR, "Login Error", "No role assigned to user.");
+            return false;
+        }
+
+        UserRoleDTO role = selectsRole(roles);
+        if (role == null) {
+            showAlert(Alert.AlertType.ERROR, "Login Error", "No role selected.");
+            return false;
+        }
+
+        List<RoleFXML> roleFXMLList = getFXMLForRoles();
+        return redirectToRoleUI(roleFXMLList, role, event);
+    }
+
+
+    private UserRoleDTO selectsRole(List<UserRoleDTO> roles) {
+        if (roles.size() == 1) {
+            return roles.get(0);
+        } else {
+            return (UserRoleDTO) Utils.showAndSelectOne(roles, "Select the role you want to adopt in this session:");
+        }
+    }
+
+    private List<RoleFXML> getFXMLForRoles() {
+        List<RoleFXML> list = new ArrayList<>();
+        list.add(new RoleFXML(AuthenticationController.ROLE_PLAYER, "playermenu", "Player Menu"));
+        list.add(new RoleFXML(AuthenticationController.ROLE_EDITOR, "editormenu", "Editor Menu"));
+        list.add(new RoleFXML(AuthenticationController.ROLE_ADMIN, "adminmenu", "Admin Menu"));
+        return list;
+    }
+
+    private boolean redirectToRoleUI(List<RoleFXML> fxmlList, UserRoleDTO role, ActionEvent event) {
+        for (RoleFXML entry : fxmlList) {
+
+            if (entry.role.equals(AuthenticationController.ROLE_EDITOR) || entry.role.equals(AuthenticationController.ROLE_ADMIN)) {
+                showAlert(Alert.AlertType.INFORMATION, "Login Attempt", entry.title + " is not implemented yet.");
+            }
+
+            if (entry.role.equals(role.getDescription())) {
+                try {
+                    controller.doLogout();
+                    switchMenusGUI(event, entry.fxmlFile, entry.title);
+                    return true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Navigation Error", "Failed to load " + entry.fxmlFile);
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     @FXML
     private void handleLoginButton(ActionEvent event) {
-        if (doLogin()) {
-            try {
-                switchMenusGUI(event, "playermenu", "Player Menu");
-            } catch (IOException e) {
-                e.printStackTrace(); // Para debug
-                showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not open main menu: " + e.getMessage());
-            }
+        boolean success = doLogin(event);
+        if (!success) {
+            showAlert(Alert.AlertType.ERROR, "Login Failed", "Login process failed.");
         }
     }
+
 
     /**
      * Switch menus gui - VERSÃO CORRIGIDA
@@ -219,4 +281,17 @@ public class LoginMenuGUIController {
     private String getCurrentPassword() {
         return isPasswordVisible ? passwordTextField.getText() : passwordField.getText();
     }
+
+    private static class RoleFXML {
+        String role;
+        String fxmlFile;
+        String title;
+
+        RoleFXML(String role, String fxmlFile, String title) {
+            this.role = role;
+            this.fxmlFile = fxmlFile;
+            this.title = title;
+        }
+    }
+
 }
