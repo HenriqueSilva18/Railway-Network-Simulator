@@ -1,0 +1,27 @@
+graph RailwayNetwork {
+  node [shape=circle];
+  "G_Tomar" -- "F_Santarem" [label="45,0 km", color=red, style=bold];
+  "G_Tomar" -- "B_Coimbra" [label="60,0 km", color=red, style=bold];
+  "P_Gaia" -- "C_Porto" [label="5,0 km", color=blue, style=normal];
+  "P_Gaia" -- "Q_Canelas" [label="15,0 km", color=black, style=normal];
+  "S_Canidelo" -- "R_Avintes" [label="8,0 km", color=black, style=normal];
+  "S_Canidelo" -- "T_Vila_Nova_de_Gaia" [label="5,0 km", color=black, style=normal];
+  "A_Lisbon" -- "A_Entroncamento" [label="120,0 km", color=blue, style=normal];
+  "H_Leiria" -- "B_Coimbra" [label="40,0 km", color=black, style=normal];
+  "H_Leiria" -- "I_Fatima" [label="25,0 km", color=black, style=normal];
+  "A_Entroncamento" -- "B_Coimbra" [label="80,0 km", color=blue, style=normal];
+  "A_Entroncamento" -- "F_Santarem" [label="30,0 km", color=red, style=bold];
+  "Q_Canelas" -- "R_Avintes" [label="10,0 km", color=black, style=normal];
+  "L_Barcelos" -- "K_Famalicao" [label="25,0 km", color=black, style=normal];
+  "L_Barcelos" -- "E_Viana" [label="20,0 km", color=black, style=normal];
+  "C_Porto" -- "B_Coimbra" [label="100,0 km", color=blue, style=normal];
+  "C_Porto" -- "D_Braga" [label="50,0 km", color=blue, style=normal];
+  "C_Porto" -- "J_Guimaraes" [label="30,0 km", color=blue, style=normal];
+  "D_Braga" -- "E_Viana" [label="40,0 km", color=black, style=normal];
+  "D_Braga" -- "J_Guimaraes" [label="20,0 km", color=black, style=normal];
+  "D_Braga" -- "K_Famalicao" [label="15,0 km", color=blue, style=normal];
+  "E_Viana" -- "M_Ponte_de_Lima" [label="30,0 km", color=black, style=normal];
+  "M_Ponte_de_Lima" -- "N_Valenca" [label="35,0 km", color=black, style=normal];
+  "O_Vigo" -- "N_Valenca" [label="40,0 km", color=blue, style=normal];
+  "F_Santarem" -- "I_Fatima" [label="35,0 km", color=red, style=bold];
+}
