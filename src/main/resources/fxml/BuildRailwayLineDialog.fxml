@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="600" prefHeight="500" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.BuildRailwayLineDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Build Railway Line" style="-fx-font-size: 24; -fx-font-weight: bold"/>
+
+    <!-- First Station Selection -->
+    <TitledPane text="Select First Station" expanded="true">
+        <VBox spacing="10">
+            <ListView fx:id="firstStationListView" prefHeight="150"/>
+            <Label fx:id="firstStationDetailsLabel" wrapText="true" style="-fx-font-style: italic"/>
+        </VBox>
+    </TitledPane>
+
+    <!-- Second Station Selection -->
+    <TitledPane text="Select Second Station" expanded="true">
+        <VBox spacing="10">
+            <ListView fx:id="secondStationListView" prefHeight="150"/>
+            <Label fx:id="secondStationDetailsLabel" wrapText="true" style="-fx-font-style: italic"/>
+        </VBox>
+    </TitledPane>
+
+    <!-- Railway Line Preview -->
+    <TitledPane text="Railway Line Details" expanded="true">
+        <VBox spacing="10">
+            <Label fx:id="railwayLineDetailsLabel" wrapText="true"/>
+            <GridPane hgap="10" vgap="5">
+                <Label text="Estimated Length:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="lengthLabel" style="-fx-font-weight: bold" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <Label text="Construction Cost:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="costLabel" style="-fx-font-weight: bold" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                
+                <Label text="Current Budget:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="budgetLabel" style="-fx-font-weight: bold" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+        </VBox>
+    </TitledPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="buildButton" text="Build Railway Line" onAction="#handleBuild" disable="true"/>
+        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox> 

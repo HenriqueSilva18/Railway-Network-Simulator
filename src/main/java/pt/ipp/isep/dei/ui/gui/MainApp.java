@@ -35,7 +35,7 @@ public class MainApp extends Application {
 
         FXMLLoader loader = new FXMLLoader(fxmlUrl);
         Parent root = loader.load();
-        
+
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Railway App");

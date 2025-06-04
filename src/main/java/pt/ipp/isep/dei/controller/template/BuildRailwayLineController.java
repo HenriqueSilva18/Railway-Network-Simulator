@@ -118,7 +118,7 @@ public class BuildRailwayLineController {
     }
 
     // Simplified method to find a direct path between two stations using Bresenham's line algorithm
-    private List<Position> findDirectPath(Station start, Station end) {
+    public List<Position> findDirectPath(Station start, Station end) {
         // Get positions of stations
         Position startPos = start.getPosition();
         Position endPos = end.getPosition();
@@ -212,7 +212,7 @@ public class BuildRailwayLineController {
         return path;
     }
 
-    private double calculatePathCost(List<Position> path) {
+    public double calculatePathCost(List<Position> path) {
         // Base cost per segment
         double baseCost = 1000;
         

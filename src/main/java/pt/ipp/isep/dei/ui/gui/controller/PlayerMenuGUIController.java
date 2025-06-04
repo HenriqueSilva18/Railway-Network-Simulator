@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -24,6 +26,10 @@ import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.domain.template.Scenario;
+import pt.ipp.isep.dei.domain.template.RailwayLine;
+import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.repository.template.RailwayLineRepository;
+import pt.ipp.isep.dei.repository.template.Repositories;
 
 import javafx.scene.control.ScrollPane; // Certifique-se que este import existe
 import javafx.geometry.Insets;
@@ -31,6 +37,7 @@ import javafx.geometry.Insets;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.List;
 
 public class PlayerMenuGUIController implements Initializable {
 
@@ -747,7 +754,39 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleBuildRailwayLine(ActionEvent event) {
         System.out.println("Build Railway Line clicked");
-        showAlert("Not Implemented", "Build Railway Line (US08) functionality is not yet implemented.");
+        
+        if (appSession.getCurrentMap() == null) {
+            showAlert(Alert.AlertType.WARNING, "No Map Selected", 
+                "Please select a map and scenario first.");
+            return;
+        }
+        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BuildRailwayLineDialog.fxml"));
+            Parent dialogRoot = loader.load();
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Build Railway Line");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+            
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+            
+            dialogStage.showAndWait();
+            
+            // After dialog closes, update the budget display and map visualization
+            updateBudgetDisplay();
+            if (appSession.getCurrentMap() != null) {
+                loadMapVisualization();
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", 
+                "Could not open Build Railway Line dialog: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -920,73 +959,245 @@ public class PlayerMenuGUIController implements Initializable {
             ViewScenarioLayoutController.MapLayoutData layoutData = viewLayoutController.getMapLayoutData(currentMap, currentScenario);
 
             if (layoutData == null) {
-                Label errorLabel = new Label("Erro ao gerar dados do mapa para visualização.");
+                Label errorLabel = new Label("Error generating map visualization data.");
                 errorLabel.setStyle("-fx-text-fill: red;");
                 contentArea.getChildren().add(errorLabel);
                 StackPane.setAlignment(errorLabel, Pos.CENTER);
                 return;
             }
 
+            // Create a grid pane for the background
             GridPane mapGrid = new GridPane();
-            mapGrid.setHgap(2);
-            mapGrid.setVgap(2);
-            mapGrid.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);");
-            mapGrid.setPadding(new Insets(20)); // Padding generoso para a "caixa"
+            mapGrid.setHgap(0);
+            mapGrid.setVgap(0);
+            mapGrid.setStyle("-fx-background-color: transparent;"); // Make grid background transparent
+            mapGrid.setPadding(new Insets(20));
+            mapGrid.setAlignment(Pos.CENTER);
+            mapGrid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+            mapGrid.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 
-            // Fonte maior para que o conteúdo do mapa seja maior
-            Font baseFont = Font.font("Courier New", FontWeight.NORMAL, 18);
-            Font boldFont = Font.font("Courier New", FontWeight.BOLD, 18);
+            // Cell size for the grid
+            double cellSize = 40;
+            double iconSize = 32; // Size for the icons
 
+            // Try to load icons, but don't fail if they're not found
+            Image cityIcon = null;
+            Image industryIcon = null;
+            Image stationIcon = null;
+            try {
+                // Try to load icons from different possible paths
+                URL cityUrl = getClass().getResource("/city.png");
+                URL industryUrl = getClass().getResource("/industry.png");
+                URL stationUrl = getClass().getResource("/icons/railway-station.png");
+                
+                if (cityUrl == null) {
+                    cityUrl = getClass().getResource("/icons/city.png");
+                }
+                if (industryUrl == null) {
+                    industryUrl = getClass().getResource("/icons/industry.png");
+                }
+                if (stationUrl == null) {
+                    stationUrl = getClass().getResource("/railway-station.png");
+                }
+                
+                if (cityUrl != null) {
+                    cityIcon = new Image(cityUrl.toExternalForm(), iconSize, iconSize, true, true);
+                }
+                if (industryUrl != null) {
+                    industryIcon = new Image(industryUrl.toExternalForm(), iconSize, iconSize, true, true);
+                }
+                if (stationUrl != null) {
+                    stationIcon = new Image(stationUrl.toExternalForm(), iconSize, iconSize, true, true);
+                }
+            } catch (Exception e) {
+                System.out.println("Icons not found, using shapes instead. Error: " + e.getMessage());
+            }
+
+            // First pass: Add background cells and entities
             for (int y = 0; y < layoutData.height; y++) {
                 for (int x = 0; x < layoutData.width; x++) {
                     ViewScenarioLayoutController.CellData cellData = layoutData.grid[y][x];
-                    Text cellText = new Text(cellData.symbol + "  ");
+                    
+                    // Create transparent background rectangle for the cell
+                    Rectangle cellRect = new Rectangle(cellSize, cellSize);
+                    cellRect.setFill(Color.TRANSPARENT);
+                    cellRect.setStroke(Color.TRANSPARENT);
+                    cellRect.setStrokeWidth(0);
+                    mapGrid.add(cellRect, x, y);
 
-                    cellText.setFont(baseFont);
-                    switch (cellData.type) {
-                        case CITY: cellText.setFill(Color.RED); cellText.setFont(boldFont); break;
-                        case INDUSTRY: cellText.setFill(Color.BLUE); cellText.setFont(boldFont); break;
-                        case STATION: cellText.setFill(Color.GREEN); cellText.setFont(boldFont); break;
-                        default: cellText.setFill(Color.GRAY); break;
+                    // Add entities based on type
+                    Node entityNode = null;
+                    switch (cellData.type.toString()) {
+                        case "CITY":
+                            if (cityIcon != null) {
+                                ImageView cityView = new ImageView(cityIcon);
+                                cityView.setFitWidth(iconSize);
+                                cityView.setFitHeight(iconSize);
+                                entityNode = cityView;
+                            } else {
+                                Rectangle cityRect = new Rectangle(cellSize * 0.8, cellSize * 0.8);
+                                cityRect.setFill(Color.RED);
+                                cityRect.setArcHeight(10);
+                                cityRect.setArcWidth(10);
+                                entityNode = cityRect;
+                            }
+                            break;
+                        case "INDUSTRY":
+                            if (industryIcon != null) {
+                                ImageView industryView = new ImageView(industryIcon);
+                                industryView.setFitWidth(iconSize);
+                                industryView.setFitHeight(iconSize);
+                                entityNode = industryView;
+                            } else {
+                                Polygon industry = createIndustryShape(cellSize);
+                                industry.setFill(Color.BLUE);
+                                entityNode = industry;
+                            }
+                            break;
+                        case "STATION":
+                            if (stationIcon != null) {
+                                ImageView stationView = new ImageView(stationIcon);
+                                stationView.setFitWidth(iconSize);
+                                stationView.setFitHeight(iconSize);
+                                entityNode = stationView;
+                            } else {
+                                Circle station = new Circle(cellSize * 0.4);
+                                station.setFill(Color.GREEN);
+                                entityNode = station;
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    mapGrid.add(cellText, x, y);
+
+                    if (entityNode != null) {
+                        StackPane cellContent = new StackPane(entityNode);
+                        cellContent.setMinSize(cellSize, cellSize);
+                        cellContent.setPrefSize(cellSize, cellSize);
+                        mapGrid.add(cellContent, x, y);
+                    }
                 }
             }
 
-            // O mapGrid agora irá calcular o seu tamanho preferido com base no conteúdo (fonte, padding, gaps).
-            // Este tamanho será o tamanho da "caixa branca".
+            // Create a container with exact size
+            VBox mapContainer = new VBox();
+            mapContainer.setMaxSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            mapContainer.setPrefSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            mapContainer.setMinSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            mapContainer.setStyle("-fx-background-color: transparent;"); // Make container background transparent
+            mapContainer.setAlignment(Pos.CENTER);
 
-            ScrollPane scrollPane = new ScrollPane(mapGrid);
-            // Para que o mapa (mapGrid) seja mostrado no seu tamanho natural dentro do ScrollPane.
-            // Se o mapGrid for maior que o viewport do ScrollPane, as barras de scroll aparecem.
+            // Create a white background pane
+            Pane backgroundPane = new Pane();
+            backgroundPane.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);");
+            backgroundPane.setMaxSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            backgroundPane.setPrefSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            backgroundPane.setMinSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+
+            // Create a Pane for the railway lines that will overlay the background
+            Pane railwayLinesPane = new Pane();
+            railwayLinesPane.setMaxSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            railwayLinesPane.setPrefSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            railwayLinesPane.setMinSize(layoutData.width * cellSize + 40, layoutData.height * cellSize + 40);
+            railwayLinesPane.setStyle("-fx-background-color: transparent;");
+            railwayLinesPane.setMouseTransparent(true);
+
+            // Add the railway lines to the overlay pane
+            RailwayLineRepository railwayLineRepository = Repositories.getInstance().getRailwayLineRepository();
+            List<RailwayLine> railwayLines = railwayLineRepository.getAll();
+            
+            if (railwayLines != null) {
+                for (RailwayLine line : railwayLines) {
+                    Station station1 = line.getStartStation();
+                    Station station2 = line.getEndStation();
+                    
+                    // Calculate positions for the line, accounting for the grid padding (20px)
+                    double x1 = (station1.getPosition().getX() * cellSize) + cellSize/2 + 20;
+                    double y1 = (station1.getPosition().getY() * cellSize) + cellSize/2 + 20;
+                    double x2 = (station2.getPosition().getX() * cellSize) + cellSize/2 + 20;
+                    double y2 = (station2.getPosition().getY() * cellSize) + cellSize/2 + 20;
+                    
+                    // Create railway line
+                    Line railLine = new Line(x1, y1, x2, y2);
+                    railLine.setStroke(Color.PURPLE);
+                    railLine.setStrokeWidth(4);
+                    railLine.setStrokeLineCap(StrokeLineCap.ROUND);
+                    
+                    // Add parallel line for double-track effect
+                    Line parallelLine = new Line(x1, y1, x2, y2);
+                    parallelLine.setStroke(Color.PURPLE);
+                    parallelLine.setStrokeWidth(4);
+                    parallelLine.setStrokeLineCap(StrokeLineCap.ROUND);
+                    
+                    // Calculate offset for parallel line
+                    double angle = Math.atan2(y2 - y1, x2 - x1);
+                    double perpAngle = angle + Math.PI/2;
+                    double offset = 3;
+                    
+                    // Apply offset to parallel line
+                    parallelLine.setStartX(x1 + offset * Math.cos(perpAngle));
+                    parallelLine.setStartY(y1 + offset * Math.sin(perpAngle));
+                    parallelLine.setEndX(x2 + offset * Math.cos(perpAngle));
+                    parallelLine.setEndY(y2 + offset * Math.sin(perpAngle));
+                    
+                    // Add the lines to the overlay pane
+                    railwayLinesPane.getChildren().addAll(railLine, parallelLine);
+                }
+            }
+
+            // Add the grid to a centering container
+            StackPane centeringPane = new StackPane();
+            centeringPane.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+            centeringPane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+            centeringPane.setAlignment(Pos.CENTER);
+            
+            // Add all layers in the correct order: background, railway lines, then grid with entities
+            centeringPane.getChildren().addAll(backgroundPane, railwayLinesPane, mapGrid);
+            
+            mapContainer.getChildren().add(centeringPane);
+
+            // Create a scroll pane to hold the map
+            ScrollPane scrollPane = new ScrollPane(mapContainer);
             scrollPane.setFitToWidth(false);
             scrollPane.setFitToHeight(false);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scrollPane.setStyle("-fx-background-color:transparent; -fx-background:transparent; -fx-background-insets: 0;");
+            scrollPane.setPannable(true);
 
-            scrollPane.setStyle("-fx-background-color:transparent; -fx-background:transparent;");
+            // Center the scroll pane in the content area
+            StackPane scrollPaneContainer = new StackPane(scrollPane);
+            scrollPaneContainer.setMaxSize(layoutData.width * cellSize + 60, layoutData.height * cellSize + 60); // Add extra space for scroll bars
+            scrollPaneContainer.setPrefSize(layoutData.width * cellSize + 60, layoutData.height * cellSize + 60);
+            scrollPaneContainer.setMinSize(layoutData.width * cellSize + 60, layoutData.height * cellSize + 60);
 
-            // Para que o ScrollPane (a "caixa" do mapa) não se expanda para além do seu conteúdo
-            // E assim possa ser centrado corretamente pelo StackPane (contentArea).
-            // Isto significa que a "caixa" terá o tamanho exato do mapGrid (incluindo padding).
-            scrollPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+            contentArea.getChildren().add(scrollPaneContainer);
+            StackPane.setAlignment(scrollPaneContainer, Pos.CENTER);
 
-
-            contentArea.getChildren().add(scrollPane);
-            StackPane.setAlignment(scrollPane, Pos.CENTER); // Centra o ScrollPane (com o mapa)
-
-            System.out.println("Visualização gráfica do mapa carregada para: " + currentMap.getNameID());
-
+            System.out.println("Map visualization loaded for: " + currentMap.getNameID());
         } else {
             VBox noMapContainer = new VBox(15);
             noMapContainer.setAlignment(Pos.CENTER);
-            Label noMapLabel = new Label("Nenhum mapa selecionado.");
+            Label noMapLabel = new Label("No map selected.");
             noMapLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
-            Label instructionLabel = new Label("Por favor, selecione um mapa e cenário através do menu 'File > Select Map & Scenario'.");
+            Label instructionLabel = new Label("Please select a map and scenario through 'File > Select Map & Scenario'.");
             instructionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
             noMapContainer.getChildren().addAll(noMapLabel, instructionLabel);
             contentArea.getChildren().add(noMapContainer);
             StackPane.setAlignment(noMapContainer, Pos.CENTER);
-            System.out.println("Nenhum mapa para visualizar.");
         }
+    }
+
+    private Polygon createIndustryShape(double size) {
+        double halfSize = size * 0.4;
+        Polygon industry = new Polygon(
+            -halfSize, halfSize,    // Bottom left
+            0, -halfSize,          // Top middle
+            halfSize, halfSize     // Bottom right
+        );
+        industry.setStroke(Color.BLUE);
+        industry.setStrokeWidth(1);
+        return industry;
     }
 
     private void openModalDialog(String fxmlPath, String title) {
