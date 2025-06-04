@@ -6,18 +6,9 @@ package "Backoffice" {
   [Map Editor] as MapEd
   [Scenario Editor] as ScnEd
   [Data Model]    as DataModel
-  database "Database\n(SQL Storage)" as DB
 
-  interface "Map API" as IMap
-  interface "Scenario API" as IScn
-  interface "Persistence API" as IPersist
-
-  MapEd      --> IMap
-  ScnEd      --> IScn
-  DataModel  --> IPersist
-  IPersist   --> DB : SQL
-  IMap       --> DataModel
-  IScn       --> DataModel
+  MapEd      --> DataModel
+  ScnEd      --> DataModel
 }
 
 '=== Simulation components ===
@@ -30,8 +21,7 @@ package "Simulator" {
   SimCore   --> RouteMgr : pathfinding & maintenance
   SimCore   --> TrainMgr : spawn & schedule
   SimCore   --> StatsEng : analytics calls
-  SimCore   --> IMap      : load map
-  SimCore   --> IScn      : load scenario
+  SimCore   --> DataModel      : load map & scenario
 }
 
 '=== Shared library ===

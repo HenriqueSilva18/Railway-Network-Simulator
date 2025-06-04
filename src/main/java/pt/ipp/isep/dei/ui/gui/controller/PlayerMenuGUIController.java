@@ -667,8 +667,30 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleBuildStation(ActionEvent event) {
         System.out.println("Build Station clicked");
-        showAlert("Not Implemented", "Build Station (US05) functionality is not yet implemented.");
-        // loadViewToContentArea("/pt/ipp/isep/dei/ui/gui/fxml/us05_BuildStation.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BuildStationDialog.fxml"));
+            Parent dialogRoot = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Build Station");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+            
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+            
+            dialogStage.showAndWait();
+            
+            // After dialog closes, update the budget display and map visualization
+            updateBudgetDisplay();
+            if (appSession.getCurrentMap() != null) {
+                loadMapVisualization();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not open Build Station dialog: " + e.getMessage());
+        }
     }
 
     @FXML

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="500" prefHeight="600" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.BuildStationDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Station Type Selection -->
+    <Label text="Select Station Type:" style="-fx-font-weight: bold"/>
+    <ListView fx:id="stationTypeList" prefHeight="150"/>
+
+    <!-- Position Input -->
+    <GridPane hgap="10" vgap="5">
+        <Label text="Position:" style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+        
+        <Label text="X:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Spinner fx:id="xCoordSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        
+        <Label text="Y:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Spinner fx:id="yCoordSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <!-- Center Point Selection (for station type that requires it) -->
+    <VBox fx:id="centerPointBox" spacing="5" visible="false">
+        <Label text="Select Center Point:" style="-fx-font-weight: bold"/>
+        <ComboBox fx:id="centerPointComboBox" prefWidth="150"/>
+    </VBox>
+
+    <!-- Station Name -->
+    <VBox spacing="5">
+        <Label text="Station Name:" style="-fx-font-weight: bold"/>
+        <Label fx:id="suggestedNameLabel" text="Suggested Name: "/>
+        <HBox spacing="10">
+            <CheckBox fx:id="useCustomNameCheckbox" text="Use custom name"/>
+            <TextField fx:id="customNameField" disable="true" prefWidth="200"/>
+        </HBox>
+    </VBox>
+
+    <!-- Station Details -->
+    <VBox spacing="5" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-radius: 5;">
+        <Label text="Station Details:" style="-fx-font-weight: bold"/>
+        <Label fx:id="typeDetailsLabel"/>
+        <Label fx:id="costLabel"/>
+        <Label fx:id="radiusLabel"/>
+        <Label fx:id="currentBudgetLabel"/>
+        <Label fx:id="remainingBudgetLabel"/>
+    </VBox>
+
+    <!-- Error Message -->
+    <Label fx:id="errorMessageLabel" textFill="RED" wrapText="true"/>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Preview" onAction="#handlePreview"/>
+        <Button text="Build" onAction="#handleBuild" disable="true" fx:id="buildButton"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox> 

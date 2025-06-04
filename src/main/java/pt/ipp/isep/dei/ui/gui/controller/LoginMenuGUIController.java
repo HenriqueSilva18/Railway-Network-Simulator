@@ -12,6 +12,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.application.controller.authorization.AuthenticationController;
+import pt.ipp.isep.dei.controller.template.ApplicationSession;
+import pt.ipp.isep.dei.domain.template.Player;
+import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.ui.console.menu.AdminUI;
 import pt.ipp.isep.dei.ui.console.menu.EditorUI;
 import pt.ipp.isep.dei.ui.console.menu.MenuItem;
@@ -99,6 +102,17 @@ public class LoginMenuGUIController {
         if (role == null) {
             showAlert(Alert.AlertType.ERROR, "Login Error", "No role selected.");
             return false;
+        }
+
+        // Set up the player in ApplicationSession if the role is PLAYER
+        if (role.getDescription().equals(AuthenticationController.ROLE_PLAYER)) {
+            Player player = Repositories.getInstance().getPlayerRepository().getPlayerByEmail(id);
+            if (player == null) {
+                // Create a new player if one doesn't exist
+                player = new Player(id, 500000); // Default budget of 500k
+                Repositories.getInstance().getPlayerRepository().save(player);
+            }
+            ApplicationSession.getInstance().setCurrentPlayer(player);
         }
 
         List<RoleFXML> roleFXMLList = getFXMLForRoles();
