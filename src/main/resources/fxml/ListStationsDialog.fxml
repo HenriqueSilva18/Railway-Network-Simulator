@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="800" prefHeight="600" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.ListStationsDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Station List" style="-fx-font-size: 24; -fx-font-weight: bold"/>
+
+    <!-- Split Pane for Station List and Details -->
+    <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
+        <!-- Left side: Station List -->
+        <VBox spacing="10">
+            <Label text="Available Stations" style="-fx-font-size: 16; -fx-font-weight: bold"/>
+            <ListView fx:id="stationsListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+        <!-- Right side: Station Details -->
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="15" style="-fx-padding: 10;">
+                <!-- Basic Info Section -->
+                <TitledPane text="Basic Information" expanded="true">
+                    <GridPane hgap="10" vgap="5">
+                        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label fx:id="stationNameLabel" style="-fx-font-weight: bold" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        
+                        <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="stationTypeLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        
+                        <Label text="Position:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label fx:id="stationPositionLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        
+                        <Label text="Storage Capacity:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label fx:id="storageCapacityLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        
+                        <Label text="Building Slots:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label fx:id="buildingSlotsLabel" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </TitledPane>
+
+                <!-- Served Cities Section -->
+                <TitledPane text="Served Cities" expanded="true">
+                    <ListView fx:id="servedCitiesListView" prefHeight="100"/>
+                </TitledPane>
+
+                <!-- Available Cargo Section -->
+                <TitledPane text="Available Cargo (Supply)" expanded="true">
+                    <ListView fx:id="availableCargoListView" prefHeight="120"/>
+                </TitledPane>
+
+                <!-- Requested Cargo Section -->
+                <TitledPane text="Requested Cargo (Demand)" expanded="true">
+                    <ListView fx:id="requestedCargoListView" prefHeight="120"/>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="upgradeButton" text="Upgrade Station" onAction="#handleUpgradeStation" disable="true"/>
+        <Button fx:id="closeButton" text="Close" onAction="#handleClose"/>
+    </HBox>
+</VBox> 

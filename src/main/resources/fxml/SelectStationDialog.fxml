@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="400" prefHeight="500" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.SelectStationDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Select a Station" style="-fx-font-size: 18; -fx-font-weight: bold"/>
+    
+    <!-- Stations List -->
+    <ListView fx:id="stationsListView" VBox.vgrow="ALWAYS"/>
+    
+    <!-- Station Details Section -->
+    <TitledPane text="Station Details" expanded="true">
+        <VBox spacing="5">
+            <Label fx:id="stationNameLabel" style="-fx-font-weight: bold"/>
+            <Label fx:id="stationTypeLabel"/>
+            <Label fx:id="stationPositionLabel"/>
+            <Label fx:id="stationDetailsLabel"/>
+        </VBox>
+    </TitledPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="selectButton" text="Select" onAction="#handleSelect" disable="true"/>
+        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox> 

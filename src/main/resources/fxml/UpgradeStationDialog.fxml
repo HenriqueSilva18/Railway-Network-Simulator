@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="600" prefHeight="700" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.UpgradeStationDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Station Information Section -->
+    <TitledPane text="Station Information" expanded="true">
+        <VBox spacing="10">
+            <GridPane hgap="10" vgap="5">
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="stationNameLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="stationTypeLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                
+                <Label text="Position:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="stationPositionLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                
+                <Label text="Storage Capacity:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="storageCapacityLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                
+                <Label text="Building Slots:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="buildingSlotsLabel" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
+        </VBox>
+    </TitledPane>
+
+    <!-- Current Buildings Section -->
+    <TitledPane text="Current Buildings" expanded="true">
+        <ListView fx:id="currentBuildingsListView" prefHeight="150"/>
+    </TitledPane>
+
+    <!-- Upgrade Options Section -->
+    <TitledPane text="Upgrade Options" expanded="true">
+        <VBox spacing="10">
+            <RadioButton fx:id="installNewBuildingRadio" text="Install New Building" selected="true" toggleGroup="$upgradeType"/>
+            <RadioButton fx:id="evolveExistingBuildingRadio" text="Evolve Existing Building" toggleGroup="$upgradeType"/>
+        </VBox>
+    </TitledPane>
+
+    <!-- Available Buildings/Evolution Options Section -->
+    <TitledPane text="Available Options" expanded="true">
+        <VBox spacing="10">
+            <ListView fx:id="availableOptionsListView" prefHeight="150"/>
+            
+            <!-- Building Details Section -->
+            <TitledPane text="Selected Building Details" expanded="true">
+                <VBox spacing="5">
+                    <Label fx:id="buildingNameLabel" style="-fx-font-weight: bold"/>
+                    <Label fx:id="buildingTypeLabel"/>
+                    <Label fx:id="buildingCostLabel"/>
+                    <Label fx:id="buildingEffectLabel"/>
+                    <Label fx:id="buildingEvolutionLabel"/>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </TitledPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="upgradeButton" text="Upgrade" onAction="#handleUpgrade" disable="true"/>
+        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox> 

@@ -696,7 +696,52 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleUpgradeStation(ActionEvent event) {
         System.out.println("Upgrade Station clicked");
-        showAlert("Not Implemented", "Upgrade Station (US06) functionality is not yet implemented.");
+        
+        // First, show the station selection dialog
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectStationDialog.fxml"));
+            Parent dialogRoot = loader.load();
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Select Station");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+            
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+            
+            dialogStage.showAndWait();
+            
+            // After station selection dialog closes, check if a station was selected
+            if (ApplicationSession.getInstance().getCurrentStation() != null) {
+                // Now show the upgrade station dialog
+                loader = new FXMLLoader(getClass().getResource("/fxml/UpgradeStationDialog.fxml"));
+                dialogRoot = loader.load();
+                
+                dialogStage = new Stage();
+                dialogStage.setTitle("Upgrade Station");
+                dialogStage.initModality(Modality.WINDOW_MODAL);
+                dialogStage.initOwner(playerMainPane.getScene().getWindow());
+                
+                scene = new Scene(dialogRoot);
+                dialogStage.setScene(scene);
+                dialogStage.setResizable(false);
+                
+                dialogStage.showAndWait();
+                
+                // After dialog closes, update the budget display and map visualization
+                updateBudgetDisplay();
+                if (appSession.getCurrentMap() != null) {
+                    loadMapVisualization();
+                }
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", 
+                "Could not open dialog: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -736,8 +781,40 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleListStations(ActionEvent event) {
         System.out.println("View Stations Details clicked");
-        showAlert("Not Implemented", "View Stations Details (US07) functionality is not yet implemented.");
-        // loadViewToContentArea("/pt/ipp/isep/dei/ui/gui/fxml/us07_ListStations.fxml");
+        
+        if (appSession.getCurrentMap() == null) {
+            showAlert(Alert.AlertType.WARNING, "No Map Selected", 
+                "Please select a map and scenario first.");
+            return;
+        }
+        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ListStationsDialog.fxml"));
+            Parent dialogRoot = loader.load();
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Station List");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+            
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(true);
+            
+            dialogStage.showAndWait();
+            
+            // After dialog closes, update the budget display and map visualization
+            // in case any upgrades were performed
+            updateBudgetDisplay();
+            if (appSession.getCurrentMap() != null) {
+                loadMapVisualization();
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", 
+                "Could not open Station List dialog: " + e.getMessage());
+        }
     }
 
     @FXML
