@@ -1,0 +1,81 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveTypeRepository\n:LocomotiveTypeRepository" as LOC_TYPE_REPO
+participant ":List<LocomotiveType>" as LIST
+participant ":LocomotiveTypeMapper" as LOC_TYPE_MAPPER
+participant "listLocomotiveType\n:List<LocomotiveType>" as LOC_TYPE_LIST
+participant "listLocomotiveTypeDTO\n:List<LocomotiveTypeDTO>" as LOC_TYPE_LIST_DTO
+participant "locomotiveTypeDTO\n:LocomotiveTypeDTO" as LOC_TYPE_DTO
+
+autonumber 10
+-> CTRL: getListOfLocomotiveTypes()
+
+autonumber 10.1
+activate CTRL
+    group Get LocomotiveTypeDTO List
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getLocomotiveTypeRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: locomotiveTypeRepository
+        deactivate REPOS_SINGLETON
+
+
+        CTRL -> LOC_TYPE_REPO: getListOfLocomotiveTypes()
+        activate LOC_TYPE_REPO
+            LOC_TYPE_REPO --> LOC_TYPE_LIST**: create()
+
+            loop for each known LocomotiveType
+                LOC_TYPE_REPO -> LIST: locomotiveType = get(i)
+                activate LIST
+                    deactivate LIST
+
+                LOC_TYPE_REPO -> LOC_TYPE_LIST: add(locomotiveType)
+                activate LOC_TYPE_LIST
+                    deactivate LOC_TYPE_LIST
+            end
+
+            LOC_TYPE_REPO --> CTRL: listLocomotiveType
+            deactivate LOC_TYPE_REPO
+
+        CTRL -> LOC_TYPE_MAPPER: toDTO(listLocomotiveType)
+        activate LOC_TYPE_MAPPER
+
+            LOC_TYPE_MAPPER --> LOC_TYPE_LIST_DTO**: create()
+
+            loop for each object in listLocomotiveType
+                LOC_TYPE_MAPPER -> LOC_TYPE_LIST: locomotiveType = get(i)
+                activate LOC_TYPE_LIST
+                    deactivate LOC_TYPE_LIST
+
+                LOC_TYPE_MAPPER -> LOC_TYPE_MAPPER: locomotiveTypeDTO = toDTO(locomotiveType)
+                activate LOC_TYPE_MAPPER
+                    LOC_TYPE_MAPPER --> LOC_TYPE_DTO**: create()
+                    deactivate LOC_TYPE_MAPPER
+
+                LOC_TYPE_MAPPER -> LOC_TYPE_LIST_DTO: add(locomotiveTypeDTO)
+                activate LOC_TYPE_LIST_DTO
+                    deactivate LOC_TYPE_LIST_DTO
+            end
+
+        LOC_TYPE_MAPPER --> CTRL: listLocomotiveTypeDTO
+        deactivate LOC_TYPE_MAPPER
+
+    end
+
+    autonumber 11
+    <-- CTRL : listLocomotiveTypeDTO
+deactivate CTRL
+
+
+@enduml

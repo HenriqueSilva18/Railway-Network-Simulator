@@ -1,0 +1,110 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateScenarioController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapDTO\n:MapDTO" as MAP_DTO
+participant SOME
+participant ":ScenarioMapper" as SCN_MAPPER
+participant "scenarioDTO\n:ScenarioDTO" as SCN_DTO
+participant "scenario:Scenario" as SCN
+
+participant "mapRepository\n:MapRepository" as MAP_REPO
+
+
+autonumber 22
+-> CTRL: createScenario(mapDTO, scenarioDTO)
+
+autonumber 22.1
+activate CTRL
+    group Create Scenario Object
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> MAP_DTO: getListOfCityDTO()
+        activate MAP_DTO
+
+            MAP_DTO --> CTRL: listCityDTO
+        deactivate MAP_DTO
+
+        CTRL -> SCN_DTO: addCities(listCityDTO)
+        activate SCN_DTO
+            deactivate SCN_DTO
+
+
+        CTRL -> CTRL: getEditorFromSession()
+        activate CTRL
+
+        ref over CTRL
+            Get EditorDTO
+        end ref
+
+        CTRL --> CTRL: editorDTO
+        deactivate CTRL
+
+        CTRL -> SCN_DTO: addEditor(editorDTO)
+        activate SCN_DTO
+            deactivate SCN_DTO
+
+
+        CTRL -> SOME: createScenario(scenarioDTO)
+            activate SOME
+
+            SOME -> SCN_MAPPER: scenario = toModel(scenarioDTO)
+                activate SCN_MAPPER
+
+                SCN_MAPPER -> SCN_DTO: nameID = getNameID()
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: editor = getEditor() // toModel
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: startDate = getStartDate()
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: endDate = getEndDate()
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: initialBudget = getInitialBudget()
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: industries = getIndustries() // toModel
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: cities = getCities() // toModel
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN_DTO: locomotiveTypes = getLocomotiveTypes() // toModel
+                activate SCN_DTO
+                    deactivate SCN_DTO
+
+                SCN_MAPPER -> SCN**: create(nameID, editor, startDate endDate, initialBudget,\nindustries, cities, locomotiveTypes)
+
+            SCN_MAPPER --> SOME: scenario
+            deactivate SCN_MAPPER
+
+            SOME --> CTRL: scenario
+
+            CTRL -> : TODO ADICIONAR A SCENARIOS DO MAP
+
+    end
+
+    autonumber 23
+    <-- CTRL : success
+deactivate CTRL
+
+
+@enduml
