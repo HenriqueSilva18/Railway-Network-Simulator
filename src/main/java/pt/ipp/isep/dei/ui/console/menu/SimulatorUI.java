@@ -154,7 +154,11 @@ public class SimulatorUI implements Runnable {
             System.out.printf("Current Budget: %.2f\n", currentPlayer.getCurrentBudget());
             System.out.printf("Current Date: %s\n", simulator.getCurrentSimulatedDate());
             System.out.println("1. View Cargo at Stations");
-            System.out.println("2. Pause Simulation");
+            if (simulator.getStatus().equals(Simulator.STATUS_PAUSED)) {
+                System.out.println("2. Resume Simulation");
+            } else {
+                System.out.println("2. Pause Simulation");
+            }
             System.out.println("3. Generate Cargo Now");
             System.out.println("4. Stop Simulation and View Report");
             System.out.println("5. Restart Simulation");
@@ -170,7 +174,8 @@ public class SimulatorUI implements Runnable {
                         simulator.pause();
                         System.out.println("Simulation paused.");
                     } else {
-                        System.out.println("Simulation is not running.");
+                        simulator.resume();
+                        System.out.println("Simulation resumed.");
                     }
                     break;
                 case 3:
