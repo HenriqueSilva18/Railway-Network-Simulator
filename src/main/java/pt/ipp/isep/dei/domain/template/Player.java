@@ -151,6 +151,13 @@ public class Player {
         return ownedLocomotives.add(locomotive);
     }
 
+    public boolean removeLocomotive(Locomotive locomotive) {
+        if (locomotive == null) {
+            return false;
+        }
+        return ownedLocomotives.remove(locomotive);
+    }
+
     // Method to initialize budget for a new scenario
     public void initializeScenarioBudget(String scenarioId) {
         scenarioBudgets.put(scenarioId, initialBudget);

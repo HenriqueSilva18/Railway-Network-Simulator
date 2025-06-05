@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" prefWidth="700" prefHeight="650" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.BuyLocomotiveDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Buy Locomotive" style="-fx-font-size: 18px; -fx-font-weight: bold"/>
+
+    <!-- Main Content -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- Available Locomotives -->
+        <VBox spacing="10" prefWidth="300">
+            <Label text="Available Locomotives:" style="-fx-font-weight: bold"/>
+            <ListView fx:id="availableLocomotivesList" prefHeight="200"/>
+        </VBox>
+
+        <!-- Owned Locomotives -->
+        <VBox spacing="10" prefWidth="300">
+            <Label text="Your Locomotives:" style="-fx-font-weight: bold"/>
+            <ListView fx:id="ownedLocomotivesList" prefHeight="200"/>
+        </VBox>
+    </HBox>
+
+    <!-- Locomotive Details -->
+    <VBox fx:id="locomotiveDetailsBox" spacing="10"
+          style="-fx-padding: 15; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-background-color: #f9f9f9;"
+          prefHeight="300" prefWidth="400">
+
+        <Label text="Locomotive Details:" style="-fx-font-weight: bold; -fx-font-size: 14px"/>
+
+        <!-- Troca o Label por TextArea para scroll e texto longo -->
+        <TextArea fx:id="locomotiveDetailsTextArea" wrapText="true"
+                  prefRowCount="10" prefHeight="200"
+                  style="-fx-font-family: monospace; -fx-font-size: 12px;" />
+
+        <Label fx:id="priceLabel" style="-fx-font-weight: bold; -fx-text-fill: #2e7d32"/>
+
+    </VBox>
+
+    <!-- Budget Information -->
+    <VBox spacing="5" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-radius: 5;">
+        <Label text="Budget Information:" style="-fx-font-weight: bold"/>
+        <Label fx:id="currentBudgetLabel" style="-fx-text-fill: #1976d2"/>
+        <Label fx:id="remainingBudgetLabel" style="-fx-text-fill: #388e3c"/>
+    </VBox>
+
+    <!-- Error Message -->
+    <Label fx:id="errorMessageLabel" textFill="RED" wrapText="true" style="-fx-font-weight: bold"/>
+
+    <!-- Buttons -->
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Purchase Locomotive" onAction="#handlePurchase" fx:id="purchaseButton"
+                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold"
+                prefWidth="150"/>
+        <Button text="Refresh Lists" onAction="#handleRefresh"
+                style="-fx-background-color: #2196f3; -fx-text-fill: white"
+                prefWidth="120"/>
+        <Button text="Close" onAction="#handleClose"
+                style="-fx-background-color: #f44336; -fx-text-fill: white"
+                prefWidth="80"/>
+    </HBox>
+</VBox>

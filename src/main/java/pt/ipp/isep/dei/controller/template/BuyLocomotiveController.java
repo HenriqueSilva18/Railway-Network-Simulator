@@ -43,12 +43,19 @@ public class BuyLocomotiveController {
 
     public List<Locomotive> getPlayerLocomotives() {
         Player player = getPlayerFromSession();
+
         if (player == null) {
             return new ArrayList<>();
         }
 
-        return player.getOwnedLocomotives();
+        List<Locomotive> owned = player.getOwnedLocomotives();
+
+        for (Locomotive loc : owned) {
+        }
+
+        return owned;
     }
+
 
     public Locomotive getLocomotive(String locomotiveID) {
         return locomotiveRepository.getLocomotive(locomotiveID);

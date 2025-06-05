@@ -700,6 +700,8 @@ public class PlayerMenuGUIController implements Initializable {
         }
     }
 
+
+
     @FXML
     void handleUpgradeStation(ActionEvent event) {
         System.out.println("Upgrade Station clicked");
@@ -792,7 +794,37 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleBuyLocomotive(ActionEvent event) {
         System.out.println("Buy Locomotive clicked");
-        showAlert("Not Implemented", "Buy Locomotive (US09) functionality is not yet implemented.");
+        if (appSession.getCurrentMap() == null) {
+            showAlert(Alert.AlertType.WARNING, "No Map Selected",
+                    "Please select a map and scenario first.");
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BuyLocomotiveDialog.fxml"));
+            Parent dialogRoot = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Buy Locomotive");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+
+            dialogStage.showAndWait();
+
+            // After dialog closes, update the budget display and map visualization
+            updateBudgetDisplay();
+            if (appSession.getCurrentMap() != null) {
+                loadMapVisualization();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not open Buy Locomotive dialog: " + e.getMessage());
+        }
+
     }
 
     @FXML

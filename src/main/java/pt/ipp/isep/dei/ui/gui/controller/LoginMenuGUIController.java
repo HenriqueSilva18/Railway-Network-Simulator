@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.application.controller.authorization.AuthenticationController;
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
+import pt.ipp.isep.dei.controller.template.UserSession;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.ui.console.menu.AdminUI;
@@ -116,6 +117,7 @@ public class LoginMenuGUIController {
         }
 
         List<RoleFXML> roleFXMLList = getFXMLForRoles();
+        ApplicationSession.getInstance().setCurrentSession(new UserSession(id));
         return redirectToRoleUI(roleFXMLList, role, event);
     }
 
