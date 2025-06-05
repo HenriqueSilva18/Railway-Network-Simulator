@@ -14,6 +14,9 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Simulator (game simulation)
 * Route (transportation route)
 * TrainSchedule (train arrival/departure times)
+* CargoGenerationEvent (cargo generation and management)
+* DepartureEvent (train departure events)
+* ArrivalEvent (train arrival events)
 
 ---
 
@@ -21,13 +24,14 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 * Cargo (goods being transported)
 * RailwayLine (connection between stations)
+* Train (transport unit with carriages)
 
 ---
 
 **Product/Service related to a Transaction or Transaction Line Item**
 
-* Station (service point with cost)
-* Building (station upgrades)
+* Station (service point with cost, storage and buildings)
+* Building (station upgrades with evolution stages)
 * Locomotive (transport service with acquisition/maintenance costs)
 * Carriage (transport capacity)
 * StationType (classification of stations)
@@ -37,24 +41,25 @@ To identify domain conceptual classes, start by making a list of candidate conce
 
 **Transaction Records**
 
-* SimulationReport (simulation results from Simulator)
+* SimulationReport (simulation results and financial performance from Simulator)
 * Train (transport unit record)
 * CargoGenerationEvent (cargo generation records)
-* TransportationEvent (transportation records)
+* DepartureEvent (departure records)
+* ArrivalEvent (arrival records)
 
 ---
 
 **Roles of People or Organizations**
 
 * Player (game participant with budget)
-* Editor (content creator)
+* Editor (content creator with maps and scenarios)
 
 ---
 
 **Places**
 
-* Map (game world)
-* City (population center)
+* Map (game world with cities and industries)
+* City (population center with house blocks)
 * Industry (production facility)
 * Position (spatial location)
 * Size (map dimensions)
@@ -66,7 +71,8 @@ To identify domain conceptual classes, start by making a list of candidate conce
 **Noteworthy Events**
 
 * CargoGenerationEvent (cargo generation and management)
-* TransportationEvent (train transportation events)
+* DepartureEvent (train departure events)
+* ArrivalEvent (train arrival events)
 * Simulation run
 * Route completion
 * Financial transactions (purchases/constructions)
@@ -117,7 +123,6 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Route (with stations and railway lines)
 * City (contains HouseBlocks)
 * IndustrySector (contains industries)
-* RailwayNetwork (contains railway lines and routes)
 
 ---
 
@@ -130,8 +135,9 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Station (part of map)
 * Position (element of map)
 * HouseBlock (part of city)
-* RailwayLine (part of railway network)
+* RailwayLine (part of route)
 * Route (part of railway network)
+* TrainSchedule (part of route)
 
 ---
 
@@ -155,6 +161,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Locomotive acquisition/maintenance costs
 * Building evolution cost
 * SimulationReport (financial performance)
+* TrackType costs
 
 ---
 
@@ -166,6 +173,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Locomotive acquisitionPrice
 * Locomotive maintenancePrice
 * Building evolutionCost
+* TrackType cost
 
 ---
 
@@ -188,16 +196,21 @@ An association is a relationship between instances of objects that indicates a r
 
 | Concept (A)      | Association         | Concept (B)       |
 |------------------|---------------------|-------------------|
+| ArrivalEvent     | involves            | Train             |
+| ArrivalEvent     | occurs at           | Station           |
+| ArrivalEvent     | unloads/discards    | Cargo             |
+| ArrivalEvent     | triggers            | CargoGenerationEvent |
 | Building         | evolves into        | Building          |
-| Carriage         | carries             | Cargo             |
+| Carriage         | loads               | Cargo             |
 | CargoGenerationEvent | generates     | Cargo             |
-| CargoGenerationEvent | involves      | Industry          |
-| CargoGenerationEvent | involves      | Station           |
 | City             | produces/consumes   | Cargo             |
 | City             | located at          | Position          |
 | City             | contains            | HouseBlock        |
-| Editor           | creates             | Map               |
-| Editor           | creates             | Scenario          |
+| DepartureEvent   | involves            | Train             |
+| DepartureEvent   | occurs at           | Station           |
+| DepartureEvent   | loads               | Cargo             |
+| Editor           | creates/saves/loads | Map               |
+| Editor           | creates/saves/loads | Scenario          |
 | HouseBlock       | has                 | Position          |
 | Industry         | produces/consumes   | Cargo             |
 | Industry         | located at          | Position          |
@@ -215,11 +228,10 @@ An association is a relationship between instances of objects that indicates a r
 | Player           | plays               | Scenario          |
 | RailwayLine      | connects            | Station           |
 | RailwayLine      | has                 | TrackType         |
-| RailwayNetwork   | contains            | RailwayLine       |
 | Route            | contains            | RailwayLine       |
-| Route            | defined by          | Player            |
 | Route            | includes            | Station           |
 | Route            | manages             | Cargo             |
+| Route            | contains            | TrainSchedule     |
 | Scenario         | configures          | Industry          |
 | Scenario         | configures          | IndustrySector    |
 | Scenario         | configures          | Locomotive        |
@@ -228,7 +240,8 @@ An association is a relationship between instances of objects that indicates a r
 | Scenario         | uses                | Map               |
 | Scenario         | runs in             | Simulator         |
 | Simulator        | handles             | CargoGenerationEvent |
-| Simulator        | handles             | TransportationEvent |
+| Simulator        | handles             | DepartureEvent    |
+| Simulator        | handles             | ArrivalEvent      |
 | Simulator        | generates           | SimulationReport  |
 | SimulationReport | reports a           | Scenario          |
 | SimulationReport | belongs to          | Player            |
@@ -238,16 +251,13 @@ An association is a relationship between instances of objects that indicates a r
 | Station          | upgraded with       | Building          |
 | Station          | located at          | Position          |
 | Station          | defined by          | StationType       |
-| Station          | has                 | TrainSchedule     |
+| Station          | generates           | TrainSchedule     |
 | StationType      | can change          | StationType       |
 | Train            | assigned to         | Route             |
 | Train            | composed of         | Carriage          |
 | Train            | powered by          | Locomotive        |
 | TrainSchedule    | contains            | Train             |
-| TransportationEvent | involves        | Train             |
-| TransportationEvent | involves        | Station           |
-| TransportationEvent | involves        | Cargo             |
-| TransportationEvent | follows          | TrainSchedule     |
+| Cargo            | uses                | Cargo             |
 
 ## Domain Model
 

@@ -27,8 +27,6 @@ class Editor {
 
 class Map {
   nameID
-  cityList
-  industryList
   scale
 }
 
@@ -50,9 +48,6 @@ class Scenario {
   endDate
   initialBudget
   currentBudget
-  tweakedCityList
-  availableIndustryList
-  availableLocomotives
 }
 
 class Simulator {
@@ -64,24 +59,34 @@ class Simulator {
 class CargoGenerationEvent {
   eventID
   timestamp
+  cargoUsed
   generatedCargo
   amount
-  sourceIndustry
+  genesisSource
   storageStation
-  requiredCargoList
+  cargoType
+  creationTime
   status
 }
 
-class TransportationEvent {
+class DepartureEvent {
     eventID
     timestamp
-    distance
     status
-    revenue
-    expenses
-    completionTime
+    nextStation
+    loadedCargo
 }
 
+class ArrivalEvent {
+    eventID
+    timestamp
+    status
+    previousStation
+    traveledDistance
+    duration
+    revenue
+    fuelExpenses
+}
 
 class SimulationReport {
     startDate
@@ -92,8 +97,6 @@ class SimulationReport {
     totalProfits
     hitBankruptcy
 }
-
-
 
 class City {
   nameID
@@ -129,14 +132,12 @@ class Cargo {
   lifespan
   type
   pricePerUnit
-  requiredCargoList
 }
 
 class Station {
   nameID
   storageCapacity
   buildingSlots
-  buildingList
   availableCargo
   requestedCargo
 }
@@ -153,6 +154,8 @@ class TrainSchedule {
   calculatedDepartureTime
   actualArrivalTime
   actualDepartureTime
+  departureStation
+  arrivalStation
 }
 
 class Building {
@@ -176,11 +179,6 @@ class TrackType{
   isElectrified
 }
 
-class RailwayNetwork{
-    nameID
-    routeList
-    }
-
 class Locomotive {
   nameID
   owner
@@ -202,23 +200,20 @@ class Locomotive {
 class Train {
   nameID
   traveledKms
+  status
 }
 
 class Carriage {
   carriageID
   storageCapacity
-  isFull
+  status
   speedDegradation
 }
 
 class Route {
   nameID
   stationSequence
-  routePointList
-  cargoPickUpList
 }
-
-
 
 ' Relationships
 Editor "1" -- "*" Map : creates/saves/loads >
@@ -241,7 +236,7 @@ Player "1" -- "*" Locomotive : buys >
 Train "1" -- "1" Locomotive : powered by >
 Train "1" -- "*" Carriage : composed of >
 Carriage "*" -- "1" Cargo : loads >
-Train "1" -- "*" Route : assigned to >
+Train "1" -- "1" Route : assigned to >
 Route "1" -- "*" Station : includes >
 Route "*" -- "*" Cargo : manages >
 Scenario "1" -- "*" Locomotive : configures >
@@ -263,18 +258,29 @@ Industry "*" -- "*" Cargo : produces/consumes >
 Station "*" -- "1" StationType : defined by >
 StationType "1" -- "*" StationType : can change >
 TrainSchedule "*" -- "*" Train: contains >
-Station "*" -- "1" TrainSchedule: generates >
-RailwayNetwork "1" -- "*" RailwayLine : contains >
+Station "1" -- "*" TrainSchedule: generates >
 Simulator "1" -- "*" SimulationReport : generates >
 SimulationReport "*" -- "1" Scenario : reports a >
 SimulationReport "*" -- "1" Player : belongs to >
 RailwayLine "*" -- "1" TrackType: has
 Simulator "1" -- "*" CargoGenerationEvent : handles >
 CargoGenerationEvent "*" -- "1" Cargo : generates >
-Simulator "1" -- "*" TransportationEvent : handles >
-TransportationEvent "*" -- "1" Train : involves >
-TransportationEvent "*" -- "1" Station : starts/ends at >
-TransportationEvent "*" -- "*" Cargo : transports >
-TransportationEvent "*" -- "1" TrainSchedule : follows >
+Simulator "1" -- "*" DepartureEvent : handles >
+Simulator "1" -- "*" ArrivalEvent : handles >
+
+Cargo "*" -- "*" Cargo : uses >
+Route "1" -- "*" TrainSchedule :  >
+
+
+DepartureEvent "*" -- "1" Train : involves >
+
+DepartureEvent "*" -- "1" Station : occurs at >
+DepartureEvent "*" -- "*" Cargo : loads >
+
+ArrivalEvent "*" -- "1" Train : involves >
+
+ArrivalEvent "*" -- "1" Station : occurs at >
+ArrivalEvent "*" -- "*" Cargo : unloads/discards >
+ArrivalEvent "*" -- "1" CargoGenerationEvent : triggers >
 
 @enduml
