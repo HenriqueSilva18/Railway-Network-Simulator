@@ -97,51 +97,61 @@ public class BuildingRepository {
         // Create telegraph (early communication) - can evolve to telephone
         add(new Building("telegraph", "Communication", 1900, 5000, 
                 "Improves train coordination by 10%", null, false, null,
-                "telephone", 5000, true));
+                "telephone", 5000, true, 0.1));
         
         // Create telephone (replaces telegraph)
         add(new Building("telephone", "Communication", 1900, 10000,  // Changed from 1920 to 1900 for testing
                 "Improves train coordination by 20%", "telegraph", false, null,
-                null, 0, false));
+                null, 0, false, 0.2));
         
         // Create small cafe - can evolve to large cafe
         add(new Building("small_cafe", "Passenger Service", 1900, 3000, 
                 "Increases passenger satisfaction by 5%", null, true, "large_cafe",
-                "large_cafe", 5000, true));
+                "large_cafe", 5000, true, 0.05));
         
         // Create large cafe
         add(new Building("large_cafe", "Passenger Service", 1900, 8000,  // Changed from 1910 to 1900 for testing
                 "Increases passenger satisfaction by 15%", null, true, "small_cafe",
-                null, 0, false));
+                null, 0, false, 0.15));
         
         // Create customs office
         add(new Building("customs", "Administrative", 1900, 12000, 
                 "Enables international cargo handling", null, false, null,
-                null, 0, false));
+                null, 0, false, 0.25));
         
         // Create post office
         add(new Building("post_office", "Administrative", 1900, 7000, 
                 "Generates additional mail cargo", null, false, null,
-                null, 0, false));
+                null, 0, false, 0.1));
         
         // Create small hotel - can evolve to large hotel
         add(new Building("small_hotel", "Passenger Service", 1900, 15000,  // Changed from 1910 to 1900 for testing
                 "Increases passenger traffic by 10%", null, true, "large_hotel",
-                "large_hotel", 15000, true));
+                "large_hotel", 15000, true, 0.1));
         
         // Create large hotel
-        add(new Building("large_hotel", "Passenger Service", 1900, 30000,  // Changed from 1930 to 1900 for testing
+        add(new Building("large_hotel", "Passenger Service", 1900, 30000,  // Changed from 1920 to 1900 for testing
                 "Increases passenger traffic by 25%", null, true, "small_hotel",
-                null, 0, false));
+                null, 0, false, 0.25));
         
-        // Create silo (for grain storage)
-        add(new Building("silo", "Cargo Storage", 1900, 20000, 
-                "Extends grain cargo lifespan by 50%", null, false, null,
-                null, 0, false));
+        // Create small warehouse - can evolve to large warehouse
+        add(new Building("small_warehouse", "Storage", 1900, 8000,
+                "Increases cargo storage capacity by 20%", null, true, "large_warehouse",
+                "large_warehouse", 12000, true, 0.1));
         
-        // Create liquid storage
-        add(new Building("liquid_storage", "Cargo Storage", 1900, 25000,  // Changed from 1915 to 1900 for testing
-                "Enables liquid cargo storage", null, false, null,
-                null, 0, false));
+        // Create large warehouse
+        add(new Building("large_warehouse", "Storage", 1900, 20000,  // Changed from 1910 to 1900 for testing
+                "Increases cargo storage capacity by 50%", null, true, "small_warehouse",
+                null, 0, false, 0.2));
+        
+        // Create small market - can evolve to large market
+        add(new Building("small_market", "Commercial", 1900, 10000,
+                "Increases cargo value by 5%", null, true, "large_market",
+                "large_market", 15000, true, 0.05));
+        
+        // Create large market
+        add(new Building("large_market", "Commercial", 1900, 25000,  // Changed from 1910 to 1900 for testing
+                "Increases cargo value by 15%", null, true, "small_market",
+                null, 0, false, 0.15));
     }
 } 

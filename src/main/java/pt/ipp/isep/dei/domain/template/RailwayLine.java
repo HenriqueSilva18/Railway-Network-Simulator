@@ -8,6 +8,10 @@ public class RailwayLine {
     private final Station startStation;
     private final Station endStation;
     private final List<Position> path;
+    private final boolean isDoubleTrack;
+    private final boolean isElectrified;
+    private final double length;
+    private final double maintenanceCostPerKm;
 
     public RailwayLine(String nameID, Station startStation, Station endStation, List<Position> path) {
         if (nameID == null || startStation == null || endStation == null || path == null || path.isEmpty()) {
@@ -18,6 +22,10 @@ public class RailwayLine {
         this.startStation = startStation;
         this.endStation = endStation;
         this.path = new ArrayList<>(path);
+        this.isDoubleTrack = false; // Default to single track
+        this.isElectrified = false; // Default to non-electrified
+        this.length = calculateLength();
+        this.maintenanceCostPerKm = 100.0; // Default maintenance cost
     }
 
     public String getNameID() {
@@ -36,7 +44,23 @@ public class RailwayLine {
         return new ArrayList<>(path);
     }
 
+    public boolean isDoubleTrack() {
+        return isDoubleTrack;
+    }
+
+    public boolean isElectrified() {
+        return isElectrified;
+    }
+
     public double getLength() {
+        return length;
+    }
+
+    public double getMaintenanceCostPerKm() {
+        return maintenanceCostPerKm;
+    }
+
+    private double calculateLength() {
         double length = 0;
         for (int i = 0; i < path.size() - 1; i++) {
             Position current = path.get(i);

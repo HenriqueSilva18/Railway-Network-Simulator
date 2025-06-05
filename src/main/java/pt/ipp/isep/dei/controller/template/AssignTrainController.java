@@ -116,6 +116,10 @@ public class AssignTrainController {
             // Set current train and route in the application session
             applicationSession.setCurrentTrain(selectedTrain);
             applicationSession.setCurrentRoute(selectedRoute);
+            
+            // Trigger cargo generation since we now have an assigned train
+            SimulatorController simulatorController = new SimulatorController();
+            simulatorController.generateCargo();
         }
         
         return success;

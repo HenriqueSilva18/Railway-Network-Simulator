@@ -13,9 +13,13 @@ public class StationTypeRepository {
     }
 
     private void initializeStationTypes() {
-        stationTypes.add(new StationType(StationType.DEPOT));
-        stationTypes.add(new StationType(StationType.STATION));
-        stationTypes.add(new StationType(StationType.TERMINAL));
+        createStationTypes();
+    }
+
+    private void createStationTypes() {
+        stationTypes.add(new StationType(StationType.DEPOT, 3, 50000, 100));
+        stationTypes.add(new StationType(StationType.STATION, 4, 100000, 200));
+        stationTypes.add(new StationType(StationType.TERMINAL, 5, 200000, 300));
     }
 
     public List<StationType> getStationTypes() {

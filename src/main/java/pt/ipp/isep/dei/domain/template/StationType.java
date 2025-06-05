@@ -4,30 +4,18 @@ public class StationType {
     private final String name;
     private final int economicRadius;
     private final double cost;
+    private final int storageCapacity;
     private String centerPoint;
 
     public static final String DEPOT = "DEPOT";
     public static final String STATION = "STATION";
     public static final String TERMINAL = "TERMINAL";
 
-    public StationType(String name) {
+    public StationType(String name, int economicRadius, double cost, int storageCapacity) {
         this.name = name;
-        switch (name) {
-            case DEPOT:
-                this.economicRadius = 3;
-                this.cost = 50000;
-                break;
-            case STATION:
-                this.economicRadius = 4;
-                this.cost = 100000;
-                break;
-            case TERMINAL:
-                this.economicRadius = 5;
-                this.cost = 200000;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid station type: " + name);
-        }
+        this.economicRadius = economicRadius;
+        this.cost = cost;
+        this.storageCapacity = storageCapacity;
     }
 
     public String getName() {
@@ -42,8 +30,12 @@ public class StationType {
         return cost;
     }
 
+    public int getStorageCapacity() {
+        return storageCapacity;
+    }
+
     public boolean requiresCenterPoint() {
-        return STATION.equals(name);
+        return "TERMINAL".equals(name);
     }
 
     public String getCenterPoint() {

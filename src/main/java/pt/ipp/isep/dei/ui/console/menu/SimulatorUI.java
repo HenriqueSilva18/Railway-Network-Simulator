@@ -1,25 +1,23 @@
 package pt.ipp.isep.dei.ui.console.menu;
 
-import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.SimulatorController;
-import pt.ipp.isep.dei.domain.template.Cargo;
-import pt.ipp.isep.dei.domain.template.Map;
-import pt.ipp.isep.dei.domain.template.Scenario;
-import pt.ipp.isep.dei.domain.template.Simulator;
+import pt.ipp.isep.dei.domain.template.*;
+import pt.ipp.isep.dei.repository.template.*;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
+import pt.ipp.isep.dei.controller.template.ApplicationSession;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * User interface for the simulator - acts as a control panel for the background simulation
  */
 public class SimulatorUI implements Runnable {
-    
     private final SimulatorController controller;
+    private final SimulatorRepository simulatorRepository;
     
     public SimulatorUI() {
         this.controller = new SimulatorController();
+        this.simulatorRepository = Repositories.getInstance().getSimulatorRepository();
     }
     
     @Override
@@ -139,60 +137,64 @@ public class SimulatorUI implements Runnable {
      * Shows the simulation control options
      */
     private void showSimulationControls() {
-        String status = controller.getSimulatorStatus();
-        if (status == null) {
-            System.out.println("No active simulation found.");
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator == null) {
+            System.out.println("No active simulation.");
             return;
         }
-        
-        boolean exitControls = false;
-        while (!exitControls) {
-            System.out.println("\n=== Simulation Controls (Status: " + status + ") ===");
+
+        Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
+        if (currentPlayer == null) {
+            System.out.println("No active player.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("\n=== Simulation Controls (Status: " + simulator.getStatus() + ") ===");
+            System.out.printf("Current Budget: %.2f\n", currentPlayer.getCurrentBudget());
+            System.out.printf("Current Date: %s\n", simulator.getCurrentSimulatedDate());
             System.out.println("1. View Cargo at Stations");
-            
-            // Toggle pause/resume option based on current status
-            if (Simulator.STATUS_RUNNING.equals(status)) {
-                System.out.println("2. Pause Simulation");
-            } else if (Simulator.STATUS_PAUSED.equals(status)) {
-                System.out.println("2. Resume Simulation");
-            }
-            
+            System.out.println("2. Pause Simulation");
             System.out.println("3. Generate Cargo Now");
             System.out.println("4. Stop Simulation and View Report");
             System.out.println("5. Restart Simulation");
             System.out.println("0. Return to Main Menu (simulation continues in background)");
-            
-            int option = Utils.readIntegerFromConsole("Select an option: ");
-            
-            switch (option) {
-                case 1: // View Cargo
+
+            int choice = Utils.readIntegerFromConsole("Select an option: ");
+            switch (choice) {
+                case 1:
                     displayCargoGeneration();
                     break;
-                case 2: // Pause/Resume
-                    togglePauseResume();
-                    status = controller.getSimulatorStatus(); // Update status
-                    break;
-                case 3: // Generate Cargo
-                    controller.generateCargo();
-                    System.out.println("Cargo generated!");
-                    break;
-                case 4: // Stop Simulation
-                    if (stopSimulation()) {
-                        exitControls = true; // Exit after stopping
+                case 2:
+                    if (simulator.getStatus().equals(Simulator.STATUS_RUNNING)) {
+                        simulator.pause();
+                        System.out.println("Simulation paused.");
+                    } else {
+                        System.out.println("Simulation is not running.");
                     }
                     break;
-                case 5: // Restart Simulation
-                    if (restartSimulation()) {
-                        status = controller.getSimulatorStatus(); // Update status
+                case 3:
+                    if (controller.generateCargo()) {
+                        System.out.println("Cargo generated successfully.");
                     }
                     break;
-                case 0: // Return to Main Menu
-                    System.out.println("Returning to main menu. Simulation continues running in background.");
-                    exitControls = true;
+                case 4:
+                    if (Utils.confirm("Are you sure you want to stop the simulation? (y/n)")) {
+                        simulator.stop();
+                        displaySimulationReport();
+                        return;
+                    }
                     break;
+                case 5:
+                    if (Utils.confirm("Are you sure you want to restart the simulation? (y/n)")) {
+                        controller.restartSimulation();
+                        System.out.println("Simulation restarted.");
+                    }
+                    break;
+                case 0:
+                    return;
                 default:
                     System.out.println("Invalid option. Please try again.");
-                    break;
             }
         }
     }
@@ -231,71 +233,19 @@ public class SimulatorUI implements Runnable {
     }
     
     /**
-     * Toggles between pause and resume
+     * Displays the simulation report
      */
-    private void togglePauseResume() {
-        String status = controller.getSimulatorStatus();
-        
-        if (Simulator.STATUS_RUNNING.equals(status)) {
-            boolean paused = controller.pauseSimulation();
-            if (paused) {
-                System.out.println("Simulation paused.");
-            } else {
-                System.out.println("Failed to pause simulation.");
-            }
-        } else if (Simulator.STATUS_PAUSED.equals(status)) {
-            boolean resumed = controller.resumeSimulation();
-            if (resumed) {
-                System.out.println("Simulation resumed.");
-            } else {
-                System.out.println("Failed to resume simulation.");
-            }
-        } else {
-            System.out.println("Cannot pause/resume - simulator is not running or already paused.");
-        }
-    }
-    
-    /**
-     * Stops the simulation and displays the report
-     * @return True if simulation was successfully stopped
-     */
-    private boolean stopSimulation() {
-        if (!Utils.confirm("Are you sure you want to stop the simulation? This cannot be undone. (y/n)")) {
-            return false;
-        }
-        
+    private void displaySimulationReport() {
         String report = controller.stopSimulation();
         if (report == null) {
             System.out.println("Failed to stop simulation.");
-            return false;
+            return;
         }
         
-        // Display the report
-        System.out.println("\n=== Simulation Report ===\n");
+        System.out.println("\n=== Simulation Report ===");
         System.out.println(report);
         
         System.out.println("\nPress Enter to continue...");
         Utils.readLineFromConsole("");
-        
-        return true;
-    }
-    
-    /**
-     * Restarts the simulation
-     * @return True if simulation was successfully restarted
-     */
-    private boolean restartSimulation() {
-        if (!Utils.confirm("Are you sure you want to restart the simulation? This cannot be undone. (y/n)")) {
-            return false;
-        }
-        
-        boolean restarted = controller.restartSimulation();
-        if (restarted) {
-            System.out.println("Simulation restarted successfully!");
-            return true;
-        } else {
-            System.out.println("Failed to restart simulation.");
-            return false;
-        }
     }
 } 

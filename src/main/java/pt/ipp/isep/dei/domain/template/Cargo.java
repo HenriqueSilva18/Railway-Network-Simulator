@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.domain.template;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Cargo {
@@ -9,6 +10,8 @@ public class Cargo {
     private int lifespan;
     private String type;
     private List<String> productionResources;
+    private double baseValue;
+    private Date creationDate;
 
     public Cargo(String name, int amount, String type) {
         this.name = name;
@@ -16,6 +19,8 @@ public class Cargo {
         this.type = type;
         this.lifespan = 10; // Default lifespan in days
         this.productionResources = new ArrayList<>();
+        this.baseValue = calculateBaseValue();
+        this.creationDate = new Date(); // Set current date as creation date
     }
 
     public Cargo(String name, int amount, int lifespan, String type) {
@@ -24,6 +29,8 @@ public class Cargo {
         this.lifespan = lifespan;
         this.type = type;
         this.productionResources = new ArrayList<>();
+        this.baseValue = calculateBaseValue();
+        this.creationDate = new Date(); // Set current date as creation date
     }
 
     public Cargo(String name, int amount, int lifespan, String type, List<String> productionResources) {
@@ -32,6 +39,8 @@ public class Cargo {
         this.lifespan = lifespan;
         this.type = type;
         this.productionResources = new ArrayList<>(productionResources);
+        this.baseValue = calculateBaseValue();
+        this.creationDate = new Date(); // Set current date as creation date
     }
 
     public String getName() {
@@ -60,11 +69,47 @@ public class Cargo {
         }
     }
 
+    public void addAmount(int amount) {
+        if (amount > 0) {
+            this.amount += amount;
+        }
+    }
+
     public boolean addProductionResource(String resource) {
         if (resource != null && !resource.isEmpty()) {
             return productionResources.add(resource);
         }
         return false;
+    }
+
+    public double getBaseValue() {
+        return baseValue;
+    }
+
+    public Date getCreationDate() {
+        return creationDate != null ? (Date) creationDate.clone() : null;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate != null ? (Date) creationDate.clone() : null;
+    }
+
+    private double calculateBaseValue() {
+        // Base value calculation based on cargo type
+        switch (type.toLowerCase()) {
+            case "raw material":
+                return 100.0;
+            case "processed material":
+                return 200.0;
+            case "people":
+                return 150.0;
+            case "communication":
+                return 120.0;
+            case "consumable":
+                return 80.0;
+            default:
+                return 50.0;
+        }
     }
 
     @Override
@@ -76,8 +121,11 @@ public class Cargo {
         return String.format("%s (%s)\n" +
                 "Amount: %d units\n" +
                 "Lifespan: %d days\n" +
-                "Type: %s",
-                name, type, amount, lifespan, type);
+                "Type: %s\n" +
+                "Base Value: %.2f\n" +
+                "Creation Date: %s",
+                name, type, amount, lifespan, type, baseValue, 
+                creationDate != null ? creationDate.toString() : "Not set");
     }
 
     @Override
