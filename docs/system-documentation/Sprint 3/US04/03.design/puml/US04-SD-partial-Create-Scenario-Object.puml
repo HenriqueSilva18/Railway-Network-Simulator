@@ -7,7 +7,7 @@ participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapDTO\n:MapDTO" as MAP_DTO
-participant SOME
+participant ":ScenarioService" as SOME
 participant ":ScenarioMapper" as SCN_MAPPER
 participant "scenarioDTO\n:ScenarioDTO" as SCN_DTO
 participant "scenario:Scenario" as SCN
@@ -97,6 +97,7 @@ activate CTRL
             deactivate SCN_MAPPER
 
             SOME --> CTRL: scenario
+            deactivate SOME
 
             CTRL -> : TODO ADICIONAR A SCENARIOS DO MAP
 
