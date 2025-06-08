@@ -13,6 +13,7 @@ import pt.ipp.isep.dei.domain.template.Station;
 import pt.ipp.isep.dei.domain.template.Train;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -38,12 +39,14 @@ public class ListTrainsDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         trains = controller.getAllTrains();
-
+        trains.sort(Comparator.comparing(Train::getNameID));
         ObservableList<String> trainItems = FXCollections.observableArrayList();
         for (Train train : trains) {
             trainItems.add(train.getNameID() + " (" + train.getLocomotive().getNameID() + ")");
         }
+
         trainsListView.setItems(trainItems);
+
 
         trainsListView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() >= 0) {
