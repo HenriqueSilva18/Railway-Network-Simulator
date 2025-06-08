@@ -389,50 +389,14 @@ public class BuyLocomotiveDialogController implements Initializable {
             return false;
         }
 
-
         try {
-            boolean addResult = player.addLocomotive(locomotive);
-            if (!addResult) {
-                // Refund the money if adding the locomotive fails
-                player.addToBudget(locomotivePrice);
-                return false;
-            }
+            boolean success = controller.purchaseLocomotive(locomotive);
+            return success;
         } catch (Exception e) {
             e.printStackTrace();
-            player.addToBudget(locomotivePrice);
+            showError("An error occurred while purchasing the locomotive: " + e.getMessage());
             return false;
         }
 
-
-        // Set the player as the owner of the locomotive
-        try {
-            boolean setOwnerResult = locomotive.setOwner(player);
-            if (!setOwnerResult) {
-                // Refund if setting owner fails
-                player.addToBudget(locomotivePrice);
-                // Try to remove locomotive from player if possible
-                try {
-                    player.removeLocomotive(locomotive);
-                } catch (Exception ex) {
-                }
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            player.addToBudget(locomotivePrice);
-            return false;
-        }
-
-
-        // Create a train with this locomotive
-        try {
-            String trainName = "Train_" + locomotive.getNameID() + "_" + System.currentTimeMillis() % 1000;
-            Train train = new Train(trainName, locomotive);
-            // Note: We're not using trainRepository here as it might not be accessible
-        } catch (Exception e) {
-            // Continue anyway, train creation is not critical for purchase
-        }
-
-        return true;
     }
 }

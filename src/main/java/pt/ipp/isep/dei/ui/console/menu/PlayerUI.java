@@ -4,14 +4,7 @@ import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.AuthenticationController;
 import pt.ipp.isep.dei.domain.template.Player;
 import pt.ipp.isep.dei.domain.template.Map;
-import pt.ipp.isep.dei.ui.console.BuildRailwayLineUI;
-import pt.ipp.isep.dei.ui.console.BuyLocomotiveUI;
-import pt.ipp.isep.dei.ui.console.CreateRouteUI;
-import pt.ipp.isep.dei.ui.console.ListStationUI;
-import pt.ipp.isep.dei.ui.console.ShowTextUI;
-import pt.ipp.isep.dei.ui.console.StationBuildingUI;
-import pt.ipp.isep.dei.ui.console.ViewLocomotivesUI;
-import pt.ipp.isep.dei.ui.console.ViewMapUI;
+import pt.ipp.isep.dei.ui.console.*;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.ArrayList;
@@ -45,6 +38,7 @@ public class PlayerUI implements Runnable {
                 // Only show these options if a map is selected
                 options.add(new MenuItem("Buy Locomotive", new BuyLocomotiveUI()));
                 options.add(new MenuItem("View Locomotives", new ViewLocomotivesUI()));
+                options.add(new MenuItem("List Trains", new ListTrainUI()));
                 options.add(new MenuItem("Build Station", new StationBuildingUI()));
                 options.add(new MenuItem("Build Railway Line", new BuildRailwayLineUI()));
                 options.add(new MenuItem("Create Route", new CreateRouteUI()));

@@ -138,12 +138,12 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem cardBuyLocomotiveItem;
     private MenuItem cardCreateRouteItem;
     private MenuItem cardAssignTrainItem;
+    private MenuItem cardListTrainsItem;
     private MenuItem cardRunSimulatorItem;
 
     // View Card
     private MenuItem cardViewMapItem;
     private MenuItem cardListStationsItem;
-    private MenuItem cardListTrainsItem;
     private MenuItem cardViewConnectivityItem;
     private MenuItem cardMaintenanceRouteItem;
     private MenuItem cardShortestRouteItem;
@@ -267,13 +267,16 @@ public class PlayerMenuGUIController implements Initializable {
             cardAssignTrainItem = new MenuItem("Assign Train to Route");
             cardAssignTrainItem.setOnAction(this::handleAssignTrainToRoute);
 
+            cardListTrainsItem = new MenuItem("List Trains");
+            cardListTrainsItem.setOnAction(this::handleListTrains);
+
             // Note: This item also exists on the main menu bar.
             // And potentially on the new "Simulation Control" card.
             // Ensure consistent behavior or specific actions as needed.
             cardRunSimulatorItem = new MenuItem("Run/Pause Simulator (Ops)");
             cardRunSimulatorItem.setOnAction(this::handleRunPauseSimulator);
 
-            contextMenu.getItems().addAll(cardBuyLocomotiveItem, cardCreateRouteItem, cardAssignTrainItem,
+            contextMenu.getItems().addAll(cardBuyLocomotiveItem, cardCreateRouteItem, cardAssignTrainItem, cardListTrainsItem,
                     new SeparatorMenuItem(), cardRunSimulatorItem);
 
             setupCardHoverEffect(operationsCard);
@@ -295,9 +298,6 @@ public class PlayerMenuGUIController implements Initializable {
             cardListStationsItem = new MenuItem("List Stations");
             cardListStationsItem.setOnAction(this::handleListStations);
 
-            cardListTrainsItem = new MenuItem("List Trains");
-            cardListTrainsItem.setOnAction(this::handleListTrains);
-
             cardViewConnectivityItem = new MenuItem("Network Connectivity");
             cardViewConnectivityItem.setOnAction(this::handleViewConnectivity);
 
@@ -314,7 +314,7 @@ public class PlayerMenuGUIController implements Initializable {
 
             contextMenu.getItems().addAll(
                     cardViewMapItem, new SeparatorMenuItem(),
-                    cardListStationsItem, cardListTrainsItem, new SeparatorMenuItem(),
+                    cardListStationsItem, new SeparatorMenuItem(),
                     cardViewConnectivityItem, cardMaintenanceRouteItem, cardShortestRouteItem,
                     new SeparatorMenuItem(), cardFinancialResultsItem
             );
@@ -570,12 +570,12 @@ public class PlayerMenuGUIController implements Initializable {
         buyLocomotiveMenuItem.setDisable(!mapLoaded);
         createRouteMenuItem.setDisable(!mapLoaded);
         assignTrainMenuItem.setDisable(!mapLoaded);
+        listTrainsMenuItem.setDisable(!mapLoaded);
         runPauseSimulatorMenuItem.setDisable(!mapLoaded);
 
         // View Menu (Main Menu Bar)
         viewCurrentMapMenuItem.setDisable(!mapLoaded);
         listStationsMenuItem.setDisable(!mapLoaded);
-        listTrainsMenuItem.setDisable(!mapLoaded);
         viewConnectivityMenuItem.setDisable(!mapLoaded);
         viewMaintenanceRouteMenuItem.setDisable(!mapLoaded);
         viewShortestRouteMenuItem.setDisable(!mapLoaded);
@@ -980,8 +980,41 @@ public class PlayerMenuGUIController implements Initializable {
 
     @FXML
     void handleListTrains(ActionEvent event) {
-        System.out.println("View Trains clicked");
-        showAlert("Not Implemented", "View Trains (US11) functionality is not yet implemented.");
+        System.out.println("View Trains Details clicked");
+
+        if (appSession.getCurrentMap() == null) {
+            showAlert(Alert.AlertType.WARNING, "No Map Selected",
+                    "Please select a map and scenario first.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ListTrainsDialog.fxml"));
+            Parent dialogRoot = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Train List");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+
+            Scene scene = new Scene(dialogRoot);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(true);
+
+            dialogStage.showAndWait();
+
+            // After dialog closes, update the budget display and map visualization
+            // in case any upgrades were performed
+            updateBudgetDisplay();
+            if (appSession.getCurrentMap() != null) {
+                loadMapVisualization();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Could not open Station List dialog: " + e.getMessage());
+        }
     }
 
     @FXML

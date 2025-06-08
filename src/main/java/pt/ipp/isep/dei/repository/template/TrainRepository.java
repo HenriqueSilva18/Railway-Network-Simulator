@@ -72,4 +72,17 @@ public class TrainRepository {
         }
         return trainsOnRoute;
     }
+
+    public void remove(Train train) {
+        if (train != null) {
+            trains.remove(train.getNameID());
+        }
+    }
+
+    public boolean contains(Train train) {
+        if (train == null || train.getNameID() == null) {
+            return false;
+        }
+        return trains.containsKey(train.getNameID());
+    }
 } 

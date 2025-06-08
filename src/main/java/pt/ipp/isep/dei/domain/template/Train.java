@@ -173,4 +173,13 @@ public class Train {
     public int hashCode() {
         return nameID != null ? nameID.hashCode() : 0;
     }
-} 
+
+    public char[] getCapacity() {
+        // Assuming capacity is the sum of the capacities of all carriages
+        int totalCapacity = 0;
+        for (Carriage carriage : carriages) {
+            totalCapacity += carriage.getStorageCapacity();
+        }
+        return String.valueOf(totalCapacity).toCharArray();
+    }
+}

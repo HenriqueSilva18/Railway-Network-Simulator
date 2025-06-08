@@ -33,13 +33,13 @@
                                 <MenuItem fx:id="buyLocomotiveMenuItem" mnemonicParsing="false" onAction="#handleBuyLocomotive" text="Buy Locomotive..." />
                                 <MenuItem fx:id="createRouteMenuItem" mnemonicParsing="false" onAction="#handleCreateRoute" text="Create Route..." />
                                 <MenuItem fx:id="assignTrainMenuItem" mnemonicParsing="false" onAction="#handleAssignTrainToRoute" text="Assign Train to Route..." />
+                                <MenuItem fx:id="listTrainsMenuItem" mnemonicParsing="false" onAction="#handleListTrains" text="View Trains" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="View">
                             <items>
                                 <MenuItem fx:id="viewCurrentMapMenuItem" mnemonicParsing="false" onAction="#handleViewCurrentMap" text="View Current Map" />
                                 <MenuItem fx:id="listStationsMenuItem" mnemonicParsing="false" onAction="#handleListStations" text="View Stations Details" />
-                                <MenuItem fx:id="listTrainsMenuItem" mnemonicParsing="false" onAction="#handleListTrains" text="View Trains" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem fx:id="viewConnectivityMenuItem" mnemonicParsing="false" onAction="#handleViewConnectivity" text="Check Network Connectivity..." />
                                 <MenuItem fx:id="viewMaintenanceRouteMenuItem" mnemonicParsing="false" onAction="#handleViewMaintenanceRoute" text="View Maintenance Route..." />

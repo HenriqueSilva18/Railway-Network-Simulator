@@ -148,12 +148,26 @@ public class BuyLocomotiveController {
         
         List<Train> allTrains = trainRepository.getAllTrains();
         for (Train train : allTrains) {
-            if (train.getLocomotive().equals(locomotive) || 
-                train.getLocomotive().getNameID().equals(locomotive.getNameID())) {
-                return train;
+            if (train.getLocomotive() != null && train.getLocomotive().equals(locomotive)) {
+                return train; // Found the train using this locomotive
             }
         }
         
         return null;
+    }
+
+    public boolean createTrain(Train train) {
+        if (train == null || train.getLocomotive() == null || train.getNameID() == null) {
+            return false;
+        }
+
+        // Check if the locomotive is already assigned to a train
+        Train existingTrain = getTrainForLocomotive(train.getLocomotive());
+        if (existingTrain != null) {
+            return false; // Locomotive is already in use
+        }
+
+        // Save the new train
+        return trainRepository.save(train);
     }
 } 
