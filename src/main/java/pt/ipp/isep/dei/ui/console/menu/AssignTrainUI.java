@@ -1,12 +1,15 @@
 package pt.ipp.isep.dei.ui.console.menu;
 
 import pt.ipp.isep.dei.controller.template.AssignTrainController;
+import pt.ipp.isep.dei.controller.template.AssignmentStatus;
 import pt.ipp.isep.dei.controller.template.MapController;
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
+
+import static pt.ipp.isep.dei.controller.template.AssignmentStatus.*;
 
 public class AssignTrainUI implements Runnable {
     private final AssignTrainController assignTrainController;
@@ -82,27 +85,29 @@ public class AssignTrainUI implements Runnable {
         }
 
         // Assign the train to the route
-        if (assignTrainController.assignTrainToRoute(selectedRoute, selectedTrain)) {
+        AssignmentStatus status = assignTrainController.assignTrainToRoute(selectedRoute, selectedTrain);
+
+        if (status == AssignmentStatus.SUCCESS) {
             System.out.println("\nTrain successfully assigned to route!");
-            
+
             // Display assigned train and route details
             System.out.println("\n=== Assignment Details ===");
             System.out.println("\nRoute: " + selectedRoute.getNameID());
             System.out.println("Train: " + selectedTrain.getNameID());
-            
+
             // Show cargo to be picked up at each station
-            Map<Station, List<Cargo>> stationCargo = assignTrainController.getCargoesToPickUp(selectedRoute);
+            java.util.Map<Station, List<Cargo>> stationCargo = assignTrainController.getCargoesToPickUp(selectedRoute);
             System.out.println("\nCargo to be picked up at stations:");
-            
-            if (stationCargo.isEmpty()) {
+
+            if (stationCargo == null || stationCargo.isEmpty()) {
                 System.out.println("No cargo to pick up on this route.");
             } else {
-                for (Map.Entry<Station, List<Cargo>> entry : stationCargo.entrySet()) {
+                for (java.util.Map.Entry<Station, List<Cargo>> entry : stationCargo.entrySet()) {
                     Station station = entry.getKey();
                     List<Cargo> cargoList = entry.getValue();
-                    
+
                     System.out.println("\nStation: " + station.getNameID());
-                    
+
                     if (cargoList.isEmpty()) {
                         System.out.println("  No cargo to pick up");
                     } else {
@@ -114,7 +119,21 @@ public class AssignTrainUI implements Runnable {
                 }
             }
         } else {
-            System.out.println("\nFailed to assign train to route. Please check that both are valid.");
+            // Handle the different failure reasons
+            String errorMessage;
+            switch (status) {
+                case ROUTE_ALREADY_HAS_TRAIN:
+                    errorMessage = "Assignment failed: This route already has a train assigned.";
+                    break;
+                case TRAIN_ALREADY_ASSIGNED:
+                    errorMessage = "Assignment failed: This train is already assigned to another route.";
+                    break;
+                case INVALID_INPUT:
+                default:
+                    errorMessage = "An unexpected error occurred. Please check your selection and try again.";
+                    break;
+            }
+            System.out.println("\n" + errorMessage);
         }
 
         Utils.readLineFromConsole("\nPress Enter to continue...");

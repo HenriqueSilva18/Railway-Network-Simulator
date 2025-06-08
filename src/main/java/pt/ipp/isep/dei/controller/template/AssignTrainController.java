@@ -91,38 +91,39 @@ public class AssignTrainController {
         }
         return selectedTrain.getDetails();
     }
-    
-    public boolean assignTrainToRoute(Route selectedRoute, Train selectedTrain) {
+
+    public AssignmentStatus assignTrainToRoute(Route selectedRoute, Train selectedTrain) {
         if (selectedRoute == null || selectedTrain == null) {
-            return false;
+            return AssignmentStatus.INVALID_INPUT;
         }
-        
-        // Verify that the train is not already assigned to a route
+
+        // CORREÇÃO: Usar o método existente 'getAssignedTrains()'
+        if (selectedRoute.getAssignedTrains() != null && !selectedRoute.getAssignedTrains().isEmpty()) {
+            return AssignmentStatus.ROUTE_ALREADY_HAS_TRAIN;
+        }
+
+        // Validação existente: Verifica se o comboio já está atribuído a outra rota.
         if (selectedTrain.getAssignedRoute() != null) {
-            return false;
+            return AssignmentStatus.TRAIN_ALREADY_ASSIGNED;
         }
-        
-        // Assign the train to the route
+
+        // Lógica de atribuição
         boolean success = selectedTrain.assignToRoute(selectedRoute);
-        
+
         if (success) {
-            // Add the train to the route's list of trains
             selectedRoute.addTrain(selectedTrain);
-            
-            // Save changes
             routeRepository.save(selectedRoute);
             trainRepository.save(selectedTrain);
-            
-            // Set current train and route in the application session
             applicationSession.setCurrentTrain(selectedTrain);
             applicationSession.setCurrentRoute(selectedRoute);
-            
-            // Trigger cargo generation since we now have an assigned train
-            SimulatorController simulatorController = new SimulatorController();
-            simulatorController.generateCargo();
+
+            new SimulatorController().generateCargo();
+
+            return AssignmentStatus.SUCCESS;
         }
-        
-        return success;
+
+        // Se a atribuição falhar por outra razão
+        return AssignmentStatus.INVALID_INPUT;
     }
     
     public Map<Station, List<Cargo>> getCargoesToPickUp(Route route) {

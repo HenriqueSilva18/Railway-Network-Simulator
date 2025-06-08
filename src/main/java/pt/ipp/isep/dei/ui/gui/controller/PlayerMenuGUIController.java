@@ -22,22 +22,24 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
+import pt.ipp.isep.dei.controller.template.AssignTrainController;
+import pt.ipp.isep.dei.controller.template.CreateRouteController;
 import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
-import pt.ipp.isep.dei.domain.template.Map;
-import pt.ipp.isep.dei.domain.template.Player;
-import pt.ipp.isep.dei.domain.template.Scenario;
-import pt.ipp.isep.dei.domain.template.RailwayLine;
-import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.RailwayLineRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
 
 import javafx.scene.control.ScrollPane; // Certifique-se que este import existe
 import javafx.geometry.Insets;
+import pt.ipp.isep.dei.ui.gui.utils.AlertHelper;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayerMenuGUIController implements Initializable {
 
@@ -167,6 +169,9 @@ public class PlayerMenuGUIController implements Initializable {
 
     private ApplicationSession appSession = ApplicationSession.getInstance();
     private ViewScenarioLayoutController viewLayoutController; // Controller para obter dados do mapa
+    private CreateRouteController createRouteController;
+    private AssignTrainController assignTrainController;
+
 
 
     @Override
@@ -828,16 +833,101 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     @FXML
-    void handleCreateRoute(ActionEvent event) {
-        System.out.println("Create Route clicked");
-        showAlert("Not Implemented", "Create Route (US10) functionality is not yet implemented.");
+    private void handleCreateRoute(ActionEvent event) {
+        openDialog("/fxml/CreateRouteDialog.fxml", "Create New Route");
     }
 
     @FXML
-    void handleAssignTrainToRoute(ActionEvent event) {
-        System.out.println("Assign Train to Route clicked");
-        showAlert("Not Implemented", "Assign Train to Route functionality is not yet implemented.");
+    private void handleAssignTrainToRoute(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AssignTrainDialog.fxml"));
+
+            if (loader.getLocation() == null) {
+                throw new IOException("Cannot find FXML file: /fxml/AssignTrainDialog.fxml");
+            }
+
+            Parent root = loader.load();
+            // CORREÇÃO: Já não passamos o 'event'
+            Stage dialogStage = createDialogStage("Assign Train to Route", root);
+            dialogStage.showAndWait();
+
+            AssignTrainDialogController controller = loader.getController();
+            if (controller.isSuccessful()) {
+                displayCargoForRoute(controller.getSelectedRoute());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            AlertHelper.showAlert(Alert.AlertType.ERROR, "Error", "Could not open the dialog: " + e.getMessage());
+        }
     }
+
+    // O método 'displayCargoForRoute' permanece o mesmo da correção anterior.
+    private void displayCargoForRoute(Route route) {
+        if (route == null) return;
+
+        AssignTrainController cargoController = new AssignTrainController();
+
+        // CORREÇÃO: Use o nome completo java.util.Map para evitar conflito.
+        java.util.Map<Station, java.util.List<Cargo>> stationCargo = cargoController.getCargoesToPickUp(route);
+
+        String cargoDetails = "No cargo to be picked up on this route.";
+        if (stationCargo != null && !stationCargo.isEmpty()) {
+            cargoDetails = stationCargo.entrySet().stream()
+                    .map(entry -> "Station: " + entry.getKey().getNameID() + "\n" +
+                            entry.getValue().stream()
+                                    .map(Object::toString)
+                                    .collect(java.util.stream.Collectors.joining("\n  - ", "  - ", "")))
+                    .collect(java.util.stream.Collectors.joining("\n\n"));
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Assignment Successful");
+        alert.setHeaderText("Train assigned to route '" + route.getNameID() + "'.");
+
+        TextArea textArea = new TextArea("Cargo to be picked up:\n\n" + cargoDetails);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        alert.getDialogPane().setContent(textArea);
+        alert.setResizable(true);
+        alert.showAndWait();
+    }
+
+    // Método utilitário para abrir diálogos genéricos
+    private void openDialog(String fxmlPath, String title) {
+        try {
+            URL fxmlUrl = getClass().getResource(fxmlPath);
+            if (fxmlUrl == null) {
+                throw new IOException("Cannot find FXML file: " + fxmlPath);
+            }
+
+            Parent root = FXMLLoader.load(fxmlUrl);
+            // CORREÇÃO: Já não passamos o 'event'
+            Stage dialogStage = createDialogStage(title, root);
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            AlertHelper.showAlert(Alert.AlertType.ERROR, "UI Error", "Could not open the requested dialog.\n" + e.getMessage());
+        }
+    }
+
+    // Método utilitário para configurar um Stage de diálogo
+    private Stage createDialogStage(String title, Parent root) {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle(title);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+
+        // CORREÇÃO: Obter a janela a partir de um Node conhecido (playerMainPane)
+        // em vez de usar o event source.
+        if (playerMainPane != null && playerMainPane.getScene() != null) {
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+        }
+
+        dialogStage.setScene(new Scene(root));
+        dialogStage.setResizable(false);
+        return dialogStage;
+    }
+
 
     @FXML
     void handleViewCurrentMap(ActionEvent event) {

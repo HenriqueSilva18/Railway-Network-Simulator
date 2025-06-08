@@ -493,4 +493,11 @@ public class Station {
         }
         return industries;
     }
+
+    @Override
+    public String toString() {
+        // Retorna o nome da estação.
+        // Se o método para obter o nome for diferente de "getNameID()", ajuste conforme necessário.
+        return this.getNameID();
+    }
 } 
