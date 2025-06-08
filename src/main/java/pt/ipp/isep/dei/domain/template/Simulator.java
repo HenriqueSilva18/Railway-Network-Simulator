@@ -140,20 +140,20 @@ public class Simulator {
 
     private boolean isTimeToGenerateNextCargo() {
         if (this.lastCargoGenerationDate == null) {
-            // This case is typically handled by generateInitialCargo setting it.
-            // If it's still null, it implies the first generation for the current start hasn't happened.
-            // However, generateInitialCargo is called in start() before the loop,
-            // so this check in the loop should always find lastCargoGenerationDate populated.
-            // For safety, let's assume if it's null, it's time for the very first scheduled generation.
+            // First generation at simulation start
             return true;
         }
 
-        Calendar nextGenerationTargetDate = Calendar.getInstance();
-        nextGenerationTargetDate.setTime(this.lastCargoGenerationDate);
-        nextGenerationTargetDate.add(Calendar.DAY_OF_MONTH, CARGO_GENERATION_INTERVAL);
+        Calendar lastGenCal = Calendar.getInstance();
+        lastGenCal.setTime(this.lastCargoGenerationDate);
+        int lastGenYear = lastGenCal.get(Calendar.YEAR);
 
-        // True if currentSimulatedDate is on or after the nextGenerationTargetDate
-        return !this.currentSimulatedDate.before(nextGenerationTargetDate.getTime());
+        Calendar currentCal = Calendar.getInstance();
+        currentCal.setTime(this.currentSimulatedDate);
+        int currentYear = currentCal.get(Calendar.YEAR);
+
+        // Generate cargo if we're in a new year
+        return currentYear > lastGenYear;
     }
 
 
@@ -263,36 +263,43 @@ public class Simulator {
      * This method is called periodically by the simulation loop.
      */
     public void generateCargo() {
-        // This method assumes currentSimulatedDate is the date for which cargo is being generated.
         List<Station> stations = map.getStations();
         if (stations == null || stations.isEmpty()) {
-            // System.out.println("No stations found on map " + map.getNameID() + " to generate cargo.");
             return;
         }
 
-        // System.out.println("Generating cargo for simulated date: " + this.currentSimulatedDate);
-
         for (Station station : stations) {
-            List<City> cities = station.getServedCities(); // Assuming Station class has this method
-            List<Industry> industries = getIndustriesServedByStation(station);
+            // Check if station needs cargo (below capacity)
+            if (station.getAvailableStorage() > 0) {
+                List<City> cities = station.getServedCities();
+                List<Industry> industries = getIndustriesServedByStation(station);
 
-            for (City city : cities) {
-                List<Cargo> cityCargo = generateCargoForCity(city);
-                for (Cargo cargo : cityCargo) {
-                    addCargoToStation(station, cargo);
+                // Generate cargo only if station is below capacity
+                for (City city : cities) {
+                    if (station.getAvailableStorage() > 0) {
+                        List<Cargo> cityCargo = generateCargoForCity(city);
+                        for (Cargo cargo : cityCargo) {
+                            if (station.hasStorageCapacity(cargo.getAmount())) {
+                                addCargoToStation(station, cargo);
+                            }
+                        }
+                    }
                 }
-            }
 
-            for (Industry industry : industries) {
-                List<Cargo> industryCargo = generateCargoForIndustry(industry);
-                for (Cargo cargo : industryCargo) {
-                    addCargoToStation(station, cargo);
+                for (Industry industry : industries) {
+                    if (station.getAvailableStorage() > 0) {
+                        List<Cargo> industryCargo = generateCargoForIndustry(industry);
+                        for (Cargo cargo : industryCargo) {
+                            if (station.hasStorageCapacity(cargo.getAmount())) {
+                                addCargoToStation(station, cargo);
+                            }
+                        }
+                    }
                 }
             }
         }
         this.lastCargoGenerationDate = (Date) this.currentSimulatedDate.clone(); // Mark generation for this date
         this.cargoCyclesCompleted++;
-        // System.out.println("Cargo generation cycle " + cargoCyclesCompleted + " completed for " + this.currentSimulatedDate);
     }
 
     /**
@@ -325,17 +332,19 @@ public class Simulator {
         return servedIndustries;
     }
 
-    private List<Cargo> generateCargoForCity(City city) {
+    public List<Cargo> generateCargoForCity(City city) {
         List<Cargo> generatedItems = new ArrayList<>();
         // Using currentSimulatedDate as the creation date for cargo for consistency
         String passengersName = "Passengers from " + city.getNameID() + " on " + this.currentSimulatedDate;
         int passengerAmount = random.nextInt(10) + 5;
         Cargo passengers = new Cargo(passengersName, passengerAmount, 2, "passenger");
+        passengers.setCreationDate((Date) this.currentSimulatedDate.clone());
         generatedItems.add(passengers);
 
         String mailName = "Mail from " + city.getNameID() + " on " + this.currentSimulatedDate;
         int mailAmount = random.nextInt(5) + 1;
         Cargo mail = new Cargo(mailName, mailAmount, 7, "mail");
+        mail.setCreationDate((Date) this.currentSimulatedDate.clone());
         generatedItems.add(mail);
 
         String cityKey = "city_" + city.getNameID();
@@ -343,7 +352,7 @@ public class Simulator {
         return generatedItems;
     }
 
-    private List<Cargo> generateCargoForIndustry(Industry industry) {
+    public List<Cargo> generateCargoForIndustry(Industry industry) {
         List<Cargo> generatedItems = new ArrayList<>();
         String industryType = industry.getType();
         double effectiveProductionRate = industry.getProductionRate() > 0 ? industry.getProductionRate() : this.productionRate;
@@ -352,16 +361,24 @@ public class Simulator {
         if ("Mine".equals(industryType)) {
             int amount = (int) (10 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5)); // Random factor between 0.5 and 1.0
             String cargoType = industry.getNameID().toLowerCase().contains("coal") ? "coal" : "ore";
-            generatedItems.add(new Cargo(cargoType + cargoBaseName, amount, 30, cargoType));
+            Cargo cargo = new Cargo(cargoType + cargoBaseName, amount, 30, cargoType);
+            cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
+            generatedItems.add(cargo);
         } else if ("Farm".equals(industryType)) {
             int amount = (int) (8 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            generatedItems.add(new Cargo("Food" + cargoBaseName, amount, 15, "food"));
+            Cargo cargo = new Cargo("Food" + cargoBaseName, amount, 15, "food");
+            cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
+            generatedItems.add(cargo);
         } else if ("Steel Mill".equals(industryType)) {
             int amount = (int) (5 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            generatedItems.add(new Cargo("Steel" + cargoBaseName, amount, 60, "steel"));
+            Cargo cargo = new Cargo("Steel" + cargoBaseName, amount, 60, "steel");
+            cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
+            generatedItems.add(cargo);
         } else if ("Port".equals(industryType)) {
             int amount = (int) (15 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            generatedItems.add(new Cargo("Goods" + cargoBaseName, amount, 30, "goods")); // Generic goods for port
+            Cargo cargo = new Cargo("Goods" + cargoBaseName, amount, 30, "goods"); // Generic goods for port
+            cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
+            generatedItems.add(cargo);
         }
         // Add other industry types as needed
 
@@ -373,19 +390,23 @@ public class Simulator {
     }
 
     private void addCargoToStation(Station station, Cargo cargo) {
-        // Assuming Station class has getAvailableCargo() and setAmount() on Cargo
-        // And that station.getAvailableCargo() returns a modifiable list.
-        // This also needs to handle cargo limits per station/type if required by project specs.
         List<Cargo> availableCargo = station.getAvailableCargo();
         boolean found = false;
+        
+        // Check if we already have this type of cargo
         for (Cargo existing : availableCargo) {
             if (existing.getType().equals(cargo.getType())) {
-                existing.setAmount(existing.getAmount() + cargo.getAmount());
-                found = true;
+                // Only add if we haven't reached capacity
+                if (station.hasStorageCapacity(cargo.getAmount())) {
+                    existing.addAmount(cargo.getAmount());
+                    found = true;
+                }
                 break;
             }
         }
-        if (!found) {
+        
+        // If we don't have this type of cargo and we have space, add it
+        if (!found && station.hasStorageCapacity(cargo.getAmount())) {
             availableCargo.add(cargo);
         }
     }

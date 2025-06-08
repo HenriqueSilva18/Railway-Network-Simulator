@@ -2,8 +2,10 @@ package pt.ipp.isep.dei.ui.console.menu;
 
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.MapController;
+import pt.ipp.isep.dei.controller.template.SimulatorController;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Player;
+import pt.ipp.isep.dei.domain.template.Scenario;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.List;
@@ -14,10 +16,12 @@ import java.util.stream.Collectors;
 
 public class MapSelectionUI implements Runnable {
     private final MapController controller;
+    private final SimulatorController simulatorController;
     private final Scanner scanner;
 
     public MapSelectionUI() {
         this.controller = new MapController();
+        this.simulatorController = new SimulatorController();
         this.scanner = new Scanner(System.in);
     }
 
@@ -110,16 +114,29 @@ public class MapSelectionUI implements Runnable {
         }
 
         String selectedDisplayName = displayNames.get(choice - 1);
-        String selectedScenario = scenarioDisplayMap.get(selectedDisplayName);
+        String selectedScenarioId = scenarioDisplayMap.get(selectedDisplayName);
 
         // Load the selected map and scenario
-        if (controller.loadMap(selectedMap.getNameID(), selectedScenario)) {
+        if (controller.loadMap(selectedMap.getNameID(), selectedScenarioId)) {
             // Initialize the budget for this scenario
             Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
             if (currentPlayer != null) {
-                currentPlayer.initializeScenarioBudget(selectedScenario);
+                currentPlayer.initializeScenarioBudget(selectedScenarioId);
             }
             System.out.println("Map and scenario loaded successfully.");
+            
+            // Get the loaded scenario
+            Scenario selectedScenario = ApplicationSession.getInstance().getCurrentScenario();
+            if (selectedScenario != null) {
+                // Start the simulator automatically
+                if (simulatorController.startSimulation(selectedMap, selectedScenario)) {
+                    System.out.println("\nSimulation started automatically!");
+                    System.out.println("The simulation will run in the background while you continue playing.");
+                    System.out.println("You can check the simulation status and control it through the main menu.");
+                } else {
+                    System.out.println("Failed to start simulation automatically.");
+                }
+            }
         } else {
             System.out.println("Failed to load map and scenario.");
         }

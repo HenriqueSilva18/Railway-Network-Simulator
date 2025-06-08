@@ -14,8 +14,12 @@ public class Station {
     private final List<Cargo> requestedCargo;
     private final List<City> servedCities;
     private final List<Building> buildings;
+    private int currentYear;
+    private double demandMultiplier;
+    private List<Cargo> demandedCargo;
+    private final Map map;
 
-    public Station(String nameID, Position position, StationType stationType) {
+    public Station(String nameID, Position position, StationType stationType, int storageCapacity, Map map) {
         if (nameID == null || position == null || stationType == null) {
             throw new IllegalArgumentException("Station parameters cannot be null");
         }
@@ -23,29 +27,31 @@ public class Station {
         this.nameID = nameID;
         this.position = position;
         this.stationType = stationType;
+        this.currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        this.demandMultiplier = 1.0;
         
         // Initialize based on station type
         switch (stationType.getName()) {
             case StationType.DEPOT:
-                this.storageCapacity = 100;
                 this.buildingSlots = 2;
                 break;
             case StationType.STATION:
-                this.storageCapacity = 200;
                 this.buildingSlots = 3;
                 break;
             case StationType.TERMINAL:
-                this.storageCapacity = 300;
                 this.buildingSlots = 4;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid station type");
         }
         
+        this.storageCapacity = storageCapacity;
         this.availableCargo = new ArrayList<>();
         this.requestedCargo = new ArrayList<>();
         this.servedCities = new ArrayList<>();
         this.buildings = new ArrayList<>();
+        this.demandedCargo = new ArrayList<>();
+        this.map = map;
     }
 
     public String getNameID() {
@@ -384,5 +390,107 @@ public class Station {
         public int getAvailableBuildingSlots() {
             return totalBuildingSlots - usedBuildingSlots;
         }
+    }
+
+    public boolean hasStorageCapacity(int amount) {
+        if (amount <= 0) {
+            return false;
+        }
+        
+        int currentStorage = availableCargo.stream()
+            .mapToInt(Cargo::getAmount)
+            .sum();
+            
+        return currentStorage + amount <= storageCapacity;
+    }
+    
+    public int getAvailableStorage() {
+        int currentStorage = availableCargo.stream()
+            .mapToInt(Cargo::getAmount)
+            .sum();
+        return storageCapacity - currentStorage;
+    }
+    
+    public boolean addCargo(Cargo cargo) {
+        if (cargo == null) {
+            return false;
+        }
+        
+        // Check if we have space
+        if (!hasStorageCapacity(cargo.getAmount())) {
+            return false;
+        }
+        
+        // Check if we already have this type of cargo
+        for (Cargo existingCargo : availableCargo) {
+            if (existingCargo.getType().equals(cargo.getType())) {
+                existingCargo.addAmount(cargo.getAmount());
+                return true;
+            }
+        }
+        
+        // If we don't have this type of cargo, add it
+        availableCargo.add(cargo);
+        return true;
+    }
+    
+    public void removeCargo(Cargo cargo) {
+        if (cargo == null) {
+            return;
+        }
+        
+        availableCargo.removeIf(c -> c.getName().equals(cargo.getName()));
+    }
+    
+    public void updateDemand(int currentYear) {
+        // Clear previous demands
+        demandedCargo.clear();
+        
+        // Get cities and industries in radius
+        List<City> cities = getServedCities();
+        List<Industry> industries = getIndustriesInRadius();
+        
+        // Add demands from cities
+        for (City city : cities) {
+            int cityDemand = city.getDemandedCargo();
+            if (cityDemand > 0) {
+                addDemandedCargo(new Cargo("Passengers from " + city.getNameID(), cityDemand, "passenger"));
+                addDemandedCargo(new Cargo("Mail from " + city.getNameID(), cityDemand / 2, "mail"));
+            }
+        }
+        
+        // Add demands from industries
+        for (Industry industry : industries) {
+            List<Cargo> industryDemands = industry.getDemandedCargo();
+            for (Cargo demand : industryDemands) {
+                addDemandedCargo(demand);
+            }
+        }
+    }
+    
+    private void addDemandedCargo(Cargo demand) {
+        // Check if we already have this type of demand
+        for (Cargo existing : demandedCargo) {
+            if (existing.getType().equals(demand.getType())) {
+                existing.setAmount(existing.getAmount() + demand.getAmount());
+                return;
+            }
+        }
+        // If not, add new demand
+        demandedCargo.add(new Cargo(demand.getName(), demand.getAmount(), demand.getType()));
+    }
+
+    public List<Cargo> getDemandedCargo() {
+        return new ArrayList<>(demandedCargo);
+    }
+
+    private List<Industry> getIndustriesInRadius() {
+        List<Industry> industries = new ArrayList<>();
+        for (Industry industry : map.getIndustries()) {
+            if (isWithinRadius(industry.getPosition())) {
+                industries.add(industry);
+            }
+        }
+        return industries;
     }
 } 

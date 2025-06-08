@@ -14,14 +14,22 @@ public class Building {
     private final String evolvesInto;
     private final double evolutionCost;
     private final boolean canEvolve;
+    private final double revenueMultiplier;
 
     public Building(String nameID, String type, int availabilityYear, double cost, String effect) {
-        this(nameID, type, availabilityYear, cost, effect, null, false, null, null, 0, false);
+        this(nameID, type, availabilityYear, cost, effect, null, false, null, null, 0, false, 0.0);
     }
 
     public Building(String nameID, String type, int availabilityYear, double cost, String effect, 
                     String replacesBuilding, boolean isMutuallyExclusive, String mutuallyExclusiveWith,
                     String evolvesInto, double evolutionCost, boolean canEvolve) {
+        this(nameID, type, availabilityYear, cost, effect, replacesBuilding, isMutuallyExclusive, 
+             mutuallyExclusiveWith, evolvesInto, evolutionCost, canEvolve, 0.0);
+    }
+
+    public Building(String nameID, String type, int availabilityYear, double cost, String effect, 
+                    String replacesBuilding, boolean isMutuallyExclusive, String mutuallyExclusiveWith,
+                    String evolvesInto, double evolutionCost, boolean canEvolve, double revenueMultiplier) {
         if (nameID == null || type == null || effect == null) {
             throw new IllegalArgumentException("Building parameters cannot be null");
         }
@@ -37,6 +45,7 @@ public class Building {
         this.evolvesInto = evolvesInto;
         this.evolutionCost = evolutionCost;
         this.canEvolve = canEvolve;
+        this.revenueMultiplier = revenueMultiplier;
     }
 
     public String getNameID() {
@@ -87,11 +96,15 @@ public class Building {
         return canEvolve && evolvesInto != null && evolvesInto.equals(buildingId);
     }
 
+    public double getRevenueMultiplier() {
+        return revenueMultiplier;
+    }
+
     /**
      * Returns a data transfer object with the building information
      */
     public BuildingInfo getInfo() {
-        return new BuildingInfo(nameID, type, availabilityYear, cost, effect, evolvesInto, evolutionCost, canEvolve);
+        return new BuildingInfo(nameID, type, availabilityYear, cost, effect, evolvesInto, evolutionCost, canEvolve, revenueMultiplier);
     }
 
     @Override
@@ -119,13 +132,19 @@ public class Building {
         private final String evolvesInto;
         private final double evolutionCost;
         private final boolean canEvolve;
+        private final double revenueMultiplier;
 
         public BuildingInfo(String nameID, String type, int availabilityYear, double cost, String effect) {
-            this(nameID, type, availabilityYear, cost, effect, null, 0, false);
+            this(nameID, type, availabilityYear, cost, effect, null, 0, false, 0.0);
         }
         
         public BuildingInfo(String nameID, String type, int availabilityYear, double cost, String effect,
                           String evolvesInto, double evolutionCost, boolean canEvolve) {
+            this(nameID, type, availabilityYear, cost, effect, evolvesInto, evolutionCost, canEvolve, 0.0);
+        }
+        
+        public BuildingInfo(String nameID, String type, int availabilityYear, double cost, String effect,
+                          String evolvesInto, double evolutionCost, boolean canEvolve, double revenueMultiplier) {
             this.nameID = nameID;
             this.type = type;
             this.availabilityYear = availabilityYear;
@@ -134,6 +153,7 @@ public class Building {
             this.evolvesInto = evolvesInto;
             this.evolutionCost = evolutionCost;
             this.canEvolve = canEvolve;
+            this.revenueMultiplier = revenueMultiplier;
         }
 
         public String getNameID() {
@@ -166,6 +186,10 @@ public class Building {
         
         public boolean canEvolve() {
             return canEvolve;
+        }
+        
+        public double getRevenueMultiplier() {
+            return revenueMultiplier;
         }
     }
 } 

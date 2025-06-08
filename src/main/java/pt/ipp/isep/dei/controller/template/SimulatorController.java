@@ -1,23 +1,12 @@
 package pt.ipp.isep.dei.controller.template;
 
-import pt.ipp.isep.dei.domain.template.Cargo;
-import pt.ipp.isep.dei.domain.template.Map;
-import pt.ipp.isep.dei.domain.template.Scenario;
-import pt.ipp.isep.dei.domain.template.Simulator;
-import pt.ipp.isep.dei.repository.template.MapRepository;
-import pt.ipp.isep.dei.repository.template.Repositories;
-import pt.ipp.isep.dei.repository.template.ScenarioRepository;
-import pt.ipp.isep.dei.repository.template.SimulatorRepository;
-import pt.ipp.isep.dei.repository.template.EditorRepository;
+import pt.ipp.isep.dei.domain.template.*;
+import pt.ipp.isep.dei.repository.template.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 /**
  * Controller for simulator operations
@@ -32,6 +21,11 @@ public class SimulatorController {
     private Timer simulationTimer;
     private static final int SIMULATION_INTERVAL_MS = 10000; // 10 seconds between cargo generations
     private boolean simulationRunningInBackground = false;
+    
+    // Train movement constants
+    private static final double SINGLE_TRACK_SPEED_FACTOR = 0.8; // 80% of max speed on single track
+    private static final double CARRIAGE_SPEED_DEGRADATION = 0.05; // 5% speed reduction per carriage
+    private static final double MAX_CARRIAGE_DEGRADATION = 0.30; // Maximum 30% speed reduction
     
     /**
      * Constructor for the simulator controller
@@ -48,7 +42,7 @@ public class SimulatorController {
      * Gets all available maps
      * @return List of available maps
      */
-    public List<Map> getAvailableMaps() {
+    public List<pt.ipp.isep.dei.domain.template.Map> getAvailableMaps() {
         return mapRepository.getAvailableMaps();
     }
     
@@ -89,7 +83,7 @@ public class SimulatorController {
      * @param selectedScenario The scenario to use for simulation
      * @return True if the simulation was started successfully
      */
-    public boolean startSimulation(Map selectedMap, Scenario selectedScenario) {
+    public boolean startSimulation(pt.ipp.isep.dei.domain.template.Map selectedMap, Scenario selectedScenario) {
         if (selectedMap == null || selectedScenario == null) {
             return false;
         }
@@ -114,13 +108,16 @@ public class SimulatorController {
             
             // Start background simulation if not already running
             startBackgroundSimulation();
+            
+            // Check for locomotive availability
+            checkLocomotiveAvailability();
         }
         
         return started;
     }
     
     /**
-     * Start the background simulation timer to regularly generate cargo
+     * Start the background simulation timer to regularly generate cargo and update trains
      */
     private void startBackgroundSimulation() {
         if (simulationTimer != null) {
@@ -133,12 +130,144 @@ public class SimulatorController {
             public void run() {
                 Simulator simulator = simulatorRepository.getActiveSimulator();
                 if (simulator != null && Simulator.STATUS_RUNNING.equals(simulator.getStatus())) {
+                    // Generate cargo
                     simulator.generateCargo();
+                    
+                    // Update train positions and arrivals
+                    updateTrainPositions();
+                    
+                    // Check for locomotive availability
+                    checkLocomotiveAvailability();
+                    
+                    // Update yearly demand if needed
+                    updateYearlyDemand();
                 }
             }
         }, SIMULATION_INTERVAL_MS, SIMULATION_INTERVAL_MS);
         
         simulationRunningInBackground = true;
+    }
+    
+    /**
+     * Updates train positions and handles arrivals
+     */
+    private void updateTrainPositions() {
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator == null) return;
+        
+        RailwayLineRepository railwayLineRepository = pt.ipp.isep.dei.repository.template.Repositories.getInstance().getRailwayLineRepository();
+        RouteRepository routeRepository = pt.ipp.isep.dei.repository.template.Repositories.getInstance().getRouteRepository();
+        List<RailwayLine> railwayLines = railwayLineRepository.getAll();
+        List<Route> routes = routeRepository.getAll();
+        
+        for (Route route : routes) {
+            for (Train train : route.getAssignedTrains()) {
+                if (train.isInTransit() && train.getCurrentLine() != null) {
+                    double baseSpeed = train.getLocomotive().getTopSpeed();
+                    RailwayLine line = train.getCurrentLine();
+                    double speedFactor = line.isDoubleTrack() ? 1.0 : SINGLE_TRACK_SPEED_FACTOR;
+                    double carriageFactor = 1.0 - Math.min(
+                        train.getCarriages().size() * CARRIAGE_SPEED_DEGRADATION,
+                        MAX_CARRIAGE_DEGRADATION
+                    );
+                    double actualSpeed = baseSpeed * speedFactor * carriageFactor;
+                    train.updatePosition(actualSpeed);
+                    if (train.hasArrived()) {
+                        handleTrainArrival(train);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Handles train arrival and calculates revenue
+     */
+    private void handleTrainArrival(Train train) {
+        Station arrivalStation = train.getCurrentStation();
+        if (arrivalStation == null) return;
+        
+        // Calculate revenue based on cargo, distance, and station buildings
+        double baseRevenue = calculateBaseRevenue(train);
+        double buildingMultiplier = calculateBuildingMultiplier(arrivalStation);
+        double totalRevenue = baseRevenue * buildingMultiplier;
+        
+        // Update player's budget
+        Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
+        if (currentPlayer != null) {
+            currentPlayer.addToBudget(totalRevenue);
+        }
+        
+        // Update station demand
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator != null) {
+            int currentYear = simulator.getElapsedSimulatedDays() / 365;
+            arrivalStation.updateDemand(currentYear);
+        }
+    }
+    
+    /**
+     * Calculates base revenue for a train's cargo
+     */
+    private double calculateBaseRevenue(Train train) {
+        double totalRevenue = 0;
+        double distance = train.getCurrentLine().getLength();
+        
+        for (Cargo cargo : train.getCargo()) {
+            // Base revenue depends on cargo type, amount, and distance
+            double cargoValue = cargo.getAmount() * cargo.getBaseValue();
+            totalRevenue += cargoValue * (1 + (distance / 1000)); // Distance bonus
+        }
+        
+        return totalRevenue;
+    }
+    
+    /**
+     * Calculates revenue multiplier based on station buildings
+     */
+    private double calculateBuildingMultiplier(Station station) {
+        double multiplier = 1.0;
+        
+        for (Building building : station.getBuildings()) {
+            multiplier += building.getRevenueMultiplier();
+        }
+        
+        return multiplier;
+    }
+    
+    /**
+     * Checks for locomotive availability based on service start year
+     */
+    private void checkLocomotiveAvailability() {
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator == null) return;
+        int currentYear = simulator.getElapsedSimulatedDays() / 365;
+        Player player = ApplicationSession.getInstance().getCurrentPlayer();
+        if (player == null) return;
+        List<Locomotive> availableLocomotives = player.getOwnedLocomotives();
+        for (Locomotive locomotive : availableLocomotives) {
+            if (locomotive.getStartYear() <= currentYear && !locomotive.isAvailable()) {
+                locomotive.setAvailable(true);
+                System.out.println("\nNew locomotive model available: " + locomotive.getNameID());
+            }
+        }
+    }
+    
+    /**
+     * Updates yearly demand for all stations
+     */
+    private void updateYearlyDemand() {
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator == null) return;
+        
+        // Only update demand at the start of each year
+        int currentYear = simulator.getElapsedSimulatedDays() / 365;
+        if (simulator.getElapsedSimulatedDays() % 365 == 0) {
+            pt.ipp.isep.dei.domain.template.Map map = simulator.getMap();
+            for (Station station : map.getStations()) {
+                station.updateDemand(currentYear);
+            }
+        }
     }
     
     /**
@@ -219,7 +348,7 @@ public class SimulatorController {
         }
         
         // Get the current map and scenario
-        Map currentMap = currentSimulator.getMap();
+        pt.ipp.isep.dei.domain.template.Map currentMap = currentSimulator.getMap();
         Scenario currentScenario = currentSimulator.getScenario();
         
         // Stop the current simulation
@@ -241,6 +370,9 @@ public class SimulatorController {
             
             // Start background simulation
             startBackgroundSimulation();
+            
+            // Check for locomotive availability
+            checkLocomotiveAvailability();
         }
         
         return started;
@@ -319,8 +451,75 @@ public class SimulatorController {
             return false;
         }
         
+        // Check if there are any trains assigned to routes
+        boolean hasAssignedTrains = false;
+        RouteRepository routeRepository = Repositories.getInstance().getRouteRepository();
+        for (Route route : routeRepository.getAll()) {
+            if (!route.getAssignedTrains().isEmpty()) {
+                hasAssignedTrains = true;
+                break;
+            }
+        }
+        
+        if (!hasAssignedTrains) {
+            System.out.println("No trains assigned to routes. Cargo generation will start when trains are assigned.");
+            return false;
+        }
+        
+        // Generate cargo at cities and industries
         simulator.generateCargo();
-        return true;
+        
+        // Transfer cargo to stations within economic radius
+        pt.ipp.isep.dei.domain.template.Map map = simulator.getMap();
+        boolean anyCargoGenerated = false;
+        
+        for (City city : map.getCities()) {
+            for (Station station : map.getStations()) {
+                if (station.isWithinRadius(city.getPosition())) {
+                    // Generate cargo for this city and add it to the station
+                    List<Cargo> cityCargo = simulator.generateCargoForCity(city);
+                    for (Cargo cargo : cityCargo) {
+                        if (station.hasStorageCapacity(cargo.getAmount())) {
+                            if (station.addCargo(cargo)) {
+                                anyCargoGenerated = true;
+                            }
+                        } else {
+                            System.out.printf("Station %s is at full capacity (%d/%d). Cannot add more cargo.\n", 
+                                station.getNameID(), 
+                                station.getStorageCapacity() - station.getAvailableStorage(),
+                                station.getStorageCapacity());
+                        }
+                    }
+                }
+            }
+        }
+        
+        for (Industry industry : map.getIndustries()) {
+            for (Station station : map.getStations()) {
+                if (station.isWithinRadius(industry.getPosition())) {
+                    // Generate cargo for this industry and add it to the station
+                    List<Cargo> industryCargo = simulator.generateCargoForIndustry(industry);
+                    for (Cargo cargo : industryCargo) {
+                        if (station.hasStorageCapacity(cargo.getAmount())) {
+                            if (station.addCargo(cargo)) {
+                                anyCargoGenerated = true;
+                            }
+                        } else {
+                            System.out.printf("Station %s is at full capacity (%d/%d). Cannot add more cargo.\n", 
+                                station.getNameID(), 
+                                station.getStorageCapacity() - station.getAvailableStorage(),
+                                station.getStorageCapacity());
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!anyCargoGenerated) {
+            System.out.println("No new cargo was generated. All stations are at full capacity.");
+        }
+        
+        return anyCargoGenerated;
     }
     
     /**
@@ -334,5 +533,25 @@ public class SimulatorController {
         }
         
         return simulator.getCargoGenerationDetails();
+    }
+    
+    /**
+     * Handles train assignment to a route and triggers cargo generation
+     * @param train The train being assigned
+     * @param route The route the train is being assigned to
+     * @return True if the assignment was successful
+     */
+    public boolean handleTrainAssignment(Train train, Route route) {
+        if (train == null || route == null) {
+            return false;
+        }
+        
+        // Add train to route
+        boolean assigned = route.addTrain(train);
+        if (assigned) {
+            // Trigger cargo generation since we now have an assigned train
+            generateCargo();
+        }
+        return assigned;
     }
 } 

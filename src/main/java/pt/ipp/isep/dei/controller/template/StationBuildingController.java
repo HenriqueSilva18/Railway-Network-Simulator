@@ -107,9 +107,8 @@ public class StationBuildingController {
             stationType.setCenterPoint(centerPoint);
         }
 
-
         // Create station
-        Station station = new Station(stationName, position, stationType);
+        Station station = new Station(stationName, position, stationType, stationType.getStorageCapacity(), getCurrentMap());
 
         // Try to deduct budget first
         if (!currentPlayer.deductFromBudget(stationCost)) {

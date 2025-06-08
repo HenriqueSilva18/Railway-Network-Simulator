@@ -12,6 +12,7 @@ public class Locomotive {
     private int availabilityYear;
     private double acquisitionPrice;
     private double maintenancePrice;
+    private boolean available;
     
     public Locomotive(String nameID, String owner, String type, double power, double acceleration,
                       double topSpeed, int startYear, double fuelCost, int availabilityYear,
@@ -27,6 +28,7 @@ public class Locomotive {
         this.availabilityYear = availabilityYear;
         this.acquisitionPrice = acquisitionPrice;
         this.maintenancePrice = maintenancePrice;
+        this.available = false;
     }
     
     public Locomotive(String nameID, String type, int power, int topSpeed, int availabilityYear, double acquisitionPrice) {
@@ -43,6 +45,7 @@ public class Locomotive {
         this.startYear = availabilityYear;
         this.fuelCost = 100.0; // Default fuel cost
         this.maintenancePrice = acquisitionPrice * 0.01; // 1% of acquisition price
+        this.available = false;
     }
     
     public String getNameID() {
@@ -87,6 +90,14 @@ public class Locomotive {
     
     public double getMaintenancePrice() {
         return maintenancePrice;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
     
     // Methods for US09
