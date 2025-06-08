@@ -5,12 +5,19 @@ import java.io.IOException;
 import java.util.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class US27_ShortestPathFinder {
-    static String fileName = "test_scenario_lines";
+    static String fileName = "fx_3av2_1_versao_2";
     static String csvPath = "docs/mdisc/data/"+fileName+".csv";
     static String dotPath = "docs/mdisc/us27/dot/"+fileName+".dot";
     static String pngPath = "docs/mdisc/us27/png/"+fileName+".png";
+    static String[] stopStationFiles = {
+        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations1.csv",
+        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations2.csv",
+        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations3.csv"
+    };
 
     static Map<String, Station> stations = new HashMap<>();
     static Map<String, List<Edge>> fullGraph = new HashMap<>();
@@ -51,15 +58,61 @@ public class US27_ShortestPathFinder {
             }
         }
 
-        // Display available stations
-        System.out.println("\nAvailable stations:");
-        for (int i = 0; i < stationOrder.size(); i++) {
-            System.out.printf("[%d] %s\n", i + 1, stationOrder.get(i));
+        // Ask user how they want to input stations
+        System.out.println("\nHow would you like to input the stations?");
+        System.out.println("[1] Use a predefined stop station file");
+        System.out.println("[2] Enter stations manually");
+        
+        int inputChoice = 0;
+        while (inputChoice != 1 && inputChoice != 2) {
+            try {
+                inputChoice = sc.nextInt();
+                if (inputChoice != 1 && inputChoice != 2) {
+                    System.out.println("Invalid option. Please enter 1 or 2.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number (1 or 2).");
+                sc.next();
+            }
         }
 
-        // Get required stations from user
-        List<String> requiredStations = getRequiredStations(sc);
+        List<String> requiredStations;
+        if (inputChoice == 1) {
+            // Display available stop station files
+            System.out.println("\nAvailable stop station files:");
+            for (int i = 0; i < stopStationFiles.length; i++) {
+                System.out.printf("[%d] %s\n", i + 1, stopStationFiles[i]);
+            }
+
+            // Get user's choice of stop station file
+            int fileChoice = 0;
+            while (fileChoice < 1 || fileChoice > stopStationFiles.length) {
+                System.out.println("\nEnter the number of the stop station file to use:");
+                try {
+                    fileChoice = sc.nextInt();
+                    if (fileChoice < 1 || fileChoice > stopStationFiles.length) {
+                        System.out.println("Invalid file number. Please enter a number between 1 and " + stopStationFiles.length);
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a valid number.");
+                    sc.next();
+                }
+            }
+
+            // Read the selected stop station file
+            requiredStations = readStopStationFile(stopStationFiles[fileChoice - 1]);
+        } else {
+            // Display available stations for manual input
+            System.out.println("\nAvailable stations:");
+            for (int i = 0; i < stationOrder.size(); i++) {
+                System.out.printf("[%d] %s\n", i + 1, stationOrder.get(i));
+            }
+            // Use manual station input
+            requiredStations = getRequiredStations(sc);
+        }
+
         if (requiredStations == null) {
+            System.out.println("Error with station selection.");
             return;
         }
 
@@ -135,6 +188,25 @@ public class US27_ShortestPathFinder {
             }
         }
         return 0.0; // This should never happen for a valid path
+    }
+
+    private static List<String> readStopStationFile(String filePath) {
+        List<String> stations = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] stationNames = line.split(";");
+                for (String station : stationNames) {
+                    if (!station.isEmpty()) {
+                        stations.add(station);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading stop station file: " + e.getMessage());
+            return null;
+        }
+        return stations;
     }
 
     private static List<String> getRequiredStations(Scanner sc) {
