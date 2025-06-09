@@ -51,6 +51,8 @@
                         <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Simulator">
                             <items>
                                 <MenuItem fx:id="runPauseSimulatorMenuItem" mnemonicParsing="false" onAction="#handleRunPauseSimulator" text="Play/Pause Simulator" />
+                                <MenuItem fx:id="simulationControlMenuItem" mnemonicParsing="false" onAction="#handleSimulationCardClick" text="Simulation Settings" />
+
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Statistics">

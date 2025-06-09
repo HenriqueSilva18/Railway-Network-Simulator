@@ -94,4 +94,8 @@ public class MapController {
 
         return layout.toString();
     }
+
+    public Map getMapById(String mapID) {
+        return mapRepository.getMap(mapID);
+    }
 } 

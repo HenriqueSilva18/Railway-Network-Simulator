@@ -33,7 +33,7 @@ public class CreateRouteDialogController {
     private void loadInitialStations() {
         List<Station> allStations = businessController.getAvailableStations();
         if (allStations.isEmpty()) {
-            AlertHelper.showAlert(Alert.AlertType.WARNING, "No Stations", "No stations available on the map.");
+            AlertHelper.showAlert(Alert.AlertType.INFORMATION,"No Stations", "No stations available on the map.");
         }
         nextStationComboBox.setItems(FXCollections.observableArrayList(allStations));
     }
@@ -81,7 +81,7 @@ public class CreateRouteDialogController {
         List<Station> stations = new ArrayList<>(currentRouteStations);
 
         if (businessController.createRoute(routeName, stations) != null) {
-            AlertHelper.showAlert(Alert.AlertType.INFORMATION, "Success", "Route '" + routeName + "' created!");
+            AlertHelper.showAlert(Alert.AlertType.CONFIRMATION,"Success", "Route '" + routeName + "' created!");
             closeWindow();
         } else {
             AlertHelper.showAlert(Alert.AlertType.ERROR, "Creation Failed", "Could not create route. Check if all stations are sequentially connected.");

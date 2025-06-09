@@ -2,6 +2,7 @@ package pt.ipp.isep.dei.ui.gui.controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
@@ -10,7 +11,6 @@ import pt.ipp.isep.dei.controller.template.AssignmentStatus;
 import pt.ipp.isep.dei.domain.template.Route;
 import pt.ipp.isep.dei.domain.template.Train;
 import pt.ipp.isep.dei.ui.gui.utils.AlertHelper;
-import javafx.scene.control.Alert;
 
 public class AssignTrainDialogController {
 
@@ -70,7 +70,7 @@ public class AssignTrainDialogController {
 
         // Mostra o alerta de erro
         this.successful = false;
-        AlertHelper.showAlert(Alert.AlertType.ERROR, "Assignment Failed", errorMessage);
+        AlertHelper.showAlert(Alert.AlertType.ERROR,"Assignment Failed", errorMessage);
     }
 
     public boolean isSuccessful() { return successful; }

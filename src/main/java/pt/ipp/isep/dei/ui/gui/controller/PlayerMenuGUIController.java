@@ -1,11 +1,12 @@
 package pt.ipp.isep.dei.ui.gui.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,15 +17,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import pt.ipp.isep.dei.controller.template.ApplicationSession;
-import pt.ipp.isep.dei.controller.template.AssignTrainController;
-import pt.ipp.isep.dei.controller.template.CreateRouteController;
-import pt.ipp.isep.dei.controller.template.ViewScenarioLayoutController;
+import javafx.util.Duration;
+import pt.ipp.isep.dei.controller.template.*;
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.RailwayLineRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
@@ -35,11 +31,9 @@ import pt.ipp.isep.dei.ui.gui.utils.AlertHelper;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayerMenuGUIController implements Initializable {
 
@@ -88,6 +82,9 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem runPauseSimulatorMenuItem; // Main menu
 
     @FXML
+    private MenuItem simulationControlMenuItem; // Main menu
+
+    @FXML
     private MenuItem stationProfitAnalysisMenuItem; // Main menu
     @FXML
     private MenuItem passengerArrivalsAnalysisMenuItem; // Main menu
@@ -108,6 +105,8 @@ public class PlayerMenuGUIController implements Initializable {
     private Label budgetLabel;
     @FXML
     private Label simulatorTimeLabel;
+
+    private Timeline simulationUpdateTimer;
 
     // Cards VBox elements from FXML
     @FXML
@@ -140,6 +139,7 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem cardAssignTrainItem;
     private MenuItem cardListTrainsItem;
     private MenuItem cardRunSimulatorItem;
+    private MenuItem cardSimulatorControlItem;
 
     // View Card
     private MenuItem cardViewMapItem;
@@ -171,20 +171,29 @@ public class PlayerMenuGUIController implements Initializable {
     private ViewScenarioLayoutController viewLayoutController; // Controller para obter dados do mapa
     private CreateRouteController createRouteController;
     private AssignTrainController assignTrainController;
-
+    private SimulatorController simulatorController;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.viewLayoutController = new ViewScenarioLayoutController(); // Inicializar o controller de layout
-
+        this.simulatorController = new SimulatorController();
         updateBudgetDisplay();
-        updateSimulatorTimeDisplay("Paused");
+        // Configurar o temporizador que vai atualizar a label
+        simulationUpdateTimer = new Timeline(
+                new KeyFrame(Duration.seconds(1), event -> updateSimulatorTimeDisplay())
+        );
+        simulationUpdateTimer.setCycleCount(Timeline.INDEFINITE);
+
+        // Atualizar a UI uma vez no início para mostrar "Parado"
+        updateSimulatorTimeDisplay();
         setupCardContextMenus();
         updateMenuItemsState();
         updateMapInfoPlaceholderLabel(); // Atualiza o placeholder no início
         loadMapVisualization();          // Tenta carregar a visualização do mapa no início
     }
+
+
 
     private void setupCardContextMenus() {
         setupInfrastructureCardMenu();
@@ -213,8 +222,28 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     @FXML
-    void handleSimulationCardClick() { // NEWLY ADDED
-        System.out.println("Simulation Control card clicked - context menu should show via setOnMouseClicked");
+    void handleSimulationCardClick(ActionEvent event) {
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SimulationDialog.fxml"));
+            Parent root = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Simulation Control Panel");
+            // Use NONE para permitir interação com a janela principal em simultâneo
+            dialogStage.initModality(Modality.NONE);
+            dialogStage.initOwner(playerMainPane.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Not possible to open Simulation Control Panel: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -275,6 +304,8 @@ public class PlayerMenuGUIController implements Initializable {
             // Ensure consistent behavior or specific actions as needed.
             cardRunSimulatorItem = new MenuItem("Run/Pause Simulator (Ops)");
             cardRunSimulatorItem.setOnAction(this::handleRunPauseSimulator);
+            cardSimulatorControlItem = new MenuItem("Simulation Control");
+            cardSimulatorControlItem.setOnAction(this::handleSimulationCardClick);
 
             contextMenu.getItems().addAll(cardBuyLocomotiveItem, cardCreateRouteItem, cardAssignTrainItem, cardListTrainsItem,
                     new SeparatorMenuItem(), cardRunSimulatorItem);
@@ -343,7 +374,7 @@ public class PlayerMenuGUIController implements Initializable {
             cardSimAdvanceTimeItem.setOnAction(event -> showAlert("Not Implemented", "Advance Time (US_SIM_X) not implemented."));
 
             // Add more simulation-specific actions here
-            contextMenu.getItems().addAll(cardSimControlRunPauseItem, cardSimAdvanceTimeItem);
+            contextMenu.getItems().addAll(cardSimControlRunPauseItem, cardSimulatorControlItem,  cardSimAdvanceTimeItem);
 
             setupCardHoverEffect(simulationCard);
             simulationCard.setOnMouseClicked(event -> {
@@ -551,6 +582,28 @@ public class PlayerMenuGUIController implements Initializable {
         simulatorTimeLabel.setText(time);
     }
 
+    /**
+     * Atualiza a interface do utilizador com o estado atual e a data do simulador.
+     * Este método é chamado periodicamente pelo Timeline.
+     */
+    private void updateSimulatorTimeDisplay() {
+        // Obtém o simulador ativo através do repositório
+        Simulator simulator = Repositories.getInstance().getSimulatorRepository().getActiveSimulator();
+
+        if (simulator != null && !simulator.getStatus().equals(Simulator.STATUS_STOPPED)) {
+            String status = simulator.getStatus();
+            java.util.Date currentDate = simulator.getCurrentSimulatedDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(currentDate);
+
+            // Combina o estado e a data e atualiza a label
+            simulatorTimeLabel.setText(String.format("%s: %s", status, formattedDate));
+        } else {
+            // Se não houver simulação a decorrer, mostra "Parado"
+            simulatorTimeLabel.setText("Stopped");
+        }
+    }
+
     private void updateMenuItemsState() {
         // TODO: Verificar se um mapa está carregado na ApplicationSession
         // boolean mapLoaded = appSession.getCurrentMap() != null;
@@ -572,6 +625,7 @@ public class PlayerMenuGUIController implements Initializable {
         assignTrainMenuItem.setDisable(!mapLoaded);
         listTrainsMenuItem.setDisable(!mapLoaded);
         runPauseSimulatorMenuItem.setDisable(!mapLoaded);
+        simulationControlMenuItem.setDisable(!mapLoaded);
 
         // View Menu (Main Menu Bar)
         viewCurrentMapMenuItem.setDisable(!mapLoaded);
@@ -600,6 +654,9 @@ public class PlayerMenuGUIController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectMapScenarioDialog.fxml"));
             Parent dialogRoot = loader.load();
 
+            SelectMapScenarioDialogController dialogController = loader.getController();
+            dialogController.initController(this.simulatorController);
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Select Map & Scenario");
             dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -618,6 +675,7 @@ public class PlayerMenuGUIController implements Initializable {
 
             if (appSession.getCurrentMap() != null) {
                 System.out.println("Map and scenario selected. UI Updated.");
+                simulationUpdateTimer.play(); // Inicia o temporizador de atualização do simulador
             } else {
                 System.out.println("No map and scenario selected or dialog cancelled.");
             }
@@ -858,7 +916,7 @@ public class PlayerMenuGUIController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
-            AlertHelper.showAlert(Alert.AlertType.ERROR, "Error", "Could not open the dialog: " + e.getMessage());
+            AlertHelper.showAlert(Alert.AlertType.ERROR,"Error", "Could not open the dialog: " + e.getMessage());
         }
     }
 
@@ -1041,16 +1099,47 @@ public class PlayerMenuGUIController implements Initializable {
         showAlert("Not Implemented", "View Year Financial Results (US25) functionality is not yet implemented.");
     }
 
-    private boolean isSimulatorRunning = false; // Basic state for toggle
-
+    /**
+     * Gere o evento de clique para o botão de pausa/retoma da simulação.
+     * Este método verifica o estado atual do simulador e invoca a ação apropriada.
+     * @param event O evento de ação que acionou este manipulador.
+     */
     @FXML
     void handleRunPauseSimulator(ActionEvent event) {
-        isSimulatorRunning = !isSimulatorRunning; // Toggle state
-        String status = isSimulatorRunning ? "Running" : "Paused";
-        System.out.println("Play/Pause Simulator clicked. Status: " + status);
-        updateSimulatorTimeDisplay(status); // Update label
-        // TODO: Add actual simulator start/pause logic (US12)
-        showAlert("Simulator Control", "Simulator is now " + status + " (US12 - Basic Toggle).");
+        // Obter uma instância do controlador do simulador
+
+        // Obter o estado real do simulador a partir do controlador
+        String status = simulatorController.getSimulatorStatus();
+
+        // Se a simulação não tiver sido iniciada ou já tiver parado, informar o utilizador.
+        if (status == null || status.equals(Simulator.STATUS_STOPPED)) {
+            showAlert("No Simulator", "Please start the simulator first.");
+            return;
+        }
+
+        // Executar uma ação com base no estado atual
+        switch (status) {
+            case Simulator.STATUS_RUNNING:
+                // Se estiver a decorrer, colocar em pausa
+                if (simulatorController.pauseSimulation()) {
+                    showAlert("Simulator paused", "The simulation has been paused.");
+                } else {
+                    showAlert("Error", "Error pausing the simulation.");
+                }
+                break;
+
+            case Simulator.STATUS_PAUSED:
+                // Se estiver em pausa, retomar
+                if (simulatorController.resumeSimulation()) {
+                    showAlert("Simulator resumed", "The simulation has been resumed.");
+                } else {
+                    showAlert("Error", "Error resuming the simulation.");
+                }
+                break;
+        }
+
+        // A atualização da interface do utilizador (ex: texto do botão, etiqueta de estado) deve ser gerida
+        // por um temporizador separado que verifica periodicamente o estado do simulador para manter a interface do utilizador sincronizada.
     }
 
     // Statistics Handlers (Python/Jupyter tasks)
