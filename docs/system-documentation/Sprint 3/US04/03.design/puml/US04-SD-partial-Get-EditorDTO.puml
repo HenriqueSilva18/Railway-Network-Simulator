@@ -11,8 +11,6 @@ participant "currentSession\n:UserSession" as CURRENT_SESSION
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "editorRepository:\nEditorRepository" as EDITOR_REPO
-participant ":List<Editor>" as EDITOR_LIST
-participant "editor:\nEditor" as EDITOR
 participant ":EditorMapper" as EDITOR_MAPPER
 participant "editorDTO:\nEditorDTO" as EDITOR_DTO
 
@@ -51,24 +49,19 @@ activate CTRL
         CTRL -> EDITOR_REPO: getEditorByEmail(email)
         activate EDITOR_REPO
 
-            loop for each known Editor
-                EDITOR_REPO -> EDITOR_LIST: editor = get(i)
-                activate EDITOR_LIST
-                    deactivate EDITOR_LIST
-
-                EDITOR_REPO -> EDITOR: foundEditor = hasEmail(email)
-                activate EDITOR
-                    deactivate EDITOR
-
-                opt foundEditor == true
                 EDITOR_REPO --> CTRL: editor
                     deactivate EDITOR_REPO
-            end
 
-    end
     CTRL -> EDITOR_MAPPER: editorDTO = toDTO(editor)
     activate EDITOR_MAPPER
-        EDITOR_MAPPER -> EDITOR_DTO**: create(...)
+
+        EDITOR_MAPPER -> EDITOR_MAPPER: editorDTO = toDTO(editor)
+        activate EDITOR_MAPPER
+
+            EDITOR_MAPPER -> EDITOR_DTO**: create()
+
+                deactivate EDITOR_MAPPER
+        EDITOR_MAPPER --> CTRL: editorDTO
         deactivate EDITOR_MAPPER
 
     autonumber 15

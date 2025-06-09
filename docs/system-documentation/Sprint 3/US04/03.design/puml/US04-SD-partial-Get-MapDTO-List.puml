@@ -60,7 +60,7 @@ activate CTRL
 
                 MAP_MAPPER -> MAP_MAPPER: mapDTO = toDTO(map)
                 activate MAP_MAPPER
-                    MAP_MAPPER --> MAP_DTO**: create(...)
+                    MAP_MAPPER --> MAP_DTO**: create()
                     deactivate MAP_MAPPER
 
                 MAP_MAPPER -> MAP_LIST_DTO: add(mapDTO)
