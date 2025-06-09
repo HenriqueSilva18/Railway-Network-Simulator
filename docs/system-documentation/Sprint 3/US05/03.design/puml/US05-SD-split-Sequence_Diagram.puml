@@ -92,6 +92,22 @@ activate PLAYER
             activate UI
         end
 
+        UI -> CTRL : getAvailableBuildings()
+        
+        ref over CTRL
+            Get Available Buildings
+        end ref
+        
+        activate CTRL
+            CTRL --> UI : availableBuildingsList
+        deactivate CTRL
+        
+        UI --> PLAYER : shows list of available buildings
+        deactivate UI
+
+        PLAYER -> UI : selects default building
+        activate UI
+
         UI -> CTRL : getClosestCity(position)
         
         ref over CTRL
