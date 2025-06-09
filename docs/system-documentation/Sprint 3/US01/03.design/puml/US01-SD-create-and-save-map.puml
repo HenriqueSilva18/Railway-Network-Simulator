@@ -16,7 +16,7 @@ participant "Map" as MAP
 participant "Size" as SIZE
 
 autonumber 11
--> CTRL: createMap(nameID, width, height)
+-> CTRL: createMap(mapDTO)
     activate CTRL
     autonumber 11.1
     group Create and save map
@@ -30,11 +30,11 @@ autonumber 11
             APP_SESSION_SINGLETON --> CTRL: editor
         deactivate APP_SESSION_SINGLETON
         
-        CTRL -> SIZE**: createSize(width, height)
+        CTRL -> SIZE**: createSize(mapDTO.width, mapDTO.height)
         
-        CTRL -> EDITOR: createMap(nameID, size)
+        CTRL -> EDITOR: createMap(mapDTO.nameID, size)
         activate EDITOR
-            EDITOR -> MAP**: createMap(nameID, size)
+            EDITOR -> MAP**: createMap(mapDTO.nameID, size)
             
             EDITOR --> CTRL: map
         deactivate EDITOR
@@ -53,9 +53,14 @@ autonumber 11
         activate REPOS_MAP
             REPOS_MAP --> CTRL: success
         deactivate REPOS_MAP
+
+        CTRL -> MAP: toDTO()
+        activate MAP
+            MAP --> CTRL: mapDTO
+        deactivate MAP
     end
     autonumber 12
-    <-- CTRL: success + mapDetails
+    <-- CTRL: success + mapDTO
 deactivate CTRL
 
 @enduml 

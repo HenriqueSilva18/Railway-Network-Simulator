@@ -10,24 +10,17 @@ class CreateMapUI {
 
 class CreateMapController {
     + create()
-    + validateMapData(nameID, width, height) : boolean
-    + createMap(nameID, width, height) : Map
+    + validateMapData(mapDTO: MapDTO) : boolean
+    + createMap(mapDTO: MapDTO) : MapDTO
 }
 
-class MapRepository {
-    + save(map) : boolean
-    + getMapByID(nameID) : Map
+class MapDTO {
+        + nameID : String
+    + width : int
+    + height : int
 }
 
-class Repositories {
-    + {static} getInstance() : Repositories
-    + getMapRepository() : MapRepository
-}
 
-class ApplicationSession {
-    + {static} getInstance() : ApplicationSession
-    + getCurrentSession() : Editor
-}
 
     class Map {
         - nameID : String
@@ -37,6 +30,7 @@ class ApplicationSession {
 
         + {static} validateMapName(nameID) : boolean
         + createMap(nameID: String, size: Size) : Map
+        + toDTO() : MapDTO
     }
 
 class Size {
@@ -55,8 +49,24 @@ class Editor {
     + createMap(nameID: String, size: Size) : Map
 }
 
-CreateMapUI ..> CreateMapController
+    class MapRepository {
+        + save(map: Map) : boolean
+        + getMapByID(nameID: String) : Map
+    }
 
+    class Repositories {
+        + {static} getInstance() : Repositories
+        + getMapRepository() : MapRepository
+    }
+
+    class ApplicationSession {
+        + {static} getInstance() : ApplicationSession
+        + getCurrentSession() : Editor
+    }
+
+
+CreateMapUI ..> CreateMapController
+CreateMapController ..> MapDTO
 CreateMapController ..> MapRepository
 CreateMapController ..> Repositories
 CreateMapController ..> ApplicationSession

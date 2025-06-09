@@ -19,8 +19,7 @@ class Editor {
 
 class Map {
   nameID
-  cityList
-  industryList
+  scale
 }
 
 class Size {

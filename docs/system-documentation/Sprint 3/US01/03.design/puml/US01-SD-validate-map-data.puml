@@ -10,16 +10,16 @@ participant "Map" as MAP
 participant "Size" as SIZE
 
 autonumber 6
--> CTRL: validateMapData(nameID, width, height)
+-> CTRL: validateMapData(mapDTO)
         activate CTRL
         autonumber 6.1
         group Validate map data
-            CTRL -> MAP: validateMapName(nameID)
+            CTRL -> MAP: validateMapName(mapDTO.nameID)
             activate MAP
                 MAP --> CTRL: valid
             deactivate MAP
             
-            CTRL -> SIZE: validateSize(width, height)
+            CTRL -> SIZE: validateSize(mapDTO.width, mapDTO.height)
             activate SIZE
                 SIZE --> CTRL: valid
             deactivate SIZE
