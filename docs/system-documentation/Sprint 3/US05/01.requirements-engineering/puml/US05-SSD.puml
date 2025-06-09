@@ -44,7 +44,7 @@ alt station type is "STATION"
     Player -> System: selects center point
     activate System
 end
-
+System --> Player: requests default building
 System --> Player: shows list of available buildings
 deactivate System
 
