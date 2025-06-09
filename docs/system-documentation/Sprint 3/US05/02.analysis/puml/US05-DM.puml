@@ -13,15 +13,12 @@ title "System Sequence Diagram - US05 : Build a Station"
 class Player {
   username
   password
-  initialBudget
-  currentBudget
   ownedLocomotives
 }
 
 class Map {
   nameID
-  cityList
-  industryList
+  scale
 }
 
 class City {
@@ -73,10 +70,20 @@ class StationType {
   cost
   centerPoint
 }
+class Building {
+  nameID
+  type
+  availabilityYear
+  evolutionCost
+  evolutionStagesLeft
+  effect
+}
 
 class HouseBlock {
   automaticPlacement
 }
+
+
 
 
 note left of Station::nameID
@@ -124,6 +131,8 @@ IndustrySector "1" -- "*" Industry : contains >
 Station "*" -- "1" StationType : defined by >
 
 StationType "1" -- "*" StationType : can change >
+Station "1" -- "*" Building : upgraded with >
+Building "1" -- "0..1" Building : evolves into >
 
 
 @enduml

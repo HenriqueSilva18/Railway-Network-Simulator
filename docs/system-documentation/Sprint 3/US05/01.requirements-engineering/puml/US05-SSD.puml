@@ -45,6 +45,12 @@ alt station type is "STATION"
     activate System
 end
 
+System --> Player: shows list of available buildings
+deactivate System
+
+Player -> System: selects default building
+activate System
+
 System --> Player: proposes station name based on closest city
 System --> Player: displays station cost and economic radius
 System --> Player: shows preview of station placement and requests confirmation

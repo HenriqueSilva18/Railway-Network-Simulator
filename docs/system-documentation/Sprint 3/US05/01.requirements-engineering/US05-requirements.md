@@ -59,6 +59,10 @@
 * Selected data:
   - Station type (DEPOT, STATION, TERMINAL)
   - For **STATION** type: Center point (NE, SE, NW, SW)
+  - Default building (according to availability year):
+    - DEPOT: 3x3 radius
+    - STATION: 4x4 radius
+    - TERMINAL: 5x5 radius
 
 * Typed data:
   - Location coordinates (x, y) on map
