@@ -8,11 +8,13 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapDTO\n:MapDTO" as MAP_DTO
 participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant "map\n:Map" as MAP
+participant "scenarios:Scenarios" as SCNS
 participant ":ScenarioMapper" as SCN_MAPPER
 participant "scenarioDTO\n:ScenarioDTO" as SCN_DTO
 participant "scenario:Scenario" as SCN
-participant "map\n:Map" as MAP
-participant "scenarios:Scenarios" as SCNS
+
 
 autonumber 22
 -> CTRL: createScenario(mapDTO, scenarioDTO)
@@ -41,39 +43,29 @@ activate CTRL
         activate SCN_DTO
             deactivate SCN_DTO
 
+        CTRL -> MAP_DTO: getNameID()
+        activate MAP_DTO
+            MAP_DTO --> CTRL: mapNameID
+        deactivate MAP_DTO
 
-        CTRL -> CTRL: getEditorFromSession()
-        activate CTRL
-
-        ref over CTRL
-            Get EditorDTO
-        end ref
-
-        CTRL --> CTRL: editorDTO
-        deactivate CTRL
-
-        CTRL -> SCN_DTO: addEditor(editorDTO)
-        activate SCN_DTO
-            deactivate SCN_DTO
-
-
-        CTRL -> MAP_REPO: createScenario(scenarioDTO)
+        CTRL -> MAP_REPO: createScenario(scenarioDTO, mapNameID)
             activate MAP_REPO
 
-            MAP_REPO -> SCN_MAPPER: scenario = toModel(scenarioDTO)
+            MAP_REPO -> MAPS: createScenario(scenarioDTO, mapNameID)
+            activate MAPS
+
+            MAPS -> MAP: createScenario(scenarioDTO, mapNameID)
+            activate MAP
+
+            MAP -> SCNS: createScenario(scenarioDTO)
+            activate SCNS
+
+            SCNS -> SCN_MAPPER: scenario = toModel(scenarioDTO)
                 activate SCN_MAPPER
 
                 SCN_MAPPER -> SCN_DTO: nameID = getNameID()
                 activate SCN_DTO
                 deactivate SCN_DTO
-
-                ' Conversão do Editor
-                SCN_MAPPER -> SCN_DTO: editorDTO = getEditor()
-                activate SCN_DTO
-                deactivate SCN_DTO
-                SCN_MAPPER -> SCN_MAPPER: editor = toEditorModel(editorDTO)
-                activate SCN_MAPPER
-                deactivate SCN_MAPPER
 
                 SCN_MAPPER -> SCN_DTO: startDate = getStartDate()
                 activate SCN_DTO
@@ -87,60 +79,38 @@ activate CTRL
                 activate SCN_DTO
                 deactivate SCN_DTO
 
-                ' Conversão das Industries
-                SCN_MAPPER -> SCN_DTO: industriesDTO = getIndustries()
+                SCN_MAPPER -> SCN_DTO: industries = getIndustries()
                 activate SCN_DTO
                 deactivate SCN_DTO
-                SCN_MAPPER -> SCN_MAPPER: industries = toIndustryModels(industriesDTO)
-                activate SCN_MAPPER
-                deactivate SCN_MAPPER
 
-                ' Conversão das Cities
-                SCN_MAPPER -> SCN_DTO: citiesDTO = getCities()
+                SCN_MAPPER -> SCN_DTO: cities = getCities()
                 activate SCN_DTO
                 deactivate SCN_DTO
-                SCN_MAPPER -> SCN_MAPPER: cities = toCityModels(citiesDTO)
-                activate SCN_MAPPER
-                deactivate SCN_MAPPER
 
-                ' Conversão dos LocomotiveTypes
-                SCN_MAPPER -> SCN_DTO: locomotiveTypesDTO = getLocomotiveTypes()
+                SCN_MAPPER -> SCN_DTO: locomotiveTypes = getLocomotiveTypes()
                 activate SCN_DTO
                 deactivate SCN_DTO
-                SCN_MAPPER -> SCN_MAPPER: locomotiveTypes = toLocomotiveTypeModels(locomotiveTypesDTO)
-                activate SCN_MAPPER
+
+                SCN_MAPPER -> SCN**: create(nameID, startDate, endDate, initialBudget,\nindustries, cities, locomotiveTypes)
                 deactivate SCN_MAPPER
 
-                SCN_MAPPER -> SCN**: create(nameID, editor, startDate, endDate, initialBudget,\nindustries, cities, locomotiveTypes)
-
-            SCN_MAPPER --> MAP_REPO: scenario
-            deactivate SCN_MAPPER
-
-            MAP_REPO --> CTRL: scenario
-            deactivate MAP_REPO
-
-            CTRL -> MAP_REPO: saveScenario(scenario, mapDTO.getNameID())
-            activate MAP_REPO
-
-                MAP_REPO -> MAP_REPO: getMapByID(nameID)
-                activate MAP_REPO
-                    MAP_REPO --> MAP_REPO: map
-                    deactivate MAP_REPO
-
-                MAP_REPO -> MAP: map.addScenario(scenario)
-                activate MAP
-                    MAP -> SCNS: addScenario(scenario)
+                SCNS -> SCNS: addScenario(scenario)
+                activate SCNS
+                    SCNS -> SCNS: validateScenario(scenario)
                     activate SCNS
+                        SCNS --> SCNS: true
                         deactivate SCNS
+                    SCNS --> SCNS: true
+                    deactivate SCNS
 
-                deactivate MAP
+                SCNS --> MAP: success
+                deactivate SCNS
 
+            MAP --> MAPS: success
+            deactivate MAP
 
-                MAP_REPO -> MAP_REPO: save(map)
-                activate MAP_REPO
-
-                MAP_REPO --> MAP_REPO: success
-                deactivate MAP_REPO
+            MAPS --> MAP_REPO: success
+            deactivate MAPS
 
             MAP_REPO --> CTRL: success
             deactivate MAP_REPO

@@ -1,0 +1,60 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":BuyLocomotiveController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "locomotiveDTO\n:LocomotiveDTO" as LOC_DTO
+participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
+participant "locomotives\n:Locomotives" as LOCS
+participant ":LocomotiveMapper" as LOC_MAPPER
+
+
+autonumber 3
+-> CTRL: getLocomotive(locomotiveDTO)
+
+autonumber 3.1
+activate CTRL
+    group Get LocomotiveDTO
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: locomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> LOC_DTO: getNameID()
+        activate LOC_DTO
+            LOC_DTO --> CTRL: locomotiveNameID
+        deactivate LOC_DTO
+
+        CTRL -> LOC_REPO: getLocomotive(locomotiveNameID)
+        activate LOC_REPO
+            LOC_REPO -> LOCS: getLocomotive(locomotiveNameID)
+            activate LOCS
+                LOCS --> LOC_REPO: locomotive
+            deactivate LOCS
+            LOC_REPO --> CTRL: locomotive
+        deactivate LOC_REPO
+
+        CTRL -> LOC_MAPPER: toDTO(locomotive)
+        activate LOC_MAPPER
+            LOC_MAPPER -> LOC_MAPPER: locomotiveDTO = toDTO(locomotive)
+            activate LOC_MAPPER
+                deactivate LOC_MAPPER
+            LOC_MAPPER --> CTRL: locomotiveDTO
+        deactivate LOC_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : locomotiveDTO
+deactivate CTRL
+
+@enduml

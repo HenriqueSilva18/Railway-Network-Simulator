@@ -1,0 +1,198 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+class CreateScenarioUI {
+}
+
+class CreateScenarioController {
+    + getListOfMaps()
+    + getListOfLocomotiveTypes()
+    + getListOfMapIndustries(mapDTO)
+    + createScenario(mapDTO, scenarioDTO)
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getMapRepository()
+    + getLocomotiveTypeRepository()
+}
+
+class MapRepository {
+    + getListOfMaps()
+    + getListOfMapIndustries(mapNameID)
+    + createScenario(scenarioDTO, mapNameID)
+}
+
+class LocomotiveTypeRepository {
+    + getListOfLocomotiveTypes()
+}
+
+class Maps {
+    + getListOfMaps()
+    + getListOfMapIndustries(mapNameID)
+    + createScenario(scenarioDTO, mapNameID)
+}
+
+class Map {
+    - nameID : String
+    + getIndustries()
+    + getCities()
+    + createScenario(scenarioDTO, mapNameID)
+}
+
+class Scenarios {
+    + createScenario(scenarioDTO)
+    + addScenario(scenario)
+    + validateScenario(scenario)
+    + getScenarios()
+}
+
+class Scenario {
+    - nameID : String
+    - startDate : Date
+    - endDate : Date
+    - initialBudget : double
+    + getCities()
+    + getIndustries()
+    + getLocomotiveTypes()
+}
+
+class Cities {
+    + getCities()
+}
+
+class Industries {
+    + getIndustries()
+}
+
+class LocomotiveTypes {
+    + getListOfLocomotiveTypes()
+}
+
+class City {
+    - nameID : String
+    - trafficRate : double
+}
+
+class Industry {
+    - nameID : String
+    - type : String
+    - availabilityYear : int
+}
+
+class LocomotiveType {
+    - nameID : String
+    - power : double
+    - acceleration : double
+}
+
+class ScenarioDTO {
+    - nameID : String
+    - startDate : Date
+    - endDate : Date
+    - initialBudget : double
+}
+
+class MapDTO {
+    - nameID : String
+    - scale : double
+}
+
+class CityDTO {
+    - nameID : String
+    - trafficRate : double
+}
+
+class IndustryDTO {
+    - nameID : String
+    - type : String
+    - availabilityYear : int
+}
+
+class LocomotiveTypeDTO {
+    - nameID : String
+    - power : double
+    - acceleration : double
+}
+
+class ScenarioMapper {
+    + toModel(scenarioDTO)
+    + toDTO(List<Scenario>)
+    + toDTO(Scenario)
+    + getNameID()
+    + getStartDate()
+    + getEndDate()
+    + getInitialBudget()
+    + getIndustries()
+    + getCities()
+    + getLocomotiveTypes()
+}
+
+class MapMapper {
+    + toDTO(List<Map>)
+    + toDTO(Map)
+}
+
+class IndustryMapper {
+    + toDTO(List<Industry>)
+    + toDTO(Industry)
+}
+
+class LocomotiveTypeMapper {
+    + toDTO(List<LocomotiveType>)
+    + toDTO(LocomotiveType)
+}
+
+
+
+CreateScenarioUI "1" --> "1" CreateScenarioController
+CreateScenarioController "1" --> "1" Repositories : repositories
+CreateScenarioController "1" --> "1" ScenarioDTO
+
+Repositories "1" --> "1" MapRepository
+Repositories "1" --> "1" LocomotiveTypeRepository
+
+MapRepository "1" --> "1" Maps : maps
+Maps "1" --> "*" Map : maps
+
+Map "1" --> "1" Cities : cities
+Map "1" --> "1" Industries : industries
+Map "1" --> "*" Scenarios : scenarios
+
+Scenarios "1" --> "*" Scenario : scenarios
+
+Scenario "1" --> "1" Cities : cities
+Scenario "1" --> "1" Industries : industries
+Scenario "1" --> "1" LocomotiveTypes : locomotiveTypes
+
+Cities "1" --> "*" City : cities
+Industries "1" --> "*" Industry : industries
+LocomotiveTypes "1" --> "*" LocomotiveType : locomotiveTypes
+
+ScenarioDTO "1" --> "*" CityDTO : listCityDTO
+ScenarioDTO "1" --> "*" IndustryDTO : listIndustryDTO
+ScenarioDTO "1" --> "*" LocomotiveTypeDTO : listLocomotiveTypeDTO
+
+MapMapper "1" --> "1" Map : maps
+MapMapper "1" --> "1" MapDTO : maps to
+
+ScenarioMapper "1" --> "1" Scenario : maps
+ScenarioMapper "1" --> "1" ScenarioDTO : maps to
+
+IndustryMapper "1" --> "1" Industry : maps
+IndustryMapper "1" --> "1" IndustryDTO : maps to
+
+LocomotiveTypeMapper "1" --> "1" LocomotiveType : maps
+LocomotiveTypeMapper "1" --> "1" LocomotiveTypeDTO : maps to
+
+MapRepository "1" --> "1" MapMapper : uses
+LocomotiveTypeRepository "1" --> "1" LocomotiveTypeMapper : uses
+CreateScenarioController "1" --> "1" ScenarioMapper : uses
+
+@enduml

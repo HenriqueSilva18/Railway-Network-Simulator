@@ -7,6 +7,7 @@ participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "locomotiveTypeRepository\n:LocomotiveTypeRepository" as LOC_TYPE_REPO
+participant "locomotiveTypes:LocomotiveTypes" as LOC_TYPES
 participant ":List<LocomotiveType>" as LIST
 participant ":LocomotiveTypeMapper" as LOC_TYPE_MAPPER
 participant "listLocomotiveType\n:List<LocomotiveType>" as LOC_TYPE_LIST
@@ -33,17 +34,26 @@ activate CTRL
 
         CTRL -> LOC_TYPE_REPO: getListOfLocomotiveTypes()
         activate LOC_TYPE_REPO
-            LOC_TYPE_REPO --> LOC_TYPE_LIST**: create()
+
+        LOC_TYPE_REPO -> LOC_TYPES: getListOfLocomotiveTypes()
+        activate LOC_TYPES
+
+
+            LOC_TYPES --> LOC_TYPE_LIST**: create()
 
             loop for each known LocomotiveType
-                LOC_TYPE_REPO -> LIST: locomotiveType = get(i)
+                LOC_TYPES -> LIST: locomotiveType = get(i)
                 activate LIST
                     deactivate LIST
 
-                LOC_TYPE_REPO -> LOC_TYPE_LIST: add(locomotiveType)
+                LOC_TYPES -> LOC_TYPE_LIST: add(locomotiveType)
                 activate LOC_TYPE_LIST
                     deactivate LOC_TYPE_LIST
             end
+
+            LOC_TYPES --> LOC_TYPE_REPO: listLocomotiveType
+            deactivate LOC_TYPES
+
 
             LOC_TYPE_REPO --> CTRL: listLocomotiveType
             deactivate LOC_TYPE_REPO

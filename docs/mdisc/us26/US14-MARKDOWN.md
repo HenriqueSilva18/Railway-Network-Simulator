@@ -19,8 +19,6 @@ gets the associated list of edges, and counts the number of edges to determine i
 | &emsp; &emsp; &emsp; degreeMap.put(station, degree) | nA           |
 | &emsp; return degreeMap                             | 1R           |
 
-&emsp; &emsp; &emsp; &emsp; (graph: Map_String_ListOfEdge)
-
 &emsp; &emsp; &emsp; *Table 1: Method calculateNodeDegrees*
 
 The time complexity of the calculateNodeDegrees method is determined by the need to iterate through all the nodes
@@ -49,8 +47,6 @@ odd, and returns the total count of such nodes.
 | &emsp; &emsp; &emsp; oddStations.add(station)              | ≤ nA         |
 | &emsp; &emsp; &emsp; count := count + 1                    | ≤ nA         |
 | &emsp; return count                                        | 1R           |
-
-&emsp; &emsp; (degreeMap: Map_String_Integer, oddStations: List_String)
 
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 2: Method checkEulerian*
 
@@ -87,8 +83,6 @@ returning it.
 | &emsp; &emsp; display stationsToShow                                    | k⋅O(n)       |
 | &emsp; &emsp; choice := read user input                                 | kA           |
 | &emsp; return startStation                                              | 1R           |
-
-(degreeMap: Map_String_Integer, stations: List_String, oddCount: Integer, oddStations: List_String)
 
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 3: Method chooseStartStation*
 
@@ -175,8 +169,6 @@ still connected.
 | &emsp; gLocal.get(v).add(new Edge(u, v, false, 0))                         | 1A           |
 | &emsp; return stillConnected                                               | 1R           |
 
-&emsp; &emsp; (u: String, v: String, gLocal: Map_String_ListOfEdge, stations: List_String)
-
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 5: Method isValidNextEdge*
 
 The time complexity of the isValidNextEdge method is determined by the call to MatrixUtils.computeTransitiveClosure.
@@ -209,8 +201,6 @@ not just a reference to the original.
 | &emsp; &emsp; copy.put(u_key, newList)                                                                  | nA           |
 | &emsp; return copy                                                                                      | 1R           |
 
-&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; (graph: Map_String_ListOfEdge)
-
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 6: Method cloneGraph*
 
 The time complexity of the cloneGraph method is determined by the need to iterate through every vertex and every edge
@@ -235,7 +225,7 @@ must find and remove the corresponding entry from each list.
 
 | **CODE**                                                                                                        | **ANALYSIS**           |
 |-----------------------------------------------------------------------------------------------------------------|------------------------|
-| procedure removeEdge(u, v, gLocal)                                                                               | **O(grau(u)+grau(v))** |
+| procedure removeEdge(u, v, gLocal)                                                                              | **O(grau(u)+grau(v))** |
 | &emsp; lu := gLocal.get(u)                                                                                      | 1L                     |
 | &emsp; for i from 0 to size of lu - 1                                                                           | (grau(u)+1)C           |
 | &emsp; &emsp; e := lu.get(i)                                                                                    | grau(u)·L              |
@@ -248,8 +238,6 @@ must find and remove the corresponding entry from each list.
 | &emsp; &emsp; if (e.from is equal to u and e.to is equal to v) or (e.from is equal to v and e.to is equal to u) | grau(v)·C              |
 | &emsp; &emsp; &emsp; lv.remove(i)                                                                               | ≤ 1A                   |
 | &emsp; &emsp; &emsp;  break                                                                                     | ≤ 1(Op)                |
-
-&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; (u: String, v: String, gLocal: Map_String_ListOfEdge)
 
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 7: Method removeEdge*
 
@@ -301,14 +289,12 @@ choose a valid starting point; and finally, 4) it invokes the fleuryVisit algori
 | &emsp; fleuryVisit(startNode, gLocal_map, stationOrder, path_list)                     | O(m⋅n^3)        |
 | &emsp; return path_list                                                                | 1R              |
 
-&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; (graph: Map_String_ListOfEdge, stationOrder: List_String)
-
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; *Table 8: Method computeEulerianPath*
 
 
 This complexity is determined by the step with the highest complexity in its sequence of operations. The dominant
 operation is the call to the fleuryVisit method. As previously analyzed, fleuryVisit has a complexity of O(m⋅n^3)
-because, for many of the m edges, it must check for bridges. In this implementation, this check invokes
+because, for many of the m edges, it must check for bridges. In the implementation, this check invokes
 the computeTransitiveClosure function, which has a cubic cost of O(n^3).
 
 All other sequential operations, such as the initial call to computeTransitiveClosure (O(n^3)) and cloneGraph (O(n+m)),

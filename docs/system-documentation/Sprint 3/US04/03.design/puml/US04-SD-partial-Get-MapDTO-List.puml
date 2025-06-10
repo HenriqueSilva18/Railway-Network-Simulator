@@ -7,6 +7,7 @@ participant ":CreateScenarioController" as CTRL
 participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
 participant ":List<Map>" as LIST
 participant ":MapMapper" as MAP_MAPPER
 participant "listMap\n:List<Map>" as MAP_LIST
@@ -33,17 +34,23 @@ activate CTRL
 
         CTRL -> MAP_REPO: getListOfMaps()
         activate MAP_REPO
-            MAP_REPO --> MAP_LIST**: create()
+        MAP_REPO -> MAPS: getListOfMaps()
+        activate MAPS
+
+            MAPS --> MAP_LIST**: create()
 
             loop for each known Map
-                MAP_REPO -> LIST: map = get(i)
+                MAPS -> LIST: map = get(i)
                 activate LIST
                     deactivate LIST
 
-                MAP_REPO -> MAP_LIST: add(map)
+                MAPS -> MAP_LIST: add(map)
                 activate MAP_LIST
                     deactivate MAP_LIST
             end
+
+            MAPS --> MAP_REPO: listMap
+            deactivate MAPS
 
             MAP_REPO --> CTRL: listMap
             deactivate MAP_REPO

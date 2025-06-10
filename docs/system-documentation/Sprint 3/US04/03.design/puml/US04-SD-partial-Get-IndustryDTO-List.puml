@@ -8,6 +8,7 @@ participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapDTO\n:MapDTO" as MAP_DTO
 participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
 participant "map\n:Map" as MAP
 participant "industries\n:Industries" as INDS
 participant ":List<Industry>" as LIST
@@ -37,12 +38,13 @@ activate CTRL
             MAP_DTO --> CTRL: mapNameID
         deactivate MAP_DTO
 
-        CTRL -> MAP_REPO: getMapByNameID(mapNameID)
+        CTRL -> MAP_REPO: getListOfMapIndustries(mapNameID)
         activate MAP_REPO
-            MAP_REPO --> CTRL: map
-        deactivate MAP_REPO
 
-        CTRL -> MAP: getListOfMapIndustries(map)
+        MAP_REPO -> MAPS: getListOfMapIndustries(mapNameID)
+        activate MAPS
+
+        MAPS -> MAP: getIndustries()
         activate MAP
 
             MAP --> INDS: getIndustries()
@@ -64,8 +66,15 @@ activate CTRL
             INDS --> MAP: listIndustry
             deactivate INDS
 
-        MAP --> CTRL: listIndustry
-        deactivate MAP
+            MAP --> MAPS: listIndustry
+            deactivate MAP
+
+        MAPS --> MAP_REPO: listIndustry
+        deactivate MAPS
+
+        MAP_REPO --> CTRL: listIndustry
+        deactivate MAP_REPO
+
 
         CTRL -> IND_MAPPER: toDTO(listIndustry)
         activate IND_MAPPER

@@ -1,0 +1,140 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+class BuyLocomotiveUI {
+}
+
+class BuyLocomotiveController {
+    + getAvailableLocomotives()
+    + getLocomotive(locomotiveDTO)
+    + purchaseLocomotive(locomotiveDTO)
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getLocomotiveRepository()
+}
+
+class ApplicationSession {
+    - ApplicationSession()
+    + {static} getInstance()
+    + getCurrentSession()
+}
+
+class UserSession {
+    + getCurrentDate()
+    + getCurrentScenario()
+    + getCurrentPlayer()
+}
+
+class LocomotiveRepository {
+    + getAvailableLocomotives(currentDate, locomotiveTypes)
+    + getLocomotive(locomotiveNameID)
+    + purchaseLocomotive(locomotive, player, scenario)
+}
+
+class Locomotives {
+    + getAvailableLocomotives(currentDate, locomotiveTypes)
+    + getLocomotive(locomotiveNameID)
+    + purchaseLocomotive(locomotive, player, scenario)
+}
+
+class Locomotive {
+    - nameID : String
+    - owner : Player
+    - type : LocomotiveType
+    - power : double
+    - acceleration : double
+    - topSpeed : double
+    - actualSpeed : double
+    - startYear : int
+    - fuelAcquisitionPrice : double
+    - fuelConsumptionPrice : double
+    - availabilityYear : int
+    - acquisitionPrice : double
+    - baseMaintenanceCost : double
+    - maintenanceFrequency : int
+    - wearAndTearFactor : double
+    + getPrice()
+    + checkAvailability(currentDate, locomotiveTypes)
+    + purchaseLocomotive(player, scenario)
+}
+
+class LocomotiveType {
+    - nameID : String
+    - power : double
+    - acceleration : double
+}
+
+class Scenario {
+    - nameID : String
+    - startDate : Date
+    - endDate : Date
+    - initialBudget : double
+    + getLocomotiveTypes()
+    + hasSufficientFunds(price, player)
+    + addLocomotive(price, locomotive, player)
+}
+
+class Player {
+    - username : String
+    - password : String
+    + hasSufficientFunds(price)
+    + removeBudget(price)
+    + addLocomotive(locomotive)
+}
+
+class LocomotiveDTO {
+    - nameID : String
+    - type : LocomotiveTypeDTO
+    - power : double
+    - acceleration : double
+    - acquisitionPrice : double
+    - availabilityYear : int
+    + getNameID()
+}
+
+class LocomotiveTypeDTO {
+    - nameID : String
+    - power : double
+    - acceleration : double
+}
+
+class LocomotiveMapper {
+    + toDTO(List<Locomotive>)
+    + toDTO(Locomotive)
+}
+
+BuyLocomotiveUI "1" --> "1" BuyLocomotiveController
+BuyLocomotiveController "1" --> "1" Repositories : repositories
+BuyLocomotiveController "1" --> "1" ApplicationSession : applicationSession
+BuyLocomotiveController "1" --> "1" LocomotiveDTO
+
+Repositories "1" --> "1" LocomotiveRepository
+
+LocomotiveRepository "1" --> "1" Locomotives : locomotives
+Locomotives "1" --> "*" Locomotive : locomotives
+
+ApplicationSession "1" --> "1" UserSession : currentSession
+UserSession "1" --> "1" Scenario : currentScenario
+UserSession "1" --> "1" Player : currentPlayer
+
+Scenario "1" --> "*" Locomotive : configures
+Scenario "1" --> "*" LocomotiveType : configures
+Player "1" --> "*" Locomotives : playerLocomotives
+Locomotive "*" --> "1" LocomotiveType : has
+
+LocomotiveMapper "1" --> "1" Locomotive : maps
+LocomotiveMapper "1" --> "1" LocomotiveDTO : maps to
+LocomotiveDTO "1" --> "1" LocomotiveTypeDTO : has
+
+LocomotiveRepository "1" --> "1" LocomotiveMapper : uses
+BuyLocomotiveController "1" --> "1" LocomotiveMapper : uses
+
+@enduml

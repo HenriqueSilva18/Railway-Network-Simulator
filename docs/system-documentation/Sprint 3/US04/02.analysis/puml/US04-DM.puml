@@ -17,25 +17,19 @@ title Domain Model Excerpt: US04 - Create a Scenario
 class Editor {
   username
   password
-  createdMaps
-  createdScenarios
 }
 
 class Scenario {
   nameID
-  editor
   startDate
   endDate
-  tweakedCityList
-  availableIndustryList
-  availableLocomotives
+  initialBudget
+  currentBudget
 }
 
 class Map {
   nameID
-  scenarios
-  cityList
-  industryList
+  scale
 }
 
 class Industry {
@@ -47,20 +41,11 @@ class Industry {
   demandedCargo
 }
 
-class IndustrySector {
-  name
-  importsExports
-  generatesCargo
-  consumesCargo
-  description
-}
-
-class Cargo {
-  name
-  amount
-  lifespan
-  type
-  productionResources
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
 }
 
 class Locomotive {
@@ -70,30 +55,24 @@ class Locomotive {
   power
   acceleration
   topSpeed
+  actualSpeed
   startYear
-  fuelCost
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
   availabilityYear
   acquisitionPrice
-  maintenancePrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor
 }
 
-class City {
-  nameID
-  trafficRate
-  suppliedCargo
-  demandedCargo
-}
-
-Editor "1" -- "*" Map : creates >
-Editor "1" -- "*" Scenario : creates >
+Editor "1" -- "*" Map : creates/saves/loads >
+Editor "1" -- "*" Scenario : creates/saves/loads >
 Scenario "*" -- "1" Map : uses >
 Map "1" -- "*" Industry : contains >
-Industry "*" -- "*" Cargo : produces/consumes >
 Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
-City "*" -- "*" Cargo : produces/consumes >
 Map "1" -- "*" City : contains >
 Scenario "1" -- "*" City : contains >
-IndustrySector "1" -- "*" Industry : contains >
 
 @enduml

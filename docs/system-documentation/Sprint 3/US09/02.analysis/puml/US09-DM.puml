@@ -17,25 +17,19 @@ title Domain Model Excerpt: US09 - Buy a Locomotive
 class Player {
   username
   password
-  initialBudget
-  currentBudget
-  ownedLocomotives
 }
 
 class Map {
   nameID
-  cityList
-  industryList
+  scale
 }
 
 class Scenario {
   nameID
-  editor
   startDate
   endDate
-  tweakedCityList
-  availableIndustryList
-  availableLocomotives
+  initialBudget
+  currentBudget
 }
 
 class Locomotive {
@@ -45,11 +39,15 @@ class Locomotive {
   power
   acceleration
   topSpeed
+  actualSpeed
   startYear
-  fuelCost
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
   availabilityYear
   acquisitionPrice
-  maintenancePrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor
 }
 
 Player "1" -- "*" Scenario : plays >
