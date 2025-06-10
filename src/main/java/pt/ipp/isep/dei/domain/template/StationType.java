@@ -35,7 +35,7 @@ public class StationType {
     }
 
     public boolean requiresCenterPoint() {
-        return "TERMINAL".equals(name);
+        return "STATION".equals(name);
     }
 
     public String getCenterPoint() {
