@@ -13,17 +13,17 @@ public class RailwayLine {
     private final double length;
     private final double maintenanceCostPerKm;
 
-    public RailwayLine(String nameID, Station startStation, Station endStation, List<Position> path) {
+    public RailwayLine(String nameID, Station startStation, Station endStation, List<Position> path, boolean isDoubleTrack, boolean isElectrified) {
         if (nameID == null || startStation == null || endStation == null || path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Invalid railway line parameters");
         }
-        
+
         this.nameID = nameID;
         this.startStation = startStation;
         this.endStation = endStation;
         this.path = new ArrayList<>(path);
-        this.isDoubleTrack = false; // Default to single track
-        this.isElectrified = false; // Default to non-electrified
+        this.isDoubleTrack = isDoubleTrack;
+        this.isElectrified = isElectrified;
         this.length = calculateLength();
         this.maintenanceCostPerKm = 100.0; // Default maintenance cost
     }
@@ -65,11 +65,11 @@ public class RailwayLine {
         for (int i = 0; i < path.size() - 1; i++) {
             Position current = path.get(i);
             Position next = path.get(i + 1);
-            
+
             // Calculate distance between points
             int dx = next.getX() - current.getX();
             int dy = next.getY() - current.getY();
-            
+
             // If diagonal movement, use diagonal distance (√2)
             if (dx != 0 && dy != 0) {
                 length += Math.sqrt(2);
@@ -103,7 +103,7 @@ public class RailwayLine {
 
     @Override
     public String toString() {
-        return String.format("%s: %s -> %s (%.2f units)", 
-            nameID, startStation.getNameID(), endStation.getNameID(), getLength());
+        return String.format("%s: %s -> %s (%.2f units)",
+                nameID, startStation.getNameID(), endStation.getNameID(), getLength());
     }
-} 
+}

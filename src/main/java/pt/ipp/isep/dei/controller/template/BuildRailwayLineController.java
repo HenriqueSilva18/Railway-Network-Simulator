@@ -30,16 +30,16 @@ public class BuildRailwayLineController {
 
         // Get stations from the map
         List<Station> stations = currentMap.getStations();
-        
+
         // Store stations in the repository for later retrieval
         for (Station station : stations) {
             stationRepository.add(station);
         }
-        
+
         return stations;
     }
 
-    public boolean canBuildRailwayLine(Station station1, Station station2) {
+    public boolean canBuildRailwayLine(Station station1, Station station2, boolean isDoubleTrack, boolean isElectrified) {
         if (station1 == null || station2 == null || station1.equals(station2)) {
             return false;
         }
@@ -61,11 +61,11 @@ public class BuildRailwayLineController {
             return false;  // No valid path found
         }
 
-        double cost = calculatePathCost(path);
+        double cost = calculatePathCost(path, isDoubleTrack, isElectrified);
         return currentPlayer.getCurrentBudget() >= cost;
     }
 
-    public RailwayLine buildRailwayLine(Station station1, Station station2) {
+    public RailwayLine buildRailwayLine(Station station1, Station station2, boolean isDoubleTrack, boolean isElectrified) {
         if (station1 == null || station2 == null || station1.equals(station2)) {
             return null;
         }
@@ -88,7 +88,7 @@ public class BuildRailwayLineController {
         }
 
         // Calculate cost
-        double cost = calculatePathCost(path);
+        double cost = calculatePathCost(path, isDoubleTrack, isElectrified);
 
         // Check if player has enough budget
         if (currentPlayer.getCurrentBudget() < cost) {
@@ -104,7 +104,7 @@ public class BuildRailwayLineController {
         String lineId = "line_" + station1.getNameID() + "_" + station2.getNameID();
 
         // Create and save the railway line with the path
-        RailwayLine railwayLine = new RailwayLine(lineId, station1, station2, path);
+        RailwayLine railwayLine = new RailwayLine(lineId, station1, station2, path, isDoubleTrack, isElectrified);
         if (railwayLineRepository.save(railwayLine)) {
             // Update player in repository
             playerRepository.save(currentPlayer);
@@ -122,26 +122,26 @@ public class BuildRailwayLineController {
         // Get positions of stations
         Position startPos = start.getPosition();
         Position endPos = end.getPosition();
-        
+
         // Use Bresenham's line algorithm to find direct path
         return bresenhamLine(startPos.getX(), startPos.getY(), endPos.getX(), endPos.getY());
     }
-    
+
     // Bresenham's line algorithm implementation
     private List<Position> bresenhamLine(int x0, int y0, int x1, int y1) {
         List<Position> path = new ArrayList<>();
-        
+
         int dx = Math.abs(x1 - x0);
         int dy = Math.abs(y1 - y0);
         int sx = x0 < x1 ? 1 : -1;
         int sy = y0 < y1 ? 1 : -1;
         int err = dx - dy;
-        
+
         while (true) {
             path.add(new Position(x0, y0));
-            
+
             if (x0 == x1 && y0 == y1) break;
-            
+
             int e2 = 2 * err;
             if (e2 > -dy) {
                 err -= dy;
@@ -152,7 +152,7 @@ public class BuildRailwayLineController {
                 y0 += sy;
             }
         }
-        
+
         return path;
     }
 
@@ -168,8 +168,8 @@ public class BuildRailwayLineController {
 
             // Check if position is within map bounds
             if (newX >= 0 && newX < gameMap.getSize().getWidth() &&
-                newY >= 0 && newY < gameMap.getSize().getHeight()) {
-                
+                    newY >= 0 && newY < gameMap.getSize().getHeight()) {
+
                 // Check if position is empty (not a city or industry)
                 if (isPositionEmpty(newPos, gameMap)) {
                     neighbors.add(newPos);
@@ -183,12 +183,12 @@ public class BuildRailwayLineController {
     private boolean isPositionEmpty(Position pos, Map gameMap) {
         // Check if position contains a city
         boolean hasCity = gameMap.getCities().stream()
-            .anyMatch(city -> city.getPosition().equals(pos));
+                .anyMatch(city -> city.getPosition().equals(pos));
         if (hasCity) return false;
 
         // Check if position contains an industry
         boolean hasIndustry = gameMap.getIndustries().stream()
-            .anyMatch(industry -> industry.getPosition().equals(pos));
+                .anyMatch(industry -> industry.getPosition().equals(pos));
         if (hasIndustry) return false;
 
         // Position is empty
@@ -212,24 +212,31 @@ public class BuildRailwayLineController {
         return path;
     }
 
-    public double calculatePathCost(List<Position> path) {
+    public double calculatePathCost(List<Position> path, boolean isDoubleTrack, boolean isElectrified) {
         // Base cost per segment
         double baseCost = 1000;
-        
+
         // Cost multiplier for diagonal segments
         double diagonalMultiplier = 1.4;
-        
+
         double totalCost = 0;
         for (int i = 0; i < path.size() - 1; i++) {
             Position current = path.get(i);
             Position next = path.get(i + 1);
-            
+
             // Check if segment is diagonal
             boolean isDiagonal = current.getX() != next.getX() && current.getY() != next.getY();
-            
+
             totalCost += isDiagonal ? baseCost * diagonalMultiplier : baseCost;
         }
-        
+
+        if(isDoubleTrack){
+            totalCost *= 1.5;
+        }
+        if(isElectrified){
+            totalCost *= 1.25;
+        }
+
         return totalCost;
     }
 
@@ -249,4 +256,4 @@ public class BuildRailwayLineController {
             return Double.compare(this.f, other.f);
         }
     }
-} 
+}

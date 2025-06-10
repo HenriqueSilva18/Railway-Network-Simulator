@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,10 @@ import java.util.logging.Logger;
  * @author Paulo Maio pam@isep.ipp.pt
  */
 public class Utils {
+
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
 
     static public String readLineFromConsole(String prompt) {
         try {
@@ -146,5 +151,21 @@ public class Utils {
         } while (value < 0 || value > list.size());
 
         return value - 1;
+    }
+
+    public static boolean readBooleanFromConsole(String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        String input;
+        while (true) {
+            System.out.print(prompt + " ");
+            input = scanner.nextLine().trim().toLowerCase();
+            if ("y".equals(input)) {
+                return true;
+            } else if ("n".equals(input)) {
+                return false;
+            } else {
+                System.out.println(ANSI_RED + "Invalid input. Please enter 'y' for yes or 'n' for no." + ANSI_RESET);
+            }
+        }
     }
 }

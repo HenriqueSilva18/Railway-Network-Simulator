@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import java.util.List;
 
 public class PlayerMenuGUIController implements Initializable {
@@ -745,13 +746,13 @@ public class PlayerMenuGUIController implements Initializable {
             dialogStage.setTitle("Build Station");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(playerMainPane.getScene().getWindow());
-            
+
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
-            
+
             dialogStage.showAndWait();
-            
+
             // After dialog closes, update the budget display and map visualization
             updateBudgetDisplay();
             if (appSession.getCurrentMap() != null) {
@@ -768,89 +769,89 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleUpgradeStation(ActionEvent event) {
         System.out.println("Upgrade Station clicked");
-        
+
         // First, show the station selection dialog
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectStationDialog.fxml"));
             Parent dialogRoot = loader.load();
-            
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Select Station");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(playerMainPane.getScene().getWindow());
-            
+
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
-            
+
             dialogStage.showAndWait();
-            
+
             // After station selection dialog closes, check if a station was selected
             if (ApplicationSession.getInstance().getCurrentStation() != null) {
                 // Now show the upgrade station dialog
                 loader = new FXMLLoader(getClass().getResource("/fxml/UpgradeStationDialog.fxml"));
                 dialogRoot = loader.load();
-                
+
                 dialogStage = new Stage();
                 dialogStage.setTitle("Upgrade Station");
                 dialogStage.initModality(Modality.WINDOW_MODAL);
                 dialogStage.initOwner(playerMainPane.getScene().getWindow());
-                
+
                 scene = new Scene(dialogRoot);
                 dialogStage.setScene(scene);
                 dialogStage.setResizable(false);
-                
+
                 dialogStage.showAndWait();
-                
+
                 // After dialog closes, update the budget display and map visualization
                 updateBudgetDisplay();
                 if (appSession.getCurrentMap() != null) {
                     loadMapVisualization();
                 }
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", 
-                "Could not open dialog: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Could not open dialog: " + e.getMessage());
         }
     }
 
     @FXML
     void handleBuildRailwayLine(ActionEvent event) {
         System.out.println("Build Railway Line clicked");
-        
+
         if (appSession.getCurrentMap() == null) {
-            showAlert(Alert.AlertType.WARNING, "No Map Selected", 
-                "Please select a map and scenario first.");
+            showAlert(Alert.AlertType.WARNING, "No Map Selected",
+                    "Please select a map and scenario first.");
             return;
         }
-        
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BuildRailwayLineDialog.fxml"));
             Parent dialogRoot = loader.load();
-            
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Build Railway Line");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(playerMainPane.getScene().getWindow());
-            
+
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
-            
+
             dialogStage.showAndWait();
-            
+
             // After dialog closes, update the budget display and map visualization
             updateBudgetDisplay();
             if (appSession.getCurrentMap() != null) {
                 loadMapVisualization();
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", 
-                "Could not open Build Railway Line dialog: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Could not open Build Railway Line dialog: " + e.getMessage());
         }
     }
 
@@ -1000,39 +1001,39 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     void handleListStations(ActionEvent event) {
         System.out.println("View Stations Details clicked");
-        
+
         if (appSession.getCurrentMap() == null) {
-            showAlert(Alert.AlertType.WARNING, "No Map Selected", 
-                "Please select a map and scenario first.");
+            showAlert(Alert.AlertType.WARNING, "No Map Selected",
+                    "Please select a map and scenario first.");
             return;
         }
-        
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ListStationsDialog.fxml"));
             Parent dialogRoot = loader.load();
-            
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Station List");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(playerMainPane.getScene().getWindow());
-            
+
             Scene scene = new Scene(dialogRoot);
             dialogStage.setScene(scene);
             dialogStage.setResizable(true);
-            
+
             dialogStage.showAndWait();
-            
+
             // After dialog closes, update the budget display and map visualization
             // in case any upgrades were performed
             updateBudgetDisplay();
             if (appSession.getCurrentMap() != null) {
                 loadMapVisualization();
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", 
-                "Could not open Station List dialog: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Could not open Station List dialog: " + e.getMessage());
         }
     }
 
@@ -1233,7 +1234,7 @@ public class PlayerMenuGUIController implements Initializable {
                 URL cityUrl = getClass().getResource("/city.png");
                 URL industryUrl = getClass().getResource("/industry.png");
                 URL stationUrl = getClass().getResource("/icons/railway-station.png");
-                
+
                 if (cityUrl == null) {
                     cityUrl = getClass().getResource("/icons/city.png");
                 }
@@ -1243,7 +1244,7 @@ public class PlayerMenuGUIController implements Initializable {
                 if (stationUrl == null) {
                     stationUrl = getClass().getResource("/railway-station.png");
                 }
-                
+
                 if (cityUrl != null) {
                     cityIcon = new Image(cityUrl.toExternalForm(), iconSize, iconSize, true, true);
                 }
@@ -1261,7 +1262,7 @@ public class PlayerMenuGUIController implements Initializable {
             for (int y = 0; y < layoutData.height; y++) {
                 for (int x = 0; x < layoutData.width; x++) {
                     ViewScenarioLayoutController.CellData cellData = layoutData.grid[y][x];
-                    
+
                     // Create transparent background rectangle for the cell
                     Rectangle cellRect = new Rectangle(cellSize, cellSize);
                     cellRect.setFill(Color.TRANSPARENT);
@@ -1349,43 +1350,55 @@ public class PlayerMenuGUIController implements Initializable {
             // Add the railway lines to the overlay pane
             RailwayLineRepository railwayLineRepository = Repositories.getInstance().getRailwayLineRepository();
             List<RailwayLine> railwayLines = railwayLineRepository.getAll();
-            
+
             if (railwayLines != null) {
                 for (RailwayLine line : railwayLines) {
                     Station station1 = line.getStartStation();
                     Station station2 = line.getEndStation();
-                    
+
                     // Calculate positions for the line, accounting for the grid padding (20px)
                     double x1 = (station1.getPosition().getX() * cellSize) + cellSize/2 + 20;
                     double y1 = (station1.getPosition().getY() * cellSize) + cellSize/2 + 20;
                     double x2 = (station2.getPosition().getX() * cellSize) + cellSize/2 + 20;
                     double y2 = (station2.getPosition().getY() * cellSize) + cellSize/2 + 20;
-                    
-                    // Create railway line
-                    Line railLine = new Line(x1, y1, x2, y2);
-                    railLine.setStroke(Color.PURPLE);
-                    railLine.setStrokeWidth(4);
-                    railLine.setStrokeLineCap(StrokeLineCap.ROUND);
-                    
-                    // Add parallel line for double-track effect
-                    Line parallelLine = new Line(x1, y1, x2, y2);
-                    parallelLine.setStroke(Color.PURPLE);
-                    parallelLine.setStrokeWidth(4);
-                    parallelLine.setStrokeLineCap(StrokeLineCap.ROUND);
-                    
-                    // Calculate offset for parallel line
-                    double angle = Math.atan2(y2 - y1, x2 - x1);
-                    double perpAngle = angle + Math.PI/2;
-                    double offset = 3;
-                    
-                    // Apply offset to parallel line
-                    parallelLine.setStartX(x1 + offset * Math.cos(perpAngle));
-                    parallelLine.setStartY(y1 + offset * Math.sin(perpAngle));
-                    parallelLine.setEndX(x2 + offset * Math.cos(perpAngle));
-                    parallelLine.setEndY(y2 + offset * Math.sin(perpAngle));
-                    
-                    // Add the lines to the overlay pane
-                    railwayLinesPane.getChildren().addAll(railLine, parallelLine);
+
+                    Color lineColor = line.isElectrified() ? Color.DEEPSKYBLUE : Color.PURPLE;
+                    double strokeWidth = 4;
+
+                    if (line.isDoubleTrack()) {
+                        double angle = Math.atan2(y2 - y1, x2 - x1);
+                        double perpAngle = angle + Math.PI / 2;
+                        double offset = 2.5; // This controls the space between tracks
+
+                        // Create two thinner lines offset from the center
+                        Line track1 = new Line();
+                        track1.setStartX(x1 + offset * Math.cos(perpAngle));
+                        track1.setStartY(y1 + offset * Math.sin(perpAngle));
+                        track1.setEndX(x2 + offset * Math.cos(perpAngle));
+                        track1.setEndY(y2 + offset * Math.sin(perpAngle));
+                        track1.setStroke(lineColor);
+                        track1.setStrokeWidth(strokeWidth / 1.5);
+                        track1.setStrokeLineCap(StrokeLineCap.ROUND);
+
+                        Line track2 = new Line();
+                        track2.setStartX(x1 - offset * Math.cos(perpAngle));
+                        track2.setStartY(y1 - offset * Math.sin(perpAngle));
+                        track2.setEndX(x2 - offset * Math.cos(perpAngle));
+                        track2.setEndY(y2 - offset * Math.sin(perpAngle));
+                        track2.setStroke(lineColor);
+                        track2.setStrokeWidth(strokeWidth / 1.5);
+                        track2.setStrokeLineCap(StrokeLineCap.ROUND);
+
+                        railwayLinesPane.getChildren().addAll(track1, track2);
+
+                    } else {
+                        // Create a single, thicker line in the center
+                        Line railLine = new Line(x1, y1, x2, y2);
+                        railLine.setStroke(lineColor);
+                        railLine.setStrokeWidth(strokeWidth);
+                        railLine.setStrokeLineCap(StrokeLineCap.ROUND);
+                        railwayLinesPane.getChildren().add(railLine);
+                    }
                 }
             }
 
@@ -1394,10 +1407,10 @@ public class PlayerMenuGUIController implements Initializable {
             centeringPane.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
             centeringPane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
             centeringPane.setAlignment(Pos.CENTER);
-            
+
             // Add all layers in the correct order: background, railway lines, then grid with entities
             centeringPane.getChildren().addAll(backgroundPane, railwayLinesPane, mapGrid);
-            
+
             mapContainer.getChildren().add(centeringPane);
 
             // Create a scroll pane to hold the map
@@ -1435,9 +1448,9 @@ public class PlayerMenuGUIController implements Initializable {
     private Polygon createIndustryShape(double size) {
         double halfSize = size * 0.4;
         Polygon industry = new Polygon(
-            -halfSize, halfSize,    // Bottom left
-            0, -halfSize,          // Top middle
-            halfSize, halfSize     // Bottom right
+                -halfSize, halfSize,    // Bottom left
+                0, -halfSize,          // Top middle
+                halfSize, halfSize     // Bottom right
         );
         industry.setStroke(Color.BLUE);
         industry.setStrokeWidth(1);
