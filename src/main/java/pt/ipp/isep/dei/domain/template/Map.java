@@ -17,6 +17,8 @@ public class Map {
     private final List<Industry> industries;
     private final List<String> scenarios;
     private final Random random;
+    private int scale;
+
 
     private static final String SCENARIOS_PATH = "docs/mdisc/data";
 
@@ -29,6 +31,19 @@ public class Map {
         this.industries = new ArrayList<>();
         this.scenarios = new ArrayList<>();
         this.random = new Random();
+        this.scale = 1;
+    }
+
+    private Map(String nameID, Size size, int scale) {
+        this.nameID = nameID;
+        this.size = size;
+        this.positions = new ArrayList<>();
+        this.cities = new ArrayList<>();
+        this.stations = new ArrayList<>();
+        this.industries = new ArrayList<>();
+        this.scenarios = new ArrayList<>();
+        this.random = new Random();
+        this.scale = scale;
     }
 
     public static boolean validateMapName(String nameID) {
@@ -40,11 +55,11 @@ public class Map {
     }
 
 
-    public static Map createMap(String nameID, Size size) {
+    public static Map createMap(String nameID, Size size, int scale) {
         if (!validateMapName(nameID)) {
             throw new IllegalArgumentException("Invalid map name");
         }
-        return new Map(nameID, size);
+        return new Map(nameID, size, scale);
     }
 
     public String getNameID() {
@@ -329,6 +344,14 @@ public class Map {
     private boolean loadPredefinedLayout() {
         // The cities and industries added during bootstrap will remain
         return true;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    private void setScale(int newScale) {
+        this.scale = newScale;
     }
 
     @Override
