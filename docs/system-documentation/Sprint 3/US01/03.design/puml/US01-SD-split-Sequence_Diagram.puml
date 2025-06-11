@@ -10,28 +10,17 @@ title Sequence Diagram: US01 - Create a Map
 actor "Editor" as editor
 participant ":CreateMapUI" as UI
 participant ":CreateMapController" as CTRL
-participant ":MapDTO" as DTO
 
 activate editor
 
     editor -> UI : asks to create a new map
         activate UI
             UI -> CTRL**: create()
-            UI --> editor: requests map data (name, width, height)
+            UI --> editor: requests map data (name, width, height,scale)
         deactivate UI
 
     editor -> UI: inputs requested data
         activate UI
-            UI -> DTO**: create(nameID, width, height)
-            UI -> CTRL: validateMapData(mapDTO)
-            activate CTRL
-            
-            ref over CTRL
-            Validate map data
-            end
-            
-                CTRL --> UI: valid
-            deactivate CTRL
             
             UI --> editor: shows map data and requests confirmation
         deactivate UI
@@ -45,7 +34,7 @@ activate editor
             end
             
             activate CTRL
-                CTRL --> UI: success + mapDTO
+                CTRL --> UI: success
             deactivate CTRL
             
             UI --> editor: displays operation success

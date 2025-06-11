@@ -19,9 +19,9 @@ public class MapRepository {
 
     private void initializeMaps() {
         // Initialize predefined maps with their sizes
-         Map iberianPeninsula = Map.createMap("iberian_peninsula", Size.createSize(12, 9));
-        Map france = Map.createMap("france", Size.createSize(10, 10));
-           Map italy = Map.createMap("italy", Size.createSize(15, 15));
+         Map iberianPeninsula = Map.createMap("iberian_peninsula", Size.createSize(12, 9), 1);
+        Map france = Map.createMap("france", Size.createSize(10, 10), 1);
+           Map italy = Map.createMap("italy", Size.createSize(15, 15), 1);
 
 
         // Add maps to repository

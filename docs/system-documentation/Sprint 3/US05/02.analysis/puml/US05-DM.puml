@@ -83,7 +83,13 @@ class HouseBlock {
   automaticPlacement
 }
 
-
+class Scenario {
+  nameID
+  startDate
+  endDate
+  initialBudget
+  currentBudget
+}
 
 
 note left of Station::nameID
@@ -133,7 +139,12 @@ Station "*" -- "1" StationType : defined by >
 StationType "1" -- "*" StationType : can change >
 Station "1" -- "*" Building : upgraded with >
 Building "1" -- "0..1" Building : evolves into >
-
+Scenario "*" -- "1" Map : uses >
+Player "1" -- "*" Scenario : plays >
+Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" IndustrySector : configures >
+Scenario "1" -- "*" Station : configures >
+Scenario "1" -- "*" City : configures >
 
 @enduml
 

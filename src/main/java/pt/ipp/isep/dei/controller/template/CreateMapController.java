@@ -16,9 +16,9 @@ public class CreateMapController {
         return Map.validateMapName(nameID) && Size.validateSize(width, height);
     }
 
-    public Map createMap(String nameID, int width, int height) {
+    public Map createMap(String nameID, int width, int height, int scale) {
         Size size = Size.createSize(width, height);
-        Map map = Map.createMap(nameID, size);
+        Map map = Map.createMap(nameID, size, scale);
         
         if (!mapRepository.add(map)) {
             throw new IllegalStateException("Failed to add map");

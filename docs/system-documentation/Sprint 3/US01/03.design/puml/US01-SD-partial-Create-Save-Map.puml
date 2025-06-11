@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateMapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant ":MapMapper" as MAP_MAPPER
+participant "map\n:Map" as MAP
+participant "mapDTO\n:MapDTO" as MAP_DTO
+
+autonumber 22
+-> CTRL: createMap(mapDTO)
+
+autonumber 22.1
+activate CTRL
+    group Create and Save Map
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> MAP_REPO: createMap(mapDTO)
+        activate MAP_REPO
+            MAP_REPO -> MAPS: createMap(mapDTO)
+            activate MAPS
+                MAPS -> MAP_MAPPER: map = toModel(mapDTO)
+                activate MAP_MAPPER
+                    MAP_MAPPER -> MAP_DTO: nameID = getNameID()
+                    activate MAP_DTO
+                    deactivate MAP_DTO
+
+                    MAP_MAPPER -> MAP_DTO: width = getWidth()
+                    activate MAP_DTO
+                    deactivate MAP_DTO
+
+                    MAP_MAPPER -> MAP_DTO: height = getHeight()
+                    activate MAP_DTO
+                    deactivate MAP_DTO
+
+                    MAP_MAPPER -> MAP_MAPPER: size = createSize(width, height)
+                    activate MAP_MAPPER
+                        MAP_MAPPER --> MAP_MAPPER: size
+                    deactivate MAP_MAPPER
+
+                    MAP_MAPPER -> MAP_DTO: scale = getScale()
+                    activate MAP_DTO
+                    deactivate MAP_DTO
+
+                    MAP_MAPPER -> MAP**: create(nameID, size, scale)
+                deactivate MAP_MAPPER
+
+                MAPS -> MAPS: addMap(map)
+                activate MAPS
+                    MAPS -> MAPS: validateMap(map)
+                    activate MAPS
+                        MAPS --> MAPS: true
+                        deactivate MAPS
+                    MAPS --> MAPS: true
+                    deactivate MAPS
+
+                MAPS --> MAP_REPO: success
+            deactivate MAPS
+
+            MAP_REPO --> CTRL: success
+        deactivate MAP_REPO
+
+    end
+
+    autonumber 23
+    <-- CTRL : success
+deactivate CTRL
+
+@enduml

@@ -46,6 +46,7 @@ As an Editor, I want to create a map with a size and a name.
   * map name
   * width (x-axis size)
   * height (y-axis size) 
+  * scale
 
 **Output Data:**
 

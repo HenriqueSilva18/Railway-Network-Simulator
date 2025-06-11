@@ -70,18 +70,42 @@ public class CreateMapUI implements Runnable {
             }
         } while (height <= 0);
 
+        int scale = -1;
+        do {
+            String scaleInput = Utils.readLineFromConsole("Enter map scale (e.g., 1 for 1 km per cell of the map): ");
+            if (scaleInput == null || scaleInput.trim().isEmpty()) {
+                System.out.println("\nError: Scale cannot be empty.");
+                System.out.println("Please try again.\n");
+                continue;
+            }
+            try {
+                scale = Integer.parseInt(scaleInput);
+                if (scale <= 0) {
+                    System.out.println("\nError: Scale must be a positive number.");
+                    System.out.println("Please try again.\n");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nError: Scale must be a valid number.");
+                System.out.println("Please try again.\n");
+                scale = -1; // Force loop to continue
+            }
+        } while (scale <= 0);
+
         System.out.println("\nMap details:");
         System.out.println("Name: " + nameID);
         System.out.println("Width: " + width);
         System.out.println("Height: " + height);
+        System.out.println("Scale: " + scale + " kms per cell");
+
 
         if (Utils.confirm("Do you want to create this map? (y/n)")) {
             try {
-                Map map = controller.createMap(nameID, width, height);
+                Map map = controller.createMap(nameID, width, height, scale);
                 System.out.println("\nMap created successfully!");
                 System.out.println("Map details:");
                 System.out.println("Name: " + map.getNameID());
                 System.out.println("Size: " + map.getSize().getWidth() + "x" + map.getSize().getHeight());
+                System.out.println("Scale: " + map.getScale() + " kms per cell");
             } catch (Exception e) {
                 System.out.println("Error creating map: " + e.getMessage());
             }

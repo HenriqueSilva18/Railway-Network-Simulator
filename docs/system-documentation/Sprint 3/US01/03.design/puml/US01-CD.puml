@@ -1,87 +1,80 @@
 @startuml
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-skinparam classAttributeIconSize 0
+skinparam linetype polyline
 
-title Class Diagram: US01 - Create a Map
+skinparam classAttributeIconSize 0
 
 class CreateMapUI {
 }
 
 class CreateMapController {
     + create()
-    + validateMapData(mapDTO: MapDTO) : boolean
-    + createMap(mapDTO: MapDTO) : MapDTO
+    + createMap(mapDTO)
+}
+
+class Repositories {
+    - Repositories()
+    + {static} getInstance()
+    + getMapRepository()
+}
+
+class MapRepository {
+    + createMap(mapDTO)
+}
+
+class Maps {
+    + createMap(mapDTO)
+    + addMap(map)
+    + validateMap(map)
+}
+
+class Map {
+    - nameID : String
+    - size : Size
+    - scale : double
+}
+
+class Size {
+    - width : double
+    - height : double
 }
 
 class MapDTO {
-        + nameID : String
-    + width : int
-    + height : int
+    - nameID : String
+    - width : double
+    - height : double
+    - scale : double
 }
 
-
-
-    class Map {
-        - nameID : String
-        - size : Size
-        - cityList : List<City>
-        - industryList : List<Industry>
-
-        + {static} validateMapName(nameID) : boolean
-        + createMap(nameID: String, size: Size) : Map
-        + toDTO() : MapDTO
-    }
-
-class Size {
-    - width : int
-    - height : int
-
-    + {static} validateSize(width: int, height: int) : boolean
-    + createSize(width: int, height: int) : Size
+class MapMapper {
+    + toModel(mapDTO)
+    + toDTO(List<Map>)
+    + toDTO(Map)
+    + getNameID()
+    + getWidth()
+    + getHeight()
+    + getScale()
+    + createSize(width, height)
 }
 
-class Editor {
-    - username : String
-    - password : String
-    - createdMaps : List<Map>
+CreateMapUI "1" --> "1" CreateMapController
+CreateMapController "1" --> "1" Repositories : repositories
+CreateMapController "1" --> "1" MapDTO
 
-    + createMap(nameID: String, size: Size) : Map
-}
+Repositories "1" --> "1" MapRepository
 
-    class MapRepository {
-        + save(map: Map) : boolean
-        + getMapByID(nameID: String) : Map
-    }
-
-    class Repositories {
-        + {static} getInstance() : Repositories
-        + getMapRepository() : MapRepository
-    }
-
-    class ApplicationSession {
-        + {static} getInstance() : ApplicationSession
-        + getCurrentSession() : Editor
-    }
-
-
-CreateMapUI ..> CreateMapController
-CreateMapController ..> MapDTO
-CreateMapController ..> MapRepository
-CreateMapController ..> Repositories
-CreateMapController ..> ApplicationSession
-CreateMapController ..> Map
-CreateMapController ..> Size
-CreateMapController ..> Editor
+MapRepository "1" --> "1" Maps : maps
+Maps "1" --> "*" Map : maps
 
 Map "1" --> "1" Size : size
-MapRepository --> "1" Map : map
-Editor "1" --> "*" Map : createdMaps
 
-Repositories -> "1" Repositories : instance
-Repositories --> "1" MapRepository : mapRepository
+MapDTO "1" --> "1" Size : size
 
-ApplicationSession -> "1" ApplicationSession : instance
-ApplicationSession --> "1" Editor : currentSession
+MapMapper "1" --> "1" Map : maps
+MapMapper "1" --> "1" MapDTO : maps to
+
+MapRepository "1" --> "1" MapMapper : uses
 
 @enduml

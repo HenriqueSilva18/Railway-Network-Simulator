@@ -1,150 +1,183 @@
 @startuml
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-skinparam classAttributeIconSize 0
+skinparam linetype polyline
 
-title Class Diagram: US05 - Build a Station
+skinparam classAttributeIconSize 0
 
 class StationBuildingUI {
 }
 
 class StationBuildingController {
-    + getAvailableMaps()
-    + loadMap(nameID) : Map
-    + getStationTypes() : List<StationType>
-    + validatePosition(position) : boolean
-    + getClosestCity(position) : City
-    + previewStationPlacement(stationType, position, centerPoint) : boolean
-    + buildStation(stationType, position, centerPoint) : boolean
-}
-
-class MapRepository {
-    + getAvailableMaps() : List<Map>
-    + getMapByID(nameID) : Map
-    + save(map) : boolean
-}
-
-class StationTypeRepository {
-    + getStationTypes() : List<StationType>
-    + getStationTypeByName(name) : StationType
+    + getStationTypes()
+    + getAvailableBuildings()
+    + getClosestCity(positionDTO)
+    + buildStation(stationDTO)
 }
 
 class Repositories {
     - Repositories()
-    + {static} getInstance() : Repositories
-    + getMapRepository() : MapRepository
-    + getStationTypeRepository() : StationTypeRepository
+    + {static} getInstance()
+    + getStationTypeRepository()
+    + getBuildingRepository()
+    + getCityRepository()
+    + getStationRepository()
 }
 
-class ApplicationSession {
-    - ApplicationSession()
-    + {static} getInstance() : ApplicationSession
-    + getCurrentSession() : Player
-    + getCurrentMap() : String
-    + setCurrentMap(nameID) : boolean
+class StationTypeRepository {
+    + getListOfStationTypes()
 }
 
-class Map {
+class BuildingRepository {
+    + getListOfBuildings()
+}
+
+class CityRepository {
+    + getListOfCities()
+}
+
+class StationRepository {
+    + createStation(stationDTO)
+}
+
+class StationTypes {
+    + getListOfStationTypes()
+}
+
+class Buildings {
+    + getListOfBuildings()
+}
+
+class Cities {
+    + getListOfCities()
+}
+
+class Stations {
+    + createStation(stationDTO)
+    + addStation(station)
+    + validateStation(station)
+}
+
+class Station {
+    - stationType : StationType
+    - position : Position
+    - defaultBuilding : Building
+    - proposedName : String
+}
+
+class StationType {
     - nameID : String
-    - size : Size
-    - positions : List<Position>
-    - cities : List<City>
-    - stations : List<Station>
-    - industries : List<Industry>
-    
-    + getMapLayout() : MapLayout
-    + validatePosition(position) : boolean
-    + getClosestCity(position) : City
-    + previewStationPlacement(stationType, position, centerPoint) : boolean
-    + addStation(station) : boolean
+    - cost : double
+    - economicRadius : double
 }
 
-class Position {
-    - x : int
-    - y : int
-    - occupied : boolean
-    
-    + isOccupied() : boolean
-    + setOccupied(boolean) : void
+class Building {
+    - nameID : String
+    - cost : double
 }
 
 class City {
     - nameID : String
     - position : Position
-    - productionRate : double
-    - suppliedCargo : List<Cargo>
-    - demandedCargo : List<Cargo>
 }
 
-class Station {
+class Position {
+    - x : double
+    - y : double
+}
+
+class StationDTO {
+    - stationType : StationTypeDTO
+    - position : PositionDTO
+    - defaultBuilding : BuildingDTO
+    - proposedName : String
+}
+
+class StationTypeDTO {
     - nameID : String
-    - position : Position
-    - stationType : StationType
-    - storageCapacity : int
-    - buildingSlots : int
-    - availableCargo : List<Cargo>
-    - requestedCargo : List<Cargo>
-    
-    + Station(nameID, position, stationType)
-}
-
-class StationType {
-    - name : String
-    - economicRadius : int
     - cost : double
-    - centerPoint : String
-    
-    + requiresCenterPoint() : boolean
-    + getEconomicRadius() : int
-    + getCost() : double
+    - economicRadius : double
 }
 
-class Player {
-    - username : String
-    - initialBudget : double
-    - currentBudget : double
-    - ownedLocomotives : List<Locomotive>
-    
-    + deductFromBudget(amount) : boolean
-    + buildStation(nameID, position, stationType) : Station
+class BuildingDTO {
+    - nameID : String
+    - cost : double
 }
 
-class Size {
-    - width : int
-    - height : int
+class PositionDTO {
+    - x : double
+    - y : double
 }
 
-StationBuildingUI ..> StationBuildingController
+class StationMapper {
+    + toModel(stationDTO)
+    + toDTO(List<Station>)
+    + toDTO(Station)
+    + getStationType()
+    + getPosition()
+    + getDefaultBuilding()
+    + getProposedName()
+}
 
-StationBuildingController ..> MapRepository
-StationBuildingController ..> StationTypeRepository
-StationBuildingController ..> Repositories
-StationBuildingController ..> ApplicationSession
-StationBuildingController ..> Map
-StationBuildingController ..> Player
-StationBuildingController ..> Station
+class StationTypeMapper {
+    + toDTO(List<StationType>)
+    + toDTO(StationType)
+}
 
-Map "1" --> "1" Size : size
-Map "1" --> "*" Position : positions
-Map "1" --> "*" City : cities
-Map "1" --> "*" Station : stations
+class BuildingMapper {
+    + toDTO(List<Building>)
+    + toDTO(Building)
+}
 
+class CityMapper {
+    + toDTO(List<City>)
+    + toDTO(City)
+}
+
+StationBuildingUI "1" --> "1" StationBuildingController
+StationBuildingController "1" --> "1" Repositories : repositories
+StationBuildingController "1" --> "1" StationDTO
+
+Repositories "1" --> "1" StationTypeRepository
+Repositories "1" --> "1" BuildingRepository
+Repositories "1" --> "1" CityRepository
+Repositories "1" --> "1" StationRepository
+
+StationTypeRepository "1" --> "1" StationTypes : stationTypes
+BuildingRepository "1" --> "1" Buildings : buildings
+CityRepository "1" --> "1" Cities : cities
+StationRepository "1" --> "1" Stations : stations
+
+StationTypes "1" --> "*" StationType : stationTypes
+Buildings "1" --> "*" Building : buildings
+Cities "1" --> "*" City : cities
+Stations "1" --> "*" Station : stations
+
+Station "1" --> "1" StationType : stationType
 Station "1" --> "1" Position : position
-Station "*" --> "1" StationType : stationType
-Station "*" --> "*" City : servedCities
-
+Station "1" --> "1" Building : defaultBuilding
 City "1" --> "1" Position : position
 
-MapRepository --> "*" Map : maps
-StationTypeRepository --> "*" StationType : stationTypes
+StationDTO "1" --> "1" StationTypeDTO : stationType
+StationDTO "1" --> "1" PositionDTO : position
+StationDTO "1" --> "1" BuildingDTO : defaultBuilding
 
-Repositories -> "1" Repositories : instance
-Repositories --> "1" MapRepository : mapRepository
-Repositories --> "1" StationTypeRepository : stationTypeRepository
+StationMapper "1" --> "1" Station : maps
+StationMapper "1" --> "1" StationDTO : maps to
 
-ApplicationSession -> "1" ApplicationSession : instance
-ApplicationSession --> "1" Player : currentSession
+StationTypeMapper "1" --> "1" StationType : maps
+StationTypeMapper "1" --> "1" StationTypeDTO : maps to
 
-Player "1" --> "*" Station : builtStations
+BuildingMapper "1" --> "1" Building : maps
+BuildingMapper "1" --> "1" BuildingDTO : maps to
 
-@enduml 
+CityMapper "1" --> "1" City : maps
+CityMapper "1" --> "1" CityDTO : maps to
+
+StationTypeRepository "1" --> "1" StationTypeMapper : uses
+BuildingRepository "1" --> "1" BuildingMapper : uses
+CityRepository "1" --> "1" CityMapper : uses
+StationRepository "1" --> "1" StationMapper : uses
+
+@enduml

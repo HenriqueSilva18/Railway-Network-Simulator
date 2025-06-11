@@ -1,0 +1,98 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as PLAYER
+
+participant ":StationBuildingUI" as UI
+participant ":StationBuildingController" as CTRL
+participant ":StationDTO" as STATION_DTO
+participant ":PositionDTO" as POS_DTO
+
+activate PLAYER
+
+    PLAYER -> UI : asks to build a station
+    activate UI
+        UI -> CTRL : getStationTypes()
+        activate CTRL
+            ref over CTRL
+                Get StationTypeDTO List
+            end ref
+            CTRL --> UI : listStationTypeDTO
+        deactivate CTRL
+
+        UI --> PLAYER : requests station type (DEPOT, STATION, TERMINAL)
+    deactivate UI
+
+    PLAYER -> UI : selects station type
+    activate UI
+        UI -> STATION_DTO** : createStationDTO(stationType)
+        UI --> PLAYER : requests location (Position) on map for the station
+    deactivate UI
+
+    PLAYER -> UI : provides location coordinates
+    activate UI
+        UI -> POS_DTO** : createPositionDTO(x, y)
+        UI -> STATION_DTO : setPosition(positionDTO)
+
+        alt station type is "STATION"
+            UI --> PLAYER : requests center point selection (NE, SE, NW, SW)
+            deactivate UI
+
+            PLAYER -> UI : selects center point
+            activate UI
+            UI -> STATION_DTO : setCenterPoint(centerPoint)
+        end
+
+        UI -> CTRL : getAvailableBuildings()
+        activate CTRL
+            ref over CTRL
+                Get BuildingDTO List
+            end ref
+            CTRL --> UI : listBuildingDTO
+        deactivate CTRL
+
+        UI --> PLAYER : requests default building
+        UI --> PLAYER : shows list of available buildings
+    deactivate UI
+
+    PLAYER -> UI : selects default building
+    activate UI
+        UI -> STATION_DTO : setDefaultBuilding(buildingDTO)
+        
+        UI -> CTRL : getClosestCity(positionDTO)
+        activate CTRL
+            ref over CTRL
+                Get Closest City
+            end ref
+            CTRL --> UI : cityName
+        deactivate CTRL
+
+        UI -> STATION_DTO : setProposedName(cityName)
+
+
+        UI --> PLAYER : proposes station name based on closest city
+        UI --> PLAYER : displays station cost and economic radius
+        UI --> PLAYER : shows preview of station placement and requests confirmation
+    deactivate UI
+
+    PLAYER -> UI : confirms station placement
+    activate UI
+        UI -> CTRL : buildStation(stationDTO)
+        activate CTRL
+            ref over CTRL
+                Create Station Object
+            end ref
+            CTRL --> UI : success
+        deactivate CTRL
+
+        UI --> PLAYER : displays operation success
+        UI --> PLAYER : updates map with the new station
+    deactivate UI
+
+deactivate PLAYER
+
+@enduml 

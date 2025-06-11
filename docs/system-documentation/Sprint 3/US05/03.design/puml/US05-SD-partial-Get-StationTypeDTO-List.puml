@@ -1,0 +1,86 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "stationTypeRepository\n:StationTypeRepository" as STATION_TYPE_REPO
+participant "stationTypes\n:StationTypes" as STATION_TYPES
+participant ":List<StationType>" as LIST
+participant ":StationTypeMapper" as STATION_TYPE_MAPPER
+participant "listStationType\n:List<StationType>" as STATION_TYPE_LIST
+participant "listStationTypeDTO\n:List<StationTypeDTO>" as STATION_TYPE_LIST_DTO
+participant "stationTypeDTO\n:StationTypeDTO" as STATION_TYPE_DTO
+
+autonumber 3
+-> CTRL: getStationTypes()
+
+autonumber 3.1
+activate CTRL
+    group Get StationTypeDTO List
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getStationTypeRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: stationTypeRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> STATION_TYPE_REPO: getListOfStationTypes()
+        activate STATION_TYPE_REPO
+            STATION_TYPE_REPO -> STATION_TYPES: getListOfStationTypes()
+            activate STATION_TYPES
+
+                STATION_TYPES --> STATION_TYPE_LIST**: create()
+
+                loop for each known StationType
+                    STATION_TYPES -> LIST: stationType = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    STATION_TYPES -> STATION_TYPE_LIST: add(stationType)
+                    activate STATION_TYPE_LIST
+                        deactivate STATION_TYPE_LIST
+                end
+
+                STATION_TYPES --> STATION_TYPE_REPO: listStationType
+            deactivate STATION_TYPES
+
+            STATION_TYPE_REPO --> CTRL: listStationType
+        deactivate STATION_TYPE_REPO
+
+        CTRL -> STATION_TYPE_MAPPER: toDTO(listStationType)
+        activate STATION_TYPE_MAPPER
+
+            STATION_TYPE_MAPPER --> STATION_TYPE_LIST_DTO**: create()
+
+            loop for each object in listStationType
+                STATION_TYPE_MAPPER -> STATION_TYPE_LIST: stationType = get(i)
+                activate STATION_TYPE_LIST
+                    deactivate STATION_TYPE_LIST
+
+                STATION_TYPE_MAPPER -> STATION_TYPE_MAPPER: stationTypeDTO = toDTO(stationType)
+                activate STATION_TYPE_MAPPER
+                    STATION_TYPE_MAPPER --> STATION_TYPE_DTO**: create()
+                    deactivate STATION_TYPE_MAPPER
+
+                STATION_TYPE_MAPPER -> STATION_TYPE_LIST_DTO: add(stationTypeDTO)
+                activate STATION_TYPE_LIST_DTO
+                    deactivate STATION_TYPE_LIST_DTO
+            end
+
+            STATION_TYPE_MAPPER --> CTRL: listStationTypeDTO
+        deactivate STATION_TYPE_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listStationTypeDTO
+deactivate CTRL
+
+@enduml 

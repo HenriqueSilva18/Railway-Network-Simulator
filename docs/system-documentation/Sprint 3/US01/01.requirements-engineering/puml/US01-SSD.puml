@@ -8,7 +8,7 @@ activate Editor
 
 Editor -> System: asks to create a new map
 activate System
-System --> Editor: requests map data (name, width, height)
+System --> Editor: requests map data (name, width, height,scale)
 deactivate System
 
 Editor -> System: inputs requested data

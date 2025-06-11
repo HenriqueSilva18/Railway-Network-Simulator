@@ -1,0 +1,85 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "stationRepository\n:StationRepository" as STATION_REPO
+participant "stations\n:Stations" as STATIONS
+
+participant ":StationMapper" as STATION_MAPPER
+participant "stationDTO\n:StationDTO" as STATION_DTO
+participant "station\n:Station" as STATION
+
+autonumber 22
+-> CTRL: buildStation(stationDTO)
+
+autonumber 22.1
+activate CTRL
+    group Create Station Object
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getStationRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: stationRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> STATION_REPO: createStation(stationDTO)
+        activate STATION_REPO
+            STATION_REPO -> STATIONS: createStation(stationDTO)
+            activate STATIONS
+                STATIONS -> STATION_MAPPER: station = toModel(stationDTO)
+                activate STATION_MAPPER
+                    STATION_MAPPER -> STATION_DTO: stationType = getStationType()
+                    activate STATION_DTO
+                    deactivate STATION_DTO
+
+                    STATION_MAPPER -> STATION_DTO: position = getPosition()
+                    activate STATION_DTO
+                        STATION_DTO --> STATION_MAPPER: positionDTO
+                    deactivate STATION_DTO
+
+                    STATION_MAPPER -> STATION_MAPPER: position = createPosition(positionDTO)
+                    activate STATION_MAPPER
+                        STATION_MAPPER --> STATION_MAPPER: position
+                    deactivate STATION_MAPPER
+
+                    STATION_MAPPER -> STATION_DTO: defaultBuilding = getDefaultBuilding()
+                    activate STATION_DTO
+                    deactivate STATION_DTO
+
+                    STATION_MAPPER -> STATION_DTO: proposedName = getProposedName()
+                    activate STATION_DTO
+                    deactivate STATION_DTO
+
+                    STATION_MAPPER -> STATION**: create(stationType, position, defaultBuilding, proposedName)
+                deactivate STATION_MAPPER
+
+                STATIONS -> STATIONS: addStation(station)
+                activate STATIONS
+                    STATIONS -> STATIONS: validateStation(station)
+                    activate STATIONS
+                        STATIONS --> STATIONS: true
+                        deactivate STATIONS
+                    STATIONS --> STATIONS: true
+                    deactivate STATIONS
+
+                STATIONS --> STATION_REPO: success
+            deactivate STATIONS
+
+            STATION_REPO --> CTRL: success
+        deactivate STATION_REPO
+
+    end
+
+    autonumber 23
+    <-- CTRL : success
+deactivate CTRL
+
+@enduml 
