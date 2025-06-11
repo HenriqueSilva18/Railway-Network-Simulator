@@ -112,6 +112,7 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * Available scenarios
 * Station types
 * Industry sectors
+* Route
 
 ---
 
@@ -137,7 +138,6 @@ To identify domain conceptual classes, start by making a list of candidate conce
 * HouseBlock (part of city)
 * RailwayLine (part of route)
 * Route (part of railway network)
-* TrainSchedule (part of route)
 
 ---
 
@@ -194,70 +194,73 @@ An association is a relationship between instances of objects that indicates a r
 - **_A_** uses or manages or owns **_B_**
 - **_A_** is related to a transaction (item) of **_B_**
 
-| Concept (A)      | Association         | Concept (B)       |
-|------------------|---------------------|-------------------|
-| ArrivalEvent     | involves            | Train             |
-| ArrivalEvent     | occurs at           | Station           |
-| ArrivalEvent     | unloads/discards    | Cargo             |
-| ArrivalEvent     | triggers            | CargoGenerationEvent |
-| Building         | evolves into        | Building          |
-| Carriage         | loads               | Cargo             |
-| CargoGenerationEvent | generates     | Cargo             |
-| City             | produces/consumes   | Cargo             |
-| City             | located at          | Position          |
-| City             | contains            | HouseBlock        |
-| DepartureEvent   | involves            | Train             |
-| DepartureEvent   | occurs at           | Station           |
-| DepartureEvent   | loads               | Cargo             |
-| Editor           | creates/saves/loads | Map               |
-| Editor           | creates/saves/loads | Scenario          |
-| HouseBlock       | has                 | Position          |
-| Industry         | produces/consumes   | Cargo             |
-| Industry         | located at          | Position          |
-| Industry         | belongs to          | IndustrySector    |
-| IndustrySector   | contains            | Industry          |
-| Locomotive       | configured in       | Scenario          |
-| Map              | contains            | City              |
-| Map              | contains            | Industry          |
-| Map              | tracks              | Position          |
-| Map              | has                 | Size              |
-| Player           | builds              | RailwayLine       |
-| Player           | builds              | Station           |
-| Player           | buys                | Locomotive        |
-| Player           | defines             | Route             |
-| Player           | plays               | Scenario          |
-| RailwayLine      | connects            | Station           |
-| RailwayLine      | has                 | TrackType         |
-| Route            | contains            | RailwayLine       |
-| Route            | includes            | Station           |
-| Route            | manages             | Cargo             |
-| Route            | contains            | TrainSchedule     |
-| Scenario         | configures          | Industry          |
-| Scenario         | configures          | IndustrySector    |
-| Scenario         | configures          | Locomotive        |
-| Scenario         | configures          | Station           |
-| Scenario         | configures          | City              |
-| Scenario         | uses                | Map               |
-| Scenario         | runs in             | Simulator         |
-| Simulator        | handles             | CargoGenerationEvent |
-| Simulator        | handles             | DepartureEvent    |
-| Simulator        | handles             | ArrivalEvent      |
-| Simulator        | generates           | SimulationReport  |
-| SimulationReport | reports a           | Scenario          |
-| SimulationReport | belongs to          | Player            |
-| Station          | serves              | City              |
-| Station          | serves              | Industry          |
-| Station          | stores              | Cargo             |
-| Station          | upgraded with       | Building          |
-| Station          | located at          | Position          |
-| Station          | defined by          | StationType       |
-| Station          | generates           | TrainSchedule     |
-| StationType      | can change          | StationType       |
-| Train            | assigned to         | Route             |
-| Train            | composed of         | Carriage          |
-| Train            | powered by          | Locomotive        |
-| TrainSchedule    | contains            | Train             |
-| Cargo            | uses                | Cargo             |
+| Concept (A)          | Association         | Concept (B)          |
+|----------------------|---------------------|----------------------|
+| ArrivalEvent         | involves            | Train                |
+| ArrivalEvent         | occurs at           | Station              |
+| ArrivalEvent         | unloads/discards    | Cargo                |
+| ArrivalEvent         | triggers            | CargoGenerationEvent |
+| Building             | evolves into        | Building             |
+| Carriage             | loads               | Cargo                |
+| CargoGenerationEvent | generates           | Cargo                |
+| City                 | produces/consumes   | Cargo                |
+| City                 | located at          | Position             |
+| City                 | contains            | HouseBlock           |
+| DepartureEvent       | involves            | Train                |
+| DepartureEvent       | occurs at           | Station              |
+| DepartureEvent       | loads               | Cargo                |
+| Editor               | creates/saves/loads | Map                  |
+| Editor               | creates/saves/loads | Scenario             |
+| HouseBlock           | has                 | Position             |
+| Industry             | produces/consumes   | Cargo                |
+| Industry             | located at          | Position             |
+| Industry             | belongs to          | IndustrySector       |
+| IndustrySector       | contains            | Industry             |
+| Locomotive           | configured in       | Scenario             |
+| Map                  | contains            | City                 |
+| Map                  | contains            | Industry             |
+| Map                  | tracks              | Position             |
+| Map                  | has                 | Size                 |
+| Player               | builds              | RailwayLine          |
+| Player               | builds              | Station              |
+| Player               | buys                | Locomotive           |
+| Player               | defines             | Route                |
+| Player               | plays               | Scenario             |
+| RailwayLine          | connects            | Station              |
+| PointOfRoute         | represents          | Station              |
+| PointOfRoute         | stores              | Cargo                |
+| RailwayLine          | has                 | TrackType            |
+| Route                | contains            | RailwayLine          |
+| Route                | includes            | Station              |
+| Route                | manages             | Cargo                |
+| Route                | contains            | TrainSchedule        |
+| Route                | contains            | PointOfRoute         |
+| Scenario             | configures          | Industry             |
+| Scenario             | configures          | IndustrySector       |
+| Scenario             | configures          | Locomotive           |
+| Scenario             | configures          | Station              |
+| Scenario             | configures          | City                 |
+| Scenario             | uses                | Map                  |
+| Scenario             | runs in             | Simulator            |
+| Simulator            | handles             | CargoGenerationEvent |
+| Simulator            | handles             | DepartureEvent       |
+| Simulator            | handles             | ArrivalEvent         |
+| Simulator            | generates           | SimulationReport     |
+| SimulationReport     | reports a           | Scenario             |
+| SimulationReport     | belongs to          | Player               |
+| Station              | serves              | City                 |
+| Station              | serves              | Industry             |
+| Station              | stores              | Cargo                |
+| Station              | upgraded with       | Building             |
+| Station              | located at          | Position             |
+| Station              | defined by          | StationType          |
+| Station              | generates           | TrainSchedule        |
+| StationType          | can change          | StationType          |
+| Train                | assigned to         | Route                |
+| Train                | composed of         | Carriage             |
+| Train                | powered by          | Locomotive           |
+| TrainSchedule        | belongs to          | Train                |
+| Cargo                | uses                | Cargo                |
 
 ## Domain Model
 

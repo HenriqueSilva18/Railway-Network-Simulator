@@ -214,6 +214,10 @@ class Route {
   stationSequence
 }
 
+class PointOfRoute {
+  cargoMode
+}
+
 ' Relationships
 Editor "1" -- "*" Map : creates/saves/loads >
 Editor "1" -- "*" Scenario : creates/saves/loads >
@@ -236,7 +240,9 @@ Train "1" -- "1" Locomotive : powered by >
 Train "1" -- "*" Carriage : composed of >
 Carriage "*" -- "1" Cargo : loads >
 Train "1" -- "1" Route : assigned to >
-Route "1" -- "*" Station : includes >
+Route "1" -- "*" PointOfRoute : contains >
+PointOfRoute "1" -- "1" Station : represents >
+PointOfRoute "*" -- "*" Cargo : stores >
 Route "*" -- "*" Cargo : manages >
 Scenario "1" -- "*" Locomotive : configures >
 Scenario "1" -- "*" Industry : configures >
@@ -256,7 +262,7 @@ IndustrySector "1" -- "*" Industry : contains >
 Industry "*" -- "*" Cargo : produces/consumes >
 Station "*" -- "1" StationType : defined by >
 StationType "1" -- "*" StationType : can change >
-TrainSchedule "*" -- "*" Train: contains >
+TrainSchedule "*" -- "*" Train: belongs to >
 Station "1" -- "*" TrainSchedule: generates >
 Simulator "1" -- "*" SimulationReport : generates >
 SimulationReport "*" -- "1" Scenario : reports a >
@@ -268,7 +274,7 @@ Simulator "1" -- "*" DepartureEvent : handles >
 Simulator "1" -- "*" ArrivalEvent : handles >
 
 Cargo "*" -- "*" Cargo : uses >
-Route "1" -- "*" TrainSchedule :  >
+Route "1" -- "*" TrainSchedule : stores  >
 
 
 DepartureEvent "*" -- "1" Train : involves >
