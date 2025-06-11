@@ -1,0 +1,104 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AddIndustryController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapDTO\n:MapDTO" as MAP_DTO
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant "map\n:Map" as MAP
+participant "scenarios\n:Scenarios" as SCENARIOS
+participant ":List<Scenario>" as LIST
+participant ":ScenarioMapper" as SCENARIO_MAPPER
+participant "listScenario\n:List<Scenario>" as SCENARIO_LIST
+participant "listScenarioDTO\n:List<ScenarioDTO>" as SCENARIO_LIST_DTO
+
+autonumber 11
+-> CTRL: getListOfScenarios(mapDTO)
+
+autonumber 11.1
+activate CTRL
+    group Get ScenarioDTO List
+
+
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> MAP_DTO: getNameID()
+        activate MAP_DTO
+            MAP_DTO --> CTRL: mapNameID
+        deactivate MAP_DTO
+
+        CTRL -> MAP_REPO: getListOfMapScenarios(mapNameID)
+        activate MAP_REPO
+
+        MAP_REPO -> MAPS: getListOfMapScenarios(mapNameID)
+        activate MAPS
+
+        MAPS -> MAP: getScenarios()
+        activate MAP
+
+            MAP --> SCENARIOS: getScenarios()
+            activate SCENARIOS
+                SCENARIOS --> SCENARIO_LIST**: create()
+
+                loop for each known Scenario
+
+                    SCENARIOS --> LIST: scenario = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    SCENARIOS --> SCENARIO_LIST: add(scenario)
+                    activate SCENARIO_LIST
+                        deactivate SCENARIO_LIST
+
+                end
+
+            SCENARIOS --> MAP: listScenario
+            deactivate SCENARIOS
+
+            MAP --> MAPS: listScenario
+            deactivate MAP
+
+        MAPS --> MAP_REPO: listScenario
+        deactivate MAPS
+
+        MAP_REPO --> CTRL: listScenario
+        deactivate MAP_REPO
+
+
+        CTRL -> SCENARIO_MAPPER: toDTO(listScenario)
+        activate SCENARIO_MAPPER
+
+            SCENARIO_MAPPER --> SCENARIO_LIST_DTO**: create()
+
+            loop for each object in listScenario
+                SCENARIO_MAPPER -> SCENARIO_LIST: scenario = get(i)
+                activate SCENARIO_LIST
+                    deactivate SCENARIO_LIST
+
+                SCENARIO_MAPPER -> SCENARIO_MAPPER: scenarioDTO = toDTO(scenario)
+                activate SCENARIO_MAPPER
+                    deactivate SCENARIO_MAPPER
+
+                SCENARIO_MAPPER -> SCENARIO_LIST_DTO: add(scenarioDTO)
+                activate SCENARIO_LIST_DTO
+                    deactivate SCENARIO_LIST_DTO
+            end
+
+        SCENARIO_MAPPER --> CTRL: listScenarioDTO
+        deactivate SCENARIO_MAPPER
+
+    end
+
+    autonumber 12
+    <-- CTRL : listScenarioDTO
+deactivate CTRL
+
+
+@enduml
