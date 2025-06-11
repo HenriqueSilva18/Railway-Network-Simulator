@@ -233,4 +233,42 @@ public class UpgradeStationController {
         
         return buildingInfos;
     }
+
+    /**
+     * Gets a building by its ID
+     * @param buildingId The ID of the building to get
+     * @return The building, or null if not found
+     */
+    public Building getBuilding(String buildingId) {
+        return buildingRepository.getBuilding(buildingId);
+    }
+
+    /**
+     * Removes a building from the current station
+     */
+    public boolean removeBuilding(String buildingId) {
+        Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+        if (currentStation == null) {
+            return false;
+        }
+        
+        // Get the building to remove
+        Building building = currentStation.getBuilding(buildingId);
+        if (building == null) {
+            return false;
+        }
+        
+        // Remove the building
+        boolean success = currentStation.removeBuilding(buildingId);
+        
+        if (success) {
+            // Save the updated station
+            stationRepository.save(currentStation);
+            
+            // Refresh the current station reference
+            ApplicationSession.getInstance().setCurrentStation(currentStation);
+        }
+        
+        return success;
+    }
 } 

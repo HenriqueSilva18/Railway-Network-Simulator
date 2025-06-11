@@ -136,6 +136,92 @@ public class Station {
     }
 
     /**
+     * Checks if a building can be installed in this station
+     * @param building The building to check
+     * @return true if the building can be installed, false otherwise
+     */
+    public boolean canInstallBuilding(Building building) {
+        if (building == null) return false;
+        
+        // Check if we already have a building of this type
+        for (Building existingBuilding : buildings) {
+            // Check for same type
+            if (existingBuilding.getType().equals(building.getType())) {
+                return false;
+            }
+            
+            // Check for mutual exclusivity
+            if (existingBuilding.isMutuallyExclusive() && 
+                existingBuilding.getMutuallyExclusiveWith() != null &&
+                existingBuilding.getMutuallyExclusiveWith().equals(building.getNameID())) {
+                return false;
+            }
+            if (building.isMutuallyExclusive() && 
+                building.getMutuallyExclusiveWith() != null &&
+                building.getMutuallyExclusiveWith().equals(existingBuilding.getNameID())) {
+                return false;
+            }
+            
+            // Check if this building replaces an existing one
+            if (building.getReplacesBuilding() != null && 
+                building.getReplacesBuilding().equals(existingBuilding.getNameID())) {
+                return false; // Can't install if the building to be replaced is still there
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Gets a list of buildings that can be installed in this station
+     * @param availableBuildings List of available buildings to check
+     * @param currentYear Current year for availability check
+     * @return List of buildings that can be installed
+     */
+    public List<Building> getAvailableNewBuildings(List<Building> availableBuildings, int currentYear) {
+        List<Building> result = new ArrayList<>();
+        
+        for (Building building : availableBuildings) {
+            // Check year availability
+            if (building.getAvailabilityYear() > currentYear) {
+                continue;
+            }
+            
+            // Check if building can be installed
+            if (canInstallBuilding(building)) {
+                result.add(building);
+            }
+        }
+        
+        return result;
+    }
+
+    /**
+     * Installs a new building in the station
+     * @param building The building to install
+     * @param currentYear Current year for availability check
+     * @return true if the building was installed successfully, false otherwise
+     */
+    public boolean installNewBuilding(Building building, int currentYear) {
+        if (building == null || building.getAvailabilityYear() > currentYear) {
+            return false;
+        }
+        
+        // Check if we can install this building
+        if (!canInstallBuilding(building)) {
+            return false;
+        }
+        
+        // Check if we have enough building slots
+        if (buildings.size() >= getTotalBuildingSlots()) {
+            return false;
+        }
+        
+        // Add the building
+        return buildings.add(building);
+    }
+
+    /**
      * Checks if a new building can be installed in this station
      */
     public boolean canInstallNewBuilding(Building building, int currentYear) {
@@ -221,21 +307,6 @@ public class Station {
     }
 
     /**
-     * Gets a list of new buildings that can be installed in this station
-     */
-    public List<Building> getAvailableNewBuildings(List<Building> availableBuildings, int currentYear) {
-        List<Building> validUpgrades = new ArrayList<>();
-        
-        for (Building building : availableBuildings) {
-            if (canInstallNewBuilding(building, currentYear)) {
-                validUpgrades.add(building);
-            }
-        }
-        
-        return validUpgrades;
-    }
-    
-    /**
      * Gets a list of buildings that can be evolved in this station
      */
     public List<Building.BuildingInfo> getEvolvableBuildings(int currentYear) {
@@ -248,59 +319,6 @@ public class Station {
         }
         
         return evolvableBuildings;
-    }
-
-    /**
-     * Installs a new building in the station
-     * Returns true if successful, false otherwise
-     */
-    public boolean installNewBuilding(Building building, int currentYear) {
-        if (!canInstallNewBuilding(building, currentYear)) {
-            return false;
-        }
-
-        // If the building replaces another, remove the replaced building
-        if (building.getReplacesBuilding() != null) {
-            buildings.removeIf(existingBuilding -> 
-                existingBuilding.getNameID().equals(building.getReplacesBuilding()));
-        }
-
-        // Add the new building
-        buildings.add(building);
-        return true;
-    }
-    
-    /**
-     * Evolves an existing building to its next stage
-     * Returns true if successful, false otherwise
-     */
-    public boolean evolveBuilding(String buildingId, Building evolution, int currentYear) {
-        // Get the building to evolve
-        Building currentBuilding = getBuilding(buildingId);
-        if (currentBuilding == null || !currentBuilding.canEvolve()) {
-            return false;
-        }
-        
-        // Check if this is the correct evolution path
-        if (!currentBuilding.getEvolvesInto().equals(evolution.getNameID())) {
-            return false;
-        }
-        
-        // Check if the evolution is available in the current year
-        if (evolution.getAvailabilityYear() > currentYear) {
-            return false;
-        }
-        
-        // Remove the old building and add the evolved building
-        for (int i = 0; i < buildings.size(); i++) {
-            if (buildings.get(i).getNameID().equals(buildingId)) {
-                // Replace directly at the same position
-                buildings.set(i, evolution);
-                return true;
-            }
-        }
-        
-        return false;
     }
 
     /**
@@ -499,5 +517,72 @@ public class Station {
         // Retorna o nome da estação.
         // Se o método para obter o nome for diferente de "getNameID()", ajuste conforme necessário.
         return this.getNameID();
+    }
+
+    /**
+     * Gets the total number of building slots available in this station
+     * @return The total number of building slots
+     */
+    public int getTotalBuildingSlots() {
+        return stationType.getBuildingSlots();
+    }
+
+    /**
+     * Gets the number of used building slots
+     * @return The number of buildings currently installed
+     */
+    public int getUsedBuildingSlots() {
+        return buildings.size();
+    }
+
+    /**
+     * Evolves an existing building to its next stage
+     * @param buildingId The ID of the building to evolve
+     * @param evolution The evolved building to install
+     * @param currentYear The current year for availability check
+     * @return true if the building was evolved successfully, false otherwise
+     */
+    public boolean evolveBuilding(String buildingId, Building evolution, int currentYear) {
+        // Get the building to evolve
+        Building currentBuilding = getBuilding(buildingId);
+        if (currentBuilding == null || !currentBuilding.canEvolve()) {
+            return false;
+        }
+        
+        // Check if this is the correct evolution path
+        if (!currentBuilding.getEvolvesInto().equals(evolution.getNameID())) {
+            return false;
+        }
+        
+        // Check if the evolution is available in the current year
+        if (evolution.getAvailabilityYear() > currentYear) {
+            return false;
+        }
+        
+        // Remove the old building and add the evolved building
+        for (int i = 0; i < buildings.size(); i++) {
+            if (buildings.get(i).getNameID().equals(buildingId)) {
+                // Replace directly at the same position
+                buildings.set(i, evolution);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Removes a building from the station
+     * @param buildingId The ID of the building to remove
+     * @return true if the building was removed, false otherwise
+     */
+    public boolean removeBuilding(String buildingId) {
+        for (int i = 0; i < buildings.size(); i++) {
+            if (buildings.get(i).getNameID().equals(buildingId)) {
+                buildings.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 } 

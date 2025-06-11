@@ -71,26 +71,38 @@ public class BuildingRepository {
     }
     
     /**
-     * Gets a list of buildings that can be installed in a station (not evolutions)
+     * Gets a list of buildings that can be installed in a station
      */
     public List<Building> getNewBuildingOptions() {
-        // First identify all buildings that are evolution targets
-        Set<String> evolutionTargets = new HashSet<>();
-        for (Building building : buildings.values()) {
-            if (building.canEvolve() && building.getEvolvesInto() != null) {
-                evolutionTargets.add(building.getEvolvesInto());
-            }
-        }
-        
-        // Now create a list of buildings that are not evolution targets and don't replace other buildings
+        // Create a list of all buildings that don't replace other buildings
         List<Building> options = new ArrayList<>();
         for (Building building : buildings.values()) {
-            String nameID = building.getNameID();
-            if (!evolutionTargets.contains(nameID) && building.getReplacesBuilding() == null) {
+            if (building.getReplacesBuilding() == null) {
                 options.add(building);
             }
         }
         return options;
+    }
+    
+    /**
+     * Gets a default building for new stations
+     * @return A default building, or null if no suitable building is found
+     */
+    public Building getDefaultBuilding() {
+        // Try to find a small warehouse as the default building
+        Building defaultBuilding = getBuilding("small_warehouse");
+        if (defaultBuilding != null) {
+            return defaultBuilding;
+        }
+        
+        // If small warehouse is not available, try to find any basic building
+        for (Building building : buildings.values()) {
+            if (!building.canEvolve() && building.getReplacesBuilding() == null) {
+                return building;
+            }
+        }
+        
+        return null;
     }
     
     public void initialize() {
@@ -99,9 +111,9 @@ public class BuildingRepository {
                 "Improves train coordination by 10%", null, false, null,
                 "telephone", 5000, true, 0.1));
         
-        // Create telephone (replaces telegraph)
+        // Create telephone (standalone building)
         add(new Building("telephone", "Communication", 1900, 10000,  // Changed from 1920 to 1900 for testing
-                "Improves train coordination by 20%", "telegraph", false, null,
+                "Improves train coordination by 20%", null, false, null,
                 null, 0, false, 0.2));
         
         // Create small cafe - can evolve to large cafe

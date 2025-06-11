@@ -35,6 +35,9 @@ public class ListStationsDialogController implements Initializable {
     private Label buildingSlotsLabel;
     
     @FXML
+    private ListView<String> buildingsListView;
+    
+    @FXML
     private ListView<String> servedCitiesListView;
     @FXML
     private ListView<String> availableCargoListView;
@@ -123,7 +126,16 @@ public class ListStationsDialogController implements Initializable {
             station.getPosition().getX(), 
             station.getPosition().getY()));
         storageCapacityLabel.setText(String.valueOf(station.getStorageCapacity()));
-        buildingSlotsLabel.setText(String.format("%d", station.getBuildingSlots()));
+        buildingSlotsLabel.setText(String.format("%d/%d", station.getBuildings().size(), station.getBuildingSlots()));
+        
+        // Update buildings list
+        ObservableList<String> buildingItems = FXCollections.observableArrayList();
+        station.getBuildings().forEach(building ->
+            buildingItems.add(String.format("%s (Type: %s) - %s",
+                building.getNameID(),
+                building.getType(),
+                building.getEffect())));
+        buildingsListView.setItems(buildingItems);
         
         // Update served cities list
         ObservableList<String> cityItems = FXCollections.observableArrayList();
@@ -157,6 +169,7 @@ public class ListStationsDialogController implements Initializable {
         stationPositionLabel.setText("");
         storageCapacityLabel.setText("");
         buildingSlotsLabel.setText("");
+        buildingsListView.setItems(FXCollections.observableArrayList());
         
         servedCitiesListView.setItems(FXCollections.observableArrayList());
         availableCargoListView.setItems(FXCollections.observableArrayList());

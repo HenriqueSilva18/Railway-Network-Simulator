@@ -17,9 +17,9 @@ public class StationTypeRepository {
     }
 
     private void createStationTypes() {
-        stationTypes.add(new StationType(StationType.DEPOT, 3, 50000, 100));
-        stationTypes.add(new StationType(StationType.STATION, 4, 100000, 200));
-        stationTypes.add(new StationType(StationType.TERMINAL, 5, 200000, 300));
+        stationTypes.add(new StationType(StationType.DEPOT, 3, 50000, 100, false, 2));
+        stationTypes.add(new StationType(StationType.STATION, 4, 100000, 200, true, 3));
+        stationTypes.add(new StationType(StationType.TERMINAL, 5, 200000, 300, false, 4));
     }
 
     public List<StationType> getStationTypes() {

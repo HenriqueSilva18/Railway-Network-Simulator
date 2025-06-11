@@ -54,6 +54,9 @@ public class UpgradeStationDialogController implements Initializable {
     @FXML
     private Button upgradeButton;
     
+    @FXML
+    private Button removeBuildingButton;
+    
     private final UpgradeStationController controller;
     private ToggleGroup upgradeType;
     
@@ -118,6 +121,11 @@ public class UpgradeStationDialogController implements Initializable {
         }
         
         currentBuildingsListView.setItems(items);
+        
+        // Add selection listener to enable/disable remove button
+        currentBuildingsListView.getSelectionModel().selectedItemProperty().addListener(
+            (obs, oldVal, newVal) -> removeBuildingButton.setDisable(newVal == null)
+        );
     }
     
     private void updateAvailableOptions() {
@@ -148,13 +156,62 @@ public class UpgradeStationDialogController implements Initializable {
         if (installNewBuildingRadio.isSelected()) {
             info = controller.getBuildingInfo(buildingName);
             if (info != null) {
+                Building building = controller.getBuilding(buildingName);
                 buildingNameLabel.setText(info.getNameID());
                 buildingTypeLabel.setText("Type: " + info.getType());
                 buildingCostLabel.setText(String.format("Cost: $%.2f", info.getCost()));
                 buildingEffectLabel.setText("Effect: " + info.getEffect());
-                buildingEvolutionLabel.setText(info.canEvolve() ? 
-                    String.format("Can evolve to: %s (Cost: $%.2f)", info.getEvolvesInto(), info.getEvolutionCost()) : 
-                    "No evolution available");
+                
+                // Show compatibility information
+                StringBuilder compatibilityInfo = new StringBuilder();
+                Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+                
+                if (currentStation != null) {
+                    // Check for same type buildings
+                    boolean hasSameType = currentStation.getBuildings().stream()
+                        .anyMatch(b -> b.getType().equals(building.getType()));
+                    if (hasSameType) {
+                        compatibilityInfo.append("Cannot install: Station already has a building of this type.\n");
+                    }
+                    
+                    // Check for mutually exclusive buildings
+                    for (Building existingBuilding : currentStation.getBuildings()) {
+                        if (existingBuilding.isMutuallyExclusive() && 
+                            existingBuilding.getMutuallyExclusiveWith() != null &&
+                            existingBuilding.getMutuallyExclusiveWith().equals(building.getNameID())) {
+                            compatibilityInfo.append("Cannot install: Mutually exclusive with " + 
+                                existingBuilding.getNameID() + ".\n");
+                        }
+                        if (building.isMutuallyExclusive() && 
+                            building.getMutuallyExclusiveWith() != null &&
+                            building.getMutuallyExclusiveWith().equals(existingBuilding.getNameID())) {
+                            compatibilityInfo.append("Cannot install: Mutually exclusive with " + 
+                                existingBuilding.getNameID() + ".\n");
+                        }
+                    }
+                    
+                    // Check for replacement buildings
+                    if (building.getReplacesBuilding() != null) {
+                        boolean hasBuildingToReplace = currentStation.getBuildings().stream()
+                            .anyMatch(b -> b.getNameID().equals(building.getReplacesBuilding()));
+                        if (!hasBuildingToReplace) {
+                            compatibilityInfo.append("Cannot install: Requires " + 
+                                building.getReplacesBuilding() + " to be present first.\n");
+                        }
+                    }
+                }
+                
+                // Show evolution information if available
+                if (info.canEvolve()) {
+                    compatibilityInfo.append("\nCan evolve to: " + info.getEvolvesInto() + 
+                        String.format(" (Cost: $%.2f)", info.getEvolutionCost()));
+                }
+                
+                buildingEvolutionLabel.setText(compatibilityInfo.toString());
+                
+                // Disable upgrade button if there are compatibility issues
+                upgradeButton.setDisable(!compatibilityInfo.toString().isEmpty() && 
+                    !compatibilityInfo.toString().contains("Can evolve to:"));
             }
         } else {
             // Handle evolution details
@@ -186,8 +243,31 @@ public class UpgradeStationDialogController implements Initializable {
         if (selectedBuilding == null) return;
         
         boolean success;
+        String errorMessage = "";
+        
         if (installNewBuildingRadio.isSelected()) {
-            success = controller.installNewBuilding(selectedBuilding);
+            Building building = controller.getBuilding(selectedBuilding);
+            if (building != null) {
+                Station currentStation = ApplicationSession.getInstance().getCurrentStation();
+                if (currentStation != null && !currentStation.canInstallBuilding(building)) {
+                    // Get specific reason why building can't be installed
+                    if (currentStation.getBuildings().stream().anyMatch(b -> b.getType().equals(building.getType()))) {
+                        errorMessage = "Cannot install: Station already has a building of this type.";
+                    } else if (building.getReplacesBuilding() != null && 
+                             !currentStation.getBuildings().stream().anyMatch(b -> 
+                                 b.getNameID().equals(building.getReplacesBuilding()))) {
+                        errorMessage = "Cannot install: Requires " + building.getReplacesBuilding() + " to be present first.";
+                    } else {
+                        errorMessage = "Cannot install: Building is not compatible with existing buildings.";
+                    }
+                }
+            }
+            
+            if (errorMessage.isEmpty()) {
+                success = controller.installNewBuilding(selectedBuilding);
+            } else {
+                success = false;
+            }
         } else {
             List<Building> evolutionOptions = controller.getEvolutionOptions(selectedBuilding);
             if (evolutionOptions.isEmpty()) {
@@ -218,8 +298,48 @@ public class UpgradeStationDialogController implements Initializable {
             }
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", 
+                errorMessage.isEmpty() ? 
                 "Failed to " + (installNewBuildingRadio.isSelected() ? "install" : "evolve") + 
-                " building. You may not have enough budget or the building is not compatible.");
+                " building. You may not have enough budget." :
+                errorMessage);
+        }
+    }
+    
+    @FXML
+    private void handleRemoveBuilding() {
+        String selectedBuilding = currentBuildingsListView.getSelectionModel().getSelectedItem();
+        if (selectedBuilding == null) return;
+        
+        // Extract building name from the display text (format: "name (Type: type)")
+        String buildingName = selectedBuilding.split(" ")[0];
+        
+        // Confirm removal
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirm Building Removal");
+        confirmDialog.setHeaderText(null);
+        confirmDialog.setContentText("Are you sure you want to remove this building?");
+        
+        if (confirmDialog.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            // Remove the building
+            boolean success = controller.removeBuilding(buildingName);
+            
+            if (success) {
+                // Update displays
+                loadStationInfo();
+                loadCurrentBuildings();
+                updateAvailableOptions();
+                
+                // Update the player's budget display in the main window
+                if (getStage().getOwner() != null && getStage().getOwner().getScene().getRoot() instanceof BorderPane) {
+                    BorderPane mainPane = (BorderPane) getStage().getOwner().getScene().getRoot();
+                    if (mainPane.getTop() instanceof Label) {
+                        Label budgetLabel = (Label) mainPane.getTop();
+                        budgetLabel.setText(String.format("$%.2f", ApplicationSession.getInstance().getCurrentPlayer().getCurrentBudget()));
+                    }
+                }
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to remove building.");
+            }
         }
     }
     

@@ -37,8 +37,11 @@
                         <Label text="Storage Capacity:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                         <Label fx:id="storageCapacityLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         
-                        <Label text="Building Slots:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label text="Building Slots:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold"/>
                         <Label fx:id="buildingSlotsLabel" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        
+                        <Label text="Buildings:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold"/>
+                        <ListView fx:id="buildingsListView" GridPane.columnIndex="1" GridPane.rowIndex="5" prefHeight="100" minHeight="100"/>
                     </GridPane>
                 </TitledPane>
 

@@ -4,6 +4,7 @@ import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.*;
 
 import java.util.List;
+import java.util.Calendar;
 
 public class StationBuildingController {
     private final MapRepository mapRepository;
@@ -78,7 +79,7 @@ public class StationBuildingController {
         return currentMap.previewStationPlacement(stationType, position, centerPoint);
     }
 
-    public boolean buildStation(String stationName, StationType stationType, Position position, String centerPoint) {
+    public boolean buildStation(String stationName, StationType stationType, Position position, String centerPoint, Building initialBuilding) {
         Map currentMap = getCurrentMap();
         if (currentMap == null) {
             return false;
@@ -89,10 +90,10 @@ public class StationBuildingController {
             return false;
         }
 
-        // Check if player has enough budget
-        double stationCost = stationType.getCost();
+        // Check if player has enough budget for both station and building
+        double totalCost = stationType.getCost() + initialBuilding.getCost();
         double currentBudget = currentPlayer.getCurrentBudget();
-        if (currentBudget < stationCost) {
+        if (currentBudget < totalCost) {
             return false;
         }
 
@@ -110,8 +111,8 @@ public class StationBuildingController {
         // Create station
         Station station = new Station(stationName, position, stationType, stationType.getStorageCapacity(), getCurrentMap());
 
-        // Try to deduct budget first
-        if (!currentPlayer.deductFromBudget(stationCost)) {
+        // Try to deduct total cost first
+        if (!currentPlayer.deductFromBudget(totalCost)) {
             return false;
         }
 
@@ -119,7 +120,15 @@ public class StationBuildingController {
         boolean success = currentMap.addStation(station);
         if (!success) {
             // If adding station fails, refund the budget
-            currentPlayer.addToBudget(stationCost);
+            currentPlayer.addToBudget(totalCost);
+            return false;
+        }
+
+        // Add initial building to station
+        if (!station.installNewBuilding(initialBuilding, getCurrentYear())) {
+            // If adding building fails, remove station and refund budget
+            currentMap.removeStation(station);
+            currentPlayer.addToBudget(totalCost);
             return false;
         }
 
@@ -131,8 +140,32 @@ public class StationBuildingController {
         return true;
     }
 
+    // Keep the old method for backward compatibility
+    public boolean buildStation(String stationName, StationType stationType, Position position, String centerPoint) {
+        // Get a default building from the repository
+        Building defaultBuilding = Repositories.getInstance().getBuildingRepository().getDefaultBuilding();
+        if (defaultBuilding == null) {
+            return false;
+        }
+        return buildStation(stationName, stationType, position, centerPoint, defaultBuilding);
+    }
+
     private Map getCurrentMap() {
         return ApplicationSession.getInstance().getCurrentMap();
+    }
+
+    /**
+     * Gets the current year from the scenario
+     */
+    private int getCurrentYear() {
+        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+        if (currentScenario == null) {
+            return Calendar.getInstance().get(Calendar.YEAR);
+        }
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentScenario.getStartDate());
+        return calendar.get(Calendar.YEAR);
     }
 
     public boolean isStationNameTaken(String name) {

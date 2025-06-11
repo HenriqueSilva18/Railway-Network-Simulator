@@ -187,6 +187,24 @@ public class Map {
         return true;
     }
 
+    /**
+     * Removes a station from the map
+     * @param station The station to remove
+     * @return true if the station was removed successfully, false otherwise
+     */
+    public boolean removeStation(Station station) {
+        if (station == null) {
+            return false;
+        }
+        
+        boolean removed = stations.remove(station);
+        if (removed) {
+            // Mark position as unoccupied
+            station.getPosition().setOccupied(false);
+        }
+        return removed;
+    }
+
     public boolean addCity(City city) {
         if (city == null || !validatePosition(city.getPosition())) {
             return false;

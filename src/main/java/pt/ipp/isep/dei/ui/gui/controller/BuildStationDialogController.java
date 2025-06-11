@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.StationBuildingController;
 import pt.ipp.isep.dei.domain.template.*;
+import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.ipp.isep.dei.repository.template.BuildingRepository;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -45,13 +47,26 @@ public class BuildStationDialogController implements Initializable {
     private Label errorMessageLabel;
     @FXML
     private Button buildButton;
+    @FXML
+    private ListView<Building> initialBuildingList;
+    @FXML
+    private Label buildingNameLabel;
+    @FXML
+    private Label buildingTypeLabel;
+    @FXML
+    private Label buildingCostLabel;
+    @FXML
+    private Label buildingEffectLabel;
 
     private final StationBuildingController controller;
+    private final BuildingRepository buildingRepository;
     private StationType selectedType;
     private String suggestedName;
+    private Building selectedBuilding;
 
     public BuildStationDialogController() {
         this.controller = new StationBuildingController();
+        this.buildingRepository = Repositories.getInstance().getBuildingRepository();
     }
 
     @Override
@@ -60,6 +75,7 @@ public class BuildStationDialogController implements Initializable {
         setupSpinners();
         setupCenterPointComboBox();
         setupCustomNameControls();
+        setupBuildingList();
         setupListeners();
         updateBudgetLabels();
         clearError();
@@ -102,6 +118,45 @@ public class BuildStationDialogController implements Initializable {
             customNameField.setDisable(!newVal));
     }
 
+    private void setupBuildingList() {
+        List<Building> availableBuildings = buildingRepository.getNewBuildingOptions();
+        if (availableBuildings.isEmpty()) {
+            showError("No buildings available. Please check if buildings are properly initialized.");
+            return;
+        }
+
+        // Sort buildings by cost for better user experience
+        availableBuildings.sort((b1, b2) -> Double.compare(b1.getCost(), b2.getCost()));
+        
+        initialBuildingList.getItems().addAll(availableBuildings);
+        
+        initialBuildingList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Building building, boolean empty) {
+                super.updateItem(building, empty);
+                if (empty || building == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%s - %s (Cost: %.2f)",
+                            building.getNameID(),
+                            building.getType(),
+                            building.getCost()));
+                }
+            }
+        });
+
+        // Select the first building by default
+        if (!availableBuildings.isEmpty()) {
+            initialBuildingList.getSelectionModel().select(0);
+        }
+
+        initialBuildingList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            selectedBuilding = newVal;
+            updateBuildingDetails();
+            updateBudgetLabels();
+        });
+    }
+
     private void setupListeners() {
         stationTypeList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             selectedType = newVal;
@@ -119,16 +174,46 @@ public class BuildStationDialogController implements Initializable {
         }
     }
 
+    private void updateBuildingDetails() {
+        if (selectedBuilding != null) {
+            buildingNameLabel.setText("Name: " + selectedBuilding.getNameID());
+            buildingTypeLabel.setText("Type: " + selectedBuilding.getType());
+            buildingCostLabel.setText(String.format("Cost: %.2f", selectedBuilding.getCost()));
+            buildingEffectLabel.setText("Effect: " + selectedBuilding.getEffect());
+        } else {
+            buildingNameLabel.setText("");
+            buildingTypeLabel.setText("");
+            buildingCostLabel.setText("");
+            buildingEffectLabel.setText("");
+        }
+    }
+
     private void updateBudgetLabels() {
         Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
-        if (currentPlayer != null) {
-            double currentBudget = currentPlayer.getCurrentBudget();
-            currentBudgetLabel.setText(String.format("Current Budget: %.2f", currentBudget));
-            
-            if (selectedType != null) {
-                double remainingBudget = currentBudget - selectedType.getCost();
-                remainingBudgetLabel.setText(String.format("Remaining Budget After Build: %.2f", remainingBudget));
-            }
+        if (currentPlayer == null) {
+            showError("No player selected.");
+            return;
+        }
+
+        double currentBudget = currentPlayer.getCurrentBudget();
+        double stationCost = selectedType != null ? selectedType.getCost() : 0;
+        double buildingCost = selectedBuilding != null ? selectedBuilding.getCost() : 0;
+        double totalCost = stationCost + buildingCost;
+        double remainingBudget = currentBudget - totalCost;
+
+        currentBudgetLabel.setText(String.format("Current Budget: %.2f", currentBudget));
+        remainingBudgetLabel.setText(String.format("Remaining Budget: %.2f", remainingBudget));
+        
+        // Update build button state
+        buildButton.setDisable(selectedType == null || selectedBuilding == null || remainingBudget < 0);
+        
+        // Update labels color based on budget
+        if (remainingBudget < 0) {
+            remainingBudgetLabel.setStyle("-fx-text-fill: red;");
+            showError("Insufficient budget for station and building.");
+        } else {
+            remainingBudgetLabel.setStyle("-fx-text-fill: black;");
+            clearError();
         }
     }
 
@@ -138,6 +223,11 @@ public class BuildStationDialogController implements Initializable {
         
         if (selectedType == null) {
             showError("Please select a station type.");
+            return;
+        }
+
+        if (selectedBuilding == null) {
+            showError("Please select an initial building.");
             return;
         }
 
@@ -186,12 +276,17 @@ public class BuildStationDialogController implements Initializable {
             return;
         }
 
+        if (selectedBuilding == null) {
+            showError("Please select an initial building.");
+            return;
+        }
+
         Position position = new Position(xCoordSpinner.getValue(), yCoordSpinner.getValue());
         String centerPoint = selectedType.requiresCenterPoint() ? centerPointComboBox.getValue() : null;
 
-        if (controller.buildStation(stationName, selectedType, position, centerPoint)) {
+        if (controller.buildStation(stationName, selectedType, position, centerPoint, selectedBuilding)) {
             updateBudgetLabels();
-            showAlert("Success", "Station built successfully!");
+            showAlert("Success", "Station built successfully with initial building!");
             closeDialog();
         } else {
             showError("Failed to build station. Please check your budget and try again.");
