@@ -15,9 +15,10 @@ class CreateMapController {
 }
 
 class MapDTO {
-        + nameID : String
+    + nameID : String
     + width : int
     + height : int
+    + scale : int
 }
 
 
@@ -25,8 +26,8 @@ class MapDTO {
     class Map {
         - nameID : String
         - size : Size
-        - cityList : List<City>
-        - industryList : List<Industry>
+        - scale : int
+
 
         + {static} validateMapName(nameID) : boolean
         + createMap(nameID: String, size: Size) : Map
@@ -41,13 +42,7 @@ class Size {
     + createSize(width: int, height: int) : Size
 }
 
-class Editor {
-    - username : String
-    - password : String
-    - createdMaps : List<Map>
 
-    + createMap(nameID: String, size: Size) : Map
-}
 
     class MapRepository {
         + save(map: Map) : boolean
@@ -61,7 +56,6 @@ class Editor {
 
     class ApplicationSession {
         + {static} getInstance() : ApplicationSession
-        + getCurrentSession() : Editor
     }
 
 
@@ -72,16 +66,13 @@ CreateMapController ..> Repositories
 CreateMapController ..> ApplicationSession
 CreateMapController ..> Map
 CreateMapController ..> Size
-CreateMapController ..> Editor
 
 Map "1" --> "1" Size : size
 MapRepository --> "1" Map : map
-Editor "1" --> "*" Map : createdMaps
 
 Repositories -> "1" Repositories : instance
 Repositories --> "1" MapRepository : mapRepository
 
 ApplicationSession -> "1" ApplicationSession : instance
-ApplicationSession --> "1" Editor : currentSession
 
 @enduml

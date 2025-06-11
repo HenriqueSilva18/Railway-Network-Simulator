@@ -1,0 +1,80 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":CreateMapController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapDTO\n:MapDTO" as MAP_DTO
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "map\n:Map" as MAP
+participant "size\n:Size" as SIZE
+
+autonumber 1
+-> CTRL: createMap(mapDTO)
+
+autonumber 1.1
+activate CTRL
+    group Create and Save Map
+
+        CTRL -> MAP_DTO: getNameID()
+        activate MAP_DTO
+            MAP_DTO --> CTRL: nameID
+        deactivate MAP_DTO
+
+        CTRL -> MAP_DTO: getWidth()
+        activate MAP_DTO
+            MAP_DTO --> CTRL: width
+        deactivate MAP_DTO
+
+        CTRL -> MAP_DTO: getHeight()
+        activate MAP_DTO
+            MAP_DTO --> CTRL: height
+        deactivate MAP_DTO
+
+        CTRL -> SIZE**: createSize(width, height)
+        activate SIZE
+            SIZE -> SIZE: validateSize(width, height)
+            activate SIZE
+                SIZE --> SIZE: true
+            deactivate SIZE
+            SIZE --> CTRL: size
+        deactivate SIZE
+
+        CTRL -> MAP**: createMap(nameID, size, scale)
+        activate MAP
+            MAP -> MAP: validateMapName(nameID)
+            activate MAP
+                MAP --> MAP: true
+            deactivate MAP
+            MAP --> CTRL: map
+        deactivate MAP
+
+        CTRL -> REPOS: getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> MAP_REPO: save(map)
+        activate MAP_REPO
+            MAP_REPO --> CTRL: success
+        deactivate MAP_REPO
+
+        CTRL -> MAP: toDTO()
+        activate MAP
+            MAP --> CTRL: mapDTO
+        deactivate MAP
+
+    end
+
+    autonumber 2
+    <-- CTRL: mapDTO
+deactivate CTRL
+
+@enduml 
