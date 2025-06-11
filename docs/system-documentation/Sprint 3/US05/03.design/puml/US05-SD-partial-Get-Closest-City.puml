@@ -1,0 +1,84 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "cityRepository\n:CityRepository" as CITY_REPO
+participant "cities\n:Cities" as CITIES
+participant ":List<City>" as CITY_LIST
+participant ":CityMapper" as CITY_MAPPER
+participant ":City" as CITY
+participant ":Position" as POSITION
+
+autonumber 3
+-> CTRL: getClosestCity(positionDTO)
+
+autonumber 3.1
+activate CTRL
+    group Get Closest City
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getCityRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: cityRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> CITY_REPO: getListOfCities()
+        activate CITY_REPO
+            CITY_REPO -> CITIES: getListOfCities()
+            activate CITIES
+                CITIES --> CITY_LIST**: create()
+
+                loop for each known City
+                    CITIES -> CITY_LIST: city = get(i)
+                    activate CITY_LIST
+                        deactivate CITY_LIST
+
+                    CITIES -> CITY_LIST: add(city)
+                    activate CITY_LIST
+                        deactivate CITY_LIST
+                end
+
+                CITIES --> CITY_REPO: cityList
+            deactivate CITIES
+
+            CITY_REPO --> CTRL: cityList
+        deactivate CITY_REPO
+
+        CTRL -> POSITION**: create(positionDTO.x, positionDTO.y)
+
+        loop for each city in cityList
+            CTRL -> CITY: getPosition()
+            activate CITY
+                CITY --> CTRL: cityPosition
+            deactivate CITY
+
+            CTRL -> CTRL: calculateDistance(position, cityPosition)
+            activate CTRL
+                CTRL --> CTRL: distance
+            deactivate CTRL
+
+            CTRL -> CTRL: updateClosestCity(city, distance)
+            activate CTRL
+                deactivate CTRL
+        end
+
+        CTRL -> CTRL: getClosestCityName()
+        activate CTRL
+            CTRL --> CTRL: cityName
+        deactivate CTRL
+
+    end
+
+    autonumber 4
+    <-- CTRL : cityName
+deactivate CTRL
+
+@enduml

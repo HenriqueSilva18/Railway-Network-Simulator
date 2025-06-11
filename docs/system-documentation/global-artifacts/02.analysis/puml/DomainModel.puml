@@ -43,7 +43,6 @@ class Position {
 
 class Scenario {
   nameID
-  editor
   startDate
   endDate
   initialBudget

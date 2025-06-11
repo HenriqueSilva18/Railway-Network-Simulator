@@ -1,0 +1,86 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":StationBuildingController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "buildingRepository\n:BuildingRepository" as BUILDING_REPO
+participant "buildings\n:Buildings" as BUILDINGS
+participant ":List<Building>" as LIST
+participant ":BuildingMapper" as BUILDING_MAPPER
+participant "listBuilding\n:List<Building>" as BUILDING_LIST
+participant "listBuildingDTO\n:List<BuildingDTO>" as BUILDING_LIST_DTO
+participant "buildingDTO\n:BuildingDTO" as BUILDING_DTO
+
+autonumber 3
+-> CTRL: getAvailableBuildings()
+
+autonumber 3.1
+activate CTRL
+    group Get BuildingDTO List
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getBuildingRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: buildingRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> BUILDING_REPO: getListOfBuildings()
+        activate BUILDING_REPO
+            BUILDING_REPO -> BUILDINGS: getListOfBuildings()
+            activate BUILDINGS
+
+                BUILDINGS --> BUILDING_LIST**: create()
+
+                loop for each known Building
+                    BUILDINGS -> LIST: building = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    BUILDINGS -> BUILDING_LIST: add(building)
+                    activate BUILDING_LIST
+                        deactivate BUILDING_LIST
+                end
+
+                BUILDINGS --> BUILDING_REPO: listBuilding
+            deactivate BUILDINGS
+
+            BUILDING_REPO --> CTRL: listBuilding
+        deactivate BUILDING_REPO
+
+        CTRL -> BUILDING_MAPPER: toDTO(listBuilding)
+        activate BUILDING_MAPPER
+
+            BUILDING_MAPPER --> BUILDING_LIST_DTO**: create()
+
+            loop for each object in listBuilding
+                BUILDING_MAPPER -> BUILDING_LIST: building = get(i)
+                activate BUILDING_LIST
+                    deactivate BUILDING_LIST
+
+                BUILDING_MAPPER -> BUILDING_MAPPER: buildingDTO = toDTO(building)
+                activate BUILDING_MAPPER
+                    BUILDING_MAPPER --> BUILDING_DTO**: create()
+                    deactivate BUILDING_MAPPER
+
+                BUILDING_MAPPER -> BUILDING_LIST_DTO: add(buildingDTO)
+                activate BUILDING_LIST_DTO
+                    deactivate BUILDING_LIST_DTO
+            end
+
+            BUILDING_MAPPER --> CTRL: listBuildingDTO
+        deactivate BUILDING_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listBuildingDTO
+deactivate CTRL
+
+@enduml 
