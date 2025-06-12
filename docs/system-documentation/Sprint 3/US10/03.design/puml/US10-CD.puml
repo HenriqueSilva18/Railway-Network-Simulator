@@ -1,213 +1,165 @@
 @startuml
+skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
+skinparam linetype polyline
+
 skinparam classAttributeIconSize 0
 
-title Class Diagram: US10 - Assign a train to a route
-
 ' UI Layer
-class EditMapUI {
-}
-
-
 class AssignTrainUI {
+    + create()
+    + getAvailableRoutes()
+    + getRouteDetails()
+    + getRoutePoints()
+    + getAvailableTrains()
+    + getTrainDetails()
+    + assignTrainToRoute()
 }
 
 ' Controller Layer
-class EditMapController {
-    + create()
-    + getAvailableMaps() : List<Map>
-    + loadMap(mapId) : MapLayout
-}
-
-
 class AssignTrainController {
     + create()
-    + getAvailableRoutes() : List<Route>
-    + getRouteDetails(routeId) : RouteDetails
-    + getAvailableTrains() : List<Train>
-    + getTrainDetails(trainId) : TrainDetails
-    + assignTrainToRoute(trainId, routeId) : boolean
+    + getAvailableRoutes()
+    + getRouteDetails(routeDTO: RouteDTO)
+    + getRoutePoints(routeDTO: RouteDTO)
+    + setCargoMode(pointOfRouteDTO: PointOfRouteDTO)
+    + getAvailableTrains()
+    + getTrainDetails(trainDTO: TrainDTO)
+    + assignTrainToRoute(routeDTO: RouteDTO, trainDTO: TrainDTO)
 }
 
 ' Repository Layer
 class RouteRepository {
-    + getRoute(routeId) : Route
-    + save(route) : boolean
+    + getListOfRoutes()
+    + getRoute(id: int)
+    + getRoutePoints(routeId: int)
 }
 
 class TrainRepository {
-    + getTrain(trainId) : Train
-    + save(train) : boolean
-}
-
-class MapRepository {
-    + getAvailableMaps() : List<Map>
-    + getMap(mapId) : Map
-}
-
-class Repositories {
-    + {static} getInstance() : Repositories
-    + getRouteRepository() : RouteRepository
-    + getTrainRepository() : TrainRepository
-    + getMapRepository() : MapRepository
-}
-
-class ApplicationSession {
-    + {static} getInstance() : ApplicationSession
-    + getCurrentTrain() : Train
-    + getCurrentRoute() : Route
-    + getCurrentMap() : Map
+    + getListOfTrains()
+    + getTrain(id: int)
 }
 
 ' Domain Layer
-class Player {
-    - username: String
-    - password: String
-    - initialBudget: double
-    - currentBudget: double
+class Routes {
+    + getListOfRoutes()
+    + getRoute(id: int)
+    + getRoutePoints(routeId: int)
 }
 
-class Train {
-    - nameID: String
-    - locomotive: Locomotive
-    - carriages: List<Carriage>
-    
-    + assignToRoute(route: Route) : boolean
-    + getDetails() : TrainDetails
-}
-
-class Locomotive {
-    - nameID: String
-    - type: String
-    - power: int
-    - acceleration: double
-    - topSpeed: int
-    - startYear: int
-    - fuelCost: double
-    - availabilityYear: int
-    - acquisitionPrice: double
-    - maintenancePrice: double
-}
-
-class Carriage {
-    - storageCapacity: int
-    - cargo: Cargo
+class Trains {
+    + getListOfTrains()
+    + getTrain(id: int)
 }
 
 class Route {
-    - nameID: String
-    - stationSequence: List<Station>
-    - cargoList: List<Cargo>
-    
-    + getDetails() : RouteDetails
-    + addTrain(train: Train) : boolean
-    + validateStations() : boolean
-}
-
-class Station {
-    - nameID: String
-    - storageCapacity: int
-    - buildingSlots: int
-    - availableCargo: int
-    - requestedCargo: int
-}
-
-class Cargo {
+    - id: int
     - name: String
-    - amount: int
-    - lifespan: int
-    - type: String
-    - productionResources: List<String>
+    - points: List<PointOfRoute>
+    + getPointOfRoute(pointId: int)
+    + assignTrain(train: Train)
+    + validateTrainAssignment(train: Train)
 }
 
-class RailwayLine {
-    - length: double
-    - trackType: String
-    - isElectrified: boolean
-    - cost: double
+class Train {
+    - id: int
+    - name: String
+    - route: Route
+    + setRoute(route: Route)
 }
 
-class Map {
-    - nameID: String
-    - cityList: List<City>
-    - industryList: List<Industry>
-    - size: Size
-    - positions: List<Position>
+class PointOfRoute {
+    - id: int
+    - routeId: int
+    - cargoMode: CargoMode
+    + setCargoMode(cargoMode: CargoMode)
 }
 
-class Size {
-    - width: int
-    - height: int
+enum CargoMode {
+    FULL
+    HALF
+    AVAILABLE
 }
 
-class Position {
-    - x: int
-    - y: int
-    - occupied: boolean
+' DTO Layer
+class RouteDTO {
+    - id: int
+    - name: String
 }
 
-class City {
-    - nameID: String
-    - trafficRate: double
-    - suppliedCargo: List<Cargo>
-    - demandedCargo: List<Cargo>
+class RouteDetailsDTO {
+    - id: int
+    - name: String
+    - points: List<PointOfRouteDTO>
 }
 
-class Industry {
-    - nameID: String
-    - type: String
-    - availabilityYear: int
-    - productionRate: double
-    - suppliedCargo: List<Cargo>
-    - demandedCargo: List<Cargo>
+class PointOfRouteDTO {
+    - id: int
+    - routeId: int
+    - cargoMode: CargoMode
 }
 
-' UI Layer Relationships
-EditMapUI ..> EditMapController : uses
-AssignTrainUI ..> AssignTrainController : uses
+class TrainDTO {
+    - id: int
+    - name: String
+}
 
-' Controller Layer Relationships
-EditMapController ..> MapRepository : uses
-EditMapController ..> Repositories : uses
-EditMapController ..> Map : uses
+class TrainDetailsDTO {
+    - id: int
+    - name: String
+    - route: RouteDTO
+}
 
+class TrainRouteAssignmentDTO {
+    - route: RouteDTO
+    - train: TrainDTO
+    - points: List<PointOfRouteDTO>
+}
 
-AssignTrainController ..> RouteRepository : uses
-AssignTrainController ..> TrainRepository : uses
-AssignTrainController ..> Repositories : uses
-AssignTrainController ..> ApplicationSession : uses
-AssignTrainController ..> Train : uses
-AssignTrainController ..> Route : uses
+' Mapper Layer
+class RouteMapper {
+    + toDTO(route: Route)
+    + toDetailsDTO(route: Route)
+    + updatePointOfRouteDTO(point: PointOfRoute)
+    + createAssignmentDTO(route: Route, train: Train)
+}
 
-' Repository Layer Relationships
-RouteRepository --> "1" Route : returns
-TrainRepository --> "*" Train : provides
-MapRepository --> "*" Map : provides
+class TrainMapper {
+    + toDTO(train: Train)
+    + toDetailsDTO(train: Train)
+}
 
-Repositories --> RouteRepository : provides >
-Repositories --> TrainRepository : provides >
-Repositories --> MapRepository : provides >
+class PointOfRouteMapper {
+    + toDTO(point: PointOfRoute)
+}
 
-' Domain Layer Relationships
-Player "1" -- "*" Train : owns >
-Train "1" -- "1" Locomotive : powered by >
-Train "1" -- "*" Carriage : composed of >
-Carriage "*" -- "1" Cargo : carries >
-Train "1" -- "*" Route : assigned to >
-Route "1" -- "*" Station : includes >
-Route "*" -- "*" Cargo : manages >
-Route "1..*" -- "1..*" RailwayLine : contains >
-Station "1" -- "*" Cargo : stores >
-Map "1" -- "*" City : contains >
-Map "1" -- "*" Industry : contains >
-Map "1" -- "1" Size : has >
-Map "1" -- "*" Position : tracks >
-City "*" -- "*" Cargo : produces/consumes >
-Industry "*" -- "*" Cargo : produces/consumes >
+' Relationships
+AssignTrainUI --> AssignTrainController
+AssignTrainController --> RouteRepository
+AssignTrainController --> TrainRepository
+AssignTrainController --> RouteMapper
+AssignTrainController --> TrainMapper
+AssignTrainController --> PointOfRouteMapper
 
-ApplicationSession --> Train : currentTrain >
-ApplicationSession --> Route : currentRoute >
-ApplicationSession --> Map : currentMap >
+RouteRepository --> Routes
+TrainRepository --> Trains
+
+Routes --> Route
+Trains --> Train
+Route --> PointOfRoute
+Route --> Train
+
+RouteMapper --> RouteDTO
+RouteMapper --> RouteDetailsDTO
+RouteMapper --> PointOfRouteDTO
+RouteMapper --> TrainRouteAssignmentDTO
+
+TrainMapper --> TrainDTO
+TrainMapper --> TrainDetailsDTO
+
+PointOfRouteMapper --> PointOfRouteDTO
+
+PointOfRoute --> CargoMode
 
 @enduml

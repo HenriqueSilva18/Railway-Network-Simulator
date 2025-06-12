@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+
+participant "routeRepository\n:RouteRepository" as ROUTE_REPO
+participant "routes\n:Routes" as ROUTES
+participant ":RouteMapper" as ROUTE_MAPPER
+participant "route\n:Route" as ROUTE
+participant "pointOfRoute\n:PointOfRoute" as POINT
+participant "pointOfRouteDTO\n:PointOfRouteDTO" as POINT_DTO
+
+autonumber 3
+-> CTRL: setCargoMode(pointOfRouteDTO)
+
+autonumber 3.1
+activate CTRL
+    group Update PointOfRouteDTO
+
+
+        CTRL -> ROUTE_REPO: getRoute(pointOfRouteDTO.getRouteId())
+        activate ROUTE_REPO
+            ROUTE_REPO -> ROUTES: getRoute(routeId)
+            activate ROUTES
+                ROUTES --> ROUTE**: create()
+                ROUTES --> ROUTE_REPO: route
+            deactivate ROUTES
+            ROUTE_REPO --> CTRL: route
+        deactivate ROUTE_REPO
+
+        CTRL -> ROUTE: getPointOfRoute(pointOfRouteDTO.getPointId())
+        activate ROUTE
+            ROUTE --> POINT**: create()
+            ROUTE --> CTRL: pointOfRoute
+        deactivate ROUTE
+
+        CTRL -> POINT: setCargoMode(pointOfRouteDTO.getCargoMode())
+        activate POINT
+            POINT --> CTRL: success
+        deactivate POINT
+
+        CTRL -> ROUTE_MAPPER: updatePointOfRouteDTO(pointOfRoute)
+        activate ROUTE_MAPPER
+            ROUTE_MAPPER --> POINT_DTO**: create()
+            ROUTE_MAPPER --> CTRL: pointOfRouteDTO
+        deactivate ROUTE_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : success
+deactivate CTRL
+
+@enduml 

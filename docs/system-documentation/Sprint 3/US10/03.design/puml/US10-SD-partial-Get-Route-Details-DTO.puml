@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "routeRepository\n:RouteRepository" as ROUTE_REPO
+participant "routes\n:Routes" as ROUTES
+participant ":RouteMapper" as ROUTE_MAPPER
+participant "route\n:Route" as ROUTE
+participant "routeDetailsDTO\n:RouteDetailsDTO" as ROUTE_DETAILS_DTO
+
+autonumber 3
+-> CTRL: getRouteDetails(routeDTO)
+
+autonumber 3.1
+activate CTRL
+    group Get Route Details DTO
+
+        CTRL -> ROUTE_REPO: getRoute(routeDTO.getId())
+        activate ROUTE_REPO
+            ROUTE_REPO -> ROUTES: getRoute(id)
+            activate ROUTES
+                ROUTES --> ROUTE**: create()
+                ROUTES --> ROUTE_REPO: route
+            deactivate ROUTES
+            ROUTE_REPO --> CTRL: route
+        deactivate ROUTE_REPO
+
+        CTRL -> ROUTE_MAPPER: toDetailsDTO(route)
+        activate ROUTE_MAPPER
+            ROUTE_MAPPER --> ROUTE_DETAILS_DTO**: create()
+            ROUTE_MAPPER --> CTRL: routeDetailsDTO
+        deactivate ROUTE_MAPPER
+    end
+
+    autonumber 4
+    <-- CTRL : routeDetailsDTO
+deactivate CTRL
+
+@enduml 

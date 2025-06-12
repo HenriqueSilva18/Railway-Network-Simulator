@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "trainRepository\n:TrainRepository" as TRAIN_REPO
+participant "trains\n:Trains" as TRAINS
+participant ":TrainMapper" as TRAIN_MAPPER
+participant "train\n:Train" as TRAIN
+participant "trainDetailsDTO\n:TrainDetailsDTO" as TRAIN_DETAILS_DTO
+
+autonumber 3
+-> CTRL: getTrainDetails(trainDTO)
+
+autonumber 3.1
+activate CTRL
+    group Get Train Details DTO
+        CTRL -> TRAIN_REPO: getTrain(trainDTO.getId())
+        activate TRAIN_REPO
+            TRAIN_REPO -> TRAINS: getTrain(id)
+            activate TRAINS
+                TRAINS --> TRAIN**: create()
+                TRAINS --> TRAIN_REPO: train
+            deactivate TRAINS
+            TRAIN_REPO --> CTRL: train
+        deactivate TRAIN_REPO
+
+        CTRL -> TRAIN_MAPPER: toDetailsDTO(train)
+        activate TRAIN_MAPPER
+            TRAIN_MAPPER --> TRAIN_DETAILS_DTO**: create()
+            TRAIN_MAPPER --> CTRL: trainDetailsDTO
+        deactivate TRAIN_MAPPER
+    end
+
+    autonumber 4
+    <-- CTRL : trainDetailsDTO
+deactivate CTRL
+
+@enduml 

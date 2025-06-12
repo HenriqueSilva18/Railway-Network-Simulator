@@ -1,0 +1,68 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "routeRepository\n:RouteRepository" as ROUTE_REPO
+participant "trainRepository\n:TrainRepository" as TRAIN_REPO
+participant "routes\n:Routes" as ROUTES
+participant "trains\n:Trains" as TRAINS
+participant ":RouteMapper" as ROUTE_MAPPER
+participant "route\n:Route" as ROUTE
+participant "train\n:Train" as TRAIN
+participant "assignmentDTO\n:TrainRouteAssignmentDTO" as ASSIGNMENT_DTO
+
+autonumber 3
+-> CTRL: assignTrainToRoute(routeDTO, trainDTO)
+
+autonumber 3.1
+activate CTRL
+    group Create Train-Route Assignment DTO
+        CTRL -> ROUTE_REPO: getRoute(routeDTO.getId())
+        activate ROUTE_REPO
+            ROUTE_REPO -> ROUTES: getRoute(id)
+            activate ROUTES
+                ROUTES --> ROUTE**: create()
+                ROUTES --> ROUTE_REPO: route
+            deactivate ROUTES
+            ROUTE_REPO --> CTRL: route
+        deactivate ROUTE_REPO
+
+        CTRL -> TRAIN_REPO: getTrain(trainDTO.getId())
+        activate TRAIN_REPO
+            TRAIN_REPO -> TRAINS: getTrain(id)
+            activate TRAINS
+                TRAINS --> TRAIN**: create()
+                TRAINS --> TRAIN_REPO: train
+            deactivate TRAINS
+            TRAIN_REPO --> CTRL: train
+        deactivate TRAIN_REPO
+
+        CTRL -> ROUTE: assignTrain(train)
+        activate ROUTE
+            ROUTE -> ROUTE: validateTrainAssignment(train)
+            activate ROUTE
+                ROUTE --> ROUTE: true
+            deactivate ROUTE
+
+            ROUTE -> TRAIN: setRoute(route)
+            activate TRAIN
+                TRAIN --> ROUTE: success
+            deactivate TRAIN
+
+            ROUTE --> CTRL: success
+        deactivate ROUTE
+
+        CTRL -> ROUTE_MAPPER: createAssignmentDTO(route, train)
+        activate ROUTE_MAPPER
+            ROUTE_MAPPER --> ASSIGNMENT_DTO**: create()
+            ROUTE_MAPPER --> CTRL: assignmentDTO
+        deactivate ROUTE_MAPPER
+    end
+
+    autonumber 4
+    <-- CTRL : assignmentDTO
+deactivate CTRL
+
+@enduml
