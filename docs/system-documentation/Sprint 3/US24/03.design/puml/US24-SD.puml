@@ -1,0 +1,45 @@
+@startuml
+autonumber
+title "Sequence Diagram - US24 : Load Game Progress"
+
+actor Player
+participant "LoadGameUI" as UI
+participant "LoadGameController" as Controller
+participant "Scenario" as Scenario
+
+activate Player
+
+Player -> UI: requests to load saved game progress
+activate UI
+
+UI -> Controller: getSavedGamesList()
+activate Controller
+Controller --> UI: savedGamesList
+deactivate Controller
+
+UI --> Player: displays list of saved games
+deactivate UI
+
+Player -> UI: selects saved game to load
+activate UI
+
+UI -> Controller: loadGameProgress(selectedGame)
+activate Controller
+
+Controller -> Controller: readFromFile(selectedGame)
+Controller -> Scenario: deserializeGameState(serializedState)
+activate Scenario
+Scenario --> Controller: gameState
+deactivate Scenario
+
+Controller -> Controller: restoreGameState(gameState)
+Controller --> UI: loadSuccess
+deactivate Controller
+
+UI --> Player: displays selected game details
+UI --> Player: displays operation success
+UI --> Player: restores game state
+deactivate UI
+
+
+@enduml 

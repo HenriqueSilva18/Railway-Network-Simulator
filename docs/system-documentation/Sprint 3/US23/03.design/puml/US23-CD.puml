@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+class SaveGameUI {
+}
+
+class SaveGameController {
+    + saveGameProgress()
+}
+
+class Scenario {
+    + serializeGameState()
+}
+
+class GameRepository {
+    + saveGame(serializedGameData)
+}
+
+SaveGameUI --> SaveGameController
+SaveGameController --> Scenario
+SaveGameController --> GameRepository
+
+@enduml 

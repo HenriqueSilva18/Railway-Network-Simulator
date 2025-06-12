@@ -1,0 +1,44 @@
+@startuml
+autonumber
+title "Sequence Diagram - US23 : Save Game Progress"
+
+actor Player
+participant "SaveGameUI" as UI
+participant "SaveGameController" as Controller
+participant "Scenario" as Scenario
+
+activate Player
+
+Player -> UI: requests to save current game progress
+activate UI
+
+UI -> Scenario: getCurrentGameState()
+activate Scenario
+Scenario --> UI: currentGameState
+deactivate Scenario
+
+UI --> Player: displays current game state
+UI --> Player: request save confirmation
+deactivate UI
+
+Player -> UI: confirms save operation
+activate UI
+
+UI -> Controller: saveGameProgress()
+activate Controller
+
+Controller -> Scenario: serializeGameState()
+activate Scenario
+Scenario --> Controller: serializedState
+deactivate Scenario
+
+Controller -> Controller: saveToFile(serializedState)
+Controller --> UI: saveSuccess
+deactivate Controller
+
+UI --> Player: displays operation success
+UI --> Player: displays saved game details
+deactivate UI
+
+
+@enduml 

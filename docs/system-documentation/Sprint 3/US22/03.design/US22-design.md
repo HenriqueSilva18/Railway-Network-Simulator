@@ -35,12 +35,8 @@ Other software classes (i.e. Pure Fabrication) identified:
 
 ## 3.2. Sequence Diagram (SD)
 
-_In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
-
 ![US22-SD](svg/US22-SD.svg)
 
 ## 3.3. Class Diagram (CD)
-
-_In this section, it is suggested to present an UML static view representing the main related software classes that are involved in fulfilling the requirements as well as their relations, attributes and methods._
 
 ![US22-CD](svg/US22-CD.svg)
