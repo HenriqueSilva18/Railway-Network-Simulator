@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+class ShortestPathFinder {
+    + findShortestPath()
+    + chooseLineType()
+    + getRequiredStations()
+    + displayPathDetails()
+    + exportToDOTWithPath()
+}
+
+class FilesUtils {
+    + loadCSV()
+    + exportToDOT()
+    + dotToPNG()
+    + openFile()
+    + readStopStationFile()
+}
+
+class DijkstraAlgorithm {
+    + findShortestPath()
+    + findPathThroughStations()
+}
+
+class Graph {
+    + filterGraph()
+    + getEdges()
+}
+
+class Path {
+    + calculatePathDetails()
+    + getTotalDistance()
+}
+
+class Station {
+    + name
+}
+
+class Edge {
+    + from
+    + to
+    + distance
+    + electrified
+}
+
+ShortestPathFinder --> FilesUtils
+ShortestPathFinder --> DijkstraAlgorithm
+ShortestPathFinder --> Graph
+ShortestPathFinder --> Path
+
+DijkstraAlgorithm --> Graph
+Graph --> Station
+Graph --> Edge
+Path --> Station
+
+@enduml 

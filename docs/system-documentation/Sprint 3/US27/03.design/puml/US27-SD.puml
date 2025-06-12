@@ -1,0 +1,91 @@
+@startuml
+autonumber
+title "Sequence Diagram - US27 : Find Shortest Path"
+
+actor Player
+participant ":ShortestPathFinder" as SPF
+participant ":FilesUtils" as FU
+participant ":DijkstraAlgorithm" as DA
+participant ":Graph" as Graph
+participant ":Path" as Path
+activate Player
+Player -> SPF: requests to find shortest path
+activate SPF
+
+SPF -> Player: requests scenario file path
+Player -> SPF: provides scenario file path
+SPF -> FU: loadCSV(filePath, stations, graph, stationOrder)
+activate FU
+FU --> SPF: network data loaded
+deactivate FU
+
+SPF -> FU: exportToDOT(dotPath, graph)
+activate FU
+FU --> SPF: dot file created
+deactivate FU
+
+SPF -> FU: dotToPNG(dotPath, pngPath)
+activate FU
+FU --> SPF: png file created
+deactivate FU
+
+SPF -> FU: openFile(pngPath)
+activate FU
+FU --> SPF: visualization opened
+deactivate FU
+
+SPF -> Player: displays network visualization
+Player -> SPF: selects line type
+SPF -> Graph: filterGraph(lineType)
+activate Graph
+Graph --> SPF: filtered graph
+deactivate Graph
+
+SPF -> Player: requests station input method
+Player -> SPF: selects input method
+
+alt Input Method = File
+    SPF -> Player: requests stop station file path
+    Player -> SPF: provides stop station file path
+    SPF -> FU: readStopStationFile(filePath)
+    activate FU
+    FU --> SPF: required stations
+    deactivate FU
+else Input Method = Manual
+    SPF -> Player: displays available stations
+    Player -> SPF: selects stations
+    SPF -> SPF: getRequiredStations()
+end
+
+SPF -> DA: findPathThroughStations(graph, requiredStations)
+activate DA
+DA -> Graph: getEdges()
+Graph --> DA: edges
+DA --> SPF: path
+deactivate DA
+
+SPF -> Path: calculatePathDetails()
+activate Path
+Path --> SPF: path details
+deactivate Path
+
+SPF -> FU: exportToDOTWithPath(dotPath, graph, path)
+activate FU
+FU --> SPF: updated dot file
+deactivate FU
+
+SPF -> FU: dotToPNG(dotPath, pngPath)
+activate FU
+FU --> SPF: updated png file
+deactivate FU
+
+SPF -> FU: openFile(pngPath)
+activate FU
+FU --> SPF: visualization opened
+deactivate FU
+
+SPF -> Player: displays path details
+SPF -> Player: displays visualization with highlighted path
+deactivate SPF
+
+@enduml 
