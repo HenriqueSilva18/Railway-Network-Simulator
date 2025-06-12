@@ -13,8 +13,8 @@
 | Step 3  		     | ...receiving the map data?                  | CreateMapUI         | Pure Fabrication: UI classes are responsible for user interactions                   |
 | Step 4   		    | ...validating the map name?                 | Map                 | Information Expert: owns its data                                                    |
 | 		             | ...validating the map size?                 | Size                | Information Expert: owns its data                                                    |
-| Step 5  		     | ...creating the Size?                       | CreateMapController | Creator: Controller creates Size to pass to Editor                                   |
-|   		           | ...creating the map?                        | Editor              | Creator: Editor creates Maps according to the domain model                           |
+| Step 5  		     | ...creating the Size?                       | MapMapper           | Creator: MapMapper creates Size as part of map creation                             |
+|   		           | ...creating the map?                        | Maps                | Creator: Maps creates Maps according to the domain model                           |
 | Step 6  		     | ...saving the map?                          | MapRepository       | Pure Fabrication: responsible for persistence operations                             |
 | Step 7  		     | ...informing operation success?             | CreateMapUI         | Pure Fabrication: UI classes handle user feedback                                    |
 | Step 8  		     | ...displaying map details?                  | CreateMapUI         | Pure Fabrication: UI classes present information to users                            |
@@ -23,7 +23,7 @@
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Editor
+* Maps
 * Map
 * Size
 
@@ -32,10 +32,17 @@ Other software classes (i.e. Pure Fabrication) identified:
 * CreateMapUI  
 * CreateMapController
 * MapRepository
+* MapDTO
+* MapMapper
+* Repositories
 
 ## 3.2. Sequence Diagram (SD)
 
 ![US01-SD](svg/US01-SD-split-Sequence_Diagram.svg)
+
+### 3.2.1. Partial Sequence Diagram
+
+![US01-SD](svg/US01-SD-create-and-save-map.svg)
 
 ## 3.3. Class Diagram (CD)
 

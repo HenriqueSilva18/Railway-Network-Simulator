@@ -1,4 +1,3 @@
-
 # US05 - Build a Station
 
 ## 3. Design
@@ -40,6 +39,7 @@ According to the taken rationale, the conceptual classes promoted to software cl
 * Position
 * Station
 * StationType
+* Building
 
 Other software classes (i.e. Pure Fabrication) identified:
 
@@ -47,11 +47,36 @@ Other software classes (i.e. Pure Fabrication) identified:
 * StationBuildingController
 * MapRepository
 * StationTypeRepository
+* BuildingRepository
+* CityRepository
+* StationRepository
+* StationMapper
+* StationTypeMapper
+* BuildingMapper
+* CityMapper
+* StationDTO
+* StationTypeDTO
+* BuildingDTO
+* PositionDTO
 
 ## 3.2. Sequence Diagram (SD)
 
 ![US05-SD](svg/US05-SD-split-Sequence_Diagram.svg)
 
+### 3.2.1. Partial Sequence Diagrams
+
+![US05-SD](svg/US05-SD-partial-Create-Station-Object.svg)
+
+### 3.2.2.  
+![US05-SD](svg/US05-SD-partial-Get-BuildingDTO-List.svg)
+
+### 3.2.3.  
+![US05-SD](svg/US05-SD-partial-Get-Closest-City.svg)
+
+### 3.2.4.  
+![US05-SD](svg/US05-SD-partial-Get-StationTypeDTO-List.svg)
+
+
 ## 3.3. Class Diagram (CD)
 
-![US05-CD](svg/US05-CD.svg)
+![US01-CD](svg/US05-CD.svg)
