@@ -1,0 +1,21 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US21 : Save a Scenario"
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+Editor -> System: requests to save current scenario
+activate System
+System --> Editor: request save confirmation
+deactivate System
+
+Editor -> System: confirms save operation
+activate System
+System --> Editor: displays operation success
+System --> Editor: displays saved scenario details
+deactivate System
+
+@enduml
+

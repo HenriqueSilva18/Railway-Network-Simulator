@@ -1,0 +1,20 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US19 : Save a Map"
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+Editor -> System: requests to save current map
+activate System
+System --> Editor: request save confirmation
+deactivate System
+
+Editor -> System: confirms save operation
+activate System
+System --> Editor: displays operation success
+System --> Editor: displays saved map details
+deactivate System
+
+@enduml
