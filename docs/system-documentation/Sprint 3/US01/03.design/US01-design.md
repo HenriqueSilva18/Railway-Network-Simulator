@@ -40,9 +40,9 @@ Other software classes (i.e. Pure Fabrication) identified:
 
 ![US01-SD](svg/US01-SD-split-Sequence_Diagram.svg)
 
-### 3.2.1. Partial Sequence Diagram
+### 3.2.1. Partial Sequence Diagram - Create and Save Map
 
-![US01-SD](svg/US01-SD-create-and-save-map.svg)
+![US01-SD-partial](svg/US01-SD-create-and-save-map.svg)
 
 ## 3.3. Class Diagram (CD)
 

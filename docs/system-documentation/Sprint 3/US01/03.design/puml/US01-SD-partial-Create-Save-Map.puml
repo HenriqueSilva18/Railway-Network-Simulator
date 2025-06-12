@@ -47,10 +47,6 @@ activate CTRL
                     activate MAP_DTO
                     deactivate MAP_DTO
 
-                    MAP_MAPPER -> MAP_MAPPER: size = createSize(width, height)
-                    activate MAP_MAPPER
-                        MAP_MAPPER --> MAP_MAPPER: size
-                    deactivate MAP_MAPPER
 
                     MAP_MAPPER -> MAP_DTO: scale = getScale()
                     activate MAP_DTO

@@ -10,6 +10,7 @@ title Sequence Diagram: US01 - Create a Map
 actor "Editor" as editor
 participant ":CreateMapUI" as UI
 participant ":CreateMapController" as CTRL
+participant ":MapDTO" as DTO
 
 activate editor
 
@@ -21,7 +22,7 @@ activate editor
 
     editor -> UI: inputs requested data
         activate UI
-            
+            UI -> DTO**: create MapDTO(name, width, height, scale)
             UI --> editor: shows map data and requests confirmation
         deactivate UI
 

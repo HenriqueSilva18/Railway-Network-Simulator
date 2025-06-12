@@ -7,6 +7,11 @@ skinparam linetype polyline
 skinparam classAttributeIconSize 0
 
 class CreateMapUI {
+    + requestMapData()
+    + showMapData()
+    + requestConfirmation()
+    + displaySuccess()
+    + displayMapDetails()
 }
 
 class CreateMapController {
@@ -34,11 +39,13 @@ class Map {
     - nameID : String
     - size : Size
     - scale : double
+    + Map(nameID, size, scale)
 }
 
 class Size {
     - width : double
     - height : double
+    + Size(width, height)
 }
 
 class MapDTO {
@@ -46,6 +53,10 @@ class MapDTO {
     - width : double
     - height : double
     - scale : double
+    + getNameID()
+    + getWidth()
+    + getHeight()
+    + getScale()
 }
 
 class MapMapper {
