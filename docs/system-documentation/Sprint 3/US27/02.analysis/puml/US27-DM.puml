@@ -1,0 +1,67 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+hide methods
+hide circle
+
+title "Domain Model - US27 : Get Shortest Route"
+
+class Station {
+  name
+  position
+}
+
+class Edge {
+  from
+  to
+  distance
+  electrified
+}
+
+class Path {
+  stations
+  totalDistance
+  segments
+}
+
+class Graph {
+  stations
+  edges
+  filteredEdges
+}
+
+class DijkstraAlgorithm {
+  distances
+  predecessors
+  queue
+}
+
+class FilesUtils {
+  filePath
+  dotPath
+  pngPath
+}
+
+class ShortestPathFinder {
+  stations
+  fullGraph
+  filteredGraph
+  stationOrder
+}
+
+' Relationships
+Graph "1" -- "*" Station : contains >
+Graph "1" -- "*" Edge : contains >
+Edge "1" -- "2" Station : connects >
+Path "1" -- "*" Station : visits >
+DijkstraAlgorithm "1" -- "1" Graph : operates on >
+FilesUtils "1" -- "1" Graph : loads/saves >
+ShortestPathFinder "1" -- "1" Graph : manages >
+ShortestPathFinder "1" -- "1" FilesUtils : uses >
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US27 : Find Shortest Path"
+actor "User" as User
+participant ":System" as System
+
+activate User
+
+User -> System: requests to find shortest path
+activate System
+System --> User: requests scenario file path
+deactivate System
+
+User -> System: provides scenario file path
+activate System
+System --> User: displays network visualization
+System --> User: requests line type preference
+deactivate System
+
+User -> System: selects line type
+activate System
+System --> User: requests station input method
+deactivate System
+
+User -> System: selects input method
+activate System
+
+alt Input Method = File
+    System --> User: requests stop station file path
+    User -> System: provides stop station file path
+else Input Method = Manual
+    System --> User: displays available stations
+    User -> System: selects start station
+    System --> User: requests destination station
+    User -> System: selects destination station
+    System --> User: asks for intermediate stations
+    User -> System: selects intermediate stations (optional)
+end
+
+System --> User: displays path details
+System --> User: displays visualization with highlighted path
+deactivate System
+
+@enduml
