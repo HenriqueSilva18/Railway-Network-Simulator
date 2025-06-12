@@ -1,0 +1,110 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+hide methods
+hide circle
+
+title "Domain Model - US24 : Load Game Progress"
+
+class Player {
+  username
+  password
+  ownedLocomotives
+}
+
+class Scenario {
+  nameID
+  startDate
+  endDate
+  initialBudget
+  currentBudget
+}
+
+class Map {
+  nameID
+  scale
+}
+
+class Size {
+  width
+  height
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Locomotive {
+  nameID
+  owner
+  type
+  power
+  acceleration
+  topSpeed
+  actualSpeed
+  startYear
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
+  availabilityYear
+  acquisitionPrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor
+}
+
+class Station {
+  nameID
+  storageCapacity
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+' Relationships
+Player "1" -- "*" Scenario : plays >
+Scenario "*" -- "1" Map : uses >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "*" -- "1" Size : has >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+Map "1" -- "*" Position : tracks >
+Scenario "1" -- "*" Locomotive : configures >
+Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" IndustrySector : configures >
+Scenario "1" -- "*" Station : configures >
+Scenario "1" -- "*" City : configures >
+IndustrySector "1" -- "*" Industry : contains >
+
+@enduml

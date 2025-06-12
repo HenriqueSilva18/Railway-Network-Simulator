@@ -1,0 +1,21 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US24 : Load Game Progress"
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+
+Player -> System: requests to load saved game progress
+activate System
+System --> Player: displays list of saved games with details (timestamp, progress, etc.)
+deactivate System
+
+Player -> System: selects saved game to load
+activate System
+System --> Player: displays selected game details (budget, time, etc.)
+System --> Player: displays operation success
+System --> Player: restores game state
+deactivate System
+
+@enduml
