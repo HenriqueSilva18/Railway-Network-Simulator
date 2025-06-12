@@ -8,50 +8,17 @@ autonumber
 title Sequence Diagram: US10 - Assign a train to a route
 
 actor "Player" as player
-participant ":MapUI" as mapUI
-participant ":MapController" as mapCTRL
 participant ":AssignTrainUI" as UI
 participant ":AssignTrainController" as CTRL
+participant ":RouteDTO" as ROUTE_DTO
+participant ":PointOfRouteDTO" as POINT_DTO
+participant ":TrainDTO" as TRAIN_DTO
 
 activate player
 
-    player -> mapUI: asks to see available maps
-        activate mapUI
-        mapUI -> mapCTRL**: create()
-        mapUI -> mapCTRL: getAvailableMaps()
-            activate mapCTRL
-                ref over mapCTRL
-                    Get available maps
-                end
-            mapCTRL --> mapUI: availableMapsList
-            deactivate mapCTRL
-        mapUI --> player: shows list of available maps to play
-        deactivate mapUI
-
-    player -> mapUI: selects a map
-        activate mapUI
-        mapUI -> mapCTRL: getMapScenarios(mapID)
-            activate mapCTRL
-                ref over mapCTRL
-                    Get map scenarios
-                end
-            mapCTRL --> mapUI: mapScenarios
-            deactivate mapCTRL
-        mapUI --> player: shows list of available scenarios to play
-        deactivate mapUI
-    player -> mapUI: selects a scenario
-
-        activate mapUI
-        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
-            activate mapCTRL
-                ref over mapCTRL
-                    Load map
-                end
-            mapCTRL --> mapUI: mapLayout
-            deactivate mapCTRL
-        mapUI --> player: loads and displays the selected map
-        deactivate mapUI
-
+note left of UI
+    Retrieves available maps and scenarios and loads them
+end note
     player -> UI : asks to assign a train
         activate UI
             UI -> CTRL**: create()
@@ -59,50 +26,78 @@ activate player
             activate CTRL
 
             ref over CTRL
-                Get available routes
+                Get RouteDTO List
             end
 
-            CTRL --> UI: availableRoutesList
+            CTRL --> UI: listRouteDTO
             deactivate CTRL
             UI --> player: displays list of available routes with valid stations
         deactivate UI
 
     player -> UI : selects a route
         activate UI
-            UI -> CTRL: getRouteDetails(selectedRoute)
+            UI -> ROUTE_DTO** : createRouteDTO(selectedRoute)
+            UI -> CTRL: getRouteDetails(routeDTO)
             activate CTRL
 
             ref over CTRL
-                Get route details
+                Get Route Details DTO
             end
 
             CTRL --> UI: routeDetails
             deactivate CTRL
-            UI --> player: displays route details (name, station stops)
+            UI --> player: displays route details (name, route points)
             UI --> player: asks for confirmation
         deactivate UI
 
     player -> UI : confirms route selection
         activate UI
-            UI -> CTRL: getAvailableTrains()
+            UI -> CTRL: getRoutePoints(routeDTO)
             activate CTRL
 
             ref over CTRL
-                Get available trains
+                Get PointOfRouteDTO List
             end
 
-            CTRL --> UI: availableTrainsList
+            CTRL --> UI: listPointOfRouteDTO
             deactivate CTRL
-            UI --> player: displays list of available trains
+            UI --> player: displays list of Points-of-Route
         deactivate UI
 
-    player -> UI : selects a train
-        activate UI
-            UI -> CTRL: getTrainDetails(selectedTrain)
+    loop for each Point-of-Route
+        player -> UI : selects cargo mode (FULL/HALF/AVAILABLE)
+            activate UI
+            UI -> POINT_DTO** : createPointOfRouteDTO(pointOfRoute, cargoMode)
+            UI -> CTRL: setCargoMode(pointOfRouteDTO)
             activate CTRL
 
             ref over CTRL
-                Get train details
+                Update PointOfRouteDTO
+            end
+
+            CTRL --> UI: success
+            deactivate CTRL
+    end
+
+    UI -> CTRL: getAvailableTrains()
+    activate CTRL
+
+    ref over CTRL
+        Get TrainDTO List
+    end
+
+    CTRL --> UI: listTrainDTO
+    deactivate CTRL
+    UI --> player: displays list of available trains
+deactivate UI
+    player -> UI : selects a train
+        activate UI
+            UI -> TRAIN_DTO** : createTrainDTO(selectedTrain)
+            UI -> CTRL: getTrainDetails(trainDTO)
+            activate CTRL
+
+            ref over CTRL
+                Get Train Details DTO
             end
 
             CTRL --> UI: trainDetails
@@ -113,17 +108,17 @@ activate player
 
     player -> UI : confirms assignment
         activate UI
-            UI -> CTRL: assignTrainToRoute(selectedRoute, selectedTrain)
+            UI -> CTRL: assignTrainToRoute(routeDTO, trainDTO)
             activate CTRL
 
             ref over CTRL
-                Assign train to route
+                Create Train-Route Assignment DTO
             end
 
             CTRL --> UI: assignmentDetails
             deactivate CTRL
             UI --> player: displays operation success
-            UI --> player: displays train, route and station details (including list of cargoes to be picked up)
+            UI --> player: displays train, route and station details (including list of cargoes to be picked up and cargo modes)
         deactivate UI
 
 deactivate player

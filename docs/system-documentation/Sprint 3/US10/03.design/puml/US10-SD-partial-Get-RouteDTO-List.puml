@@ -1,0 +1,86 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "routeRepository\n:RouteRepository" as ROUTE_REPO
+participant "routes\n:Routes" as ROUTES
+participant ":List<Route>" as LIST
+participant ":RouteMapper" as ROUTE_MAPPER
+participant "listRoute\n:List<Route>" as ROUTE_LIST
+participant "listRouteDTO\n:List<RouteDTO>" as ROUTE_LIST_DTO
+participant "routeDTO\n:RouteDTO" as ROUTE_DTO
+
+autonumber 3
+-> CTRL: getAvailableRoutes()
+
+autonumber 3.1
+activate CTRL
+    group Get RouteDTO List
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getRouteRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: routeRepository
+        deactivate REPOS_SINGLETON
+
+        CTRL -> ROUTE_REPO: getListOfRoutes()
+        activate ROUTE_REPO
+            ROUTE_REPO -> ROUTES: getListOfRoutes()
+            activate ROUTES
+
+                ROUTES --> ROUTE_LIST**: create()
+
+                loop for each known Route
+                    ROUTES -> LIST: route = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    ROUTES -> ROUTE_LIST: add(route)
+                    activate ROUTE_LIST
+                        deactivate ROUTE_LIST
+                end
+
+                ROUTES --> ROUTE_REPO: listRoute
+            deactivate ROUTES
+
+            ROUTE_REPO --> CTRL: listRoute
+        deactivate ROUTE_REPO
+
+        CTRL -> ROUTE_MAPPER: toDTO(listRoute)
+        activate ROUTE_MAPPER
+
+            ROUTE_MAPPER --> ROUTE_LIST_DTO**: create()
+
+            loop for each object in listRoute
+                ROUTE_MAPPER -> ROUTE_LIST: route = get(i)
+                activate ROUTE_LIST
+                    deactivate ROUTE_LIST
+
+                ROUTE_MAPPER -> ROUTE_MAPPER: routeDTO = toDTO(route)
+                activate ROUTE_MAPPER
+                    ROUTE_MAPPER --> ROUTE_DTO**: create()
+                    deactivate ROUTE_MAPPER
+
+                ROUTE_MAPPER -> ROUTE_LIST_DTO: add(routeDTO)
+                activate ROUTE_LIST_DTO
+                    deactivate ROUTE_LIST_DTO
+            end
+
+            ROUTE_MAPPER --> CTRL: listRouteDTO
+        deactivate ROUTE_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listRouteDTO
+deactivate CTRL
+
+@enduml 

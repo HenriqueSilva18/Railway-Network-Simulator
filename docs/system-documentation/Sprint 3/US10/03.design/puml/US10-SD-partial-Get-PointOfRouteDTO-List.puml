@@ -1,0 +1,74 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "routeRepository\n:RouteRepository" as ROUTE_REPO
+participant "routes\n:Routes" as ROUTES
+participant ":List<PointOfRoute>" as LIST
+participant ":PointOfRouteMapper" as POINT_MAPPER
+participant "listPointOfRoute\n:List<PointOfRoute>" as POINT_LIST
+participant "listPointOfRouteDTO\n:List<PointOfRouteDTO>" as POINT_LIST_DTO
+participant "pointOfRouteDTO\n:PointOfRouteDTO" as POINT_DTO
+
+autonumber 3
+-> CTRL: getRoutePoints(routeDTO)
+
+autonumber 3.1
+activate CTRL
+    group Get PointOfRouteDTO List
+
+        CTRL -> ROUTE_REPO: getRoutePoints(routeDTO.getId())
+        activate ROUTE_REPO
+            ROUTE_REPO -> ROUTES: getRoutePoints(routeId)
+            activate ROUTES
+
+                ROUTES --> POINT_LIST**: create()
+
+                loop for each PointOfRoute in route
+                    ROUTES -> LIST: point = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    ROUTES -> POINT_LIST: add(point)
+                    activate POINT_LIST
+                        deactivate POINT_LIST
+                end
+
+                ROUTES --> ROUTE_REPO: listPointOfRoute
+            deactivate ROUTES
+
+            ROUTE_REPO --> CTRL: listPointOfRoute
+        deactivate ROUTE_REPO
+
+        CTRL -> POINT_MAPPER: toDTO(listPointOfRoute)
+        activate POINT_MAPPER
+
+            POINT_MAPPER --> POINT_LIST_DTO**: create()
+
+            loop for each object in listPointOfRoute
+                POINT_MAPPER -> POINT_LIST: point = get(i)
+                activate POINT_LIST
+                    deactivate POINT_LIST
+
+                POINT_MAPPER -> POINT_MAPPER: pointDTO = toDTO(point)
+                activate POINT_MAPPER
+                    POINT_MAPPER --> POINT_DTO**: create()
+                    deactivate POINT_MAPPER
+
+                POINT_MAPPER -> POINT_LIST_DTO: add(pointDTO)
+                activate POINT_LIST_DTO
+                    deactivate POINT_LIST_DTO
+            end
+
+            POINT_MAPPER --> CTRL: listPointOfRouteDTO
+        deactivate POINT_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listPointOfRouteDTO
+deactivate CTRL
+
+@enduml 

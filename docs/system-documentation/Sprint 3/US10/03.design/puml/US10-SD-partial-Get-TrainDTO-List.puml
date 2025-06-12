@@ -1,0 +1,74 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTrainController" as CTRL
+participant "trainRepository\n:TrainRepository" as TRAIN_REPO
+participant "trains\n:Trains" as TRAINS
+participant ":List<Train>" as LIST
+participant ":TrainMapper" as TRAIN_MAPPER
+participant "listTrain\n:List<Train>" as TRAIN_LIST
+participant "listTrainDTO\n:List<TrainDTO>" as TRAIN_LIST_DTO
+participant "trainDTO\n:TrainDTO" as TRAIN_DTO
+
+autonumber 3
+-> CTRL: getAvailableTrains()
+
+autonumber 3.1
+activate CTRL
+    group Get TrainDTO List
+
+        CTRL -> TRAIN_REPO: getListOfTrains()
+        activate TRAIN_REPO
+            TRAIN_REPO -> TRAINS: getListOfTrains()
+            activate TRAINS
+
+                TRAINS --> TRAIN_LIST**: create()
+
+                loop for each known Train
+                    TRAINS -> LIST: train = get(i)
+                    activate LIST
+                        deactivate LIST
+
+                    TRAINS -> TRAIN_LIST: add(train)
+                    activate TRAIN_LIST
+                        deactivate TRAIN_LIST
+                end
+
+                TRAINS --> TRAIN_REPO: listTrain
+            deactivate TRAINS
+
+            TRAIN_REPO --> CTRL: listTrain
+        deactivate TRAIN_REPO
+
+        CTRL -> TRAIN_MAPPER: toDTO(listTrain)
+        activate TRAIN_MAPPER
+
+            TRAIN_MAPPER --> TRAIN_LIST_DTO**: create()
+
+            loop for each object in listTrain
+                TRAIN_MAPPER -> TRAIN_LIST: train = get(i)
+                activate TRAIN_LIST
+                    deactivate TRAIN_LIST
+
+                TRAIN_MAPPER -> TRAIN_MAPPER: trainDTO = toDTO(train)
+                activate TRAIN_MAPPER
+                    TRAIN_MAPPER --> TRAIN_DTO**: create()
+                    deactivate TRAIN_MAPPER
+
+                TRAIN_MAPPER -> TRAIN_LIST_DTO: add(trainDTO)
+                activate TRAIN_LIST_DTO
+                    deactivate TRAIN_LIST_DTO
+            end
+
+            TRAIN_MAPPER --> CTRL: listTrainDTO
+        deactivate TRAIN_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listTrainDTO
+deactivate CTRL
+
+@enduml 
