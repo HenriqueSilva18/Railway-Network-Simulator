@@ -1,5 +1,5 @@
 # Algorithm Analysis US14
-In this section, we will analyze the different methods of Fleury's algorithm developed in US14.
+In this section, we'll analyze the different methods of Fleury's algorithm developed in US14.
 
 ---
 
@@ -18,8 +18,8 @@ In the "ANALYSIS" column of the following tables, specific letters and variables
 * **$C$ (Comparison/Conditional Check):**
   This symbol denotes a **comparison operation** or a **conditional check** (e.g., `if (condition)`). It includes evaluating boolean expressions and loop conditions. For loops, an additional $C$ often appears, representing the final check that causes the loop to terminate.
 
-* **$L$ (Lookup/Access Operation):
-  **This symbol indicates an operation where a value is **looked up or accessed** from a data structure, such as retrieving an element from a map (`graph.get(key)`) or a list (`list.get(index)`). These are typically considered constant time operations for the types of data structures implied (e.g., hash maps, array-backed lists).
+* **$L$ (Lookup/Access Operation):**
+  This symbol indicates an operation where a value is **looked up or accessed** from a data structure, such as retrieving an element from a map (`graph.get(key)`) or a list (`list.get(index)`). These are typically considered constant time operations for the types of data structures implied (e.g., hash maps, array-backed lists).
 
 * **$Op$ (General Operation):**
   This is a general term for an **operation** that doesn't fit neatly into the more specific categories of Assignment, Comparison, or Lookup. It can represent a `break` statement within a loop, a display action, or other singular, constant-time actions.
@@ -41,14 +41,14 @@ The `calculateNodeDegrees` method calculates the degree of each node (station) i
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function calculateNodeDegrees(graph)` | **$\mathcal{O}(n)$** |
-| `&emsp; degreeMap := new empty Map` | $1A$ |
-| `&emsp; for each station in graph.keySet()` | $(n+1)C$ |
-| `&emsp; &emsp; edges := graph.get(station)` | $nL$ |
-| `&emsp; &emsp; degree := 0` | $nA$ |
-| `&emsp; &emsp; &emsp;if edges is not null` | $nC$ |
-| `&emsp; &emsp; &emsp; &emsp;degree := size of edges` | $\leq nA$ |
-| `&emsp; &emsp; &emsp; degreeMap.put(station, degree)` | $nA$ |
-| `&emsp; return degreeMap` | $1R$ |
+| `    degreeMap := new empty Map` | $1A$ |
+| `    for each station in graph.keySet()` | $(n+1)C$ |
+| `        edges := graph.get(station)` | $nL$ |
+| `        degree := 0` | $nA$ |
+| `        if edges is not null` | $nC$ |
+| `            degree := size of edges` | $\leq nA$ |
+| `        degreeMap.put(station, degree)` | $nA$ |
+| `    return degreeMap` | $1R$ |
 
 (graph: Map\_String\_ListOfEdge)
 
@@ -68,12 +68,12 @@ The `checkEulerian` method checks a map of node degrees to count how many nodes 
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function checkEulerian(degreeMap, oddStations)` | **$\mathcal{O}(n)$** |
-| `&emsp; count := 0` | $1A$ |
-| `&emsp; for each entry (station, d) in degreeMap.entrySet()` | $(n+1)C$ |
-| `&emsp; &emsp; if d % 2 is not 0` | $nC$ |
-| `&emsp; &emsp; &emsp; oddStations.add(station)` | $\leq nA$ |
-| `&emsp; &emsp; &emsp; count := count + 1` | $\leq nA$ |
-| `&emsp; return count` | $1R$ |
+| `    count := 0` | $1A$ |
+| `    for each entry (station, d) in degreeMap.entrySet()` | $(n+1)C$ |
+| `        if d % 2 is not 0` | $nC$ |
+| `            oddStations.add(station)` | $\leq nA$ |
+| `            count := count + 1` | $\leq nA$ |
+| `    return count` | $1R$ |
 
 *Table 2: Method checkEulerian*
 
@@ -91,19 +91,19 @@ The `chooseStartStation` method determines a set of valid starting stations and 
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function chooseStartStation(degreeMap, stations, oddCount, oddStations)` | **$\mathcal{O}(n)$** |
-| `&emsp; availableStations := new empty List` | $1A$ |
-| `&emsp; for each station in stations` | $(n+1)C$ |
-| `&emsp; &emsp; if degreeMap.getOrDefault(station, 0) > 0` | $nL + nC$ |
-| `&emsp; &emsp; &emsp; availableStations.add(station)` | $\leq nA$ |
-| `&emsp; stationsToShow := availableStations` | $1A$ |
-| `&emsp; &emsp; if oddCount is 2` | $1C$ |
-| `&emsp; &emsp; &emsp; stationsToShow := oddStations` | $\leq 1A$ |
-| `&emsp; startStation := null` | $1A$ |
-| `&emsp; validChoice := false` | $1A$ |
-| `&emsp; while not validChoice` | $(k+1)C$ |
-| `&emsp; &emsp; display stationsToShow` | $k \cdot \mathcal{O}(n)$ |
-| `&emsp; &emsp; choice := read user input` | $kA$ |
-| `&emsp; return startStation` | $1R$ |
+| `    availableStations := new empty List` | $1A$ |
+| `    for each station in stations` | $(n+1)C$ |
+| `        if degreeMap.getOrDefault(station, 0) > 0` | $nL + nC$ |
+| `            availableStations.add(station)` | $\leq nA$ |
+| `    stationsToShow := availableStations` | $1A$ |
+| `    if oddCount is 2` | $1C$ |
+| `        stationsToShow := oddStations` | $\leq 1A$ |
+| `    startStation := null` | $1A$ |
+| `    validChoice := false` | $1A$ |
+| `    while not validChoice` | $(k+1)C$ |
+| `        display stationsToShow` | $k \cdot \mathcal{O}(n)$ |
+| `        choice := read user input` | $kA$ |
+| `    return startStation` | $1R$ |
 
 *Table 3: Method chooseStartStation*
 
@@ -121,27 +121,27 @@ The `fleuryVisit` method implements the core traversal logic of Fleury's algorit
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `procedure fleuryVisit(v, gLocal, stations, path)` | **$\mathcal{O}(m \cdot n^3)$** |
-| `&emsp; edges := gLocal.get(v)` | $1L$ |
-| `&emsp; while edges is not null and size of edges > 0` | $(m+1)C$ |
-| `&emsp; &emsp; chosen := edges.get(0)` | $mA$ |
-| `&emsp; &emsp; &emsp; if chosen.from is equal to v` | $mC$ |
-| `&emsp; &emsp; &emsp; &emsp; w := chosen.to` | $\leq mA$ |
-| `&emsp; &emsp; &emsp; else w := chosen.from` | $\leq mA$ |
-| `&emsp; &emsp; if size of edges > 1` | $mC$ |
-| `&emsp; &emsp; &emsp; for i from 0 to size of edges - 1` | $\mathcal{O}(m \cdot \text{grau}(v))$ |
-| `&emsp; &emsp; &emsp; &emsp; cand := edges.get(i)` | $k \cdot \text{grau}(v) \cdot A$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; if cand.from is equal to v` | $k \cdot \text{grau}(v) \cdot C$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; u := cand.to` | $\leq k \cdot \text{grau}(v) \cdot A$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; else u := cand.from` | $\leq k \cdot \text{grau}(v) \cdot A$ |
-| `&emsp; &emsp; &emsp; &emsp; if isValidNextEdge(v, u, gLocal, stations)` | $k \cdot \text{grau}(v) \cdot \mathcal{O}(n^3)$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; chosen := cand` | $\leq mA$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; w := u` | $\leq mA$ |
-| `&emsp; &emsp; &emsp; &emsp; &emsp; break` | $\leq m(\text{Op})$ |
-| `&emsp; &emsp; removeEdge(v, w, gLocal)` | $mA$ |
-| `&emsp; &emsp; path.add(v)` | $mA$ |
-| `&emsp; &emsp; v := w` | $mA$ |
-| `&emsp; &emsp; edges := gLocal.get(v)` | $mL$ |
-| `&emsp; path.add(v)` | $1A$ |
+| `    edges := gLocal.get(v)` | $1L$ |
+| `    while edges is not null and size of edges > 0` | $(m+1)C$ |
+| `        chosen := edges.get(0)` | $mA$ |
+| `        if chosen.from is equal to v` | $mC$ |
+| `            w := chosen.to` | $\leq mA$ |
+| `        else w := chosen.from` | $\leq mA$ |
+| `        if size of edges > 1` | $mC$ |
+| `            for i from 0 to size of edges - 1` | $\mathcal{O}(m \cdot \text{grau}(v))$ |
+| `                cand := edges.get(i)` | $k \cdot \text{grau}(v) \cdot A$ |
+| `                if cand.from is equal to v` | $k \cdot \text{grau}(v) \cdot C$ |
+| `                    u := cand.to` | $\leq k \cdot \text{grau}(v) \cdot A$ |
+| `                else u := cand.from` | $\leq k \cdot \text{grau}(v) \cdot A$ |
+| `                if isValidNextEdge(v, u, gLocal, stations)` | $k \cdot \text{grau}(v) \cdot \mathcal{O}(n^3)$ |
+| `                    chosen := cand` | $\leq mA$ |
+| `                    w := u` | $\leq mA$ |
+| `                    break` | $\leq m(\text{Op})$ |
+| `        removeEdge(v, w, gLocal)` | $mA$ |
+| `        path.add(v)` | $mA$ |
+| `        v := w` | $mA$ |
+| `        edges := gLocal.get(v)` | $mL$ |
+| `    path.add(v)` | $1A$ |
 
 (v: String, gLocal: Map\_String\_ListOfEdge, stations: List\_String, path: List\_String)
 
@@ -161,15 +161,15 @@ The `isValidNextEdge` method is a helper function for Fleury's algorithm that de
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function isValidNextEdge(u, v, gLocal, stations)` | **$\mathcal{O}(n^3)$** |
-| `&emsp; edges := gLocal.get(u)` | $1L$ |
-| `&emsp; if size of edges is 1` | $1C$ |
-| `&emsp; &emsp; return true` | $1R$ |
-| `&emsp; removeEdge(u, v, gLocal)` | $1A$ |
-| `&emsp; closure := MatrixUtils.computeTransitiveClosure(gLocal, stations)` | $\mathcal{O}(n^3)$ |
-| `&emsp; stillConnected := closure[stations.indexOf(u)][stations.indexOf(v)]` | $2L + 1A$ |
-| `&emsp; gLocal.get(u).add(new Edge(u, v, false, 0))` | $1A$ |
-| `&emsp; gLocal.get(v).add(new Edge(u, v, false, 0))` | $1A$ |
-| `&emsp; return stillConnected` | $1R$ |
+| `    edges := gLocal.get(u)` | $1L$ |
+| `    if size of edges is 1` | $1C$ |
+| `        return true` | $1R$ |
+| `    removeEdge(u, v, gLocal)` | $1A$ |
+| `    closure := MatrixUtils.computeTransitiveClosure(gLocal, stations)` | $\mathcal{O}(n^3)$ |
+| `    stillConnected := closure[stations.indexOf(u)][stations.indexOf(v)]` | $2L + 1A$ |
+| `    gLocal.get(u).add(new Edge(u, v, false, 0))` | $1A$ |
+| `    gLocal.get(v).add(new Edge(u, v, false, 0))` | $1A$ |
+| `    return stillConnected` | $1R$ |
 
 *Table 5: Method isValidNextEdge*
 
@@ -187,14 +187,14 @@ The `cloneGraph` method creates a copy of a graph. It iterates through every ver
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function cloneGraph(graph)` | **$\mathcal{O}(n+m)$** |
-| `&emsp; copy := new empty Map` | $1A$ |
-| `&emsp; for each u_key in graph.keySet()` | $(n+1)C$ |
-| `&emsp; &emsp; list_val := graph.get(u_key)` | $nL$ |
-| `&emsp; &emsp; newList := new empty List` | $nA$ |
-| `&emsp; &emsp; for each e_item in list_val` | $(m+n)C$ |
-| `&emsp; &emsp; &emsp; newList.add(new Edge(e_item.from, e_item.to, e_item.electrified, e_item.distance))` | $mA$ |
-| `&emsp; &emsp; copy.put(u_key, newList)` | $nA$ |
-| `&emsp; return copy` | $1R$ |
+| `    copy := new empty Map` | $1A$ |
+| `    for each u_key in graph.keySet()` | $(n+1)C$ |
+| `        list_val := graph.get(u_key)` | $nL$ |
+| `        newList := new empty List` | $nA$ |
+| `        for each e_item in list_val` | $(m+n)C$ |
+| `            newList.add(new Edge(e_item.from, e_item.to, e_item.electrified, e_item.distance))` | $mA$ |
+| `        copy.put(u_key, newList)` | $nA$ |
+| `    return copy` | $1R$ |
 
 *Table 6: Method cloneGraph*
 
@@ -212,18 +212,18 @@ The `removeEdge` method is a utility function designed to remove an undirected e
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `procedure removeEdge(u, v, gLocal)` | **$\mathcal{O}(\text{grau}(u)+\text{grau}(v))$** |
-| `&emsp; lu := gLocal.get(u)` | $1L$ |
-| `&emsp; for i from 0 to size of lu - 1` | $(\text{grau}(u)+1)C$ |
-| `&emsp; &emsp; e := lu.get(i)` | $\text{grau}(u) \cdot L$ |
-| `&emsp; &emsp; if (e.from is equal to u and e.to is equal to v) or (e.from is equal to v and e.to is equal to u)` | $\text{grau}(u) \cdot C$ |
-| `&emsp; &emsp; &emsp; lu.remove(i)` | $\leq 1A$ |
-| `&emsp; &emsp; &emsp; break` | $\leq 1(\text{Op})$ |
-| `&emsp; lv := gLocal.get(v)` | $1L$ |
-| `&emsp; for i from 0 to size of lv - 1` | $(\text{grau}(v)+1)C$ |
-| `&emsp; &emsp; e := lv.get(i)` | $\text{grau}(v) \cdot L$ |
-| `&emsp; &emsp; if (e.from is equal to u and e.to is equal to v) or (e.from is equal to v and e.to is equal to u)` | $\text{grau}(v) \cdot C$ |
-| `&emsp; &emsp; &emsp; lv.remove(i)` | $\leq 1A$ |
-| `&emsp; &emsp; &emsp; break` | $\leq 1(\text{Op})$ |
+| `    lu := gLocal.get(u)` | $1L$ |
+| `    for i from 0 to size of lu - 1` | $(\text{grau}(u)+1)C$ |
+| `        e := lu.get(i)` | $\text{grau}(u) \cdot L$ |
+| `        if (e.from is equal to u and e.to is equal to v) or (e.from is equal to v and e.to is equal to u)` | $\text{grau}(u) \cdot C$ |
+| `            lu.remove(i)` | $\leq 1A$ |
+| `            break` | $\leq 1(\text{Op})$ |
+| `    lv := gLocal.get(v)` | $1L$ |
+| `    for i from 0 to size of lv - 1` | $(\text{grau}(v)+1)C$ |
+| `        e := lv.get(i)` | $\text{grau}(v) \cdot L$ |
+| `        if (e.from is equal to u and e.to is equal to v) or (e.from is equal to v and e.to is equal to u)` | $\text{grau}(v) \cdot C$ |
+| `            lv.remove(i)` | $\leq 1A$ |
+| `            break` | $\leq 1(\text{Op})$ |
 
 *Table 7: Method removeEdge*
 
@@ -241,32 +241,32 @@ The `computeEulerianPath` method arranges the entire process of finding an Euler
 | **CODE** | **ANALYSIS** |
 |---|---|
 | `function computeEulerianPath(graph, stationOrder)` | **$\mathcal{O}(m \cdot n^3)$** |
-| `&emsp; degreeMap := calculateNodeDegrees(graph)` | $\mathcal{O}(n)$ |
-| `&emsp; closure := MatrixUtils.computeTransitiveClosure(graph, stationOrder)` | $\mathcal{O}(n^3)$ |
-| `&emsp; ref := null` | $1A$ |
-| `&emsp; for each s_item in stationOrder` | $(n+1)C$ |
-| `&emsp; &emsp; if grau(s_item) > 0` | $nL + nC$ |
-| `&emsp; &emsp; &emsp; ref := s_item` | $\leq 1A$ |
-| `&emsp; &emsp; &emsp; break` | $\leq 1(\text{Op})$ |
-| `&emsp; if ref is null, return empty List` | $1C + 1R$ |
-| `&emsp; refIdx := stationOrder.indexOf(ref)` | $\mathcal{O}(n)$ |
-| `&emsp; for each s_item in stationOrder` | $(n+1)C$ |
-| `&emsp; &emsp; if grau(s_item) > 0` | $nL + nC$ |
-| `&emsp; &emsp; &emsp; idx := stationOrder.indexOf(s_item)` | $n \cdot \mathcal{O}(n) = \mathcal{O}(n^2)$ |
-| `&emsp; &emsp; &emsp; if not closure[refIdx][idx]` | $nC$ |
-| `&emsp; &emsp; &emsp; &emsp; return null` | $\leq 1R$ |
-| `&emsp; oddStations := new empty List` | $1A$ |
-| `&emsp; oddCount := checkEulerian(degreeMap, oddStations)` | $\mathcal{O}(n)$ |
-| `&emsp; if oddCount is not 0 and not 2, return null` | $1C + 1R$ |
-| `&emsp; display Eulerian properties` | $1(\text{Op})$ |
-| `&emsp; startNode := chooseStartStation(degreeMap, stationOrder, oddCount, oddStations)` | $\mathcal{O}(n)$ |
-| `&emsp; gLocal_map := cloneGraph(graph)` | $\mathcal{O}(n + m)$ |
-| `&emsp; path_list := new empty List` | $1A$ |
-| `&emsp; fleuryVisit(startNode, gLocal_map, stationOrder, path_list)` | $\mathcal{O}(m \cdot n^3)$ |
-| `&emsp; return path_list` | $1R$ |
+| `    degreeMap := calculateNodeDegrees(graph)` | $\mathcal{O}(n)$ |
+| `    closure := MatrixUtils.computeTransitiveClosure(graph, stationOrder)` | $\mathcal{O}(n^3)$ |
+| `    ref := null` | $1A$ |
+| `    for each s_item in stationOrder` | $(n+1)C$ |
+| `        if grau(s_item) > 0` | $nL + nC$ |
+| `            ref := s_item` | $\leq 1A$ |
+| `            break` | $\leq 1(\text{Op})$ |
+| `    if ref is null, return empty List` | $1C + 1R$ |
+| `    refIdx := stationOrder.indexOf(ref)` | $\mathcal{O}(n)$ |
+| `    for each s_item in stationOrder` | $(n+1)C$ |
+| `        if grau(s_item) > 0` | $nL + nC$ |
+| `            idx := stationOrder.indexOf(s_item)` | $n \cdot \mathcal{O}(n) = \mathcal{O}(n^2)$ |
+| `            if not closure[refIdx][idx]` | $nC$ |
+| `                return null` | $\leq 1R$ |
+| `    oddStations := new empty List` | $1A$ |
+| `    oddCount := checkEulerian(degreeMap, oddStations)` | $\mathcal{O}(n)$ |
+| `    if oddCount is not 0 and not 2, return null` | $1C + 1R$ |
+| `    display Eulerian properties` | $1(\text{Op})$ |
+| `    startNode := chooseStartStation(degreeMap, stationOrder, oddCount, oddStations)` | $\mathcal{O}(n)$ |
+| `    gLocal_map := cloneGraph(graph)` | $\mathcal{O}(n + m)$ |
+| `    path_list := new empty List` | $1A$ |
+| `    fleuryVisit(startNode, gLocal_map, stationOrder, path_list)` | $\mathcal{O}(m \cdot n^3)$ |
+| `    return path_list` | $1R$ |
 
 *Table 8: Method computeEulerianPath*
 
 This complexity is determined by the step with the highest complexity in its sequence of operations. The dominant operation is the call to the **`fleuryVisit`** method. As previously analyzed, `fleuryVisit` has a complexity of $\mathcal{O}(m \cdot n^3)$ because, for many of the $m$ edges, it must check for bridges. In the implementation, this check invokes the `computeTransitiveClosure` function, which has a cubic cost of $\mathcal{O}(n^3)$.
-
 All other sequential operations, such as the initial call to `computeTransitiveClosure` ($\mathcal{O}(n^3)$) and `cloneGraph` ($\mathcal{O}(n+m)$), are of a lower or equal order of complexity and are therefore absorbed by the dominant `fleuryVisit` step.
+
