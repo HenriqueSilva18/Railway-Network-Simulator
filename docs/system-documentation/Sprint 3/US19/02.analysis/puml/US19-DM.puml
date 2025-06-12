@@ -1,0 +1,62 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+
+hide methods
+hide circle
+
+title "Domain Model - US19 : Save a Map"
+
+
+class Editor {
+  username
+  password
+  createdMaps
+}
+
+class Map {
+  nameID
+  scale
+}
+
+class Size {
+  width
+  height
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+' Relationships
+Editor "1" -- "*" Map : creates/saves/loads >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "*" -- "1" Size : has >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+Map "1" -- "*" Position : tracks >
+
+@enduml

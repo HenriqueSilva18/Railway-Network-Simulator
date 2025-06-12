@@ -8,7 +8,7 @@ skinparam class {
 hide circle
 hide methods
 
-title "System Sequence Diagram - US05 : Build a Station"
+title "Domain Model - US05 : Build a Station"
 
 class Player {
   username
