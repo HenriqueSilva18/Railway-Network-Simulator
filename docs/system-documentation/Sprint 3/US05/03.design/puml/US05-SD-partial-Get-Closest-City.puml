@@ -4,35 +4,28 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":StationBuildingController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "cityRepository\n:CityRepository" as CITY_REPO
+
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant "map\n:Map" as MAP
 participant "cities\n:Cities" as CITIES
 participant ":List<City>" as CITY_LIST
-participant ":CityMapper" as CITY_MAPPER
 participant ":City" as CITY
-participant ":Position" as POSITION
 
 autonumber 3
--> CTRL: getClosestCity(positionDTO)
+-> CTRL: getClosestCity(position)
 
 autonumber 3.1
 activate CTRL
     group Get Closest City
 
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
-
-        CTRL -> REPOS_SINGLETON: getCityRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: cityRepository
-        deactivate REPOS_SINGLETON
-
-        CTRL -> CITY_REPO: getListOfCities()
-        activate CITY_REPO
-            CITY_REPO -> CITIES: getListOfCities()
+        CTRL -> MAP_REPO: getListOfCities()
+        activate MAP_REPO
+            MAP_REPO -> MAPS: getListOfCities()
+            activate MAPS
+            MAPS -> MAP: getListOfCities()
+            activate MAP
+            MAP  -> CITIES: getListOfCities()
             activate CITIES
                 CITIES --> CITY_LIST**: create()
 
@@ -46,13 +39,15 @@ activate CTRL
                         deactivate CITY_LIST
                 end
 
-                CITIES --> CITY_REPO: cityList
+                CITIES --> MAP: cityList
             deactivate CITIES
+            MAP --> MAPS: cityList
+            deactivate MAP
+            MAPS --> MAP_REPO: cityList
+        deactivate MAPS
 
-            CITY_REPO --> CTRL: cityList
-        deactivate CITY_REPO
-
-        CTRL -> POSITION**: create(positionDTO.x, positionDTO.y)
+            MAP_REPO --> CTRL: cityList
+        deactivate MAP_REPO
 
         loop for each city in cityList
             CTRL -> CITY: getPosition()

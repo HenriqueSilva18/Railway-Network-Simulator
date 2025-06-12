@@ -10,10 +10,13 @@ actor "Player" as PLAYER
 participant ":StationBuildingUI" as UI
 participant ":StationBuildingController" as CTRL
 participant ":StationDTO" as STATION_DTO
-participant ":PositionDTO" as POS_DTO
+participant ":Position" as POSITION
 
 activate PLAYER
 
+note left of UI
+    Retrieves available maps and scenarios and loads them
+end note
     PLAYER -> UI : asks to build a station
     activate UI
         UI -> CTRL : getStationTypes()
@@ -35,8 +38,7 @@ activate PLAYER
 
     PLAYER -> UI : provides location coordinates
     activate UI
-        UI -> POS_DTO** : createPositionDTO(x, y)
-        UI -> STATION_DTO : setPosition(positionDTO)
+        UI -> POSITION** : create(x, y)
 
         alt station type is "STATION"
             UI --> PLAYER : requests center point selection (NE, SE, NW, SW)
@@ -63,7 +65,7 @@ activate PLAYER
     activate UI
         UI -> STATION_DTO : setDefaultBuilding(buildingDTO)
         
-        UI -> CTRL : getClosestCity(positionDTO)
+        UI -> CTRL : getClosestCity(position)
         activate CTRL
             ref over CTRL
                 Get Closest City
@@ -72,7 +74,7 @@ activate PLAYER
         deactivate CTRL
 
         UI -> STATION_DTO : setProposedName(cityName)
-
+        UI -> STATION_DTO : setPosition(position)
 
         UI --> PLAYER : proposes station name based on closest city
         UI --> PLAYER : displays station cost and economic radius

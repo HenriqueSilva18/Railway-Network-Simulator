@@ -4,11 +4,12 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":StationBuildingController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
-participant "stationRepository\n:StationRepository" as STATION_REPO
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant "map\n:Map" as MAP
+participant "scenarios:Scenarios" as SCNS
+participant "scenario:Scenario" as SCN
 participant "stations\n:Stations" as STATIONS
-
 participant ":StationMapper" as STATION_MAPPER
 participant "stationDTO\n:StationDTO" as STATION_DTO
 participant "station\n:Station" as STATION
@@ -20,19 +21,18 @@ autonumber 22.1
 activate CTRL
     group Create Station Object
 
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
 
-        CTRL -> REPOS_SINGLETON: getStationRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: stationRepository
-        deactivate REPOS_SINGLETON
-
-        CTRL -> STATION_REPO: createStation(stationDTO)
-        activate STATION_REPO
-            STATION_REPO -> STATIONS: createStation(stationDTO)
+        CTRL -> MAP_REPO: createStation(stationDTO)
+        activate MAP_REPO
+            MAP_REPO -> MAPS: createStation(stationDTO)
+            activate MAPS
+            MAPS -> MAP: createStation(stationDTO)
+            activate MAP
+            MAP -> SCNS: createStation(stationDTO)
+            activate SCNS
+            SCNS -> SCN: createStation(stationDTO)
+            activate SCN
+            SCN -> STATIONS: createStation(stationDTO)
             activate STATIONS
                 STATIONS -> STATION_MAPPER: station = toModel(stationDTO)
                 activate STATION_MAPPER
@@ -42,13 +42,8 @@ activate CTRL
 
                     STATION_MAPPER -> STATION_DTO: position = getPosition()
                     activate STATION_DTO
-                        STATION_DTO --> STATION_MAPPER: positionDTO
+                        STATION_DTO --> STATION_MAPPER: position
                     deactivate STATION_DTO
-
-                    STATION_MAPPER -> STATION_MAPPER: position = createPosition(positionDTO)
-                    activate STATION_MAPPER
-                        STATION_MAPPER --> STATION_MAPPER: position
-                    deactivate STATION_MAPPER
 
                     STATION_MAPPER -> STATION_DTO: defaultBuilding = getDefaultBuilding()
                     activate STATION_DTO
@@ -70,11 +65,24 @@ activate CTRL
                     STATIONS --> STATIONS: true
                     deactivate STATIONS
 
-                STATIONS --> STATION_REPO: success
-            deactivate STATIONS
+                    STATIONS -> STATION: occupyPosition()
+                    activate STATION
+                        STATION -> STATION: position.setOccupied(true)
+                        STATION --> STATIONS: success
+                    deactivate STATION
 
-            STATION_REPO --> CTRL: success
-        deactivate STATION_REPO
+                    STATIONS --> SCN: success
+                    deactivate STATIONS
+                    SCN --> SCNS: success
+                    deactivate SCN
+                    SCNS --> MAP: success
+                    deactivate SCNS
+                    MAP --> MAPS: success
+                    deactivate MAP
+                    MAPS --> MAP_REPO: success
+                    deactivate MAPS
+            MAP_REPO --> CTRL: success
+        deactivate MAP_REPO
 
     end
 

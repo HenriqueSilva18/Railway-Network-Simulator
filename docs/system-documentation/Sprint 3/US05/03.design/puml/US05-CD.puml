@@ -7,177 +7,162 @@ skinparam linetype polyline
 skinparam classAttributeIconSize 0
 
 class StationBuildingUI {
+    + getStationTypes()
+    + buildStation()
 }
 
 class StationBuildingController {
     + getStationTypes()
     + getAvailableBuildings()
-    + getClosestCity(positionDTO)
-    + buildStation(stationDTO)
-}
-
-class Repositories {
-    - Repositories()
-    + {static} getInstance()
-    + getStationTypeRepository()
-    + getBuildingRepository()
-    + getCityRepository()
-    + getStationRepository()
-}
-
-class StationTypeRepository {
-    + getListOfStationTypes()
-}
-
-class BuildingRepository {
-    + getListOfBuildings()
-}
-
-class CityRepository {
-    + getListOfCities()
-}
-
-class StationRepository {
-    + createStation(stationDTO)
-}
-
-class StationTypes {
-    + getListOfStationTypes()
-}
-
-class Buildings {
-    + getListOfBuildings()
-}
-
-class Cities {
-    + getListOfCities()
-}
-
-class Stations {
-    + createStation(stationDTO)
-    + addStation(station)
-    + validateStation(station)
-}
-
-class Station {
-    - stationType : StationType
-    - position : Position
-    - defaultBuilding : Building
-    - proposedName : String
-}
-
-class StationType {
-    - nameID : String
-    - cost : double
-    - economicRadius : double
-}
-
-class Building {
-    - nameID : String
-    - cost : double
-}
-
-class City {
-    - nameID : String
-    - position : Position
-}
-
-class Position {
-    - x : double
-    - y : double
+    + getClosestCity(position: Position)
+    + buildStation(stationDTO: StationDTO)
+    - calculateDistance(position1: Position, position2: Position)
+    - updateClosestCity(city: City, distance: double)
+    - getClosestCityName(): String
 }
 
 class StationDTO {
-    - stationType : StationTypeDTO
-    - position : PositionDTO
-    - defaultBuilding : BuildingDTO
-    - proposedName : String
+    + getStationType(): StationType
+    + getPosition(): Position
+    + getDefaultBuilding(): BuildingDTO
+    + getProposedName(): String
+    + setCenterPoint(centerPoint: String)
+    + setDefaultBuilding(buildingDTO: BuildingDTO)
+    + setProposedName(cityName: String)
+    + setPosition(position: Position)
+}
+
+class Position {
+    + getX(): int
+    + getY(): int
+    + setOccupied(occupied: boolean)
 }
 
 class StationTypeDTO {
-    - nameID : String
-    - cost : double
-    - economicRadius : double
+    + getType(): String
 }
 
 class BuildingDTO {
-    - nameID : String
-    - cost : double
+    + getName(): String
 }
 
-class PositionDTO {
-    - x : double
-    - y : double
+class StationType {
+    + getType(): String
 }
 
-class StationMapper {
-    + toModel(stationDTO)
-    + toDTO(List<Station>)
-    + toDTO(Station)
-    + getStationType()
-    + getPosition()
-    + getDefaultBuilding()
-    + getProposedName()
+class Building {
+    + getName(): String
+}
+
+class Station {
+    + occupyPosition()
+}
+
+class City {
+    + getPosition(): Position
+    + getName(): String
 }
 
 class StationTypeMapper {
-    + toDTO(List<StationType>)
-    + toDTO(StationType)
+    + toDTO(stationType: StationType): StationTypeDTO
 }
 
 class BuildingMapper {
-    + toDTO(List<Building>)
-    + toDTO(Building)
+    + toDTO(building: Building): BuildingDTO
 }
 
-class CityMapper {
-    + toDTO(List<City>)
-    + toDTO(City)
+class StationMapper {
+    + toModel(stationDTO: StationDTO): Station
 }
 
-StationBuildingUI "1" --> "1" StationBuildingController
-StationBuildingController "1" --> "1" Repositories : repositories
-StationBuildingController "1" --> "1" StationDTO
+class StationTypeRepository {
+    + getListOfStationTypes(): List<StationType>
+}
 
-Repositories "1" --> "1" StationTypeRepository
-Repositories "1" --> "1" BuildingRepository
-Repositories "1" --> "1" CityRepository
-Repositories "1" --> "1" StationRepository
+class BuildingRepository {
+    + getListOfBuildings(): List<Building>
+}
 
-StationTypeRepository "1" --> "1" StationTypes : stationTypes
-BuildingRepository "1" --> "1" Buildings : buildings
-CityRepository "1" --> "1" Cities : cities
-StationRepository "1" --> "1" Stations : stations
+class MapRepository {
+    + getListOfCities(): List<City>
+    + createStation(stationDTO: StationDTO): boolean
+}
 
-StationTypes "1" --> "*" StationType : stationTypes
-Buildings "1" --> "*" Building : buildings
-Cities "1" --> "*" City : cities
-Stations "1" --> "*" Station : stations
+class Repositories {
+    + {static} getInstance(): Repositories
+    + getStationTypeRepository(): StationTypeRepository
+    + getBuildingRepository(): BuildingRepository
+    + getMapRepository(): MapRepository
+}
 
-Station "1" --> "1" StationType : stationType
-Station "1" --> "1" Position : position
-Station "1" --> "1" Building : defaultBuilding
-City "1" --> "1" Position : position
+class StationTypes {
+    + getListOfStationTypes(): List<StationType>
+}
 
-StationDTO "1" --> "1" StationTypeDTO : stationType
-StationDTO "1" --> "1" PositionDTO : position
-StationDTO "1" --> "1" BuildingDTO : defaultBuilding
+class Buildings {
+    + getListOfBuildings(): List<Building>
+}
 
-StationMapper "1" --> "1" Station : maps
-StationMapper "1" --> "1" StationDTO : maps to
+class Maps {
+    + getListOfCities(): List<City>
+    + createStation(stationDTO: StationDTO): boolean
+}
 
-StationTypeMapper "1" --> "1" StationType : maps
-StationTypeMapper "1" --> "1" StationTypeDTO : maps to
+class Map {
+    + getListOfCities(): List<City>
+    + createStation(stationDTO: StationDTO): boolean
+}
 
-BuildingMapper "1" --> "1" Building : maps
-BuildingMapper "1" --> "1" BuildingDTO : maps to
+class Scenarios {
+    + createStation(stationDTO: StationDTO): boolean
+}
 
-CityMapper "1" --> "1" City : maps
-CityMapper "1" --> "1" CityDTO : maps to
+class Scenario {
+    + createStation(stationDTO: StationDTO): boolean
+}
 
-StationTypeRepository "1" --> "1" StationTypeMapper : uses
-BuildingRepository "1" --> "1" BuildingMapper : uses
-CityRepository "1" --> "1" CityMapper : uses
-StationRepository "1" --> "1" StationMapper : uses
+class Stations {
+    + createStation(stationDTO: StationDTO): boolean
+    + addStation(station: Station): boolean
+    + validateStation(station: Station): boolean
+}
+
+class Cities {
+    + getListOfCities(): List<City>
+}
+
+' Relationships
+StationBuildingUI --> StationBuildingController
+StationBuildingController --> StationDTO
+StationBuildingController --> Position
+StationBuildingController --> StationTypeDTO
+StationBuildingController --> BuildingDTO
+StationBuildingController --> City
+StationBuildingController --> Repositories
+
+StationDTO --> Position
+StationDTO --> StationTypeDTO
+StationDTO --> BuildingDTO
+
+Repositories --> StationTypeRepository
+Repositories --> BuildingRepository
+Repositories --> MapRepository
+
+StationTypeRepository --> StationTypes
+BuildingRepository --> Buildings
+MapRepository --> Maps
+
+Maps --> Map
+Map --> Scenarios
+Scenarios --> Scenario
+Scenario --> Stations
+Map --> Cities
+
+StationTypeMapper ..> StationType
+StationTypeMapper ..> StationTypeDTO
+BuildingMapper ..> Building
+BuildingMapper ..> BuildingDTO
+StationMapper ..> StationDTO
+StationMapper ..> Station
 
 @enduml

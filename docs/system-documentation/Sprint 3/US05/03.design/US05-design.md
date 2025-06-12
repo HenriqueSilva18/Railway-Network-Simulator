@@ -10,22 +10,18 @@
 |:---------------|:-----------------------------------------------------|:--------------------------|:----------------------------------------------------------------------------------------|
 | Step 1  		     | ... interacting with the actor?                      | StationBuildingUI         | Pure Fabrication: no reason to assign this responsibility to any existing domain class. |
 |                | ... coordinating the US?                             | StationBuildingController | Controller pattern: coordinates the use case.                                           |
-|                | ... showing available maps?                          | MapRepository             | Information Expert: knows all available maps.                                           |
-| Step 2  		     | ... recording the selected map?                      | StationBuildingUI         | IE: UI is responsible for keeping track of user selections.                             |
-| Step 3  		     | ... loading and displaying the map?                  | MapRepository             | IE: has access to the map data.                                                         |
-|                |                                                      | Map                       | IE: contains its own data to be displayed.                                              |
-| Step 4  		     | ... processing the request to build a station?       | StationBuildingController | Controller: coordinates actions between UI and domain.                                  |
-| Step 5  		     | ... knowing the available station types?             | StationTypeRepository     | IE: contains all station type information.                                              |
-| Step 6  		     | ... recording the selected station type?             | StationBuildingUI         | IE: UI is responsible for keeping track of user selections.                             |
-| Step 7  		     | ... validating if position is valid on map?          | Map                       | IE: knows its own structure and valid positions.                                        |
+|                | ... showing available station types?                 | StationTypeRepository     | Information Expert: knows all available station types.                                  |
+| Step 2  		     | ... recording the selected station type?             | StationBuildingUI         | IE: UI is responsible for keeping track of user selections.                             |
+| Step 3  		     | ... creating station DTO?                           | StationBuildingUI         | Creator: creates DTO to hold station information.                                       |
+| Step 4  		     | ... validating if position is valid on map?          | Map                       | IE: knows its own structure and valid positions.                                        |
 |                |                                                      | Position                  | IE: knows its own state (occupied or not).                                              |
-| Step 8  		     | ... determining if center point selection is needed? | StationType               | IE: knows its own properties and requirements.                                          |
-| Step 9  		     | ... recording the selected center point?             | StationBuildingUI         | IE: UI is responsible for keeping track of user selections.                             |
-| Step 10  		    | ... determining the closest city?                    | Map                       | IE: knows all cities and their positions.                                               |
+| Step 5  		     | ... determining if center point selection is needed? | StationType               | IE: knows its own properties and requirements.                                          |
+| Step 6  		     | ... recording the selected center point?             | StationBuildingUI         | IE: UI is responsible for keeping track of user selections.                             |
+| Step 7  		     | ... getting available buildings?                     | BuildingRepository        | IE: contains all building information.                                                  |
+| Step 8  		     | ... determining the closest city?                    | Map                       | IE: knows all cities and their positions.                                               |
 |                | ... calculating station cost and economic radius?    | StationType               | IE: contains cost and radius information.                                               |
 |                | ... generating a preview of station placement?       | Map                       | IE: can determine impact of station placement.                                          |
-| Step 11  		    | ... confirming station placement?                    | StationBuildingController | Controller: coordinates the action.                                                     |
-|                | ... deducting cost from player's budget?             | Player                    | IE: manages its own budget.                                                             |
+| Step 9  		     | ... confirming station placement?                    | StationBuildingController | Controller: coordinates the action.                                                     |
 |                | ... creating the station instance?                   | Map                       | Creator: contains stations.                                                             |
 |                | ... updating the map with new station?               | Map                       | IE: knows its own structure and manages station placement.                              |
 
@@ -33,7 +29,6 @@
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Player
 * Map
 * City
 * Position
@@ -48,35 +43,38 @@ Other software classes (i.e. Pure Fabrication) identified:
 * MapRepository
 * StationTypeRepository
 * BuildingRepository
-* CityRepository
-* StationRepository
+* Repositories
 * StationMapper
 * StationTypeMapper
 * BuildingMapper
-* CityMapper
 * StationDTO
 * StationTypeDTO
 * BuildingDTO
-* PositionDTO
+* Maps
+* Scenarios
+* Scenario
+* Stations
+* Cities
+* StationTypes
+* Buildings
 
 ## 3.2. Sequence Diagram (SD)
 
 ![US05-SD](svg/US05-SD-split-Sequence_Diagram.svg)
 
-### 3.2.1. Partial Sequence Diagrams
-
+### 3.2.1. Partial Sequence Diagrams - Create Station Object
 ![US05-SD](svg/US05-SD-partial-Create-Station-Object.svg)
 
-### 3.2.2.  
+#### 3.2.2. Partial Sequence Diagrams - Get BuildingDTO List
 ![US05-SD](svg/US05-SD-partial-Get-BuildingDTO-List.svg)
 
-### 3.2.3.  
+#### 3.2.3. Partial Sequence Diagrams - Get Closest City
 ![US05-SD](svg/US05-SD-partial-Get-Closest-City.svg)
 
-### 3.2.4.  
+#### 3.2.4. Partial Sequence Diagrams - Get StationTypeDTO List
 ![US05-SD](svg/US05-SD-partial-Get-StationTypeDTO-List.svg)
 
 
 ## 3.3. Class Diagram (CD)
 
-![US01-CD](svg/US05-CD.svg)
+![US05-CD](svg/US05-CD.svg)

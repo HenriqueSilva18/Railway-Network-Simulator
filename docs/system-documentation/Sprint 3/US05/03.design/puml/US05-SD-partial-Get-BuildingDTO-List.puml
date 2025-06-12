@@ -4,8 +4,7 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":StationBuildingController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
+
 participant "buildingRepository\n:BuildingRepository" as BUILDING_REPO
 participant "buildings\n:Buildings" as BUILDINGS
 participant ":List<Building>" as LIST
@@ -20,16 +19,6 @@ autonumber 3
 autonumber 3.1
 activate CTRL
     group Get BuildingDTO List
-
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
-
-        CTRL -> REPOS_SINGLETON: getBuildingRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: buildingRepository
-        deactivate REPOS_SINGLETON
 
         CTRL -> BUILDING_REPO: getListOfBuildings()
         activate BUILDING_REPO
