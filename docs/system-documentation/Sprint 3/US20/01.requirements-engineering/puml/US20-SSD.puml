@@ -1,0 +1,21 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US20 : Load a Map"
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+Editor -> System: requests to load a map
+activate System
+System --> Editor: displays saved maps
+deactivate System
+
+Editor -> System: selects map file to load
+activate System
+System --> Editor: displays operation success
+System --> Editor: displays loaded map with all elements (cities, industries, railways)
+System --> Editor: displays map details (nameID, scale, size)
+deactivate System
+
+@enduml

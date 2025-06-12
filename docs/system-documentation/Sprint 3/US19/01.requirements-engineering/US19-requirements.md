@@ -17,9 +17,6 @@
 > **Question:** Nesta US quando se refere a guardar um mapa para ser usado posteriormente, estamos a falar de guardar um mapa 1 a 1 num ficheiro independente ou apenas tornar persistente através de serialização?
 > > **Answer:** Pretende-se que a aplicação permita o armazenamento dos mapas para utilização futura usando persistência através de serialização
 
-> **Question:** Nesta US quando se refere a guardar um mapa para ser usado posteriormente, estamos a falar de guardar um mapa 1 a 1 num ficheiro independente ou apenas tornar persistente através de serialização?
-> > **Answer:** Pretende-se que a aplicação permita o armazenamento dos mapas para utilização futura usando persistência através de serialização.
-
  
 ### 1.3. Acceptance Criteria
 

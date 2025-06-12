@@ -1,0 +1,61 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title "Domain Model - US20 : Load a Map"
+
+class Editor {
+  username
+  password
+  createdMaps
+}
+
+class Map {
+  nameID
+  scale
+}
+
+class Size {
+  width
+  height
+}
+
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+
+' Relationships
+Editor "1" -- "*" Map : loads >
+Map "1" -- "1" Size : has >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "*" Position : tracks >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+autonumber
+title "System Sequence Diagram - US22 : Load a Scenario"
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+Editor -> System: requests to load a scenario
+activate System
+System --> Editor: displays available maps
+deactivate System
+
+Editor -> System: selects map to load scenario for
+activate System
+System --> Editor: displays saved scenarios for selected map
+deactivate System
+
+Editor -> System: selects scenario file to load
+activate System
+System --> Editor: displays operation success
+System --> Editor: displays loaded scenario details (nameID, startDate, endDate, initialBudget)
+System --> Editor: displays scenario configurations (locomotives, industries, stations, cities)
+deactivate System
+
+@enduml

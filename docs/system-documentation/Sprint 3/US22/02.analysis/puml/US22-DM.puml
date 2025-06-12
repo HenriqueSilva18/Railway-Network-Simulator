@@ -1,0 +1,173 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor LightBlue
+  BorderColor Blue
+}
+hide circle
+hide methods
+
+title "Domain Model - US22 : Load a Scenario"
+
+class Editor {
+  username
+  password
+  createdMaps
+}
+
+class Map {
+  nameID
+  scale
+}
+
+class Size {
+  width
+  height
+}
+
+class City {
+  nameID
+  trafficRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Industry {
+  nameID
+  type
+  availabilityYear
+  productionRate
+  suppliedCargo
+  demandedCargo
+}
+
+class Position {
+  x
+  y
+  occupied
+}
+
+class Locomotive {
+  nameID
+  owner
+  type
+  power
+  acceleration
+  topSpeed
+  actualSpeed
+  startYear
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
+  availabilityYear
+  acquisitionPrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor
+}
+
+
+class IndustrySector {
+  name
+  importsExports
+  generatesCargo
+  consumesCargo
+  description
+}
+
+class Station {
+  nameID
+  storageCapacity
+  buildingSlots
+  availableCargo
+  requestedCargo
+}
+
+class PointOfRoute {
+  cargoMode
+}
+
+class Route {
+  nameID
+  stationSequence
+}
+
+class StationType {
+  name
+  economicRadius
+  cost
+  centerPoint
+}
+
+class Building {
+  nameID
+  type
+  availabilityYear
+  evolutionCost
+  evolutionStagesLeft
+  effect
+}
+
+class TrainSchedule {
+  calculatedArrivalTime
+  calculatedDepartureTime
+  actualArrivalTime
+  actualDepartureTime
+  departureStation
+  arrivalStation
+}
+
+class Cargo {
+  name
+  amount
+  lifespan
+  type
+  pricePerUnit
+}
+class RailwayLine {
+  length
+  placementPrice
+  maintenanceCostPerKm
+  wearAndTearFactor
+}
+class Scenario {
+  nameID
+  startDate
+  endDate
+  initialBudget
+  currentBudget
+}
+
+' Relationships
+Editor "1" -- "*" Map : loads >
+Map "1" -- "1" Size : has >
+Map "1" -- "*" City : contains >
+Map "1" -- "*" Industry : contains >
+Map "1" -- "*" Position : tracks >
+City "1" -- "1" Position : located at >
+Industry "1" -- "1" Position : located at >
+Scenario "1" -- "*" Locomotive : configures >
+Scenario "1" -- "*" Industry : configures >
+Scenario "1" -- "*" IndustrySector : configures >
+Scenario "1" -- "*" Station : configures >
+Scenario "1" -- "*" City : configures >
+Scenario "*" -- "1" Map : uses >
+IndustrySector "1" -- "*" Industry : contains >
+Station "1" -- "*" Building : upgraded with >
+Station "1" -- "*" City : serves >
+Station "1" -- "*" Industry : serves >
+Station "1" -- "*" Cargo : stores >
+Route "1" -- "*" PointOfRoute : contains >
+PointOfRoute "1" -- "1" Station : represents >
+PointOfRoute "*" -- "*" Cargo : stores >
+Scenario "1" -- "*" Station : configures >
+Station "1" -- "1" Position : located at >
+Station "*" -- "1" StationType : defined by >
+StationType "1" -- "*" StationType : can change >
+Station "1" -- "*" TrainSchedule: generates >
+Route "*" -- "*" Cargo : manages >
+Route "1..*" -- "1..*" RailwayLine : contains >
+Route "1" -- "*" TrainSchedule : stores  >
+Building "1" -- "0..1" Building : evolves into >
+
+@enduml
