@@ -4,7 +4,6 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":CreateScenarioController" as CTRL
-participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "locomotiveTypeRepository\n:LocomotiveTypeRepository" as LOC_TYPE_REPO
 participant "locomotiveTypes:LocomotiveTypes" as LOC_TYPES
@@ -20,11 +19,6 @@ autonumber 10
 autonumber 10.1
 activate CTRL
     group Get LocomotiveTypeDTO List
-
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
 
         CTRL -> REPOS_SINGLETON: getLocomotiveTypeRepository()
         activate REPOS_SINGLETON

@@ -38,7 +38,7 @@ public void ensureGetListOfMapsReturnsCorrectList() {
     
     assertNotNull(result);
     assertFalse(result.isEmpty());
-    // Verify each DTO has required fields
+
     for (MapDTO dto : result) {
         assertNotNull(dto.getNameID());
         assertTrue(dto.getScale() > 0);
@@ -92,11 +92,9 @@ public class CreateScenarioController {
     public boolean createScenario(MapDTO mapDTO, ScenarioDTO scenarioDTO) {
         MapRepository mapRepository = repositories.getMapRepository();
         
-        // Add cities from map to scenario
         List<CityDTO> listCityDTO = mapDTO.getListOfCityDTO();
         scenarioDTO.addCities(listCityDTO);
         
-        // Create scenario using map nameID
         String mapNameID = mapDTO.getNameID();
         return mapRepository.createScenario(scenarioDTO, mapNameID);
     }

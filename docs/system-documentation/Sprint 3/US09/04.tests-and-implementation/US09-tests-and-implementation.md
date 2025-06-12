@@ -29,7 +29,7 @@ public void ensureGetAvailableLocomotivesReturnsCorrectList() {
     
     assertNotNull(result);
     assertFalse(result.isEmpty());
-    // Verify each DTO has required fields
+
     for (LocomotiveDTO dto : result) {
         assertNotNull(dto.getNameID());
         assertNotNull(dto.getType());

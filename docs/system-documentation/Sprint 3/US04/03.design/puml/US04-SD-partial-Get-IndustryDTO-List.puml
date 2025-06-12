@@ -4,7 +4,6 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":CreateScenarioController" as CTRL
-participant "Repositories" as REPOS
 participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapDTO\n:MapDTO" as MAP_DTO
 participant "mapRepository\n:MapRepository" as MAP_REPO
@@ -22,11 +21,6 @@ autonumber 15
 autonumber 15.1
 activate CTRL
     group Get IndustryDTO List
-
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
 
         CTRL -> REPOS_SINGLETON: getMapRepository()
         activate REPOS_SINGLETON

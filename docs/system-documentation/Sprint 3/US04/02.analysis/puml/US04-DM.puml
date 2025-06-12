@@ -17,6 +17,8 @@ title Domain Model Excerpt: US04 - Create a Scenario
 class Editor {
   username
   password
+  createdMaps
+  createdScenarios
 }
 
 class Scenario {

@@ -4,8 +4,6 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":CreateScenarioController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "mapDTO\n:MapDTO" as MAP_DTO
 participant "mapRepository\n:MapRepository" as MAP_REPO
 participant "maps\n:Maps" as MAPS
@@ -22,16 +20,6 @@ autonumber 22
 autonumber 22.1
 activate CTRL
     group Create Scenario Object
-
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
-
-        CTRL -> REPOS_SINGLETON: getMapRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: mapRepository
-        deactivate REPOS_SINGLETON
 
         CTRL -> MAP_DTO: getListOfCityDTO()
         activate MAP_DTO

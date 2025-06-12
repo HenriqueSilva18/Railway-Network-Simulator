@@ -17,6 +17,7 @@ title Domain Model Excerpt: US09 - Buy a Locomotive
 class Player {
   username
   password
+  ownedLocomotives
 }
 
 class Map {

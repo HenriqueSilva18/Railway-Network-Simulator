@@ -4,8 +4,6 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 
 participant ":BuyLocomotiveController" as CTRL
-participant "Repositories" as REPOS
-participant "repositories\n:Repositories" as REPOS_SINGLETON
 participant "locomotiveDTO\n:LocomotiveDTO" as LOC_DTO
 participant "locomotiveRepository\n:LocomotiveRepository" as LOC_REPO
 participant "locomotives\n:Locomotives" as LOCS
@@ -18,16 +16,6 @@ autonumber 3
 autonumber 3.1
 activate CTRL
     group Get LocomotiveDTO
-
-        CTRL -> REPOS : getInstance()
-        activate REPOS
-            REPOS --> CTRL: repositories
-        deactivate REPOS
-
-        CTRL -> REPOS_SINGLETON: getLocomotiveRepository()
-        activate REPOS_SINGLETON
-            REPOS_SINGLETON --> CTRL: locomotiveRepository
-        deactivate REPOS_SINGLETON
 
         CTRL -> LOC_DTO: getNameID()
         activate LOC_DTO
