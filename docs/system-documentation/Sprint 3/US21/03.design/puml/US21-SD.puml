@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as EDITOR
+
+participant ":SaveScenarioUI" as UI
+participant ":SaveScenarioController" as CTRL
+participant ":Scenario" as SCENARIO
+participant ":ScenarioRepository" as REPO
+
+activate EDITOR
+
+EDITOR -> UI : requests to save current scenario
+activate UI
+    UI --> EDITOR : requests save confirmation
+deactivate UI
+
+EDITOR -> UI : confirms save operation
+activate UI
+    UI -> CTRL : saveScenario()
+    activate CTRL
+        CTRL -> SCENARIO : serialize()
+        activate SCENARIO
+            SCENARIO --> CTRL : serializedScenarioData
+        deactivate SCENARIO
+        
+        CTRL -> REPO : saveScenario(serializedScenarioData)
+        activate REPO
+            REPO --> CTRL : success
+        deactivate REPO
+        
+        CTRL --> UI : success
+    deactivate CTRL
+    
+    UI --> EDITOR : displays operation success
+    UI --> EDITOR : displays saved scenario details
+deactivate UI
+
+deactivate EDITOR
+
+@enduml 

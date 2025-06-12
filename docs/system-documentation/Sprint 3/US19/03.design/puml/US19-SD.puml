@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as EDITOR
+
+participant ":SaveMapUI" as UI
+participant ":SaveMapController" as CTRL
+participant ":Map" as MAP
+participant ":MapRepository" as REPO
+
+activate EDITOR
+
+EDITOR -> UI : requests to save current map
+activate UI
+    UI --> EDITOR : requests save confirmation
+deactivate UI
+
+EDITOR -> UI : confirms save operation
+activate UI
+    UI -> CTRL : saveMap()
+    activate CTRL
+        CTRL -> MAP : serialize()
+        activate MAP
+            MAP --> CTRL : serializedMapData
+        deactivate MAP
+        
+        CTRL -> REPO : saveMap(serializedMapData)
+        activate REPO
+            REPO --> CTRL : success
+        deactivate REPO
+        
+        CTRL --> UI : success
+    deactivate CTRL
+    
+    UI --> EDITOR : displays operation success
+    UI --> EDITOR : displays saved map details
+deactivate UI
+
+deactivate EDITOR
+
+@enduml

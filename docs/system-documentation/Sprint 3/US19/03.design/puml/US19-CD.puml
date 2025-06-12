@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+class SaveMapUI {
+}
+
+class SaveMapController {
+    + saveMap()
+}
+
+class Map {
+    + serialize()
+}
+
+class MapRepository {
+    + saveMap(serializedMapData)
+}
+
+SaveMapUI --> SaveMapController
+SaveMapController --> Map
+SaveMapController --> MapRepository
+
+@enduml
