@@ -19,8 +19,6 @@ title Domain Model - US10 : Assign a train to a route
 class Player {
   username
   password
-  initialBudget
-  currentBudget
   ownedLocomotives
 }
 
@@ -36,6 +34,7 @@ class City {
   suppliedCargo
   demandedCargo
 }
+
 
 class HouseBlock {
   automaticPlacement
@@ -76,8 +75,8 @@ class StationType {
 
 class RailwayLine {
   length
-  trackType
-  cost
+  placementPrice
+  maintenanceCostPerKm
 }
 
 class Locomotive {
@@ -87,20 +86,27 @@ class Locomotive {
   power
   acceleration
   topSpeed
+  actualSpeed
   startYear
-  fuelCost
+  fuelAcquisitionPrice
+  fuelConsumptionPrice
   availabilityYear
   acquisitionPrice
-  maintenancePrice
+  baseMaintenanceCost
+  maintenanceFrequency
+  wearAndTearFactor
 }
+
 class Route {
   nameID
   stationSequence
-  cargoList
 }
 
 class Carriage {
+  carriageID
   storageCapacity
+  status
+  speedDegradation
 }
 
 class Cargo {
@@ -108,11 +114,26 @@ class Cargo {
   amount
   lifespan
   type
-  productionResources
+  pricePerUnit
 }
 
 class Train {
   nameID
+  traveledKms
+  status
+}
+
+class TrainSchedule {
+  calculatedArrivalTime
+  calculatedDepartureTime
+  actualArrivalTime
+  actualDepartureTime
+  departureStation
+  arrivalStation
+}
+
+class PointOfRoute {
+  cargoMode
 }
 
 Player "1" -- "*" Station : builds >
@@ -151,5 +172,11 @@ Station "*" -- "1" StationType : defined by >
 IndustrySector "1" -- "*" Industry : contains >
 
 StationType "1" -- "*" StationType : can change >
+Route "1" -- "*" PointOfRoute : contains >
+PointOfRoute "1" -- "1" Station : represents >
+PointOfRoute "*" -- "*" Cargo : stores >
+TrainSchedule "*" -- "*" Train: belongs to >
+Station "1" -- "*" TrainSchedule: generates >
+Route "1" -- "*" TrainSchedule : stores  >
 
 @enduml

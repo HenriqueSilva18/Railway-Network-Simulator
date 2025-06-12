@@ -27,7 +27,8 @@ As a Player, I want to assign a selected train to a route with valid stations an
 
 ### 1.3. Acceptance Criteria
 
-No acceptance criteria mentioned.
+* **AC1:** For each Point-of-Route I want to assign a cargo mode, that can be: FULL (the train only departs when full loaded); HALF (the
+train departs as soon it has half of carriages loaded); AVAILABLE (the train departs with available cargoes in the station)
 
 ### 1.4. Found out Dependencies
 
@@ -40,11 +41,12 @@ No acceptance criteria mentioned.
 **Input Data:**
 
 * Selected data:
-    * a train
-    * a route
+    * a train (from the available trains)
+    * a route (from the valid routes)
+    * point-of-route cargo mode 
 
 **Output Data:**
-* Success or insuccess of the operation
+* (In)Success of the operation
 * Information about the train, the route, the stations included, as well as the cargoes assigned to the train for pick up
 
 ### 1.6. System Sequence Diagram (SSD)

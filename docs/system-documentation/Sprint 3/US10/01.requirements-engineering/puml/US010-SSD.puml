@@ -11,56 +11,41 @@ actor "Player" as Player
 participant ":System" as System
 
 activate Player
-Player -> System: asks to see available maps
-activate System
-System --> Player: shows list of available maps to play
-deactivate System
-Player -> System: selects a map
-activate System
-System --> Player: shows list of available scenarios to play
-deactivate System
-Player -> System : selects a scenario
-activate System
-
-System --> Player: loads and displays the selected map
-deactivate System
 
     Player -> System : asks to assign a train
         activate System
-
-
             System --> Player : displays list of available routes with valid stations
         deactivate System
 
     Player -> System : selects a route
         activate System
-
-
-            System --> Player : displays route details (name, station stops)
+            System --> Player : displays route details (name, route points)
             System --> Player : asks for confirmation
         deactivate System
 
     Player -> System : confirms route selection
         activate System
+            System --> Player : displays list of Points-of-Route
+        deactivate System
 
+    loop for each Point-of-Route
+        Player -> System : selects cargo mode (FULL/HALF/AVAILABLE)
+            activate System
+    end
 
             System --> Player : displays list of available trains
         deactivate System
 
     Player -> System : selects a train
         activate System
-
-
             System --> Player : displays train details
             System --> Player : asks for confirmation
         deactivate System
 
     Player -> System : confirms assignment
         activate System
-
-
             System --> Player : displays operation success
-            System --> Player : displays train, route and station details (including list of cargoes to be picked up)
+            System --> Player : displays train, route and station details (including list of cargoes to be picked up and cargo modes)
         deactivate System
 
 @enduml
