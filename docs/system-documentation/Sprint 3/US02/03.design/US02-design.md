@@ -8,37 +8,54 @@
 
 | Interaction ID | Question: Which class is responsible for... | Answer              | Justification (with patterns)                                                                                 |
 |:-------------  |:--------------------------------------------|:--------------------|:--------------------------------------------------------------------------------------------------------------|
-| Step 1  		 | 	interacting with the actor?                | EditMapUI           | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
-|  | ... coordinating the US?                    | EditMapController   | Controller: controls the execution of the operation                                                   |
-|  | ... knowing the user using the system?      | ApplicationSession  | IE: cf. A&A component documentation. |
-|  |                                             | Editor              |IE: knows its own data|
-|  |                                             | Map                 |IE: knows its own data|
-| Step 2  		 | ... obtaining the list of available industries? | IndustryRepository   | IE: knows all Industry objects                                                                              |              
-| Step 3  		 | ... getting the selected industry type?       | AddIndustryUI        | Pure Fabrication: responsible for UI interactions                                                           |
-| Step 4  		 | ... validating the positions (X,Y)?          | Map                  | IE: knows its own cells and whether they are occupied                                                      |
-| Step 5  		 | ... creating/instantiating a new Industry?   | Industry             | Creator: creates its own instances                                                                         |
-| Step 6  		 | ... saving the Industry on the Map?          | Map                  | IE: records all its components and manages its Industry objects                                            |
-| Step 7  		 | ... informing operation success?             | AddIndustryUI        | Pure Fabrication: responsible for showing the operation result to the user                                 |
+| Step 1         | ... interacting with the actor?            | AddIndustryUI       | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
+|                | ... coordinating the US?                   | AddIndustryController | Controller: controls the execution of the operation                                                         |
+|                | ... knowing the user using the system?     | ApplicationSession  | IE: cf. A&A component documentation.                                                                        |
+|                |                                            | Editor              | IE: knows its own data                                                                                       |
+| Step 2         | ... obtaining the list of available maps?  | MapRepository       | IE: knows all Map objects                                                                                    |
+|                | ... converting Map objects to MapDTO?      | MapMapper           | Pure Fabrication: responsible for data conversion between layers                                             |
+| Step 3         | ... selecting and loading a specific map?  | AddIndustryUI       | Pure Fabrication: responsible for UI interactions                                                           |
+|                | ... retrieving map by ID?                  | Maps                | IE: knows all its Map objects and can retrieve by identifier                                                |
+|                | ... providing map layout information?      | Map                 | IE: knows its own structure and layout                                                                       |
+| Step 4         | ... obtaining the list of industry sectors? | IndustrySectorRepository | IE: knows all IndustrySector objects                                                                    |
+|                | ... converting IndustrySector to DTO?      | IndustrySectorMapper | Pure Fabrication: responsible for data conversion between layers                                         |
+| Step 5         | ... collecting industry data from user?    | AddIndustryUI       | Pure Fabrication: responsible for UI interactions and data collection                                       |
+|                | ... creating IndustryDTO for validation?   | AddIndustryController | Controller: coordinates the creation of DTOs for business operations                                       |
+| Step 6         | ... validating the positions (X,Y)?        | Positions           | IE: knows all position states and availability                                                               |
+|                | ... checking if position is available?     | Position            | IE: knows its own occupation status                                                                          |
+| Step 7         | ... creating/instantiating a new Industry? | IndustryMapper      | Pure Fabrication: responsible for converting DTO to domain object                                           |
+|                | ... adding Industry to the collection?     | Industries          | IE: knows all its Industry objects and manages the collection                                                |
+| Step 8         | ... marking position as occupied?          | Position            | IE: knows and controls its own state                                                                         |
+|                | ... updating position collection?          | Positions           | IE: manages all Position objects                                                                             |
+| Step 9         | ... informing operation success?           | AddIndustryUI       | Pure Fabrication: responsible for showing the operation result to the user                                  |
 
-### Systematization ##
+### 3.2. Systematization
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
 * Editor
 * Map
 * Industry
+* IndustrySector
+* Position
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* EditMapUI
-* EditMapController
-* AddIndustryUI  
+* AddIndustryUI
 * AddIndustryController
-* IndustryRepository
 * MapRepository
+* IndustrySectorRepository
+* Maps
+* Industries
+* IndustryDTO
+* Positions
+* MapMapper
+* IndustrySectorMapper
+* IndustryMapper
 * Repositories
 * ApplicationSession
-
+* IndustrySectorDTO
+* MapDTO
 ## 3.2. Sequence Diagram (SD)
 
 _In this section, it is suggested to present an UML dynamic view representing the sequence of interactions between software objects that allows to fulfill the requirements._
@@ -49,20 +66,17 @@ _In this section, it is suggested to present an UML dynamic view representing th
 
 ### 3.2.2. Partial Sequence Diagrams
 
-#### 3.2.2.1. Get Available Maps
-![US02-SD-get-available-maps](svg/US02-SD-get-available-maps.svg)
+#### 3.2.2.1. Get Available Maps DTO
+![US02-SD-get-available-maps-dto](svg/US02-SD-partial-Get-MapDTO-List.svg)
 
 #### 3.2.2.2. Load Map
-![US02-SD-load-map](svg/US02-SD-load-map.svg)
+![US02-SD-load-map](svg/US02-SD-partial-Load-Map.svg)
 
-#### 3.2.2.3. Get Available Industries
-![US02-SD-get-available-industries](svg/US02-SD-get-available-industries.svg)
+#### 3.2.2.3. Get Available Industry Sectors
+![US02-SD-get-available-industry-sectors](svg/US02-SD-partial-Get-IndustrySector-List.svg)
 
-#### 3.2.2.4. Validate Industry Data
-![US02-SD-validate-industry-data](svg/US02-SD-validate-industry-data.svg)
-
-#### 3.2.2.5. Add Industry
-![US02-SD-add-industry](svg/US02-SD-add-industry.svg)
+#### 3.2.2.4. Create and Add Industry
+![US02-SD-create-add-industry](svg/US02-SD-partial-Create-Add-Industry.svg)
 
 ## 3.3. Class Diagram (CD)
 

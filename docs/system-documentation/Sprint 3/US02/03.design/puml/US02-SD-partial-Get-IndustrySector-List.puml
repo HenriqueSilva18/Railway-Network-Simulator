@@ -1,0 +1,82 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AddIndustryController" as CTRL
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "industrySectorRepository\n:IndustrySectorRepository" as IND_SECTOR_REPO
+participant "industrySectors:IndustrySectors" as IND_SECTORS
+participant ":List<IndustrySector>" as LIST
+participant ":IndustrySectorMapper" as IND_SECTOR_MAPPER
+participant "listIndustrySector\n:List<IndustrySector>" as IND_SECTOR_LIST
+participant "listIndustrySectorDTO\n:List<IndustrySectorDTO>" as IND_SECTOR_LIST_DTO
+participant "industrySectorDTO\n:IndustrySectorDTO" as IND_SECTOR_DTO
+
+autonumber 11
+-> CTRL: getListOfIndustrySectors()
+
+autonumber 11.1
+activate CTRL
+    group Get IndustrySectorDTO List
+
+                CTRL -> REPOS_SINGLETON: getIndustrySectorRepository()
+                activate REPOS_SINGLETON
+                    REPOS_SINGLETON --> CTRL: industrySectorRepository
+                deactivate REPOS_SINGLETON
+
+                CTRL -> IND_SECTOR_REPO: getListOfIndustrySectors()
+                activate IND_SECTOR_REPO
+
+                IND_SECTOR_REPO -> IND_SECTORS: getListOfIndustrySectors()
+                activate IND_SECTORS
+
+                    IND_SECTORS --> IND_SECTOR_LIST**: create()
+
+                    loop for each known IndustrySector
+                        IND_SECTORS -> LIST: industrySector = get(i)
+                        activate LIST
+                            deactivate LIST
+
+                        IND_SECTORS -> IND_SECTOR_LIST: add(industrySector)
+                        activate IND_SECTOR_LIST
+                            deactivate IND_SECTOR_LIST
+                    end
+
+                    IND_SECTORS --> IND_SECTOR_REPO: listIndustrySector
+                    deactivate IND_SECTORS
+
+                    IND_SECTOR_REPO --> CTRL: listIndustrySector
+                    deactivate IND_SECTOR_REPO
+
+                CTRL -> IND_SECTOR_MAPPER: toDTO(listIndustrySector)
+                activate IND_SECTOR_MAPPER
+
+                    IND_SECTOR_MAPPER --> IND_SECTOR_LIST_DTO**: create()
+
+                    loop for each object in listIndustrySector
+                        IND_SECTOR_MAPPER -> IND_SECTOR_LIST: industrySector = get(i)
+                        activate IND_SECTOR_LIST
+                            deactivate IND_SECTOR_LIST
+
+                        IND_SECTOR_MAPPER -> IND_SECTOR_MAPPER: industrySectorDTO = toDTO(industrySector)
+                        activate IND_SECTOR_MAPPER
+                            IND_SECTOR_MAPPER --> IND_SECTOR_DTO**: create()
+                            deactivate IND_SECTOR_MAPPER
+
+                        IND_SECTOR_MAPPER -> IND_SECTOR_LIST_DTO: add(industrySectorDTO)
+                        activate IND_SECTOR_LIST_DTO
+                            deactivate IND_SECTOR_LIST_DTO
+                    end
+
+                IND_SECTOR_MAPPER --> CTRL: listIndustrySectorDTO
+                deactivate IND_SECTOR_MAPPER
+
+            end
+
+    autonumber 12
+    <-- CTRL : listIndustryDTO
+deactivate CTRL
+
+
+@enduml

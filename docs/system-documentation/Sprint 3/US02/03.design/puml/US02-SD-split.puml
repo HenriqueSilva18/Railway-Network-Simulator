@@ -8,16 +8,17 @@ autonumber
 actor "Editor" as EDITOR
 participant ":AddIndustryUI" as UI
 participant ":AddIndustryController" as CTRL
+participant "industryDTO\n:IndustryDTO" as DTO_IND
 
 activate EDITOR
 
     EDITOR -> UI : asks to add an industry
     activate UI
         UI --> CTRL** : create()
-        UI -> CTRL : getAvailableMaps()
+        UI -> CTRL : getListOfMaps()
 
         ref over CTRL
-            Get Available MapDTO List
+            Get MapDTO List
         end ref
 
         activate CTRL
@@ -59,14 +60,16 @@ activate EDITOR
 
     EDITOR -> UI : selects an industry sector
     activate UI
-        UI --> EDITOR : asks for industry data
+        UI --> EDITOR : asks for industry data(nameID, X and Y coordinates, availabilityYear, suppliedCargo, demandedCargo)
     deactivate UI
 
-    EDITOR -> UI : provides industry data
+    EDITOR -> UI : provides industry data(nameID, X and Y coordinates, availabilityYear, suppliedCargo, demandedCargo)
     activate UI
-        UI -> CTRL : addIndustry(...)
+        UI -> CTRL : addIndustry(nameID, X and Y coordinates, sector, availabilityYear, suppliedCargo, demandedCargo)
 
         activate CTRL
+            CTRL -> DTO_IND** : create(nameID, X, Y, sector, availabilityYear, suppliedCargo, demandedCargo)
+
             CTRL --> UI : industryDTO
         deactivate CTRL
 
@@ -75,7 +78,7 @@ activate EDITOR
 
     EDITOR -> UI : confirms the data
     activate UI
-        UI -> CTRL : createAndAddIndustry(mapDTO, industryDTO)
+        UI -> CTRL : createAndAddIndustry(currentMap, industryDTO)
 
         ref over CTRL
             Create and Add Industry

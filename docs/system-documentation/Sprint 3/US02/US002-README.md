@@ -6,4 +6,4 @@
 
 [Design](03.design/US02-design.md)
 
-[Tests & Implementation](04.tests-and-implementation/US002-tests-and-implementation.md)
+[Tests & Implementation](04.tests-and-implementation/US02-tests-and-implementation.md)

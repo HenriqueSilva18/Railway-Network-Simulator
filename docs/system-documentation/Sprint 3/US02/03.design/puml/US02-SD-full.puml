@@ -51,7 +51,7 @@ activate UI
 
     UI -> CTRL**: create()
 
-    UI -> CTRL: getAvailableMaps()
+    UI -> CTRL: getListOfMaps()
     activate CTRL
         group Get Available Maps
         autonumber 3.1
@@ -65,7 +65,7 @@ activate UI
                 REPOS_SINGLETON --> CTRL : mapRepository
             deactivate REPOS_SINGLETON
 
-            CTRL -> REPOS_MAP : getAvailableMaps()
+            CTRL -> REPOS_MAP : getListOfMaps()
             activate REPOS_MAP
                 REPOS_MAP -> LIST_MAP**: create()
                 REPOS_MAP --> CTRL : List<Map>
@@ -88,11 +88,11 @@ activate UI
                 deactivate LIST_MAP_DTO
 
                 end
-                MAPPER_MAP --> CTRL : List<MapDTO>
+                MAPPER_MAP --> CTRL : listMapDTO
             deactivate MAPPER_MAP
         end
         autonumber 4
-        CTRL --> UI: List<MapDTO>
+        CTRL --> UI: listMapDTO
     deactivate CTRL
 
     UI --> editor: Shows the list of available maps
@@ -134,6 +134,7 @@ editor -> UI: Confirms the selected map
 activate UI
 
     UI -> CTRL: getListOfIndustrySectors()
+    autoNumber 11.1
     activate CTRL
         group Get IndustrySectorDTO List
 
@@ -191,7 +192,7 @@ activate UI
 
         end
 
-        autonumber 16
+        autonumber 12
         CTRL --> UI : listIndustrySectorDTO
     deactivate CTRL
     UI --> editor : Shows the list of industry sectors
@@ -219,6 +220,7 @@ editor -> UI : Confirms the data
 activate UI
     UI -> CTRL : createAndAddIndustry(mapDTO, industryDTO)
         activate CTRL
+        autonumber 22.1
             group Create and Add Industry
 
             CTRL ->  MAPS :createAndAddIndustry(currentMap, industryDTO)
@@ -285,6 +287,7 @@ activate UI
 
             ' Success response
             end
+            autonumber 23
             CTRL --> UI : success
         deactivate CTRL
     UI --> editor : displays success message

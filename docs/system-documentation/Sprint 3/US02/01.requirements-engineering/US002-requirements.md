@@ -38,14 +38,17 @@
     * industry nameID
     * a X coordinate
     * a Y coordinate
+    * availabilityYear
+    * suppliedCargo
+    * demandedCargo
 
 * Selected data:
     * a map
-    * an industry available in the list
+    * an industry sector available in the list
 
 **Output Data:**
 
-* Success or insuccess of the operation
+* Success or insuccess of operations
 * Details of the industry placed in the map
 
 ### 1.6. System Sequence Diagram (SSD)
