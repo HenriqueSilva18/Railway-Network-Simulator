@@ -12,6 +12,9 @@ participant ":BuyLocomotiveController" as CTRL
 
 activate PLAYER
 
+    note left of UI
+        Retrieves available maps and scenarios and loads them
+    end note
     PLAYER -> UI : asks to buy a locomotive
     activate UI
         UI --> CTRL** : create()
