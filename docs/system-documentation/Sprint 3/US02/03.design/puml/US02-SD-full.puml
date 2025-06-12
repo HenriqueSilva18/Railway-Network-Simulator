@@ -4,7 +4,7 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam sequenceMessageAlign center
 
-title Full Corrected Sequence Diagram: US02 - Add Industry
+title Sequence Diagram: US02 - Add Industry
 
 autonumber
 
@@ -23,23 +23,26 @@ participant "listMapDTO\n:List<MapDTO>" as LIST_MAP_DTO
 participant "mapDTO\n:MapDTO" as DTO_MAP
 participant "currentMap\n:Map" as MAP
 
-participant "scenarioRepository\n:ScenarioRepository" as SCENARIO_REPO
-participant "scenarios\n:Scenarios" as SCENARIOS
-participant "scenario\n:Scenario" as SCENARIO
-participant ":List<Scenario>" as LIST
-participant "scenarioRepository\n:ScenarioRepository" as REPOS_SCENARIO
-participant ":ScenarioMapper" as SCENARIO_MAPPER
-participant "listScenario\n:List<Scenario>" as SCENARIO_LIST
-participant "listScenarioDTO\n:List<ScenarioDTO>" as SCENARIO_LIST_DTO
-participant "scenarioDTO\n:ScenarioDTO" as SCENARIO_DTO
 
+participant "industrySectorRepository\n:IndustrySectorRepository" as IND_SECTOR_REPO
+participant "industrySectors:IndustrySectors" as IND_SECTORS
+participant ":List<IndustrySector>" as LIST
+participant ":IndustrySectorMapper" as IND_SECTOR_MAPPER
+participant "listIndustrySector\n:List<IndustrySector>" as IND_SECTOR_LIST
+participant "listIndustrySectorDTO\n:List<IndustrySectorDTO>" as IND_SECTOR_LIST_DTO
+participant "industrySectorDTO\n:IndustrySectorDTO" as IND_SECTOR_DTO
 
 participant "industries\n:Industries" as INDS
 participant ":List<Industry>" as LIST
 participant ":IndustryMapper" as IND_MAPPER
+participant "industryDTO\n:IndustryDTO" as DTO_IND
+participant "Industry\n:Industry" as IND
 participant "listIndustry\n:List<Industry>" as IND_LIST
 participant "listIndustryDTO\n:List<IndustryDTO>" as IND_LIST_DTO
 participant "industryRepository\n:IndustryRepository" as REPOS_IND
+
+participant "positions\n:Positions" as POSITIONS
+participant "position\n:Position" as POS
 
 activate editor
 
@@ -97,274 +100,115 @@ deactivate UI
 
 editor -> UI: Selects a map
 activate UI
-    UI -> CTRL: loadMap(mapSelectionDTO)
+    UI -> CTRL: loadMap(mapDTO)
     activate CTRL
         group Load Selected Map
         autonumber 7.1
-            CTRL -> APP_SESSION: getInstance()
-            activate APP_SESSION
-                 APP_SESSION --> CTRL : appSession
-            deactivate APP_SESSION
-            CTRL -> APP_SESSION: setCurrentMap(mapId)
+
+            CTRL -> DTO_MAP: getNameID()
+            activate DTO_MAP
+                DTO_MAP --> CTRL : nameID
+            deactivate DTO_MAP
 
             CTRL -> REPOS_MAP : getMapById(mapId)
             activate REPOS_MAP
+            REPOS_MAP -> MAPS: getMapById(mapId)
+                activate MAPS
+                    MAPS --> REPOS_MAP: currentMap
+                deactivate MAPS
                 REPOS_MAP --> CTRL : currentMap
             deactivate REPOS_MAP
 
-            CTRL -> MAPPER_MAP : toMapLayoutDTO(currentMap)
-            activate MAPPER_MAP
-                MAPPER_MAP -> DTO_MAP**: create(...)
-
-                MAPPER_MAP --> CTRL : mapLayoutDTO
-            deactivate MAPPER_MAP
+            CTRL -> MAP: getMapLayout()
+            activate MAP
+            MAP --> CTRL: mapLayout
+            deactivate MAP
             autonumber 8
         end
-        CTRL --> UI: mapLayoutDTO
+        CTRL --> UI: mapLayout
     deactivate CTRL
     UI --> editor: Loads and displays the selected map
 deactivate UI
 
 editor -> UI: Confirms the selected map
 activate UI
-    UI -> CTRL: getListOfScenarios(mapDTO)
-    autonumber 11.1
+
+    UI -> CTRL: getListOfIndustrySectors()
     activate CTRL
-        group Get ScenarioDTO List
+        group Get IndustrySectorDTO List
 
-
-            CTRL -> REPOS_SINGLETON: getMapRepository()
+            CTRL -> REPOS_SINGLETON: getIndustrySectorRepository()
             activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL: mapRepository
+                REPOS_SINGLETON --> CTRL: industrySectorRepository
             deactivate REPOS_SINGLETON
 
-            CTRL -> DTO_MAP: getNameID()
-            activate DTO_MAP
-                DTO_MAP --> CTRL: mapNameID
-            deactivate DTO_MAP
+            CTRL -> IND_SECTOR_REPO: getListOfIndustrySectors()
+            activate IND_SECTOR_REPO
 
-            CTRL -> REPOS_MAP: getListOfMapScenarios(mapNameID)
-            activate REPOS_MAP
+            IND_SECTOR_REPO -> IND_SECTORS: getListOfIndustrySectors()
+            activate IND_SECTORS
 
-            REPOS_MAP -> MAPS: getListOfMapScenarios(mapNameID)
-            activate MAPS
+                IND_SECTORS --> IND_SECTOR_LIST**: create()
 
-            MAPS -> MAP: getScenarios()
-            activate MAP
+                loop for each known IndustrySector
+                    IND_SECTORS -> LIST: industrySector = get(i)
+                    activate LIST
+                        deactivate LIST
 
-                MAP --> SCENARIOS: getScenarios()
-                activate SCENARIOS
-                    SCENARIOS --> SCENARIO_LIST**: create()
-
-                    loop for each known Scenario
-
-                        SCENARIOS --> LIST: scenario = get(i)
-                        activate LIST
-                            deactivate LIST
-
-                        SCENARIOS --> SCENARIO_LIST: add(scenario)
-                        activate SCENARIO_LIST
-                            deactivate SCENARIO_LIST
-
-                    end
-
-                SCENARIOS --> MAP: listScenario
-                deactivate SCENARIOS
-
-                MAP --> MAPS: listScenario
-                deactivate MAP
-
-            MAPS --> REPOS_MAP: listScenario
-            deactivate MAPS
-
-            REPOS_MAP --> CTRL: listScenario
-            deactivate REPOS_MAP
-
-
-            CTRL -> SCENARIO_MAPPER: toDTO(listScenario)
-            activate SCENARIO_MAPPER
-
-                SCENARIO_MAPPER --> SCENARIO_LIST_DTO**: create()
-
-                loop for each object in listScenario
-                    SCENARIO_MAPPER -> SCENARIO_LIST: scenario = get(i)
-                    activate SCENARIO_LIST
-                        deactivate SCENARIO_LIST
-
-                    SCENARIO_MAPPER -> SCENARIO_MAPPER: scenarioDTO = toDTO(scenario)
-                    activate SCENARIO_MAPPER
-                        deactivate SCENARIO_MAPPER
-
-                    SCENARIO_MAPPER -> SCENARIO_LIST_DTO: add(scenarioDTO)
-                    activate SCENARIO_LIST_DTO
-                        deactivate SCENARIO_LIST_DTO
+                    IND_SECTORS -> IND_SECTOR_LIST: add(industrySector)
+                    activate IND_SECTOR_LIST
+                        deactivate IND_SECTOR_LIST
                 end
 
-            SCENARIO_MAPPER --> CTRL: listScenarioDTO
-            deactivate SCENARIO_MAPPER
+                IND_SECTORS --> IND_SECTOR_REPO: listIndustrySector
+                deactivate IND_SECTORS
 
-        end
+                IND_SECTOR_REPO --> CTRL: listIndustrySector
+                deactivate IND_SECTOR_REPO
 
-    autonumber 12
-    UI <-- CTRL : listScenarioDTO
-deactivate CTRL
-    UI --> editor: Shows the list of available scenarios
-deactivate UI
+            CTRL -> IND_SECTOR_MAPPER: toDTO(listIndustrySector)
+            activate IND_SECTOR_MAPPER
 
-editor -> UI: Selects a scenario and confirms
-activate UI
-    UI -> CTRL: loadScenario(scenarioSelectionDTO)
-     activate CTRL
-         group Load Selected Scenario
+                IND_SECTOR_MAPPER --> IND_SECTOR_LIST_DTO**: create()
 
+                loop for each object in listIndustrySector
+                    IND_SECTOR_MAPPER -> IND_SECTOR_LIST: industrySector = get(i)
+                    activate IND_SECTOR_LIST
+                        deactivate IND_SECTOR_LIST
 
-             CTRL -> REPOS_SINGLETON: getScenarioRepository()
-             activate REPOS_SINGLETON
-                 REPOS_SINGLETON --> CTRL: scenarioRepository
-             deactivate REPOS_SINGLETON
+                    IND_SECTOR_MAPPER -> IND_SECTOR_MAPPER: industrySectorDTO = toDTO(industrySector)
+                    activate IND_SECTOR_MAPPER
+                        IND_SECTOR_MAPPER --> IND_SECTOR_DTO**: create()
+                        deactivate IND_SECTOR_MAPPER
 
-             CTRL -> SCENARIO_DTO: getScenarioID()
-             activate SCENARIO_DTO
-                 SCENARIO_DTO --> CTRL: scenarioID
-             deactivate SCENARIO_DTO
-
-             CTRL -> SCENARIO_REPO: getScenario(scenarioID)
-             activate SCENARIO_REPO
-
-             SCENARIO_REPO -> SCENARIOS: getScenario(scenarioID)
-             activate SCENARIOS
-
-                 SCENARIOS -> SCENARIO: get(scenarioID)
-                 activate SCENARIO
-                     SCENARIO --> SCENARIOS: scenario
-                 deactivate SCENARIO
-
-             SCENARIOS --> SCENARIO_REPO: scenario
-             deactivate SCENARIOS
-
-             SCENARIO_REPO --> CTRL: scenario
-             deactivate SCENARIO_REPO
-
-             CTRL -> APP_SESSION: getInstance()
-             activate APP_SESSION
-                 APP_SESSION --> CTRL: appSession
-             deactivate APP_SESSION
-
-             CTRL -> APP_SESSION: setCurrentScenario(scenario)
-             activate APP_SESSION
-                 APP_SESSION --> CTRL: success
-             deactivate APP_SESSION
-
-             CTRL -> SCENARIO_MAPPER: toDTO(scenario)
-             activate SCENARIO_MAPPER
-                 SCENARIO_MAPPER -> SCENARIO_DTO**: create(...)
-                 SCENARIO_MAPPER --> CTRL: scenarioDTO
-             deactivate SCENARIO_MAPPER
-
-         end
-
-         autonumber 16
-         <-- CTRL : scenarioDTO
-     deactivate CTRL
-     UI --> editor : Loads the selected scenario
-deactivate UI
-
-editor -> UI: Confirms the selected scenario
-activate UI
-    UI -> CTRL: getListOfMapIndustries(mapDTO)
-    activate CTRL
-        group Get IndustryDTO List
-
-            CTRL -> REPOS_SINGLETON: getMapRepository()
-            activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL: mapRepository
-            deactivate REPOS_SINGLETON
-
-            CTRL -> DTO_MAP: getNameID()
-            activate DTO_MAP
-                DTO_MAP --> CTRL: mapNameID
-            deactivate DTO_MAP
-
-            CTRL -> REPOS_MAP: getListOfMapIndustries(mapNameID)
-            activate REPOS_MAP
-
-            REPOS_MAP -> MAPS: getListOfMapIndustries(mapNameID)
-            activate MAPS
-
-            MAPS -> MAP: getIndustries()
-            activate MAP
-
-                MAP --> INDS: getIndustries()
-                activate INDS
-                    INDS --> IND_LIST**: create()
-
-                    loop for each known Industry
-
-                        INDS --> LIST: industry = get(i)
-                        activate LIST
-                            deactivate LIST
-
-                        INDS --> IND_LIST: add(industry)
-                        activate IND_LIST
-                            deactivate IND_LIST
-
-                    end
-
-                INDS --> MAP: listIndustry
-                deactivate INDS
-
-                MAP --> MAPS: listIndustry
-                deactivate MAP
-
-            MAPS --> REPOS_MAP: listIndustry
-            deactivate MAPS
-
-            REPOS_MAP --> CTRL: listIndustry
-            deactivate REPOS_MAP
-
-
-            CTRL -> IND_MAPPER: toDTO(listIndustry)
-            activate IND_MAPPER
-
-                IND_MAPPER --> IND_LIST_DTO**: create()
-
-                loop for each object in listIndustry
-                    IND_MAPPER -> IND_LIST: industry = get(i)
-                    activate IND_LIST
-                        deactivate IND_LIST
-
-                    IND_MAPPER -> IND_MAPPER: industryDTO = toDTO(industry)
-                    activate IND_MAPPER
-                        deactivate IND_MAPPER
-
-                    IND_MAPPER -> IND_LIST_DTO: add(industryDTO)
-                    activate IND_LIST_DTO
-                        deactivate IND_LIST_DTO
+                    IND_SECTOR_MAPPER -> IND_SECTOR_LIST_DTO: add(industrySectorDTO)
+                    activate IND_SECTOR_LIST_DTO
+                        deactivate IND_SECTOR_LIST_DTO
                 end
 
-            IND_MAPPER --> CTRL: listIndustryDTO
-            deactivate IND_MAPPER
+            IND_SECTOR_MAPPER --> CTRL: listIndustrySectorDTO
+            deactivate IND_SECTOR_MAPPER
 
         end
 
         autonumber 16
-        CTRL --> UI : listIndustryDTO
+        CTRL --> UI : listIndustrySectorDTO
     deactivate CTRL
-    UI --> editor : Shows the list of available industries
+    UI --> editor : Shows the list of industry sectors
 deactivate UI
 
-editor -> UI : Selects an industry
+editor -> UI : Selects an industry sector
 activate UI
-UI --> editor : Asks for industry data(nameID, X and Y coordinates, availabilityYear)
+UI --> editor : Asks for industry data(nameID, X and Y coordinates, availabilityYear, suppliedCargo, demandedCargo)
 deactivate UI
 
-editor -> UI : Provides industry data (name, coords, etc.)
+editor -> UI : Provides industry data (nameID, X and Y coordinates, availabilityYear, suppliedCargo, demandedCargo)
 activate UI
 
-    UI -> CTRL : addIndustry(nameID, x, y, availabilityYear)
+    UI -> CTRL : addIndustry(nameID, X and Y coordinates, sector, availabilityYear, suppliedCargo, demandedCargo)
     activate CTRL
         ' The Controller creates the DTO for validation and confirmation.
-        CTRL -> DTO_IND**: create(nameID, x, y, availabilityYear)
+        CTRL -> DTO_IND**: create(nameID, X and Y coordinates, sector, availabilityYear, suppliedCargo, demandedCargo)
         CTRL --> UI : industryDTO
     deactivate CTRL
 
@@ -373,58 +217,78 @@ deactivate UI
 
 editor -> UI : Confirms the data
 activate UI
-    UI -> CTRL : confirmAddIndustry(industryDTO)
-    activate CTRL
-        group Domain Logic: Create and Add Industry
-            ' The Controller delegates creation to the Repository, passing the DTO.
-            CTRL -> REPOS_SINGLETON : getIndustryRepository()
-             activate REPOS_SINGLETON
-                REPOS_SINGLETON --> CTRL : industryRepository
-            deactivate REPOS_SINGLETON
+    UI -> CTRL : createAndAddIndustry(mapDTO, industryDTO)
+        activate CTRL
+            group Create and Add Industry
 
-            CTRL -> REPOS_IND : save(industryDTO)
-            activate REPOS_IND
-                ' The Repository uses the Mapper to create the domain object from the DTO.
-                REPOS_IND -> IND_MAPPER : toDomain(industryDTO)
-                activate IND_MAPPER
-                    IND_MAPPER -> DTO_IND : getNameID()
-                    IND_MAPPER -> DTO_IND : getX()
-                    IND_MAPPER -> DTO_IND : getY()
-                    ' ... gets other attributes
-                    IND_MAPPER -> IND**: create(nameID, x, y, ...)
-                    IND_MAPPER --> REPOS_IND : newIndustry
-                deactivate IND_MAPPER
+            CTRL ->  MAPS :createAndAddIndustry(currentMap, industryDTO)
+                activate MAPS
+                MAPS -> MAP: createAndAddIndustry(industryDTO)
+                activate MAP
+                    MAP -> POSITIONS : isPositionAvailable(industryDTO.getX(), industryDTO.getY())
+                    activate POSITIONS
+                        POSITIONS -> POS : isAvailable()
+                        activate POS
+                            POS --> POSITIONS : true
+                        deactivate POS
+                        POSITIONS --> MAP : success
+                    deactivate POSITIONS
 
-                ' The Repository persists the new domain object.
-                REPOS_IND -> IND : // stores the new object
-                REPOS_IND --> CTRL : newIndustry
-            deactivate REPOS_IND
 
-            ' The Controller orchestrates adding the industry to the map.
-            CTRL -> MAP : addIndustry(newIndustry)
-            activate MAP
-                MAP --> CTRL : success
-            deactivate MAP
+                    MAP -> INDS: AddIndustry(industryDTO)
+                    activate INDS
+                        INDS -> IND_MAPPER : industry = toDomain(industryDTO)
+                        activate IND_MAPPER
+                            IND_MAPPER -> DTO_IND : nameID = getNameID()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : type = getType()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : position = getPosition()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : availabilityYear = getAvailabilityYear()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : demandedCargo = getDemandedCargo()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : suppliedCargo = getSuppliedCargo()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> IND** : create(nameID, type, position, availabilityYear, demandedCargo, suppliedCargo)
+                        deactivate IND_MAPPER
 
-            ' The Controller requests persistence of the map state.
-            CTRL -> REPOS_MAP : save(currentMap)
-            activate REPOS_MAP
-                REPOS_MAP --> CTRL : success
-            deactivate REPOS_MAP
+                        INDS -> INDS : add(industry)
+                        activate INDS
+                        INDS --> INDS : true
+                        deactivate INDS
 
-            ' The Controller uses the Mapper to create a details DTO for the UI.
-            CTRL -> IND_MAPPER : toDetailsDTO(newIndustry)
-            activate IND_MAPPER
-                 IND_MAPPER -> DTO_IND**: create(...)
-                 IND_MAPPER --> CTRL : industryDetailsDTO
-            deactivate IND_MAPPER
-        end
 
-        CTRL --> UI : industryDetailsDTO
-    deactivate CTRL
+                        INDS --> MAP : success
 
-    UI --> editor : Displays success message and the\ndetails of the added industry
-deactivate UI
+                    deactivate INDS
+                    MAP -> POSITIONS : setOcuppied(industryDTO.getX(), industryDTO.getY())
+                    activate POSITIONS
+                        POSITIONS -> POS : setOcuppied()
+                        activate POS
+                            POS --> POSITIONS : success
+                        deactivate POS
+                        POSITIONS --> MAP : success
+                    deactivate POSITIONS
+                    MAP --> MAPS : success
+                deactivate MAP
+                MAPS --> CTRL : success
+            deactivate MAPS
+
+
+            ' Success response
+            end
+            CTRL --> UI : success
+        deactivate CTRL
+    UI --> editor : displays success message
+    deactivate UI
 
 deactivate editor
 @enduml

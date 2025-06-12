@@ -5,105 +5,88 @@ skinparam shadowing false
 
 autonumber
 
-title Sequence Diagram: US02 - Add an industry
-
-actor "Editor" as editor
-participant ":EditMapUI" as mapUI
-participant ":EditMapController" as mapCTRL
+actor "Editor" as EDITOR
 participant ":AddIndustryUI" as UI
 participant ":AddIndustryController" as CTRL
 
-activate editor
+activate EDITOR
 
-    editor -> mapUI : asks to edit map
+    EDITOR -> UI : asks to add an industry
+    activate UI
+        UI --> CTRL** : create()
+        UI -> CTRL : getAvailableMaps()
 
-        activate mapUI
-            mapUI -> mapCTRL**: create()
-            mapUI -> mapCTRL: getAvailableMaps()
+        ref over CTRL
+            Get Available MapDTO List
+        end ref
 
-            activate mapCTRL
-                ref over mapCTRL
-                Get available maps
-                end
-                mapCTRL --> mapUI: availableMapsList
-            deactivate mapCTRL
+        activate CTRL
+            CTRL --> UI : listMapDTO
+        deactivate CTRL
 
-            mapUI --> editor: shows list of available maps
-        deactivate mapUI
+        UI --> EDITOR : shows a list of available maps
+    deactivate UI
 
-    editor -> mapUI: selects a map
-        activate mapUI
+    EDITOR -> UI : selects a map
+    activate UI
+        UI -> CTRL : loadMap(mapDTO)
 
-            mapUI -> mapCTRL: loadMap(selectedMap)
-            activate mapCTRL
+        ref over CTRL
+            Load Selected Map
+        end ref
 
-                ref over mapCTRL
-                Load selected map
-                end
+        activate CTRL
+            CTRL --> UI : mapLayout
+        deactivate CTRL
 
-                mapCTRL --> mapUI: mapLayout
+        UI --> EDITOR : displays the selected map
+    deactivate UI
 
-            deactivate mapCTRL
+    EDITOR -> UI : confirms the selected map
+    activate UI
+        UI -> CTRL : getListOfIndustrySectors()
 
-            mapUI --> editor: loads and displays the selected map
+        ref over CTRL
+            Get IndustrySectorDTO List
+        end ref
 
+        activate CTRL
+            CTRL --> UI : listIndustrySectorDTO
+        deactivate CTRL
 
-        deactivate mapUI
+        UI --> EDITOR : shows a list of industry sectors
+    deactivate UI
 
-    editor -> UI : asks to add industry
-        activate UI
+    EDITOR -> UI : selects an industry sector
+    activate UI
+        UI --> EDITOR : asks for industry data
+    deactivate UI
 
+    EDITOR -> UI : provides industry data
+    activate UI
+        UI -> CTRL : addIndustry(...)
 
-            UI -> CTRL**: create()
-            UI -> CTRL: getIndustriesAvailable()
-            activate CTRL
-            ref over CTRL
-            Get available industries
-            end
-                CTRL --> UI: availableIndustriesList
-            deactivate CTRL
+        activate CTRL
+            CTRL --> UI : industryDTO
+        deactivate CTRL
 
-        UI --> editor: shows all available industries in a list
-        deactivate UI
+        UI --> EDITOR : shows industry data and asks for confirmation
+    deactivate UI
 
-    editor -> UI: selects industry
-        activate UI
-        UI --> editor: requests industry data (nameID, X and Y coordinates)
-        deactivate UI
+    EDITOR -> UI : confirms the data
+    activate UI
+        UI -> CTRL : createAndAddIndustry(mapDTO, industryDTO)
 
-    editor -> UI: types industry data
-        activate UI
-        UI -> CTRL: validateIndustry(nameID, x, y)
-            activate CTRL
+        ref over CTRL
+            Create and Add Industry
+        end ref
 
-            ref over CTRL
-            Validate industry data
-            end
+        activate CTRL
+            CTRL --> UI : success
+        deactivate CTRL
 
-                CTRL --> UI: success
-            deactivate CTRL
+        UI --> EDITOR : displays success message
+    deactivate UI
 
-        UI --> editor: asks for confirmation
-        deactivate UI
-
-    editor -> UI: confirms industry data
-        activate UI
-            UI -> CTRL: createIndustry(nameID, x, y)
-
-            ref over CTRL
-            Create and add industry to map
-            end
-
-            activate CTRL
-
-               CTRL --> UI: industryDetails
-               deactivate CTRL
-
-            UI --> editor: displays operation success
-            UI --> editor: display industry details
-
-        deactivate UI
-
-deactivate editor
-
+deactivate EDITOR
 @enduml
