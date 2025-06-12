@@ -1,0 +1,54 @@
+@startuml
+autonumber
+title "Sequence Diagram - US20 : Load a Map"
+
+actor "Editor" as Editor
+participant ":MapUI" as MapUI
+participant ":MapController" as MapController
+participant ":MapRepository" as MapRepository
+participant ":Map" as Map
+
+activate Editor
+
+Editor -> MapUI: requests to load a map
+activate MapUI
+
+MapUI -> MapController: loadMap()
+activate MapController
+
+MapController -> MapRepository: getSavedMaps()
+activate MapRepository
+MapRepository --> MapController: returns list of saved maps
+deactivate MapRepository
+
+MapController --> MapUI: returns list of saved maps
+deactivate MapController
+
+MapUI --> Editor: displays saved maps
+deactivate MapUI
+
+Editor -> MapUI: selects map file to load
+activate MapUI
+
+MapUI -> MapController: loadSelectedMap(file)
+activate MapController
+
+MapController -> MapRepository: deserializeMap(file)
+activate MapRepository
+MapRepository --> MapController: returns deserialized map data
+deactivate MapRepository
+
+MapController -> Map: createMap(data)
+activate Map
+Map --> MapController: returns new Map instance
+deactivate Map
+
+MapController --> MapUI: returns loaded map
+deactivate MapController
+
+MapUI --> Editor: displays operation success
+MapUI --> Editor: displays loaded map with all elements
+MapUI --> Editor: displays map details (nameID, scale, size)
+deactivate MapUI
+
+@enduml 

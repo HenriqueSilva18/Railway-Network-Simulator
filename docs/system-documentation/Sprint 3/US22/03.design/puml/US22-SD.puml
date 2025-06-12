@@ -1,0 +1,71 @@
+@startuml
+autonumber
+title "Sequence Diagram - US22 : Load a Scenario"
+
+actor "Editor" as Editor
+participant ":ScenarioUI" as ScenarioUI
+participant ":ScenarioController" as ScenarioController
+participant ":MapRepository" as MapRepository
+participant ":Scenario" as Scenario
+
+activate Editor
+
+Editor -> ScenarioUI: requests to load a scenario
+activate ScenarioUI
+
+ScenarioUI -> ScenarioController: loadScenario()
+activate ScenarioController
+
+ScenarioController -> MapRepository: getAvailableMaps()
+activate MapRepository
+MapRepository --> ScenarioController: returns list of available maps
+deactivate MapRepository
+
+ScenarioController --> ScenarioUI: returns list of available maps
+deactivate ScenarioController
+
+ScenarioUI --> Editor: displays available maps
+deactivate ScenarioUI
+
+Editor -> ScenarioUI: selects map to load scenario for
+activate ScenarioUI
+
+ScenarioUI -> ScenarioController: getScenariosForMap(selectedMap)
+activate ScenarioController
+
+ScenarioController -> MapRepository: getScenariosForMap(selectedMap)
+activate MapRepository
+MapRepository --> ScenarioController: returns list of saved scenarios
+deactivate MapRepository
+
+ScenarioController --> ScenarioUI: returns list of saved scenarios
+deactivate ScenarioController
+
+ScenarioUI --> Editor: displays saved scenarios for selected map
+deactivate ScenarioUI
+
+Editor -> ScenarioUI: selects scenario file to load
+activate ScenarioUI
+
+ScenarioUI -> ScenarioController: loadSelectedScenario(file)
+activate ScenarioController
+
+ScenarioController -> MapRepository: deserializeScenario(file)
+activate MapRepository
+MapRepository --> ScenarioController: returns deserialized scenario data
+deactivate MapRepository
+
+ScenarioController -> Scenario: createScenario(data)
+activate Scenario
+Scenario --> ScenarioController: returns new Scenario instance
+deactivate Scenario
+
+ScenarioController --> ScenarioUI: returns loaded scenario
+deactivate ScenarioController
+
+ScenarioUI --> Editor: displays operation success
+ScenarioUI --> Editor: displays loaded scenario details (nameID, startDate, endDate, initialBudget)
+ScenarioUI --> Editor: displays scenario configurations (locomotives, industries, stations, cities)
+deactivate ScenarioUI
+
+@enduml 

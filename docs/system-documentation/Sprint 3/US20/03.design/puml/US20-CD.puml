@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+class MapUI {
+}
+
+class MapController {
+    + loadMap()
+    + loadSelectedMap(file)
+}
+
+class Map {
+    + createMap(data)
+}
+
+class MapRepository {
+    + getSavedMaps()
+    + deserializeMap(file)
+}
+
+MapUI --> MapController
+MapController --> Map
+MapController --> MapRepository
+
+@enduml 

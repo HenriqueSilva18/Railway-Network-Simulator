@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+class ScenarioUI {
+}
+
+class ScenarioController {
+    + loadScenario()
+    + getScenariosForMap(selectedMap)
+    + loadSelectedScenario(file)
+}
+
+class Scenario {
+    + createScenario(data)
+}
+
+
+class MapRepository {
+    + getAvailableMaps()
+        + getScenariosForMap(selectedMap)
+        + deserializeScenario(file)
+}
+
+ScenarioUI --> ScenarioController
+ScenarioController --> Scenario
+ ScenarioController --> MapRepository
+
+@enduml 
