@@ -1,116 +1,177 @@
 @startuml
+'skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-skinparam classAttributeIconSize 0
+skinparam linetype polyline
 
-title Class Diagram: US02 - Add an Industry
+skinparam classAttributeIconSize 0
 
 class AddIndustryUI {
 }
 
 class AddIndustryController {
-    + create()
-    + getAvailableIndustries() : List<Industry>
-    + validateIndustry(nameID, x, y) : boolean
-    + validatePosition(x, y) : boolean
-    + validateIndustryType(nameID) : boolean
-    + createIndustry(nameID, x, y) : Industry
-}
-
-class IndustryRepository {
-    + getAvailableIndustries() : List<Industry>
-    + save(industry: Industry) : boolean
-}
-
-class MapRepository {
-    + getCurrentMap(session) : Map
-    + save(map) : boolean
+    + getListOfMaps()
+    + loadMap(mapDTO)
+    + getListOfIndustrySectors()
+    + addIndustry(nameID, x, y, sector, availabilityYear, suppliedCargo, demandedCargo)
+    + createAndAddIndustry(currentMap, industryDTO)
 }
 
 class Repositories {
-    + {static} getInstance() : Repositories
-    + getIndustryRepository() : IndustryRepository
-    + getMapRepository() : MapRepository
+    - Repositories()
+    + {static} getInstance()
+    + getMapRepository()
+    + getIndustrySectorRepository()
 }
 
 class ApplicationSession {
-    + {static} getInstance() : ApplicationSession
-    + getCurrentSession() : Editor
-    + getCurrentMap() : Map
+}
+
+class MapRepository {
+    + getListOfMaps()
+    + getMapById(mapId)
+}
+
+class IndustrySectorRepository {
+    + getListOfIndustrySectors()
+}
+
+class Maps {
+    + getListOfMaps()
+    + getMapById(mapId)
+    + createAndAddIndustry(currentMap, industryDTO)
 }
 
 class Map {
     - nameID : String
-    - size : Size
-    - industries : List<Industry>
-    - positions : List<Position>
-
-    + isCellEmpty(x: int, y: int) : boolean
-    + addIndustry(industry: Industry) : boolean
-    + getPosition(x: int, y: int) : Position
+    + getMapLayout()
+    + createAndAddIndustry(industryDTO)
 }
 
-class Industry {
-    + {static} create(nameID: String, x: int, y: int) : Industry
-    - nameID : String
-    - type : String
-    - availabilityYear : int
-    - productionRate : double
-    - suppliedCargo : List<Cargo>
-    - demandedCargo : List<Cargo>
-    - position : Position
-}
-
-class Position {
-    - x : int
-    - y : int
-    - occupied : boolean
+class IndustrySectors {
+    + getListOfIndustrySectors()
 }
 
 class IndustrySector {
-    - name : String
-    - importsExports : boolean
-    - generatesCargo : List<Cargo>
-    - consumesCargo : List<Cargo>
-    - description : String
-}
-
-class Cargo {
-    - name : String
-    - amount : int
-    - lifespan : int
+    - nameID : String
     - type : String
-    - productionResources : List<String>
 }
 
-class Editor {
-    - username : String
-    - password : String
+class Industries {
+    + addIndustry(industryDTO)
+    + add(industry)
 }
 
-AddIndustryUI ..> AddIndustryController : uses
-AddIndustryController ..> IndustryRepository : uses
-AddIndustryController ..> MapRepository : uses
-AddIndustryController ..> Repositories : uses
-AddIndustryController ..> ApplicationSession : uses
-AddIndustryController ..> Map : uses
-AddIndustryController ..> Industry : uses
+class Industry {
+    - nameID : String
+    - type : String
+    - position : Position
+    - availabilityYear : int
+    - demandedCargo : List<String>
+    - suppliedCargo : List<String>
+}
 
-Map "1" o-- "*" Industry : contains >
-Map "1" o-- "*" Position : contains >
-MapRepository --> "1" Map : returns
-IndustryRepository --> "*" Industry : provides
+class Positions {
+    + isPositionAvailable(x, y)
+    + setOccupied(x, y)
+}
 
-Repositories --> IndustryRepository : provides >
-Repositories --> MapRepository : provides >
+class Position {
+    - x : double
+    - y : double
+    - occupied : boolean
+    + isAvailable()
+    + setOccupied()
+}
 
-ApplicationSession --> Editor : holds >
-ApplicationSession --> Map : currentMap >
+class MapDTO {
+    - nameID : String
+    - scale : double
+    + getNameID()
+}
 
-Editor ..> AddIndustryUI : interacts with >
+class IndustrySectorDTO {
+    - nameID : String
+    - type : String
+}
 
-Industry "1" -- "1" Position : located at >
-Industry "*" -- "1" IndustrySector : belongs to >
-Industry "*" -- "*" Cargo : produces/consumes >
+class IndustryDTO {
+    - nameID : String
+    - type : String
+    - x : double
+    - y : double
+    - availabilityYear : int
+    - demandedCargo : List<String>
+    - suppliedCargo : List<String>
+    + getNameID()
+    + getType()
+    + getPosition()
+    + getAvailabilityYear()
+    + getDemandedCargo()
+    + getSuppliedCargo()
+    + getX()
+    + getY()
+}
+
+class MapMapper {
+    + toMapDTOs(List<Map>)
+    + toDTO(Map)
+}
+
+class IndustrySectorMapper {
+    + toDTO(List<IndustrySector>)
+    + toDTO(IndustrySector)
+}
+
+class IndustryMapper {
+    + toDomain(IndustryDTO)
+    + toDTO(List<Industry>)
+    + toDTO(Industry)
+}
+
+' UI and Controller relationships
+AddIndustryUI "1" --> "1" AddIndustryController
+AddIndustryController "1" --> "1" Repositories : uses
+AddIndustryController "1" --> "1" ApplicationSession
+
+' Repository relationships
+Repositories "1" --> "1" MapRepository
+Repositories "1" --> "1" IndustrySectorRepository
+
+' Domain model relationships
+MapRepository "1" --> "1" Maps : contains
+Maps "1" --> "*" Map : has
+
+Map "1" --> "1" Industries : contains
+Map "1" --> "1" Positions : has
+
+Industries "1" --> "*" Industry : has
+Positions "1" --> "*" Position : has
+
+IndustrySectorRepository "1" --> "1" IndustrySectors : contains
+IndustrySectors "1" --> "*" IndustrySector : has
+
+' DTO relationships
+AddIndustryController "1" --> "1" MapDTO : uses
+AddIndustryController "1" --> "1" IndustryDTO : uses
+AddIndustryController "1" --> "*" IndustrySectorDTO : uses
+
+' Mapper relationships
+MapRepository "1" --> "1" MapMapper : uses
+IndustrySectorRepository "1" --> "1" IndustrySectorMapper : uses
+AddIndustryController "1" --> "1" IndustryMapper : uses
+
+' Mapper to Domain/DTO relationships
+MapMapper "1" --> "1" Map : maps
+MapMapper "1" --> "1" MapDTO : maps to
+
+IndustrySectorMapper "1" --> "1" IndustrySector : maps
+IndustrySectorMapper "1" --> "1" IndustrySectorDTO : maps to
+
+IndustryMapper "1" --> "1" Industry : maps
+IndustryMapper "1" --> "1" IndustryDTO : maps to
+
+' Position relationship with Industry
+Industry "1" --> "1" Position : occupies
 
 @enduml

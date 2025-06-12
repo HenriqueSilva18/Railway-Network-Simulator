@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 7
+
+participant ":AddIndustryController" as CTRL
+participant "mapDTO\n:MapDTO" as DTO_MAP
+participant "mapRepository\n:MapRepository" as REPOS_MAP
+participant "currentMap\n:Map" as MAP
+participant "maps\n:Maps" as MAPS
+
+-> CTRL: loadMap(mapDTO)
+ activate CTRL
+        group Load Selected Map
+        autonumber 7.1
+
+            CTRL -> DTO_MAP: getNameID()
+            activate DTO_MAP
+                DTO_MAP --> CTRL : nameID
+            deactivate DTO_MAP
+
+            CTRL -> REPOS_MAP : getMapById(mapId)
+            activate REPOS_MAP
+            REPOS_MAP -> MAPS: getMapById(mapId)
+                activate MAPS
+                    MAPS --> REPOS_MAP: currentMap
+                deactivate MAPS
+                REPOS_MAP --> CTRL : currentMap
+            deactivate REPOS_MAP
+
+            CTRL -> MAP: getMapLayout()
+            activate MAP
+            MAP --> CTRL: mapLayout
+            deactivate MAP
+            autonumber 8
+        end
+    autonumber 8
+    <-- CTRL : mapLayout
+deactivate CTRL
+
+@enduml

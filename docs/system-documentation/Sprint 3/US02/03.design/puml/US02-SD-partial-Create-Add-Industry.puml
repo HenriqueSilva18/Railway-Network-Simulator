@@ -1,0 +1,90 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AddIndustryController" as CTRL
+participant "maps\n:Maps" as MAPS
+participant "currentMap\n:Map" as MAP
+participant "positions\n:Positions" as POSITIONS
+participant "position\n:Position" as POS
+participant "industries\n:Industries" as INDS
+participant ":IndustryMapper" as IND_MAPPER
+participant "industryDTO\n:IndustryDTO" as DTO_IND
+
+autonumber 22
+-> CTRL: createAndAddIndustry(currentMap, industryDTO)
+
+activate CTRL
+        autonumber 22.1
+            group Create and Add Industry
+
+            CTRL ->  MAPS :createAndAddIndustry(currentMap, industryDTO)
+                activate MAPS
+                MAPS -> MAP: createAndAddIndustry(industryDTO)
+                activate MAP
+                    MAP -> POSITIONS : isPositionAvailable(industryDTO.getX(), industryDTO.getY())
+                    activate POSITIONS
+                        POSITIONS -> POS : isAvailable()
+                        activate POS
+                            POS --> POSITIONS : true
+                        deactivate POS
+                        POSITIONS --> MAP : success
+                    deactivate POSITIONS
+
+
+                    MAP -> INDS: AddIndustry(industryDTO)
+                    activate INDS
+                        INDS -> IND_MAPPER : industry = toDomain(industryDTO)
+                        activate IND_MAPPER
+                            IND_MAPPER -> DTO_IND : nameID = getNameID()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : type = getType()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : position = getPosition()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : availabilityYear = getAvailabilityYear()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : demandedCargo = getDemandedCargo()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> DTO_IND : suppliedCargo = getSuppliedCargo()
+                            activate DTO_IND
+                            deactivate DTO_IND
+                            IND_MAPPER -> IND** : create(nameID, type, position, availabilityYear, demandedCargo, suppliedCargo)
+                        deactivate IND_MAPPER
+
+                        INDS -> INDS : add(industry)
+                        activate INDS
+                        INDS --> INDS : true
+                        deactivate INDS
+
+
+                        INDS --> MAP : success
+
+                    deactivate INDS
+                    MAP -> POSITIONS : setOcuppied(industryDTO.getX(), industryDTO.getY())
+                    activate POSITIONS
+                        POSITIONS -> POS : setOcuppied()
+                        activate POS
+                            POS --> POSITIONS : success
+                        deactivate POS
+                        POSITIONS --> MAP : success
+                    deactivate POSITIONS
+                    MAP --> MAPS : success
+                deactivate MAP
+                MAPS --> CTRL : success
+            deactivate MAPS
+
+
+            ' Success response
+            end
+            autonumber 23
+    <-- CTRL : success
+deactivate CTRL
+
+@enduml

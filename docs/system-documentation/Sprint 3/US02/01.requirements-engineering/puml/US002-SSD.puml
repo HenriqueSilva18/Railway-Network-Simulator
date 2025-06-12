@@ -5,45 +5,40 @@ skinparam shadowing false
 
 autonumber
 
-title System Sequence Diagram: US02 - Add an industry
+actor "Editor" as EDITOR
+participant ":system" as SYSTEM
 
-actor "Editor" as editor
-participant ":system" as system
+activate EDITOR
 
-activate editor
+    EDITOR -> SYSTEM : asks to add an industry
+    activate SYSTEM
+        SYSTEM --> EDITOR : shows a list of available maps
+    deactivate SYSTEM
 
-    editor -> system : asks to edit map
-        activate system
-            system --> editor: shows list of available maps
-        deactivate system
+    EDITOR -> SYSTEM : selects a map
+    activate SYSTEM
+        SYSTEM --> EDITOR : displays the selected map
+    deactivate SYSTEM
 
-    editor -> system: selects a map
-        activate system
-            system --> editor: loads and displays the selected map
-        deactivate system
+    EDITOR -> SYSTEM : confirms the selected map
+    activate SYSTEM
+        SYSTEM --> EDITOR : shows a list of industry sectors
+    deactivate SYSTEM
 
-    editor -> system : asks to add industry
-        activate system
-        system --> editor: shows all available industries in a list
+    EDITOR -> SYSTEM : selects an industry sector
+    activate SYSTEM
+        SYSTEM --> EDITOR : asks for industry data
+    deactivate SYSTEM
 
+    EDITOR -> SYSTEM : provides industry data
+    activate SYSTEM
+        SYSTEM --> EDITOR : shows industry data and asks for confirmation
+    deactivate SYSTEM
 
-        deactivate system
+    EDITOR -> SYSTEM : confirms the data
+    activate SYSTEM
+        SYSTEM --> EDITOR : displays success message
+    deactivate SYSTEM
 
-    editor -> system: selects industry
-        activate system
-        system --> editor: requests industry data (nameID, X and Y coordinates)
-        deactivate system
-
-    editor -> system: types industry data
-        activate system
-        system --> editor: asks for confirmation
-        deactivate system
-
-    editor -> system: confirms industry data
-        activate system
-        system --> editor: displays operation success
-        system --> editor: display industry details
-        deactivate system
-
-
+deactivate EDITOR
 @enduml
