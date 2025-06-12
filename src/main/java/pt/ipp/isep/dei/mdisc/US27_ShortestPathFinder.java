@@ -7,18 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.File;
 
 public class US27_ShortestPathFinder {
-    static String fileName = "fx_3av2_1_versao_2";
-    static String csvPath = "docs/mdisc/data/"+fileName+".csv";
-    static String dotPath = "docs/mdisc/us27/dot/"+fileName+".dot";
-    static String pngPath = "docs/mdisc/us27/png/"+fileName+".png";
-    static String[] stopStationFiles = {
-        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations1.csv",
-        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations2.csv",
-        "docs/mdisc/data/fx_3av2_1_versao_2_stopstations3.csv"
-    };
-
     static Map<String, Station> stations = new HashMap<>();
     static Map<String, List<Edge>> fullGraph = new HashMap<>();
     static Map<String, List<Edge>> filteredGraph = new HashMap<>();
@@ -27,11 +18,31 @@ public class US27_ShortestPathFinder {
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner sc = new Scanner(System.in);
 
+        // Get scenario file path from user
+        System.out.println("\nPlease enter the path to your scenario CSV file:");
+        String csvPath = sc.nextLine().trim();
+        
+        // Validate if the file exists
+        if (!FilesUtils.fileExists(csvPath)) {
+            System.out.println("Error: The specified scenario file does not exist.");
+            return;
+        }
+
         System.out.println("\nLoading railway scenario data from .csv file...");
         FilesUtils.loadCSV(csvPath, stations, fullGraph, stationOrder, 1);
         System.out.println("Loading complete\n");
 
-        // First show the network visualization
+        // Extract base filename without extension
+        String baseFileName = new File(csvPath).getName().replaceFirst("[.][^.]+$", "");
+        
+        // Create output paths in the correct directories
+        String dotPath = "docs/mdisc/us27/dot/" + baseFileName + ".dot";
+        String pngPath = "docs/mdisc/us27/png/" + baseFileName + ".png";
+        
+        // Create directories if they don't exist
+        new File("docs/mdisc/us27/dot").mkdirs();
+        new File("docs/mdisc/us27/png").mkdirs();
+        
         System.out.println("Exporting network to .dot file...");
         FilesUtils.exportToDOT(dotPath, fullGraph);
         System.out.println("Export network to .png file....");
@@ -60,13 +71,14 @@ public class US27_ShortestPathFinder {
 
         // Ask user how they want to input stations
         System.out.println("\nHow would you like to input the stations?");
-        System.out.println("[1] Use a predefined stop station file");
+        System.out.println("[1] Use a stop station file");
         System.out.println("[2] Enter stations manually");
         
         int inputChoice = 0;
         while (inputChoice != 1 && inputChoice != 2) {
             try {
                 inputChoice = sc.nextInt();
+                sc.nextLine(); // Consume newline
                 if (inputChoice != 1 && inputChoice != 2) {
                     System.out.println("Invalid option. Please enter 1 or 2.");
                 }
@@ -78,29 +90,18 @@ public class US27_ShortestPathFinder {
 
         List<String> requiredStations;
         if (inputChoice == 1) {
-            // Display available stop station files
-            System.out.println("\nAvailable stop station files:");
-            for (int i = 0; i < stopStationFiles.length; i++) {
-                System.out.printf("[%d] %s\n", i + 1, stopStationFiles[i]);
+            // Get stop station file path from user
+            System.out.println("\nPlease enter the path to your stop stations CSV file:");
+            String stopStationPath = sc.nextLine().trim();
+            
+            // Validate if the file exists
+            if (!FilesUtils.fileExists(stopStationPath)) {
+                System.out.println("Error: The specified stop stations file does not exist.");
+                return;
             }
-
-            // Get user's choice of stop station file
-            int fileChoice = 0;
-            while (fileChoice < 1 || fileChoice > stopStationFiles.length) {
-                System.out.println("\nEnter the number of the stop station file to use:");
-                try {
-                    fileChoice = sc.nextInt();
-                    if (fileChoice < 1 || fileChoice > stopStationFiles.length) {
-                        System.out.println("Invalid file number. Please enter a number between 1 and " + stopStationFiles.length);
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Please enter a valid number.");
-                    sc.next();
-                }
-            }
-
-            // Read the selected stop station file
-            requiredStations = readStopStationFile(stopStationFiles[fileChoice - 1]);
+            
+            // Read the stop station file
+            requiredStations = readStopStationFile(stopStationPath);
         } else {
             // Display available stations for manual input
             System.out.println("\nAvailable stations:");
@@ -117,6 +118,8 @@ public class US27_ShortestPathFinder {
         }
 
         // Find shortest path through required stations
+        System.out.println("\nRequired stations: " + requiredStations);
+        System.out.println("Filtered graph stations: " + filteredGraph.keySet());
         List<String> path = DijkstraAlgorithm.findPathThroughStations(filteredGraph, requiredStations);
         if (path == null) {
             System.out.println("\nNo valid path found through the specified stations.");
@@ -179,6 +182,10 @@ public class US27_ShortestPathFinder {
         
         System.out.println("-------------");
         System.out.printf("Total distance: %.1f km\n", totalDistance);
+        
+        // Display simple semicolon-separated path
+        System.out.println("\nSimple path:");
+        System.out.println("[" + String.join("; ", path) + "]");
     }
 
     private static double getDistanceBetweenStations(String from, String to) {
@@ -197,8 +204,9 @@ public class US27_ShortestPathFinder {
             if (line != null) {
                 String[] stationNames = line.split(";");
                 for (String station : stationNames) {
-                    if (!station.isEmpty()) {
-                        stations.add(station);
+                    String normalizedStation = station.replace("_", "").trim();
+                    if (!normalizedStation.isEmpty()) {
+                        stations.add(normalizedStation);
                     }
                 }
             }

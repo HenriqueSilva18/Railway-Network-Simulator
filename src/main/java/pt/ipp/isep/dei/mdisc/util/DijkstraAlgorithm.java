@@ -77,22 +77,26 @@ public class DijkstraAlgorithm {
     public static List<String> findPathThroughStations(Map<String, List<Edge>> graph, 
                                                      List<String> requiredStations) {
         if (requiredStations.size() < 2) {
+            System.out.println("Not enough stations specified (need at least 2)");
             return null;
         }
 
         // Validate that all required stations exist in the graph
         for (String station : requiredStations) {
             if (!graph.containsKey(station)) {
+                System.out.println("Station " + station + " not found in graph");
                 return null;
             }
         }
 
         List<String> fullPath = new ArrayList<>();
         for (int i = 0; i < requiredStations.size() - 1; i++) {
+            System.out.println("\nFinding path from " + requiredStations.get(i) + " to " + requiredStations.get(i + 1));
             List<String> segment = findShortestPath(graph, 
                                                   requiredStations.get(i), 
                                                   requiredStations.get(i + 1));
             if (segment == null) {
+                System.out.println("No path found from " + requiredStations.get(i) + " to " + requiredStations.get(i + 1));
                 return null;
             }
             

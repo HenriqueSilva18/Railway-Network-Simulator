@@ -10,14 +10,23 @@ import java.util.*;
 
 public class FilesUtils {
 
+    public static boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists() && file.isFile();
+    }
+
+    private static String normalizeStationName(String station) {
+        return station.replace("_", "");
+    }
+
     public static void loadCSV(String csvPath, Map<String, Station> stations, Map<String, List<Edge>> graph,
                                List<String> stationOrder, int maintenanceType) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(csvPath));
         String line;
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(";");
-            String from = parts[0].trim();
-            String to = parts[1].trim();
+            String from = normalizeStationName(parts[0].trim());
+            String to = normalizeStationName(parts[1].trim());
             boolean electrified = parts[2].trim().equals("1");
             double distance = Double.parseDouble(parts[3].trim());
 
