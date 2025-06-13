@@ -1,0 +1,67 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title Create HouseBlockDTO
+
+participant AddHouseBlocksController as "AddCityController"
+participant Map
+participant MapRepository as "MapRepository"
+participant maps as "maps\n:Maps"
+
+activate AddHouseBlocksController
+
+
+autonumber 14
+-> AddHouseBlocksController: createHouseBlocksDTO(mapDTO, true, coordinate)
+
+group Create HouseBlockDTO
+
+autonumber 14.1
+AddHouseBlocksController -> MapRepository : getMap(mapDTO.id)
+activate MapRepository
+MapRepository -> maps : getMap(mapDTO.id)
+activate maps
+maps --> MapRepository : map
+deactivate maps
+MapRepository --> AddHouseBlocksController : map
+deactivate MapRepository
+AddHouseBlocksController -> Map : getCityBoundaries()
+activate Map
+Map --> AddHouseBlocksController : boundaries
+deactivate Map
+
+
+AddHouseBlocksController -> Map : isPositionAvailable(x, y)
+activate Map
+Map --> AddHouseBlocksController : true
+deactivate Map
+
+create "pos:Position" as Pos
+AddHouseBlocksController -> Pos : new Position(x, y)
+activate Pos
+Pos --> AddHouseBlocksController : position
+deactivate Pos
+
+create "dto:HouseBlockDTO" as DTO
+AddHouseBlocksController -> DTO : new HouseBlockDTO(position, false)
+activate DTO
+DTO --> AddHouseBlocksController : HouseBlockDTO
+deactivate DTO
+
+
+end
+
+autonumber 15
+ <-- AddHouseBlocksController : houseBlockDTO
+
+
+
+
+
+
+deactivate AddHouseBlocksController
+
+@enduml

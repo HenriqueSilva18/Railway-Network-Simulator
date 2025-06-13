@@ -1,119 +1,86 @@
 @startuml
-
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
-title System Sequence Diagram : US03 - Add a city
+title System Sequence Diagram : US03 - Add a City
 
-actor "Editor" as Editor
-participant ":EditMapUI" as mapUI
-participant ":EditMapController" as mapCTRL
-participant AddCityUI
-participant AddCityController
-participant AddHouseBlocksController as AddHouseBlocksController
+actor Editor
+participant ":AddCityUI" as UI
+participant ":AddCityController" as Controller
+participant ":CityDTO" as CityDTO
 
 activate Editor
-   Editor -> mapUI : asks to edit map
 
-           activate mapUI
-               mapUI -> mapCTRL**: create()
-               mapUI -> mapCTRL: getAvailableMaps()
+Editor -> UI : asks to add a city
+activate UI
+UI -> Controller : create()
+activate Controller
 
-               activate mapCTRL
-                   ref over mapCTRL
-                   Get available maps
-                   end
-                   mapCTRL --> mapUI: availableMapsList
-               deactivate mapCTRL
+UI -> Controller : getListOfMaps()
+ref over Controller
+    Get MapDTO List
+end
+Controller --> UI : list<MapDTO>
+deactivate Controller
 
-               mapUI --> Editor: shows list of available maps
-           deactivate mapUI
+UI --> Editor : shows map list and asks to select one
+deactivate UI
 
-       Editor -> mapUI: selects a map
-           activate mapUI
+Editor -> UI : selects a map
+activate UI
+UI -> Editor : asks for city name, coordinates, and number of house blocks
+deactivate UI
 
-               mapUI -> mapCTRL: loadMap(selectedMap)
-               activate mapCTRL
+Editor -> UI : types requested data
+activate UI
 
-                   ref over mapCTRL
-                   Load selected map
-                   end
+UI -> CityDTO : createCityDTO(name, coordinates, numBlocks)
 
-                   mapCTRL --> mapUI: mapLayout
+UI --> Editor : ask if blocks are assigned manually
+deactivate UI
 
-               deactivate mapCTRL
+Editor -> UI : selects yes/no
+activate UI
 
-               mapUI --> Editor: loads and displays the selected map
-
-
-           deactivate mapUI
-
-Editor -> AddCityUI : asks to add city
-        activate AddCityUI
-        AddCityUI --> Editor : requests city data (nameID, X and Y coordinates, number of house blocks)
-        deactivate AddCityUI
-
-    Editor -> AddCityUI: types city data
-        activate AddCityUI
-        AddCityUI --> AddCityController: validateName(name)
-        activate AddCityController
-        AddCityController --> AddCityUI: name
-        deactivate AddCityController
-
-        AddCityUI --> AddCityController: validateCoordinates(x, y)
-        activate AddCityController
-        ref over AddCityController
-        ValidateCoordinates()
+alt User selects "manual"
+    loop for each block (i in 1..numBlocks)
+        UI --> Editor : ask coordinates for block i
+        Editor -> UI : inputs coordinates
+        UI -> Controller : createHouseBlockDTO(map, coordinates)
+        ref over Controller
+            Create HouseBlockDTO
         end
-        AddCityController --> AddCityUI: position
-        deactivate AddCityController
-
-        AddCityUI --> AddCityController: validateNumBlocks(numBlocks)
-        activate AddCityController
-        AddCityController --> AddCityUI: numBlocks
-        deactivate AddCityController
-        
-        AddCityUI --> Editor: asks if the editor wants to assign the blocks manually or automatically
-        deactivate AddCityUI
-        
-    Editor -> AddCityUI: selects yes/no
-        activate AddCityUI
-
-alt User selects "yes" (manual)
-    AddCityUI --> AddHouseBlocksController : assignBlocks(numBlocks)
-    activate AddHouseBlocksController
-    ref over AddHouseBlocksController
-        AssignManualBlocks()
+        activate Controller
+        Controller --> UI : houseBlockDTO
+        deactivate Controller
+        UI -> CityDTO : addHouseBlock(houseBlockDTO)
     end
-    AddHouseBlocksController --> AddCityUI : houseBlocks
-    deactivate AddHouseBlocksController
 
-else User selects "no" (automatic)
-    AddCityUI --> AddHouseBlocksController : assignBlocks(numBlocks)
-    activate AddHouseBlocksController
-    ref over AddHouseBlocksController
-        AssignAutoBlocks()
+else User selects "automatic"
+    UI -> Controller : createListHouseBlocksDTO(numBlocks)
+    activate Controller
+    ref over Controller
+        CreateListAutoBlocksDTO
     end
-    AddHouseBlocksController --> AddCityUI : houseBlocks
-    deactivate AddHouseBlocksController
-end alt
+    Controller --> UI : list<HouseBlockDTO>
+    deactivate Controller
+    UI -> CityDTO : addHouseBlocksList(houseBlocksListDTO)
+end
 
-        AddCityUI --> Editor: asks for confirmation
-        deactivate AddCityUI
-        
-        Editor -> AddCityUI: confirms city data
-        activate AddCityUI
-        AddCityUI --> AddCityController: saveCity(nameID, position, houseBlocks)
-        activate AddCityController
-        ref over AddCityController
-        saveCity
-        end
-        AddCityController --> AddCityUI: success
-        deactivate AddCityController
-        AddCityUI --> Editor: displays operation success
-        AddCityUI --> Editor: display city details
-        deactivate AddCityUI
+UI --> Editor : asks for confirmation
+Editor -> UI : confirms
+
+UI -> Controller : saveCity(mapDTO, cityDTO)
+activate Controller
+ref over Controller
+    Save City
+end
+Controller --> UI : CityDTO
+deactivate Controller
+
+UI --> Editor : shows city details and success message
+deactivate UI
 
 @enduml

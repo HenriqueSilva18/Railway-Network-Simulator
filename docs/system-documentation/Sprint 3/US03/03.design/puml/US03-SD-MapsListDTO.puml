@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AddCityController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Maps" as MAPS
+participant ":List<Map>" as LIST
+participant ":MapMapper" as MAP_MAPPER
+participant "listMap\n:List<Map>" as MAP_LIST
+participant "listMapDTO\n:List<MapDTO>" as MAP_LIST_DTO
+participant "mapDTO\n:MapDTO" as MAP_DTO
+
+autonumber 3
+-> CTRL: getListOfMaps()
+
+autonumber 3.1
+activate CTRL
+    group Get MapDTO List
+
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
+
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
+
+
+        CTRL -> MAP_REPO: getListOfMaps()
+        activate MAP_REPO
+        MAP_REPO -> MAPS: getListOfMaps()
+        activate MAPS
+
+            MAPS --> MAP_LIST**: create()
+
+            loop for each known Map
+                MAPS -> LIST: map = get(i)
+                activate LIST
+                    deactivate LIST
+
+                MAPS -> MAP_LIST: add(map)
+                activate MAP_LIST
+                    deactivate MAP_LIST
+            end
+
+            MAPS --> MAP_REPO: listMap
+            deactivate MAPS
+
+            MAP_REPO --> CTRL: listMap
+            deactivate MAP_REPO
+
+        CTRL -> MAP_MAPPER: toDTO(listMap)
+        activate MAP_MAPPER
+
+            MAP_MAPPER --> MAP_LIST_DTO**: create()
+
+            loop for each object in listMap
+                MAP_MAPPER -> MAP_LIST: map = get(i)
+                activate MAP_LIST
+                    deactivate MAP_LIST
+
+                MAP_MAPPER -> MAP_MAPPER: mapDTO = toDTO(map)
+                activate MAP_MAPPER
+                    MAP_MAPPER --> MAP_DTO**: create()
+                    deactivate MAP_MAPPER
+
+                MAP_MAPPER -> MAP_LIST_DTO: add(mapDTO)
+                activate MAP_LIST_DTO
+                    deactivate MAP_LIST_DTO
+            end
+
+        MAP_MAPPER --> CTRL: listMapDTO
+        deactivate MAP_MAPPER
+
+    end
+
+    autonumber 4
+    <-- CTRL : listMapDTO
+deactivate CTRL
+
+
+@enduml

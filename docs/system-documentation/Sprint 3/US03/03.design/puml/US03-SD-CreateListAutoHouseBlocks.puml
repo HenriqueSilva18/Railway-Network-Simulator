@@ -4,53 +4,57 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 autonumber
 
-title AssignAutoBlocks
+title AssignAutoBlocks (Return HouseBlockDTOs)
 
 participant AddHouseBlocksController
-participant HouseBlock
-participant Position
+participant MapRepository
+participant maps as "maps\n:Maps"
 participant Map
 
-autonumber 18
--> AddHouseBlocksController: assignBlocks(numBlocks)
+autonumber 17
+-> AddHouseBlocksController: assignBlocks(mapDTO, numBlocks)
 activate AddHouseBlocksController
 
-
 group Automatic Block Assignment
-    autonumber 18.1
-    AddHouseBlocksController -> Map : getCurrentMap()
-    activate Map
-    Map --> AddHouseBlocksController : map
-    deactivate Map
-    
+
+    autonumber 17.1
+    AddHouseBlocksController -> MapRepository : getMap(mapDTO.id)
+    activate MapRepository
+    MapRepository -> maps : getMap(mapDTO.id)
+    activate maps
+    maps --> MapRepository : map
+    deactivate maps
+    MapRepository --> AddHouseBlocksController : map
+    deactivate MapRepository
+
     AddHouseBlocksController -> Map : getCityBoundaries()
     activate Map
     Map --> AddHouseBlocksController : boundaries
     deactivate Map
-    
+
     AddHouseBlocksController -> Map : getAvailablePositions(numBlocks)
     activate Map
-    
+
     create "availablePositions:List<Position>" as PosList
     Map -> PosList : new ArrayList<>()
-    
+
     Map -> Map : generateRandomPositions(numBlocks, boundaries)
-    
+
     Map --> AddHouseBlocksController : availablePositions
     deactivate Map
-    
-    create "blocksList:List<HouseBlock>" as BlocksList
-    AddHouseBlocksController -> BlocksList : new ArrayList<>()
-    
+
+    create "dtoList:List<HouseBlockDTO>" as DTOList
+    AddHouseBlocksController -> DTOList : new ArrayList<>()
+
     loop for each position in availablePositions
-        create "block:HouseBlock" as Block
-        AddHouseBlocksController -> Block : new HouseBlock(position, true)
-        activate Block
-        Block --> AddHouseBlocksController : block
-        deactivate Block
-        
-        AddHouseBlocksController -> BlocksList : add(block)
-        
+        create "dto:HouseBlockDTO" as DTO
+        AddHouseBlocksController -> DTO : new HouseBlockDTO(position, true)
+        activate DTO
+        DTO --> AddHouseBlocksController : dto
+        deactivate DTO
+
+        AddHouseBlocksController -> DTOList : add(dto)
+
         AddHouseBlocksController -> Map : markPositionOccupied(position)
         activate Map
         Map --> AddHouseBlocksController : success
@@ -58,8 +62,8 @@ group Automatic Block Assignment
     end
 end
 
-autonumber 19
-<-- AddHouseBlocksController : houseBlocks
+autonumber 18
+<-- AddHouseBlocksController : list<HouseBlockDTO>
 deactivate AddHouseBlocksController
 
-@enduml 
+@enduml

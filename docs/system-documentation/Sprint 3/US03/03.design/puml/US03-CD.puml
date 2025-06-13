@@ -1,116 +1,119 @@
 @startuml
-
-
-skinparam packageStyle rectangle
-skinparam shadowing false
-skinparam linetype polyline
+skinparam monochrome true
 skinparam classAttributeIconSize 0
+title Class Diagram - Create City & Assign HouseBlocks
 
-title Class Diagram: US03 - Add a city
-
-class ApplicationSession {
-  -ApplicationSession()
-  +getInstance()
-  +getCurrentSession()
+class AddCityUI {
 }
 
-' Main controller class
 class AddCityController {
-  +getAvailableMaps() : List<Map>
-  +validateName(name : String) : String
-  +validateCoordinates(x : float, y : float) : Position
-  +validateNumBlocks(number : int) : int
-  +saveCity(nameID : String, position : Position, houseBlocks : List<HouseBlock>) : City
-}
-
-' Controller for house blocks management
-class AddHouseBlocksController {
-  +assignBlocks(numBlocks : int) : List<HouseBlock>
-  +promptForCoordinates() : Point
-  +requestNewPosition() : Point
-}
-
-' Repository classes
-class Repositories {
-  -mapRepository : MapRepository
-  +getInstance() : Repositories
-  +mapRepository() : MapRepository
+    +createCity(cityDTO: CityDTO)
+    +getListOfMaps(): List<MapDTO>
+    +createHouseBlockDTO(mapDTO: MapDTO, coordinate: Position): HouseBlockDTO
+    +createListOfHouseBlocksDTO(numHouseBlocks: int): List<HouseBlockDTO>
+    +saveCity(cityDTO: CityDTO, mapDTO: MapDTO)
 }
 
 class MapRepository {
-  +getMaps() : List<Map>
-  +saveMap(map : Map) : boolean
-  +getCurrentMap() : Map
+  +getListOfMaps(): List<Map>
+    +getMap(mapID: String): Map
 }
 
-' Domain classes
+class Repositories {
+  +getInstance(): Repositories
+  +getMapRepository(): MapRepository
+}
+
+class Maps {
+  +getListOfMaps(): List<Map>
+  +getMap(mapID: String): Map
+}
+
+class MapMapper {
+  +toDTO(map: Map): MapDTO
+  +toModel(mapDTO: MapDTO): Map
+}
+
+class Map {
+  -cities: Cities
+  -positions: List<Position>
+  +createCity(cityDTO: CityDTO)
+  +getCityBoundaries(): List<Position>
+  +getAvailablePositions(n: int): List<Position>
+  +markPositionOccupied(pos: Position)
+}
+
+class Cities {
+  +addCity(city: City)
+  +validateCity(city: City): boolean
+}
+
 class City {
   -nameID: String
   -position: Position
   -houseBlocks: List<HouseBlock>
-  -trafficRate: float
-  -suppliedCargo: int
-  -demandedCargo: int
-  +City(nameID : String, position : Position, houseBlocks : List<HouseBlock>)
-  +addBlocks(blocks : List<HouseBlock>) : boolean
-}
-
-class Map {
-  -nameID : String
-  -cities : List<City>
-  -industries : List<Industry>
-  -size : Size
-  +addCity(city : City) : boolean
-  +isPositionAvailable(x : float, y : float) : boolean
-  +markPositionOccupied(position : Position) : boolean
-  +getCityBoundaries() : Rectangle
-  +getAvailablePositions(numPositions : int) : List<Position>
+    +create(nameID: String, position: Position)
+    +addHouseBlock(houseBlock: HouseBlock)
+    +setHouseBlocks(houseBlocks: List<HouseBlock>)
 }
 
 class HouseBlock {
   -position: Position
-  -automaticPlacement: boolean
-  +HouseBlock(position : Position, isAutomatic : boolean)
-  +setPosition(position : Position) : void
+  -autoAssigned: boolean
+}
+
+class HouseBlockDTO {
+  +position: Position
+  +autoAssigned: boolean
+
+  +getPosition(): Position
+    +isAutomaticPlacement(): boolean
+
 }
 
 class Position {
-  -x: float
-  -y: float
+  -x: int
+  -y: int
   -occupied: boolean
-  +Position(x : float, y : float)
-  +isOccupied() : boolean
-  +setOccupied(occupied : boolean) : void
+  +setOccupied(val: boolean)
 }
 
-class Size {
-  -width: int
-  -height: int
-  +Size(width : int, height : int)
-  +getWidth() : int
-  +getHeight() : int
+class CityMapper {
+  +toModel(cityDTO: CityDTO): City
+    +toDTO(city: City): CityDTO
 }
 
-' UI class
-class AddCityUI {
+class CityDTO {
+  +nameID: String
+  +position: Position
+    +houseBlockDTOs: List<HouseBlockDTO>
+
+  getNameID(): String
+    getPosition(): Position
+    getHouseBlocksDTO(): List<HouseBlockDTO>
 }
 
-' Relationships
-AddCityController .> ApplicationSession
-Repositories --> MapRepository : mapRepository
-AddCityController .> Repositories
-AddCityController .> City
-AddCityController .> Map
-AddCityController .> MapRepository
-AddHouseBlocksController .> HouseBlock
-AddHouseBlocksController .> Map
-AddCityUI .> AddCityController
-AddCityUI .> AddHouseBlocksController
-Map "1" *-- "1..*" City : contains
-City "1" *-- "1..*" HouseBlock : contains
-Map "1" *-- "1" Size : has
-HouseBlock "1" -- "1" Position : has >
-City "1" -- "1" Position : located at >
-Map "1" -- "*" Position : tracks >
+class MapDTO {
+  +id: String
+}
+
+' RELATIONSHIPS
+AddCityUI --> AddCityController
+AddCityController --> Repositories
+AddCityController --> MapMapper
+MapMapper --> MapDTO
+MapRepository -> MapMapper
+Repositories --> MapRepository
+MapRepository --> Maps
+Maps --> Map
+Map --> Cities
+Cities --> City
+Cities --> CityMapper
+CityMapper --> CityDTO
+CityMapper --> HouseBlockDTO
+City --> HouseBlock
+HouseBlock --> Position
+CityDTO --> Position
+AddCityController --> CityMapper
 
 @enduml

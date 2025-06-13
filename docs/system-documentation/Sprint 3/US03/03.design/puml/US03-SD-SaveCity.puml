@@ -1,0 +1,93 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title Create City Object with HouseBlocks
+
+participant AddCityController
+participant mapRepository as "mapRepository: MapRepository"
+participant maps as "maps: Maps"
+participant map as "Map"
+participant cities as "cities: Cities"
+participant CityMapper as ":CityMapper"
+participant cityDTO as "cityDTO: CityDTO"
+participant city as "city: City"
+
+autonumber 22
+-> AddCityController : saveCity(cityDTO, mapDTO)
+activate AddCityController
+
+group Create City Object
+    autonumber 22.1
+    AddCityController -> mapRepository: createCity(cityDTO, mapDTO)
+    activate mapRepository
+
+    mapRepository -> maps: getMap(mapDTO.id)
+    activate maps
+    maps --> mapRepository: map
+    deactivate maps
+    mapRepository -> map: createCity(cityDTO)
+    activate map
+
+    map -> cities: createCity(cityDTO)
+    activate cities
+
+    cities -> CityMapper : city = toModel(cityDTO)
+    activate CityMapper
+
+        CityMapper -> cityDTO: getNameID()
+        cityDTO --> CityMapper: nameID
+
+        CityMapper -> cityDTO: getPosition()
+        cityDTO --> CityMapper: position
+
+        CityMapper -> city: create(nameID, position)
+
+
+        activate city
+        city --> CityMapper: city
+        deactivate city
+
+        CityMapper -> cityDTO: getHouseBlocksDTO()
+                cityDTO --> CityMapper: houseBlockDTOs
+
+                CityMapper -> "houseBlocks:List<HouseBlock>" :new ArrayList<>()
+                loop for each houseBlockDTO
+                    CityMapper -> houseBlockDTO: getPosition()
+                    activate houseBlockDTO
+                    houseBlockDTO --> CityMapper: position
+                    deactivate houseBlockDTO
+                    CityMapper -> houseBlockDTO: isAutomaticPlacement()
+                    activate houseBlockDTO
+                    houseBlockDTO --> CityMapper: automaticPlacement
+                    deactivate houseBlockDTO
+                    CityMapper -> "houseBlocks:List<HouseBlock>" : add(new HouseBlock(position, automaticPlacement))
+                end
+
+                "houseBlocks:List<HouseBlock>" --> CityMapper: houseBlocks
+                CityMapper -> city: setHouseBlocks(houseBlocks)
+
+    CityMapper --> cities: city
+    deactivate CityMapper
+
+    cities -> cities: validateCity(city)
+    cities -> cities: addCity(city)
+
+    cities --> map: cityDTO
+    deactivate cities
+
+    map --> mapRepository: cityDTO
+    deactivate map
+
+    mapRepository --> AddCityController: cityDTO
+    deactivate mapRepository
+
+end
+
+autonumber 23
+<-- AddCityController: cityDTO
+deactivate AddCityController
+
+@enduml
