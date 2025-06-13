@@ -1,10 +1,13 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Station {
+public class Station implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String nameID;
     private final Position position;
     private final StationType stationType;
@@ -17,7 +20,7 @@ public class Station {
     private int currentYear;
     private double demandMultiplier;
     private List<Cargo> demandedCargo;
-    private final Map map;
+    private transient final Map map; // Make map transient since it's a circular reference
 
     public Station(String nameID, Position position, StationType stationType, int storageCapacity, Map map) {
         if (nameID == null || position == null || stationType == null) {

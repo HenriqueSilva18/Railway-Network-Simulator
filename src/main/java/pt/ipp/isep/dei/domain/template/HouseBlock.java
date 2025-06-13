@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.domain.template;
 
-public class HouseBlock {
+import java.io.Serializable;
+
+public class HouseBlock implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final Position position;
     private final boolean automaticPlacement;
 

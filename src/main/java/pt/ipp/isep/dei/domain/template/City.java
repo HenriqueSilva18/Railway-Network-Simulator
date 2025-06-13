@@ -1,9 +1,12 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class City {
+public class City implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String nameID;
     private final Position position;
     private final List<HouseBlock> houseBlocks;

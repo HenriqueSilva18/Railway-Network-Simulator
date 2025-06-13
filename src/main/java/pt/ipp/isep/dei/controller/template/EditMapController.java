@@ -36,6 +36,13 @@ public class EditMapController {
         return true;
     }
 
+    public void updateCurrentMap() {
+        if (currentMap != null) {
+            mapRepository.save(currentMap);
+            ApplicationSession.getInstance().setCurrentMap(currentMap);
+        }
+    }
+
     public String getMapLayout() {
         if (currentMap == null) {
             return "No map loaded";

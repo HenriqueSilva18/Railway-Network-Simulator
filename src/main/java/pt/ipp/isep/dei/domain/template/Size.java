@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.domain.template;
 
-public class Size {
+import java.io.Serializable;
+
+public class Size implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private int width;
     private int height;
 

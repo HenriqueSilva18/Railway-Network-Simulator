@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.EditorRepository;
 
-public class Map {
+public class Map implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String nameID;
     private final Size size;
     private final List<Position> positions;
@@ -16,7 +18,7 @@ public class Map {
     private final List<Station> stations;
     private final List<Industry> industries;
     private final List<String> scenarios;
-    private final Random random;
+    private transient final Random random;
     private int scale;
 
 

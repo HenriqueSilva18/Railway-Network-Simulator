@@ -36,6 +36,34 @@ public class MapController {
         return map != null ? map.getScenarios() : List.of();
     }
 
+    public boolean saveMap(Map map) {
+        if (map == null) return false;
+        return mapRepository.save(map);
+    }
+
+    public Map loadMap(String mapId) {
+        if (mapId == null) return null;
+        Map map = mapRepository.loadMapFromFile(mapId);
+        if (map != null) {
+            mapRepository.save(map); // Add to in-memory repository
+        }
+        return map;
+    }
+
+    public List<String> getAvailableMapFiles() {
+        return mapRepository.getAvailableMapFiles();
+    }
+
+    public Map getCurrentMap() {
+        return ApplicationSession.getInstance().getCurrentMap();
+    }
+
+    public boolean setCurrentMap(Map map) {
+        if (map == null) return false;
+        ApplicationSession.getInstance().setCurrentMap(map);
+        return true;
+    }
+
     public boolean loadMap(String mapID, String scenarioID) {
         Map map = mapRepository.getMap(mapID);
         if (map == null) {

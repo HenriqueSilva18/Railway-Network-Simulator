@@ -1,8 +1,11 @@
 package pt.ipp.isep.dei.application.session;
 
-import pt.ipp.isep.dei.application.session.emailService.EmailService;
+import pt.ipp.isep.dei.domain.template.Map;
+import pt.ipp.isep.dei.domain.template.Scenario;
+import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.AuthenticationRepository;
-import pt.ipp.isep.dei.repository.Repositories;
+import pt.ipp.isep.dei.application.session.emailService.EmailService;
+import pt.ipp.isep.dei.application.session.emailService.adapters.DEIService;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,17 +16,21 @@ import java.util.Properties;
  * Represents the application session.
  */
 public class ApplicationSession {
-    private final AuthenticationRepository authenticationRepository;
-    private static final String CONFIGURATION_FILENAME = "src/main/resources/config.properties";
+    private static ApplicationSession instance;
+    private Map currentMap;
+    private Scenario currentScenario;
+    private final AuthenticationRepository authRepository;
+    private final EmailService emailService;
+    private static final String PROPERTIES_FILE = "application.properties";
     private static final String COMPANY_DESIGNATION = "Company.Designation";
-    private EmailService emailService;
 
     /**
      * Initializes a new instance of ApplicationSession.
      */
     private ApplicationSession() {
-        this.authenticationRepository = Repositories.getInstance().getAuthenticationRepository();
-        Properties props = getProperties();
+        Properties props = loadProperties();
+        this.authRepository = Repositories.getInstance().getAuthenticationRepository();
+        this.emailService = new DEIService();
     }
 
     /**
@@ -32,7 +39,7 @@ public class ApplicationSession {
      * @return The current user session.
      */
     public UserSession getCurrentSession() {
-        pt.isep.lei.esoft.auth.UserSession userSession = this.authenticationRepository.getCurrentUserSession();
+        pt.isep.lei.esoft.auth.UserSession userSession = this.authRepository.getCurrentUserSession();
         return new UserSession(userSession);
     }
 
@@ -41,54 +48,50 @@ public class ApplicationSession {
      *
      * @return The properties from the configuration file.
      */
-
-    private Properties getProperties() {
+    private Properties loadProperties() {
         Properties props = new Properties();
-
-        props.setProperty(COMPANY_DESIGNATION, "MusgoSublime");
-
-        try {
-            InputStream in = new FileInputStream(CONFIGURATION_FILENAME);
+        try (InputStream in = new FileInputStream(PROPERTIES_FILE)) {
             props.load(in);
-            in.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            // If properties file doesn't exist, use default values
+            props.setProperty(COMPANY_DESIGNATION, "Default Company");
         }
         return props;
     }
-
-    private static ApplicationSession singleton = null;
 
     /**
      * Retrieves the singleton instance of ApplicationSession.
      *
      * @return The singleton instance of ApplicationSession.
      */
-    public static ApplicationSession getInstance() {
-        if (singleton == null) {
-            synchronized (ApplicationSession.class) {
-                singleton = new ApplicationSession();
-            }
+    public static synchronized ApplicationSession getInstance() {
+        if (instance == null) {
+            instance = new ApplicationSession();
         }
-        return singleton;
+        return instance;
     }
 
-    public static EmailService getEmailService() {
-        try {
-            Properties props = new Properties();
-            FileInputStream in=new FileInputStream(CONFIGURATION_FILENAME);
-            props.load(in);
-            in.close();
-
-            String emailServiceClassName = props.getProperty("email.service");
-
-            Class<?> emailServiceClass = Class.forName(emailServiceClassName);
-            return (EmailService) emailServiceClass.getDeclaredConstructor().newInstance();
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed to load email service", ex);
-        }
+    public Map getCurrentMap() {
+        return currentMap;
     }
 
+    public void setCurrentMap(Map map) {
+        this.currentMap = map;
+    }
 
+    public Scenario getCurrentScenario() {
+        return currentScenario;
+    }
 
+    public void setCurrentScenario(Scenario scenario) {
+        this.currentScenario = scenario;
+    }
+
+    public AuthenticationRepository getAuthRepository() {
+        return authRepository;
+    }
+
+    public EmailService getEmailService() {
+        return emailService;
+    }
 }

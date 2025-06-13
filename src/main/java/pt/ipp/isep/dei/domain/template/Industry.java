@@ -1,9 +1,12 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Industry {
+public class Industry implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String nameID;
     private String type;
     private String sector;

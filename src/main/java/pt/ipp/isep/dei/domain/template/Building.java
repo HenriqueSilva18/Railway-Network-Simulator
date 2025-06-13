@@ -1,8 +1,11 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Building {
+public class Building implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String nameID;
     private final String type;
     private final int availabilityYear;
@@ -123,7 +126,9 @@ public class Building {
     /**
      * DTO class to hold building information
      */
-    public static class BuildingInfo {
+    public static class BuildingInfo implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
         private final String nameID;
         private final String type;
         private final int availabilityYear;

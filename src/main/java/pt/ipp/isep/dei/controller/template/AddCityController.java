@@ -15,10 +15,12 @@ import java.util.Optional;
 public class AddCityController {
     private final MapRepository mapRepository;
     private final Map currentMap;
+    private final EditMapController editMapController;
 
     public AddCityController() {
         this.mapRepository = Repositories.getInstance().getMapRepository();
         this.currentMap = ApplicationSession.getInstance().getCurrentMap();
+        this.editMapController = new EditMapController();
     }
 
     public List<Map> getAvailableMaps() {
@@ -125,7 +127,9 @@ public class AddCityController {
 
         City city = new City(nameID, position, houseBlocks);
         if (currentMap.addCity(city)) {
+            // Update the map in both the repository and application session
             mapRepository.save(currentMap);
+            editMapController.updateCurrentMap();
             return city;
         }
         return null;

@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.domain.template;
 
-public class StationType {
+import java.io.Serializable;
+
+public class StationType implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String name;
     private final int economicRadius;
     private final double cost;

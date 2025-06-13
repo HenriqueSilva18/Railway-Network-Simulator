@@ -1,10 +1,13 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Cargo {
+public class Cargo implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String name;
     private int amount;
     private int lifespan;
