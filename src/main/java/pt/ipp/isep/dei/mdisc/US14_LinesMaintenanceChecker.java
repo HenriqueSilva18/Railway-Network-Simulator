@@ -10,10 +10,10 @@ import java.io.File;
 import static pt.ipp.isep.dei.mdisc.util.FilesUtils.*;
 
 public class US14_LinesMaintenanceChecker {
-    static String fileName = "scenario1_lines";
-    static String csvPath = "docs/mdisc/data/"+fileName+".csv";
-    static String dotPath = "docs/mdisc/us14/dot/"+fileName+".dot";
-    static String pngPath = "docs/mdisc/us14/png/"+fileName+".png";
+    // static String fileName = "scenario1_lines";
+    // static String csvPath = "docs/mdisc/data/"+fileName+".csv";
+    // static String dotPath = "docs/mdisc/us14/dot/"+fileName+".dot";
+    // static String pngPath = "docs/mdisc/us14/png/"+fileName+".png";
 
     static Map<String, Station> stations = new HashMap<>();
     static Map<String, List<Edge>> fullGraph = new HashMap<>();
@@ -32,6 +32,23 @@ public class US14_LinesMaintenanceChecker {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner sc = new Scanner(System.in);
+
+        System.out.println("\nPlease enter the path to your railway scenario CSV file:");
+        String csvPath = sc.nextLine().trim();
+
+        if (!FilesUtils.fileExists(csvPath)) {
+            System.out.println("Error: The specified scenario file does not exist.");
+            return;
+        }
+
+        String baseFileName = new File(csvPath).getName().replaceFirst("[.][^.]+$", "");
+
+        String dotPath = "docs/mdisc/us14/dot/" + baseFileName + ".dot";
+        String pngPath = "docs/mdisc/us14/png/" + baseFileName + ".png";
+
+        new File("docs/mdisc/us14/dot").mkdirs();
+        new File("docs/mdisc/us14/png").mkdirs();
+
 
         int maintenanceType = chooseMaintenanceType(sc);
         System.out.println("Selected maintenance type: " +
