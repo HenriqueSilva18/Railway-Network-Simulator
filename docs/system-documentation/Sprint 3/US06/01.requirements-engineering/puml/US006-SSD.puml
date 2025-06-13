@@ -11,44 +11,29 @@ actor "Player" as player
 participant ":System" as system
 
 activate player
-player -> system: asks to see available maps
+player -> system : Asks to upgrade a station
 activate system
-system --> player: shows list of available maps to play
-deactivate system
-player -> system: selects a map
-activate system
-system --> player: shows list of available scenarios to play
-deactivate system
-player -> system : selects a scenario
-activate system
-
-system --> player: loads and displays the selected map
+system --> player : Shows the list of available stations
 deactivate system
 
-player -> system: requests to see available stations
+player -> system : Selects a station
 activate system
-system --> player: displays list of available stations
+system --> player : Loads and displays the selected station details
 deactivate system
 
-player -> system: selects a specific station
+player -> system : Confirms the selected station
 activate system
-system --> player: shows station details
-deactivate system
-player -> system: asks to upgrade station
-activate system
-system --> player: shows list of available buildings for upgrading
+system --> player : Shows the list of available buildings for upgrade
 deactivate system
 
-player -> system: selects building
+player -> system : Selects a building
 activate system
-system --> player: displays building information
-system --> player: asks for confirmation
+system --> player : Shows building details and asks for confirmation
 deactivate system
 
-player -> system: confirms upgrade
+player -> system : Confirms the upgrade
 activate system
-system --> player: displays operation success
-system --> player: displays station and building new information
+system --> player : Displays success message
 deactivate system
 
 deactivate player

@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+participant ":UpgradeStationController" as CTRL
+participant "currentStation\n:Station" as STATION
+participant "buildings\n:Buildings" as BUILDINGS
+participant "buildingMapper\n:BuildingMapper" as MAPPER_BUILDING
+participant ":List<Building>" as LIST_BUILDING
+participant "listBuilding\n:List<Building>" as BUILDING_LIST
+participant "listBuildingDTO\n:List<BuildingDTO>" as BUILDING_LIST_DTO
+participant "buildingDTO\n:BuildingDTO" as DTO_BUILDING
+
+autonumber 11
+
+-> CTRL: getListOfAvailableBuildings()
+    autonumber 11.1
+    activate CTRL
+        group Get Available Building DTOs
+
+            ' Filter buildings compatible with current station
+            CTRL -> STATION: getUpgradableBuildings()
+            activate STATION
+
+            STATION -> BUILDINGS: getUpgradableBuildings()
+            activate BUILDINGS
+            BUILDINGS -> LIST_BUILDING**: create()
+            loop for each upgradable Building
+                BUILDINGS -> LIST_BUILDING: building = get(i)
+                activate LIST_BUILDING
+                    deactivate LIST_BUILDING
+                BUILDINGS -> BUILDING_LIST: add(building)
+                activate BUILDING_LIST
+                    deactivate BUILDING_LIST
+            end
+            BUILDINGS --> STATION: upgradableBuildings
+            deactivate BUILDINGS
+
+                STATION --> CTRL: upgradableBuildings
+            deactivate STATION
+
+            CTRL -> MAPPER_BUILDING: toDTO(upgradableBuildings)
+            activate MAPPER_BUILDING
+
+                MAPPER_BUILDING --> BUILDING_LIST_DTO**: create()
+
+                loop for each object in upgradableBuildings
+                    MAPPER_BUILDING -> BUILDING_LIST: building = get(i)
+                    activate BUILDING_LIST
+                        deactivate BUILDING_LIST
+
+                    MAPPER_BUILDING -> MAPPER_BUILDING: buildingDTO = toDTO(building)
+                    activate MAPPER_BUILDING
+                        MAPPER_BUILDING --> DTO_BUILDING**: create()
+                        deactivate MAPPER_BUILDING
+
+                    MAPPER_BUILDING -> BUILDING_LIST_DTO: add(buildingDTO)
+                    activate BUILDING_LIST_DTO
+                        deactivate BUILDING_LIST_DTO
+                end
+
+            MAPPER_BUILDING --> CTRL: listBuildingDTO
+            deactivate MAPPER_BUILDING
+
+        end
+
+        autonumber 12
+        <-- CTRL : listBuildingDTO
+    deactivate CTRL
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":UpgradeStationController" as CTRL
+participant "currentStation\n:Station" as STATION
+participant "buildingDTO\n:BuildingDTO" as DTO_BUILDING
+participant "building\n:Building" as BUILDING
+
+autonumber 15
+
+ -> CTRL : getBuildingInfo(buildingDTO)
+        activate CTRL
+        group Get Building Info
+        autonumber 15.1
+
+            CTRL -> DTO_BUILDING: getNameID()
+            activate DTO_BUILDING
+                DTO_BUILDING --> CTRL : buildingNameID
+            deactivate DTO_BUILDING
+
+            CTRL -> STATION: getBuildingByNameID(buildingNameID)
+            activate STATION
+                STATION --> CTRL : building
+            deactivate STATION
+
+            CTRL -> BUILDING: getBuildingDetails()
+            activate BUILDING
+                BUILDING --> CTRL: buildingDetails
+            deactivate BUILDING
+
+        end
+        autonumber 16
+        <-- CTRL : buildingDetails
+    deactivate CTRL
+
+@enduml

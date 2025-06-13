@@ -1,0 +1,297 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram: US06 - Upgrade a selected station with a building
+
+autonumber
+
+actor "Player" as player
+participant ":UpgradeStationUI" as UI
+participant ":UpgradeStationController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant ":ApplicationSession" as APP_SESSION
+participant "appSession\n:ApplicationSession" as APP_SESSION_SINGLETON
+
+participant "stationMapper\n:StationMapper" as MAPPER_STATION
+participant "currentScenario\n:Scenario" as SCENARIO
+participant "stations\n:Stations" as STATIONS
+participant "listStation : List<Station>" as LIST_STATION
+participant "listStationDTO\n:List<StationDTO>" as LIST_STATION_DTO
+participant "stationDTO\n:StationDTO" as DTO_STATION
+participant "currentStation\n:Station" as STATION
+
+participant "buildingRepository\n:BuildingRepository" as REPOS_BUILDING
+participant "buildings\n:Buildings" as BUILDINGS
+participant "buildingMapper\n:BuildingMapper" as MAPPER_BUILDING
+participant ":List<Building>" as LIST_BUILDING
+participant "listBuilding\n:List<Building>" as BUILDING_LIST
+participant "listBuildingDTO\n:List<BuildingDTO>" as BUILDING_LIST_DTO
+participant "buildingDTO\n:BuildingDTO" as DTO_BUILDING
+participant "Building\n:Building" as BUILDING
+
+activate player
+
+player -> UI : Asks to upgrade a station
+activate UI
+
+    UI -> CTRL**: create()
+
+    UI -> CTRL: getListOfStationsDTO()
+    activate CTRL
+        group Get StationsDTO List
+        autonumber 3.1
+
+            CTRL -> APP_SESSION: getInstance()
+            activate APP_SESSION
+                APP_SESSION --> CTRL : appSession
+            deactivate APP_SESSION
+
+            CTRL -> APP_SESSION_SINGLETON: getCurrentScenario()
+            activate APP_SESSION_SINGLETON
+                APP_SESSION_SINGLETON --> CTRL : currentScenario
+            deactivate APP_SESSION_SINGLETON
+
+            ' Scenario configures stations: Scenario "1" -- "*" Station : configures >
+            CTRL -> SCENARIO : getStations()
+            activate SCENARIO
+            SCENARIO -> STATIONS: getStations()
+            activate STATIONS
+                STATIONS -> LIST_STATION**: create()
+                loop for each known Station
+                    STATIONS -> LIST_STATION: obj = get(i)
+                    activate LIST_STATION
+                        deactivate LIST_STATION
+
+                    STATIONS -> LIST_STATION : add(obj)
+                    activate LIST_STATION
+                        deactivate LIST_STATION
+                end
+                STATIONS --> SCENARIO : listStations
+            deactivate STATIONS
+                SCENARIO --> CTRL : listStations
+            deactivate SCENARIO
+
+            CTRL -> MAPPER_STATION : toStationDTOs(List<Station>)
+            activate MAPPER_STATION
+                loop for each station in List<Station>
+                MAPPER_STATION -> LIST_STATION: obj = get(i)
+                activate LIST_STATION
+                deactivate LIST_STATION
+
+                MAPPER_STATION -> MAPPER_STATION : objDTO = toDTO(obj)
+                activate MAPPER_STATION
+                deactivate MAPPER_STATION
+
+                MAPPER_STATION -> DTO_STATION**: create(...)
+                MAPPER_STATION --> LIST_STATION_DTO : add(stationDTO)
+                activate LIST_STATION_DTO
+                deactivate LIST_STATION_DTO
+
+                end
+                MAPPER_STATION --> CTRL : listStationDTO
+            deactivate MAPPER_STATION
+        end
+        autonumber 4
+        CTRL --> UI: listStationDTO
+    deactivate CTRL
+
+    UI --> player: Shows the list of player's stations
+deactivate UI
+
+player -> UI: Selects a station
+activate UI
+    UI -> CTRL: loadStation(stationDTO)
+    activate CTRL
+        group Load Selected Station
+        autonumber 7.1
+
+            CTRL -> DTO_STATION: getNameID()
+            activate DTO_STATION
+                DTO_STATION --> CTRL : stationNameID
+            deactivate DTO_STATION
+
+            CTRL -> SCENARIO : getStationByNameID(stationNameID)
+            activate SCENARIO
+                SCENARIO --> CTRL : currentStation
+            deactivate SCENARIO
+
+            CTRL -> STATION: getStationDetails()
+            activate STATION
+            STATION --> CTRL: stationDetails
+            deactivate STATION
+            autonumber 8
+        end
+        CTRL --> UI: stationDetails
+    deactivate CTRL
+    UI --> player: Loads and displays the selected station details
+deactivate UI
+
+player -> UI: Confirms the selected station
+activate UI
+
+    UI -> CTRL: getListOfAvailableBuildings()
+    autonumber 11.1
+    activate CTRL
+        group Get Available Building DTOs
+
+            ' Filter buildings compatible with current station
+            CTRL -> STATION: getUpgradableBuildings()
+            activate STATION
+
+            STATION -> BUILDINGS: getUpgradableBuildings()
+            activate BUILDINGS
+            BUILDINGS -> LIST_BUILDING**: create()
+            loop for each upgradable Building
+                BUILDINGS -> LIST_BUILDING: building = get(i)
+                activate LIST_BUILDING
+                    deactivate LIST_BUILDING
+                BUILDINGS -> BUILDING_LIST: add(building)
+                activate BUILDING_LIST
+                    deactivate BUILDING_LIST
+            end
+            BUILDINGS --> STATION: upgradableBuildings
+            deactivate BUILDINGS
+
+                STATION --> CTRL: upgradableBuildings
+            deactivate STATION
+
+            CTRL -> MAPPER_BUILDING: toDTO(upgradableBuildings)
+            activate MAPPER_BUILDING
+
+                MAPPER_BUILDING --> BUILDING_LIST_DTO**: create()
+
+                loop for each object in upgradableBuildings
+                    MAPPER_BUILDING -> BUILDING_LIST: building = get(i)
+                    activate BUILDING_LIST
+                        deactivate BUILDING_LIST
+
+                    MAPPER_BUILDING -> MAPPER_BUILDING: buildingDTO = toDTO(building)
+                    activate MAPPER_BUILDING
+                        MAPPER_BUILDING --> DTO_BUILDING**: create()
+                        deactivate MAPPER_BUILDING
+
+                    MAPPER_BUILDING -> BUILDING_LIST_DTO: add(buildingDTO)
+                    activate BUILDING_LIST_DTO
+                        deactivate BUILDING_LIST_DTO
+                end
+
+            MAPPER_BUILDING --> CTRL: listBuildingDTO
+            deactivate MAPPER_BUILDING
+
+        end
+
+        autonumber 12
+        CTRL --> UI : listBuildingDTO
+    deactivate CTRL
+    UI --> player : Shows the list of available buildings for upgrade
+deactivate UI
+
+player -> UI : Selects a building
+activate UI
+
+    UI -> CTRL : getBuildingInfo(buildingDTO)
+        activate CTRL
+        group Get Building Info
+        autonumber 15.1
+
+            CTRL -> DTO_BUILDING: getNameID()
+            activate DTO_BUILDING
+                DTO_BUILDING --> CTRL : buildingNameID
+            deactivate DTO_BUILDING
+
+            CTRL -> STATION: getBuildingByNameID(buildingNameID)
+            activate STATION
+                STATION --> CTRL : building
+            deactivate STATION
+
+            CTRL -> BUILDING: getBuildingDetails()
+            activate BUILDING
+                BUILDING --> CTRL: buildingDetails
+            deactivate BUILDING
+
+        end
+        autonumber 16
+        CTRL --> UI : buildingDetails
+    deactivate CTRL
+
+UI --> player : Shows building details and asks for confirmation
+deactivate UI
+
+
+
+player -> UI : Confirms the upgrade
+activate UI
+    UI -> CTRL : upgradeStation(currentStation, buildingDTO)
+        activate CTRL
+        autonumber 19.1
+            group Upgrade Station
+
+            ' Go through Scenario to manage the upgrade (Scenario configures stations)
+            CTRL -> STATIONS: upgradeStation(currentStation, buildingDTO)
+                activate STATIONS
+                STATIONS -> STATION: upgradeStation(buildingDTO)
+                activate STATION
+                STATION -> BUILDINGS: upgradeStation(buildingDTO)
+                activate BUILDINGS
+                BUILDINGS -> MAPPER_BUILDING: building = toDomain(buildingDTO)
+                activate MAPPER_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: nameID = getNameID()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: type = getType()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: availabilityYear = getAvailabilityYear()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: evolutionCost = getEvolutionCost()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: evolutionStagesLeft = getEvolutionStagesLeft()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> DTO_BUILDING: effect = getEffect()
+                    activate DTO_BUILDING
+                    deactivate DTO_BUILDING
+                    MAPPER_BUILDING -> BUILDING** : create(nameID, type, availabilityYear, evolutionCost, evolutionStagesLeft, effect)
+                    deactivate MAPPER_BUILDING
+
+                    BUILDINGS -> BUILDINGS : addBuilding(building)
+                    activate BUILDINGS
+                        BUILDINGS --> BUILDINGS : success
+                    deactivate BUILDINGS
+
+                    BUILDINGS --> STATION : success
+                deactivate BUILDINGS
+                STATION --> STATIONS : success
+                deactivate STATION
+                STATIONS --> CTRL : success
+                deactivate STATIONS
+                CTRL -> APP_SESSION_SINGLETON: upgradePlayerBudget(evolutionCost)
+                activate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON -> APP_SESSION_SINGLETON: getCurrentPlayer()
+                    activate APP_SESSION_SINGLETON
+                        APP_SESSION_SINGLETON --> APP_SESSION_SINGLETON : currentPlayer
+                    deactivate APP_SESSION_SINGLETON
+
+                    ' Update player's budget based on upgrade cost
+                    APP_SESSION_SINGLETON -> APP_SESSION_SINGLETON : updatePlayerBudget(currentPlayer, evolutionCost)
+                    activate APP_SESSION_SINGLETON
+                        APP_SESSION_SINGLETON --> APP_SESSION_SINGLETON : success
+                    deactivate APP_SESSION_SINGLETON
+                    APP_SESSION_SINGLETON --> CTRL : success
+                deactivate APP_SESSION_SINGLETON
+                end
+                autonumber 20
+
+                CTRL --> UI : success
+                deactivate CTRL
+    UI --> player : displays success message
+    deactivate UI
+
+deactivate player
+@enduml

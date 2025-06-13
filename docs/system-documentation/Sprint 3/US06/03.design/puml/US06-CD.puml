@@ -1,151 +1,95 @@
 @startuml
-skinparam packageStyle rectangle
-skinparam shadowing false
 skinparam classAttributeIconSize 0
+title Class Diagram - US06: Upgrade a Selected Station with a Building
 
-title Class Diagram: US06 - Upgrade a selected station with a building
-
-class MapUI {
-}
-
-class MapController {
-    + create()
-    + getAvailableMaps() : List<Map>
-    + loadMap(mapId) : MapLayout
-}
-
-class ListStationUI {
-}
-
-class ListStationController {
-    + create()
-    + getAvailableStations() : List<Station>
-    + getStationDetails(stationId) : StationDetails
-}
-
+' Classes principais
 class UpgradeStationUI {
+    - controller: UpgradeStationController
+    + create()
+    + getListOfStationsDTO(): List<StationDTO>
+    + loadStation(stationDTO: StationDTO): Station
+    + getListOfAvailableBuildings(): List<BuildingDTO>
+    + getBuildingInfo(buildingDTO: BuildingDTO): Building
+    + upgradeStation(station: Station, buildingDTO: BuildingDTO): boolean
 }
 
 class UpgradeStationController {
-    + create()
-    + getAvailableUpgrades() : List<Building>
-    + getBuildingInfo(buildingId) : BuildingInfo
-    + upgradeStation() : boolean
-    + getStationInfo(stationId) : StationInfo
-}
-
-class StationRepository {
-    + getStation(stationId) : Station
-    + save(station) : boolean
-}
-
-class BuildingRepository {
-    + getBuilding(buildingId) : Building
-}
-
-class MapRepository {
-    + getAvailableMaps() : List<Map>
-    + getMap(mapId) : Map
-}
-
-class Repositories {
-    + {static} getInstance() : Repositories
-    + getStationRepository() : StationRepository
-    + getBuildingRepository() : BuildingRepository
-    + getMapRepository() : MapRepository
+    - appSession: ApplicationSession
+    + getListOfStationsDTO(): List<StationDTO>
+    + loadStation(stationDTO: StationDTO): Station
+    + getListOfAvailableBuildings(): List<BuildingDTO>
+    + getBuildingInfo(buildingDTO: BuildingDTO): Building
+    + upgradeStation(station: Station, buildingDTO: BuildingDTO): boolean
 }
 
 class ApplicationSession {
-    + {static} getInstance() : ApplicationSession
-    + getCurrentStation() : Station
-    + getCurrentMap() : Map
+    + getInstance(): ApplicationSession
+    + getCurrentScenario(): Scenario
+    + getCurrentPlayer(): Player
+    + updatePlayerBudget(player: Player, amount: int): boolean
+}
+
+class Scenario {
+    + getStations(): Stations
+    + getStationByNameID(nameID: String): Station
+}
+
+class Stations {
+    + getStations(): List<Station>
+    + upgradeStation(station: Station, buildingDTO: BuildingDTO): boolean
 }
 
 class Station {
-    - nameID: String
-    - storageCapacity: int
-    - buildingSlots: int
-    - availableCargo: int
-    - requestedCargo: int
-    - position: Position
-    
-    + getAvailableUpgrades() : List<Building>
-    + upgrade(building: Building) : boolean
-    + getInfo() : StationInfo
-    + getDetails() : StationDetails
+    + getStationDetails(): String
+    + getUpgradableBuildings(): List<Building>
+    + getBuildingByNameID(nameID: String): Building
+    + upgradeStation(buildingDTO: BuildingDTO): boolean
+}
+
+class Buildings {
+    + getUpgradableBuildings(): List<Building>
+    + upgradeStation(buildingDTO: BuildingDTO): boolean
+    + addBuilding(building: Building): boolean
 }
 
 class Building {
-    - nameID: String
-    - type: String
-    - availabilityYear: int
-    - evolutionCost: int
-    - evolutionStagesLeft: int
-    - effect: String
-    
-    + getInfo() : BuildingInfo
+    + getBuildingDetails(): String
 }
 
-class Map {
-    - nameID: String
-    - cityList: List<City>
-    - industryList: List<Industry>
-    - size: Size
-    - positions: List<Position>
+class StationDTO {
+    + getNameID(): String
 }
 
-class Position {
-    - x: int
-    - y: int
-    - occupied: boolean
+class BuildingDTO {
+    + getNameID(): String
+    + getType(): String
+    + getAvailabilityYear(): int
+    + getEvolutionCost(): int
+    + getEvolutionStagesLeft(): int
+    + getEffect(): String
 }
 
-class StationType {
-    - name: String
-    - economicRadius: int
-    - cost: double
-    - centerPoint: Position
+class StationMapper {
+    + toStationDTOs(List<Station>): List<StationDTO>
 }
 
-' UI Layer
-MapUI ..> MapController : uses
-ListStationUI ..> ListStationController : uses
-UpgradeStationUI ..> UpgradeStationController : uses
+class BuildingMapper {
+    + toDTO(List<Building>): List<BuildingDTO>
+    + toDomain(BuildingDTO): Building
+}
 
-' Controller Layer
-MapController ..> MapRepository : uses
-MapController ..> Repositories : uses
-MapController ..> Map : uses
+' Relações principais
+UpgradeStationUI --> UpgradeStationController : uses
+UpgradeStationController --> ApplicationSession : uses
+ApplicationSession --> Scenario : owns
+Scenario "1" --> "1" Stations : has
+Stations "1" --> "0..*" Station : contains
+Station"1"--> "1" Buildings : has
+Buildings"1" --> "0..*" Building : contains
+UpgradeStationController --> StationMapper : uses
+StationMapper --> "0..*" StationDTO : creates
+UpgradeStationController --> BuildingMapper : uses
+BuildingMapper --> "0..*" BuildingDTO : creates
+BuildingMapper --> Building : maps to
 
-ListStationController ..> StationRepository : uses
-ListStationController ..> Repositories : uses
-ListStationController ..> Station : uses
-
-UpgradeStationController ..> StationRepository : uses
-UpgradeStationController ..> BuildingRepository : uses
-UpgradeStationController ..> Repositories : uses
-UpgradeStationController ..> ApplicationSession : uses
-UpgradeStationController ..> Station : uses
-UpgradeStationController ..> Building : uses
-
-' Repository Layer
-StationRepository --> "1" Station : returns
-BuildingRepository --> "*" Building : provides
-MapRepository --> "*" Map : provides
-
-Repositories --> StationRepository : provides >
-Repositories --> BuildingRepository : provides >
-Repositories --> MapRepository : provides >
-
-' Domain Layer
-Station "1" o-- "0..1" Building : has >
-Station "1" -- "1" Position : located at >
-Station "*" -- "1" StationType : defined by >
-Map "1" -- "*" Position : tracks >
-Building "1" -- "0..1" Building : evolves into >
-StationType "1" -- "*" StationType : can change >
-
-ApplicationSession --> Station : currentStation >
-ApplicationSession --> Map : currentMap >
-
-@enduml 
+@enduml

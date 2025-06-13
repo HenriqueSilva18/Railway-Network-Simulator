@@ -1,0 +1,37 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":UpgradeStationController" as CTRL
+participant "stationDTO\n:StationDTO" as DTO_STATION
+participant "currentStation\n:Station" as STATION
+participant "scenario\n:Scenario" as SCENARIO
+
+autonumber 7
+
+-> CTRL: loadStation(stationDTO)
+    activate CTRL
+        group Load Selected Station
+        autonumber 7.1
+
+            CTRL -> DTO_STATION: getNameID()
+            activate DTO_STATION
+                DTO_STATION --> CTRL : stationNameID
+            deactivate DTO_STATION
+
+            CTRL -> SCENARIO : getStationByNameID(stationNameID)
+            activate SCENARIO
+                SCENARIO --> CTRL : currentStation
+            deactivate SCENARIO
+
+            CTRL -> STATION: getStationDetails()
+            activate STATION
+            STATION --> CTRL: stationDetails
+            deactivate STATION
+            autonumber 8
+        end
+        <-- CTRL : stationDetails
+
+@enduml
