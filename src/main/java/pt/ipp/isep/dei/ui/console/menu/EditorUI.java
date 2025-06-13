@@ -5,6 +5,8 @@ import pt.ipp.isep.dei.ui.console.utils.Utils;
 import pt.ipp.isep.dei.ui.console.ViewScenarioLayoutUI;
 import pt.ipp.isep.dei.ui.console.SaveMapUI;
 import pt.ipp.isep.dei.ui.console.LoadMapUI;
+import pt.ipp.isep.dei.ui.console.SaveScenarioUI;
+import pt.ipp.isep.dei.ui.console.LoadScenarioUI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ public class EditorUI implements Runnable {
         options.add(new MenuItem("Load Map", new LoadMapUI()));
         options.add(new MenuItem("Create Scenario", new CreateScenarioUI()));
         options.add(new MenuItem("View Scenario Layout", new ViewScenarioLayoutUI()));
+        options.add(new MenuItem("Save Scenario", new SaveScenarioUI()));
+        options.add(new MenuItem("Load Scenario", new LoadScenarioUI()));
 
         int option = 0;
         do {

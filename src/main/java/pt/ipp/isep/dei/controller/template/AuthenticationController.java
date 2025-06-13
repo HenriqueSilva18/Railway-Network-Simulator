@@ -66,5 +66,8 @@ public class AuthenticationController {
         ApplicationSession.getInstance().setCurrentSession(null);
         ApplicationSession.getInstance().setCurrentEditor(null);
         ApplicationSession.getInstance().setCurrentPlayer(null);
+        ApplicationSession.getInstance().setCurrentMap(null);
+        ApplicationSession.getInstance().setCurrentScenario(null);
+
     }
 }

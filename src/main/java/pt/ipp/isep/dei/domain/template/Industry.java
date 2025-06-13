@@ -3,6 +3,7 @@ package pt.ipp.isep.dei.domain.template;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Industry implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -30,6 +31,7 @@ public class Industry implements Serializable {
         this.importedCargo = new ArrayList<>();
         this.exportedCargo = new ArrayList<>();
         this.producedCargo = new ArrayList<>();
+        this.productionRate = 1.0;
     }
 
     public static Industry create(String nameID, int x, int y) {
@@ -111,5 +113,23 @@ public class Industry implements Serializable {
 
     public void setProducedCargo(List<Cargo> producedCargo) {
         this.producedCargo = new ArrayList<>(producedCargo);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Industry industry = (Industry) o;
+        return Objects.equals(nameID, industry.nameID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nameID);
+    }
+
+    @Override
+    public String toString() {
+        return nameID;
     }
 } 

@@ -3,6 +3,7 @@ package pt.ipp.isep.dei.domain.template;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class City implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -57,5 +58,23 @@ public class City implements Serializable {
 
     public void setDemandedCargo(int demandedCargo) {
         this.demandedCargo = demandedCargo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return Objects.equals(nameID, city.nameID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nameID);
+    }
+
+    @Override
+    public String toString() {
+        return nameID;
     }
 } 

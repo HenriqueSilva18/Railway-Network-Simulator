@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.io.Serializable;
+import java.util.Objects;
 
-public class Scenario {
+public class Scenario implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String nameID;
     private String displayName;
     private Editor editor;
@@ -27,6 +30,78 @@ public class Scenario {
         this.availableIndustryList = new ArrayList<>(selectedIndustries);
         this.availableLocomotives = new ArrayList<>(availableLocomotives);
         this.tweakedCityList = new ArrayList<>(mapCityList);
+    }
+
+    public void setNameID(String nameID) {
+        this.nameID = nameID;
+    }
+
+    public String getNameID() {
+        return nameID;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Editor getEditor() {
+        return editor;
+    }
+
+    public void setEditor(Editor editor) {
+        this.editor = editor;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<City> getTweakedCityList() {
+        return new ArrayList<>(tweakedCityList);
+    }
+
+    public void setTweakedCityList(List<City> tweakedCityList) {
+        this.tweakedCityList = new ArrayList<>(tweakedCityList);
+    }
+
+    public List<Industry> getAvailableIndustryList() {
+        return new ArrayList<>(availableIndustryList);
+    }
+
+    public void setAvailableIndustryList(List<Industry> availableIndustryList) {
+        this.availableIndustryList = new ArrayList<>(availableIndustryList);
+    }
+
+    public List<Locomotive> getAvailableLocomotives() {
+        return new ArrayList<>(availableLocomotives);
+    }
+
+    public void setAvailableLocomotives(List<Locomotive> availableLocomotives) {
+        this.availableLocomotives = new ArrayList<>(availableLocomotives);
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
     }
 
     public boolean configurePort(Industry port, List<Cargo> portImports,
@@ -59,39 +134,6 @@ public class Scenario {
         return true;
     }
 
-    // Getters
-    public String getNameID() {
-        return nameID;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public Editor getEditor() {
-        return editor;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public List<City> getTweakedCityList() {
-        return new ArrayList<>(tweakedCityList);
-    }
-
-    public List<Industry> getAvailableIndustryList() {
-        return new ArrayList<>(availableIndustryList);
-    }
-
-    public List<Locomotive> getAvailableLocomotives() {
-        return new ArrayList<>(availableLocomotives);
-    }
-
     public List<Locomotive> getAvailableLocomotives(Date currentDate) {
         if (currentDate == null) {
             return getAvailableLocomotives();
@@ -114,12 +156,17 @@ public class Scenario {
         return filteredLocomotives;
     }
 
-    public Map getMap() {
-        return map;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Scenario scenario = (Scenario) o;
+        return Objects.equals(nameID, scenario.nameID);
     }
 
-    public void setMap(Map map) {
-        this.map = map;
+    @Override
+    public int hashCode() {
+        return Objects.hash(nameID);
     }
 
     @Override

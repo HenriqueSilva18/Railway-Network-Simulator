@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.domain.template;
 
-public class Locomotive {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Locomotive implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String nameID;
     private String owner;
     private String type;
@@ -125,5 +129,18 @@ public class Locomotive {
     @Override
     public String toString() {
         return nameID + " (" + type + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Locomotive that = (Locomotive) o;
+        return Objects.equals(nameID, that.nameID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nameID);
     }
 } 

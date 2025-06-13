@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.domain.template;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Position implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -32,15 +33,20 @@ public class Position implements Serializable {
     }
     
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Position position = (Position) obj;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
         return x == position.x && y == position.y;
     }
     
     @Override
     public int hashCode() {
-        return 31 * x + y;
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
     }
 } 
