@@ -8,61 +8,29 @@ autonumber
 title System Sequence Diagram : US07 - List stations and view details
 
 actor "Player" as Player
-participant ":MapUI" as mapUI
-participant ":MapController" as mapCTRL
 participant ListStationUI
 participant ListStationController
 
 
+
+
 activate Player
 
-    Player -> mapUI: asks to see available maps
-        activate mapUI
-        mapUI -> mapCTRL**: create()
-        mapUI -> mapCTRL: getAvailableMaps()
-            activate mapCTRL
-                ref over mapCTRL
-                    Get available maps
-                end
-            mapCTRL --> mapUI: availableMapsList
-            deactivate mapCTRL
-        mapUI --> Player: shows list of available maps to play
-        deactivate mapUI
 
-    Player -> mapUI: selects a map
-        activate mapUI
-        mapUI -> mapCTRL: getMapScenarios(mapID)
-            activate mapCTRL
-                ref over mapCTRL
-                    Get map scenarios
-                end
-            mapCTRL --> mapUI: mapScenarios
-            deactivate mapCTRL
-        mapUI --> Player: shows list of available scenarios to play
-        deactivate mapUI
-    Player -> mapUI: selects a scenario
-
-        activate mapUI
-        mapUI -> mapCTRL: loadMap(mapID, scenarioID)
-            activate mapCTRL
-                ref over mapCTRL
-                    Load map
-                end
-            mapCTRL --> mapUI: mapLayout
-            deactivate mapCTRL
-        mapUI --> Player: loads and displays the selected map
-        deactivate mapUI
+note left of ListStationUI
+    Retrieves available maps and scenarios and loads them
+end note
 
 Player -> ListStationUI : request to see available stations
         activate ListStationUI
-        ListStationUI --> ListStationController: getStations(mapId)
+        ListStationUI --> ListStationController: getStationsDTO(mapId)
         activate ListStationController
         
         ref over ListStationController
         Get available stations
         end
         
-        ListStationController --> ListStationUI: stationsList
+        ListStationController --> ListStationUI: stationsDTOList
         deactivate ListStationController
         
         ListStationUI --> Player : displays list of available stations
@@ -71,7 +39,7 @@ Player -> ListStationUI : request to see available stations
 
 Player -> ListStationUI : selects a specific station
         activate ListStationUI
-        ListStationUI --> ListStationController: getStationDetails(stationId)
+        ListStationUI --> ListStationController: getStationDetails(listStation, stationId)
         activate ListStationController
         
         ref over ListStationController

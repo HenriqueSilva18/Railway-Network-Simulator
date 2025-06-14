@@ -1,50 +1,95 @@
 @startuml
-
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
-autonumber
 
-title System Sequence Diagram : US07 - Get Stations
+participant ":ListStationController" as CTRL
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant "maps\n:Map" as MAPS
+participant "map\n:Map" as MAP
+participant "city\n:City" as CITY
+participant "listStation\n:List<Station>" as listStation
 
-participant ListStationController
-participant ApplicationSession
-participant Map
-participant City
-autonumber
-activate ListStationController
+participant ":StationMapper" as STATION_MAPPER
+participant ":List<Station>" as STATION_LIST
+participant ":List<StationDTO>" as STATION_LIST_DTO
+participant "stationDTO\n:StationDTO" as STATION_DTO
 
-autonumber 10
---> ListStationController: loadMap(mapId)
+autonumber 2
+-> CTRL: getStationsDTO(mapID)
 
-group GetStations
-autonumber 10.1
-  ListStationController -> ApplicationSession : getInstance()
-  activate ApplicationSession
-  ApplicationSession --> ListStationController : sessionInstance
-  deactivate ApplicationSession
+autonumber 2.1
+activate CTRL
+    group Get StationDTO List
 
-  ListStationController -> ApplicationSession : getCurrentMap()
-  activate ApplicationSession
-  ApplicationSession --> ListStationController : currentMap
-  deactivate ApplicationSession
+        CTRL -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> CTRL: repositories
+        deactivate REPOS
 
-  ListStationController -> Map : getCities()
-  activate Map
-  Map --> ListStationController : citiesList
-  deactivate Map
+        CTRL -> REPOS_SINGLETON: getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> CTRL: mapRepository
+        deactivate REPOS_SINGLETON
 
-  loop for each city in citiesList
-    ListStationController -> City : getStations()
-    activate City
-    City --> ListStationController : cityStations
-    deactivate City
-  end
+        CTRL -> MAP_REPO: getMap(mapID)
+        activate MAP_REPO
+            MAP_REPO -> MAPS: getMap(mapID)
+            activate MAPS
 
-  ListStationController --> ListStationController : compileStationsList()
-end
-autonumber 11
-<-- ListStationController: stationsList
-deactivate ListStationController
+                MAPS --> MAP_REPO : map
+            deactivate MAPS
+            MAP_REPO --> CTRL: map
+        deactivate MAP_REPO
+
+        CTRL -> MAP: getCities()
+
+        activate MAP
+        MAP --> CTRL: cities
+        deactivate MAP
+
+
+        CTRL -> listStation : new ArrayList<>()
+
+        loop for each city in cities
+            CTRL -> CITY: getStations()
+            activate CITY
+                CITY --> CTRL: listStationsPerCity
+            deactivate CITY
+                CTRL -> listStation: add(listStationsPerCity))
+        end
+
+        listStation -> CTRL: listStation
+        deactivate MAP
+
+        CTRL -> STATION_MAPPER: toDTO(listStation)
+                activate STATION_MAPPER
+
+                    STATION_MAPPER --> STATION_LIST_DTO**: create()
+
+                    loop for each object in listStation
+                        STATION_MAPPER -> STATION_LIST: stationType = get(i)
+                        activate STATION_LIST
+                            deactivate STATION_LIST
+
+                        STATION_MAPPER -> STATION_MAPPER: stationDTO = toDTO(station)
+                        activate STATION_MAPPER
+                            STATION_MAPPER --> STATION_DTO**: create()
+                            deactivate STATION_MAPPER
+
+                        STATION_MAPPER -> STATION_LIST_DTO: add(stationDTO)
+                        activate STATION_LIST_DTO
+                            deactivate STATION_LIST_DTO
+                    end
+
+                    STATION_MAPPER --> CTRL: listStationDTO
+                deactivate STATION_MAPPER
+
+    end
+    autonumber 3
+        <--CTRL : listStationDTO
+
 
 @enduml 

@@ -7,10 +7,17 @@ skinparam classAttributeIconSize 0
 
 title Class Diagram: US07 - List Stations and View Details
 
-class ApplicationSession {
-  -ApplicationSession()
-  +getInstance()
-  +getCurrentSession()
+class StationMapper {
+  +toDTO(station) : StationDTO
+}
+
+class StationDTO {
+  -id : String
+  -name : String
+  -storageCapacity : int
+  -buildingSlots : int
+  -availableCargo : List<CargoDTO>
+  -requestedCargo : List<CargoDTO>
 }
 
 class ListStationController {
@@ -39,11 +46,20 @@ class Map {
   +getCities() : List<City>
 }
 
+class Maps {
+  +getListOfMaps() : List<Map>
+  +getMap(mapId : String) : Map
+}
+
 class City {
   -name : String
   -position : Position
   -stations : List<Station>
   +getStations() : List<Station>
+}
+
+class Cities {
+  +getCities() : List<City>
 }
 
 class Size {
@@ -97,18 +113,30 @@ class Position {
   +setOccupied(occupied : boolean) : void
 }
 
+class MapDTO {
+  -id : String
+  -size : Size
+
+}
+
 class ListStationUI {
 }
 
 ' Relationships
 ListStationUI ..> ListStationController
-ListStationController ..> ApplicationSession
+ListStationController ..> StationMapper
 ListStationController ..> MapRepository
+ListStationController ..> MapMapper
+MapMapper ..> MapDTO
 ListStationController ..> Repositories
+MapRepository ..> Maps
+Maps ..> Map
+Map ..> Cities
 Repositories --> MapRepository : mapRepository
-Map "1" *-- "*" City : contains
+Cities "1" *-- "*" City : contains
 Map "1" *-- "1" Size : has
 City "1" *-- "*" Station : contains
+StationMapper --> StationDTO : converts to
 Station "*" --> "1" StationType : defined by
 Station "1" *-- "*" Building : contains
 Station "1" *-- "*" Cargo : stores
