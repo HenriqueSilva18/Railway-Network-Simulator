@@ -112,7 +112,7 @@ public class BuildingRepository {
                 "telephone", 5000, true, 0.1));
         
         // Create telephone (standalone building)
-        add(new Building("telephone", "Communication", 1900, 10000,  // Changed from 1920 to 1900 for testing
+        add(new Building("telephone", "Communication", 1902, 10000,  // Changed from 1920 to 1900 for testing
                 "Improves train coordination by 20%", null, false, null,
                 null, 0, false, 0.2));
         

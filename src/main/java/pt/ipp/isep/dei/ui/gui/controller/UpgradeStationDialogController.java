@@ -300,7 +300,7 @@ public class UpgradeStationDialogController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", 
                 errorMessage.isEmpty() ? 
                 "Failed to " + (installNewBuildingRadio.isSelected() ? "install" : "evolve") + 
-                " building. You may not have enough budget." :
+                " building. You may not have enough budget or might have to wait a couple years." :
                 errorMessage);
         }
     }

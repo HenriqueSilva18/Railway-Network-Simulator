@@ -18,25 +18,20 @@ public class UpgradeStationController {
     private final BuildingRepository buildingRepository;
     private final StationRepository stationRepository;
     private final PlayerRepository playerRepository;
+    private final SimulatorController simulatorController;
     
     public UpgradeStationController() {
         this.buildingRepository = Repositories.getInstance().getBuildingRepository();
         this.stationRepository = Repositories.getInstance().getStationRepository();
         this.playerRepository = Repositories.getInstance().getPlayerRepository();
+        this.simulatorController = new SimulatorController();
     }
     
     /**
      * Gets the current year from the scenario
      */
     public int getCurrentYear() {
-        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
-        if (currentScenario == null) {
-            return 1950; // Changed from 1900 to 1950 to make more buildings available
-        }
-        
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentScenario.getStartDate());
-        return calendar.get(Calendar.YEAR);
+        return simulatorController.getCurrentYear();
     }
     
     /**

@@ -314,9 +314,10 @@ public class Station implements Serializable {
      */
     public List<Building.BuildingInfo> getEvolvableBuildings(int currentYear) {
         List<Building.BuildingInfo> evolvableBuildings = new ArrayList<>();
-        
+
         for (Building building : buildings) {
-            if (building.canEvolve() && building.getEvolvesInto() != null) {
+            // Check if the building can evolve and is available in the current or past year
+            if (building.canEvolve() && building.getEvolvesInto() != null && building.getAvailabilityYear() <= currentYear) {
                 evolvableBuildings.add(building.getInfo());
             }
         }
@@ -559,6 +560,7 @@ public class Station implements Serializable {
         
         // Check if the evolution is available in the current year
         if (evolution.getAvailabilityYear() > currentYear) {
+            System.out.println("Evolution not available in the current year: " + currentYear + " only in: " + evolution.getAvailabilityYear());
             return false;
         }
         

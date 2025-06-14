@@ -98,6 +98,8 @@ public class SimulatorController {
         if (simulator == null) {
             return false;
         }
+
+        simulatorRepository.setActiveSimulator(simulator.getStatus());
         
         // Start the simulator
         boolean started = simulator.start();
@@ -141,10 +143,11 @@ public class SimulatorController {
                     
                     // Update yearly demand if needed
                     updateYearlyDemand();
+                    simulatorRepository.setActiveSimulator(simulator.getStatus());
                 }
             }
         }, SIMULATION_INTERVAL_MS, SIMULATION_INTERVAL_MS);
-        
+
         simulationRunningInBackground = true;
     }
     
@@ -553,5 +556,17 @@ public class SimulatorController {
             generateCargo();
         }
         return assigned;
+    }
+
+    public int getCurrentYear() {
+        Simulator simulator = Repositories.getInstance().getSimulatorRepository().getActiveSimulator();
+
+        if (simulator == null) {
+            return 0; // Default to year 0 if no simulation is active
+        }
+
+        Date date = simulator.getCurrentSimulatedDate();
+        int year = date.getYear() + 1900; // Date.getYear() returns years since 1900
+        return year;
     }
 } 

@@ -98,8 +98,10 @@ public class BuyLocomotiveController {
             return false;
         }
 
-        // Create a train with this locomotive
-        String trainName = "Train_" + locomotive.getNameID() + "_" + System.currentTimeMillis() % 1000;
+        // Create a train with this locomotive adding a unique incremental name
+        String trainName = "Train_" + locomotive.getNameID() + "_"+ (trainRepository.getAllTrains().size() + 1);
+
+
         Train train = new Train(trainName, locomotive);
         trainRepository.save(train);
 
