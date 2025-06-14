@@ -62,14 +62,26 @@ public class ScenarioRepository {
         String filePath = SCENARIOS_DIR + File.separator + scenarioId + ".scenario";
         File file = new File(filePath);
         
-        if (!file.exists()) return null;
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            return (Scenario) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        if (!file.exists()) {
+            System.out.println("Scenario file not found: " + filePath);
             return null;
         }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            Scenario scenario = (Scenario) ois.readObject();
+            if (scenario != null) {
+                // Add to in-memory repository
+                if (!scenarios.contains(scenario)) {
+                    scenarios.add(scenario);
+                }
+                return scenario;
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading scenario file: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error deserializing scenario: " + e.getMessage());
+        }
+        return null;
     }
 
     public List<String> getAvailableScenarioFiles() {

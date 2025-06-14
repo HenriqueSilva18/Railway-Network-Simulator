@@ -118,6 +118,9 @@ public class SaveScenarioUI implements Runnable {
             return;
         }
 
+        // Ensure the scenario is associated with the selected map
+        selectedScenario.setMap(selectedMap);
+
         // Create a filename that includes both map and scenario names
         String fileName = selectedMap.getNameID() + "_" + selectedScenarioId;
         selectedScenario.setNameID(fileName);
@@ -126,6 +129,12 @@ public class SaveScenarioUI implements Runnable {
         if (scenarioController.saveScenario(selectedScenario)) {
             System.out.println("\nScenario saved successfully!");
             System.out.println("Saved as: " + fileName + ".scenario");
+            
+            // Add the scenario to the map's list of scenarios if not already present
+            if (!selectedMap.getScenarios().contains(selectedScenarioId)) {
+                selectedMap.addScenario(selectedScenarioId);
+                mapController.saveMap(selectedMap);
+            }
         } else {
             System.out.println("Failed to save scenario.");
         }

@@ -11,6 +11,7 @@ import pt.ipp.isep.dei.domain.template.Locomotive;
 import pt.ipp.isep.dei.repository.template.Repositories;
 import pt.ipp.isep.dei.repository.template.MapRepository;
 import pt.ipp.isep.dei.repository.template.EditorRepository;
+import pt.ipp.isep.dei.repository.template.ScenarioRepository;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.List;
@@ -19,16 +20,21 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ViewScenarioLayoutUI implements Runnable {
 
     private final MapController mapController;
     private final EditorRepository editorRepository;
+    private final ScenarioRepository scenarioRepository;
     private final ViewScenarioLayoutController viewController;
 
     public ViewScenarioLayoutUI() {
         this.mapController = new MapController();
         this.editorRepository = Repositories.getInstance().getEditorRepository();
+        this.scenarioRepository = Repositories.getInstance().getScenarioRepository();
         this.viewController = new ViewScenarioLayoutController();
     }
 
@@ -36,77 +42,97 @@ public class ViewScenarioLayoutUI implements Runnable {
     public void run() {
         System.out.println("\n=== View Scenario Layout ===\n");
 
-        // Get available maps
-        List<Map> maps = mapController.getAvailableMaps();
-        if (maps.isEmpty()) {
-            System.out.println("No maps available.");
+        // Check if a map is currently loaded
+        Map currentMap = ApplicationSession.getInstance().getCurrentMap();
+        if (currentMap == null) {
+            System.out.println("No map is currently loaded. Please load a map first.");
             return;
         }
 
-        // Show available maps
-        System.out.println("Available Maps:");
-        Map selectedMap = (Map) Utils.showAndSelectOne(maps, "Select a map to view scenarios:");
+        // Get all scenarios from both repositories
+        List<Scenario> editorScenarios = editorRepository.getAllScenarios();
+        List<Scenario> scenarioRepoScenarios = scenarioRepository.getAllScenarios();
         
-        if (selectedMap == null) {
-            return;
-        }
-        // Get scenarios for selected map
-        List<String> scenarioIDs = mapController.getMapScenarios(selectedMap.getNameID());
-        if (scenarioIDs.isEmpty()) {
-            System.out.println("No scenarios available for this map.");
-            return;
-        }
-
-        // Filter out scenario3 and scenario4 for all maps
-        scenarioIDs = scenarioIDs.stream()
-            .filter(id -> !id.equals("scenario3") && !id.equals("scenario4"))
-            .collect(java.util.stream.Collectors.toList());
-
-        // Create a mapping of display names to scenario IDs
-        LinkedHashMap<String, String> scenarioDisplayMap = new LinkedHashMap<>();
-        for (String id : scenarioIDs) {
-            String displayName;
-            if (id.equals("scenario1")) {
-                displayName = selectedMap.getNameID().equals("italy") ? "Italian Giolitti Era" :
-                             selectedMap.getNameID().equals("france") ? "French Belle Époque" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Early Industrial" : id;
-            } else if (id.equals("scenario2")) {
-                displayName = selectedMap.getNameID().equals("italy") ? "Italian Inter-War" :
-                             selectedMap.getNameID().equals("france") ? "French Reconstruction" :
-                             selectedMap.getNameID().equals("iberian_peninsula") ? "Iberian Inter-War" : id;
-            } else {
-                displayName = id;
+        // Combine scenarios from both repositories while avoiding duplicates
+        Set<String> scenarioIds = new HashSet<>();
+        List<Scenario> allScenarios = new ArrayList<>();
+        
+        // Add from editor repository
+        for (Scenario scenario : editorScenarios) {
+            if (!scenarioIds.contains(scenario.getNameID())) {
+                allScenarios.add(scenario);
+                scenarioIds.add(scenario.getNameID());
             }
-            scenarioDisplayMap.put(displayName, id);
+        }
+        
+        // Add from scenario repository
+        for (Scenario scenario : scenarioRepoScenarios) {
+            if (!scenarioIds.contains(scenario.getNameID())) {
+                allScenarios.add(scenario);
+                scenarioIds.add(scenario.getNameID());
+            }
+        }
+        
+        // Filter scenarios that belong to the current map and are properly loaded
+        List<Scenario> availableScenarios = allScenarios.stream()
+            .filter(s -> s != null && 
+                        s.getMap() != null && 
+                        s.getMap().getNameID().equals(currentMap.getNameID()) &&
+                        !s.getNameID().equals("scenario3") && 
+                        !s.getNameID().equals("scenario4"))
+            .collect(Collectors.toList());
+
+        if (availableScenarios.isEmpty()) {
+            System.out.println("No scenarios available for the current map. Please load a scenario first.");
+            return;
         }
 
-        // Show available scenarios with their display names
-        System.out.println("\nAvailable Scenarios for " + selectedMap.getNameID() + ":");
+        // Create a mapping of display names to scenarios
+        LinkedHashMap<String, Scenario> scenarioDisplayMap = new LinkedHashMap<>();
+        for (Scenario scenario : availableScenarios) {
+            String displayName;
+            if (scenario.getNameID().equals("scenario1")) {
+                displayName = currentMap.getNameID().equals("italy") ? "Italian Giolitti Era" :
+                             currentMap.getNameID().equals("france") ? "French Belle Époque" :
+                             currentMap.getNameID().equals("iberian_peninsula") ? "Iberian Early Industrial" : scenario.getNameID();
+            } else if (scenario.getNameID().equals("scenario2")) {
+                displayName = currentMap.getNameID().equals("italy") ? "Italian Inter-War" :
+                             currentMap.getNameID().equals("france") ? "French Reconstruction" :
+                             currentMap.getNameID().equals("iberian_peninsula") ? "Iberian Inter-War" : scenario.getNameID();
+            } else {
+                displayName = scenario.getNameID();
+            }
+            scenarioDisplayMap.put(displayName, scenario);
+        }
+
+        // Display available scenarios
+        System.out.println("Available scenarios for " + currentMap.getNameID() + ":");
         List<String> displayNames = new ArrayList<>(scenarioDisplayMap.keySet());
-        String selectedDisplayName = (String) Utils.showAndSelectOne(displayNames, "Select a scenario to view layout:");
+        for (int i = 0; i < displayNames.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, displayNames.get(i));
+        }
+        System.out.println("0. Return to previous menu");
 
-        if (selectedDisplayName == null) {
+        // Get user selection
+        System.out.print("\nType your option: ");
+        int choice = Utils.readIntegerFromConsole("Invalid option. Please try again: ");
+        if (choice == 0) {
             return;
         }
 
-        // Get the actual scenario ID from the selected display name
-        String selectedScenarioID = scenarioDisplayMap.get(selectedDisplayName);
-
-        // Load the selected scenario
-        if (!mapController.loadMap(selectedMap.getNameID(), selectedScenarioID)) {
-            System.out.println("Failed to load scenario.");
+        if (choice < 1 || choice > displayNames.size()) {
+            System.out.println("Invalid selection.");
             return;
         }
 
-        // Get the loaded map from the session
-        Map loadedMap = ApplicationSession.getInstance().getCurrentMap();
-        if (loadedMap == null) {
-            System.out.println("Error: Could not retrieve loaded map.");
-            return;
-        }
+        String selectedDisplayName = displayNames.get(choice - 1);
+        Scenario selectedScenario = scenarioDisplayMap.get(selectedDisplayName);
+
+        // Set the selected scenario as current
+        ApplicationSession.getInstance().setCurrentScenario(selectedScenario);
 
         // Display scenario layout
-        displayScenarioLayout(loadedMap, selectedDisplayName);
+        displayScenarioLayout(currentMap, selectedDisplayName);
     }
 
     private void displayScenarioLayout(Map map, String displayName) {
