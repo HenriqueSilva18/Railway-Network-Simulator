@@ -97,23 +97,23 @@ class MapDTO {
   +id: String
 }
 
-' RELATIONSHIPS
-AddCityUI --> AddCityController
-AddCityController --> Repositories
-AddCityController --> MapMapper
-MapMapper --> MapDTO
-MapRepository -> MapMapper
-Repositories --> MapRepository
-MapRepository --> Maps
-Maps --> Map
-Map --> Cities
-Cities --> City
-Cities --> CityMapper
-CityMapper --> CityDTO
-CityMapper --> HouseBlockDTO
-City --> HouseBlock
-HouseBlock --> Position
-CityDTO --> Position
-AddCityController --> CityMapper
+AddCityUI "1" --> "1" AddCityController
+AddCityController "1" --> "*" Repositories
+AddCityController "1" --> "1" MapMapper
+MapMapper "1" --> "1" MapDTO
+MapRepository "1" --> "1" MapMapper
+Repositories "*" --> "1" MapRepository
+MapRepository "1" --> "1" Maps
+Maps "1" --> "*" Map
+Map "1" --> "*" Cities
+Cities "1" --> "*" City
+Cities "1" --> "1" CityMapper
+CityMapper "1" --> "1" CityDTO
+CityMapper "1" --> "*" HouseBlockDTO
+City "1" --> "*" HouseBlock
+HouseBlock "1" --> "1" Position
+CityDTO "1" --> "1" Position
+AddCityController "1" --> "1" CityMapper
+
 
 @enduml

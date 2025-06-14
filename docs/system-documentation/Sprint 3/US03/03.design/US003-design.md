@@ -8,7 +8,6 @@
 |----------------|-------------------------------------------------------------------------|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Step 1         | ... interacting with the actor?                                         | `AddCityUI`                | **Pure Fabrication**: There is no reason to assign this responsibility to any existing class in the Domain Model.                                                                              |
 |                | ... coordinating the US?                                                | `AddCityController`        | **Controller**: Coordinates the flow of the use case between UI, domain entities, and repositories.                                                                                            |
-|                | ... knowing the user using the system?                                  | `UserSession`              | **IE**: cf. A&A component documentation; represents the current user in session.                                                                                                               |
 |                | ... getting the list of available maps?                                 | `MapRepository`            | **IE**: Knows all maps in the system.                                                                                                                                                          |
 | Step 2         | ... loading and displaying the selected map?                            | `AddCityUI`                | **IE**: Responsible for user interaction and displaying information.                                                                                                                           |
 | Step 3         | ... validating that the city name has no special characters or digits?  | `AddCityController`        | **Controller**: Applies validation rules on inputs.                                                                                                                                            |
@@ -37,9 +36,13 @@ Other software classes (i.e. Pure Fabrication or Controller) identified:
 * `AddCityUI`
 * `AddCityController`
 * `AddHouseBlocksController`
-* `ApplicationSession`
-* `UserSession`
 * `MapRepository`
+* `Repositories`
+* `CityDTO`
+* `MapDTO`
+* `HouseBlockDTO`
+* `CityMapper`
+* `MapMapper`
 
 ## 3.2. Sequence Diagram (SD)
 

@@ -10,7 +10,6 @@
 |:--------------:|:--------------------------------------------------------------|:------------------------|:------------------------------------------------------------------------------------------------------------------|
 |     Step 1     | ... interacting with the actor?                               | `ListStationUI`         | **Pure Fabrication**: There is no reason to assign this responsibility to any existing class in the Domain Model. |
 |                | ... coordinating the US?                                      | `ListStationController` | **Controller**: Coordinates the flow of the use case between UI, domain entities, and repositories.               |
-|                | ... knowing the user using the system?                        | `ApplicationSession`    | **IE**: Represents the current user in session.                                                                   |
 |                | ... getting the list of available maps?                       | `MapRepository`         | **IE**: Knows all maps in the system.                                                                             |
 |     Step 2     | ... displaying list of available maps?                        | `ListStationUI`         | **IE**: Responsible for user interaction and displaying information.                                              |
 |     Step 3     | ... processing the map selection?                             | `ListStationController` | **Controller**: Processes user input and coordinates the action.                                                  |
@@ -43,8 +42,11 @@ Other software classes (i.e. Pure Fabrication) identified:
 * `ListStationUI`
 * `ListStationController`
 * `MapRepository`
-* `ApplicationSession`
 * `Repositories`
+* `StationDTO`
+* `MapDTO`
+* `MapMapper`
+* `StationMapper`
 
 ## 3.2. Sequence Diagram (SD)
 
