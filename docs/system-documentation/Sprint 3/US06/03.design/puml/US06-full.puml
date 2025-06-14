@@ -225,7 +225,7 @@ deactivate UI
 
 player -> UI : Confirms the upgrade
 activate UI
-    UI -> CTRL : upgradeStation(currentStation, buildingDTO)
+    UI -> CTRL : upgradeStation(buildingDTO)
         activate CTRL
         autonumber 19.1
             group Upgrade Station

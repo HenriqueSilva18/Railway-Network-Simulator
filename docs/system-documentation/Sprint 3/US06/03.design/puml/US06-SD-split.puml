@@ -58,7 +58,7 @@ deactivate UI
 
 PLAYER -> UI : Confirms the upgrade
 activate UI
-UI -> CTRL : upgradeStation(currentStation, buildingDTO)
+UI -> CTRL : upgradeStation(buildingDTO)
 activate CTRL
 ref over CTRL : Upgrade Station
 CTRL --> UI : success
