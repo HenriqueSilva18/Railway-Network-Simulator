@@ -16,7 +16,8 @@ public class FilesUtils {
     }
 
     private static String normalizeStationName(String station) {
-        return station.replace("_", "");
+        // Remove all separators (_, ., -, space) and trim
+        return station.replaceAll("[_.\\s-]", "").trim();
     }
 
     public static void loadCSV(String csvPath, Map<String, Station> stations, Map<String, List<Edge>> graph,
@@ -24,11 +25,37 @@ public class FilesUtils {
         BufferedReader reader = new BufferedReader(new FileReader(csvPath));
         String line;
         while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(";");
-            String from = normalizeStationName(parts[0].trim());
-            String to = normalizeStationName(parts[1].trim());
-            boolean electrified = parts[2].trim().equals("1");
-            double distance = Double.parseDouble(parts[3].trim());
+            // First split by either semicolon or comma to separate the fields
+            String[] fields = line.split("[;,]");
+            if (fields.length < 4) {
+                System.out.println("Warning: Skipping invalid line: " + line);
+                continue;
+            }
+
+            // Process each field, handling potential empty strings
+            List<String> validFields = new ArrayList<>();
+            for (String field : fields) {
+                String trimmed = field.trim();
+                if (!trimmed.isEmpty()) {
+                    validFields.add(trimmed);
+                }
+            }
+
+            if (validFields.size() < 4) {
+                System.out.println("Warning: Skipping invalid line (insufficient fields): " + line);
+                continue;
+            }
+
+            String from = normalizeStationName(validFields.get(0));
+            String to = normalizeStationName(validFields.get(1));
+            boolean electrified = validFields.get(2).equals("1");
+            double distance;
+            try {
+                distance = Double.parseDouble(validFields.get(3));
+            } catch (NumberFormatException e) {
+                System.out.println("Warning: Invalid distance value in line: " + line);
+                continue;
+            }
 
             if (maintenanceType == 2 && !electrified) {
                 continue;

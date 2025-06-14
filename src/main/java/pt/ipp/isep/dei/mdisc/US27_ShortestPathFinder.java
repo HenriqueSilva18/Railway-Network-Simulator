@@ -202,9 +202,9 @@ public class US27_ShortestPathFinder {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line = reader.readLine();
             if (line != null) {
-                String[] stationNames = line.split(";");
+                String[] stationNames = line.split("[;,]");
                 for (String station : stationNames) {
-                    String normalizedStation = station.replace("_", "").trim();
+                    String normalizedStation = station.replaceAll("[_.\\s-]", "").trim();
                     if (!normalizedStation.isEmpty()) {
                         stations.add(normalizedStation);
                     }
