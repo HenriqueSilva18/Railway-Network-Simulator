@@ -11,7 +11,7 @@ To validate the correct implementation of the feature that lists all stations an
 ```java
 @Test
 void ensureListIsNotNull() {
-    Station s = new Station("ST01", position, StationType.BASIC, 50, 3);
+    Station s = new Station("ST01", position, 50, 3);
 
     List<StationDTO> result = controller.listAllStations();
     assertNotNull(result);
@@ -23,7 +23,7 @@ void ensureListIsNotNull() {
 ```java
 @Test
 void ensureDetailsAreMappedCorrectly() {
-    Station s = new Station("ST01", position, StationType.BASIC, 50, 3);
+    Station s = new Station("ST01", position, 50, 3);
     when(repository.getAllStations()).thenReturn(List.of(s));
 
     List<StationDTO> result = service.listAllStations();
@@ -100,10 +100,9 @@ public class Station{
     private List<Cargo> suppliedCargo;
     private List<Cargo> demandedCargo;
 
-    public Station(String nameID, Position position, StationType type, int storageCapacity, int buildingSlots) {
+    public Station(String nameID, Position position, int storageCapacity, int buildingSlots) {
         this.nameID = nameID;
         this.position = position;
-        this.type = type;
         this.storageCapacity = storageCapacity;
         this.buildingSlots = buildingSlots;
         this.buildings = new ArrayList<>();
