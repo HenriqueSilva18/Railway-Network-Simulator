@@ -2,6 +2,7 @@ package pt.ipp.isep.dei.ui.gui.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,22 +20,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import pt.ipp.isep.dei.controller.template.*;
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.RailwayLineRepository;
 import pt.ipp.isep.dei.repository.template.Repositories;
+import pt.ipp.isep.dei.ui.gui.MainApp;
 
 import javafx.scene.control.ScrollPane; // Certifique-se que este import existe
 import javafx.geometry.Insets;
 import pt.ipp.isep.dei.ui.gui.utils.AlertHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Optional;
 
 public class PlayerMenuGUIController implements Initializable {
 
@@ -575,19 +580,74 @@ public class PlayerMenuGUIController implements Initializable {
 
     @FXML
     void handleSaveGame(ActionEvent event) {
-        System.out.println("Save Game clicked");
-        showAlert("Not Implemented", "Save Game (US23) functionality is not yet implemented.");
+        if (simulatorController == null) {
+            simulatorController = new SimulatorController();
+        }
+
+        // Create a dialog to get the save name
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Save Game");
+        dialog.setHeaderText("Enter a name for your saved game");
+        dialog.setContentText("Save name:");
+
+        // Show dialog and wait for response
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(saveName -> {
+            if (simulatorController.saveGame(saveName)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Game saved successfully!");
+                updateBudgetDisplay(); // Refresh UI
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to save game. Please try again.");
+            }
+        });
     }
 
     @FXML
     void handleLoadGame(ActionEvent event) {
-        System.out.println("Load Game clicked");
-        // TODO: Implement US24 - Load a saved game
-        // This should set mapLoaded to true and update UI
-        showAlert("Not Implemented", "Load Game (US24) functionality is not yet implemented.");
-        // After successful load:
-        // appSession.setMapLoaded(true); // Or your equivalent logic
-        // updateMenuItemsState();
+        if (simulatorController == null) {
+            simulatorController = new SimulatorController();
+        }
+
+        List<String> savedGames = simulatorController.getSavedGames();
+        if (savedGames.isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "No Saved Games", "There are no saved games available.");
+            return;
+        }
+
+        // Create a dialog to select the game to load
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(savedGames.get(0), savedGames);
+        dialog.setTitle("Load Game");
+        dialog.setHeaderText("Select a saved game to load");
+        dialog.setContentText("Saved games:");
+
+        // Show dialog and wait for response
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(saveName -> {
+            if (confirm("Load Game", "Are you sure you want to load this game? Any unsaved progress will be lost.")) {
+                if (simulatorController.loadGame(saveName)) {
+                    // Update ApplicationSession with the new scenario and its associated map
+                    Scenario loadedScenario = simulatorController.getScenarioRepository().getCurrentScenario();
+                    Map loadedMap = loadedScenario.getMap();
+                    appSession.setCurrentScenario(loadedScenario);
+                    appSession.setCurrentMap(loadedMap);
+
+                    System.out.println("handleLoadGame: appSession.currentScenario set to: " + (appSession.getCurrentScenario() != null ? appSession.getCurrentScenario().getNameID() : "null"));
+                    System.out.println("handleLoadGame: appSession.currentMap set to: " + (appSession.getCurrentMap() != null ? appSession.getCurrentMap().getNameID() : "null"));
+
+                    Platform.runLater(() -> {
+                        showAlert(Alert.AlertType.INFORMATION, "Success", "Game loaded successfully!");
+                        updateBudgetDisplay(); // Refresh UI
+                        updateMapInfoPlaceholderLabel(); // Refresh map info
+                        updateSimulatorTimeDisplay(); // Refresh simulator time
+                        loadMapVisualization(); // Refresh map visualization
+                        updateMenuItemsState(); // Refresh menu item states
+                        simulationUpdateTimer.play(); // Start or resume the simulation timer
+                    });
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to load game. Please try again.");
+                }
+            }
+        });
     }
 
     @FXML
@@ -1031,7 +1091,14 @@ public class PlayerMenuGUIController implements Initializable {
         Map currentMap = appSession.getCurrentMap();
         Scenario currentScenario = appSession.getCurrentScenario();
 
+        System.out.println("loadMapVisualization: Current Map = " + (currentMap != null ? currentMap.getNameID() : "null"));
+        System.out.println("loadMapVisualization: Current Scenario = " + (currentScenario != null ? currentScenario.getNameID() : "null"));
+
         if (currentMap != null && currentScenario != null) {
+            System.out.println("loadMapVisualization: Map cities count = " + currentMap.getCities().size());
+            System.out.println("loadMapVisualization: Map stations count = " + currentMap.getStations().size());
+            System.out.println("loadMapVisualization: Map industries count = " + currentMap.getIndustries().size());
+
             if (this.viewLayoutController == null) {
                 this.viewLayoutController = new ViewScenarioLayoutController();
             }
@@ -1042,6 +1109,7 @@ public class PlayerMenuGUIController implements Initializable {
                 errorLabel.setStyle("-fx-text-fill: red;");
                 contentArea.getChildren().add(errorLabel);
                 StackPane.setAlignment(errorLabel, Pos.CENTER);
+                System.err.println("loadMapVisualization: Error generating map layout data.");
                 return;
             }
 
@@ -1383,5 +1451,15 @@ public class PlayerMenuGUIController implements Initializable {
         currentStage.show();
 
         System.out.println("Navegação para '" + menuName + "' concluída com sucesso.");
+    }
+
+    private boolean confirm(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 }
