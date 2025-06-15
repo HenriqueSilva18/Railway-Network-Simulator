@@ -8,10 +8,7 @@ import pt.ipp.isep.dei.domain.template.Station;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 import pt.ipp.isep.dei.ui.console.menu.MenuItem;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ListStationUI implements Runnable {
 
@@ -139,7 +136,14 @@ public class ListStationUI implements Runnable {
         System.out.printf("Position: (%d, %d)\n", 
             station.getPosition().getX(), 
             station.getPosition().getY());
-        System.out.printf("Storage Capacity: %d\n", station.getStorageCapacity());
+        
+        // Calculate current storage usage
+        int currentStorage = station.getAvailableCargo().stream()
+            .mapToInt(Cargo::getAmount)
+            .sum();
+        System.out.printf("Storage Capacity: %d/%d units\n", 
+            currentStorage,
+            station.getStorageCapacity());
         System.out.printf("Building Slots: %d\n", station.getBuildingSlots());
         
         // Display served cities (prevent duplicates)
@@ -157,30 +161,38 @@ public class ListStationUI implements Runnable {
             });
         }
         
-        // Display available cargo
+        // Display available cargo grouped by type
         System.out.println("\nAvailable Cargo (Supply):");
         List<Cargo> availableCargo = station.getAvailableCargo();
         if (availableCargo.isEmpty()) {
             System.out.println("None");
         } else {
-            availableCargo.forEach(cargo -> 
-                System.out.printf("- %s: %d units (Type: %s)\n", 
-                    cargo.getName(), 
-                    cargo.getAmount(),
-                    cargo.getType()));
+            // Group cargo by type and calculate total amount for each type
+            java.util.Map<String, Integer> cargoByType = new HashMap<>();
+            for (Cargo cargo : availableCargo) {
+                cargoByType.merge(cargo.getType(), cargo.getAmount(), Integer::sum);
+            }
+            
+            // Display total amount for each cargo type
+            cargoByType.forEach((type, totalAmount) -> 
+                System.out.printf("- %s: %d units\n", type, totalAmount));
         }
         
-        // Display requested cargo
+        // Display requested cargo grouped by type
         System.out.println("\nRequested Cargo (Demand):");
         List<Cargo> requestedCargo = station.getRequestedCargo();
         if (requestedCargo.isEmpty()) {
             System.out.println("None");
         } else {
-            requestedCargo.forEach(cargo -> 
-                System.out.printf("- %s: %d units (Type: %s)\n", 
-                    cargo.getName(), 
-                    cargo.getAmount(),
-                    cargo.getType()));
+            // Group cargo by type and calculate total amount for each type
+            java.util.Map<String, Integer> cargoByType = new HashMap<>();
+            for (Cargo cargo : requestedCargo) {
+                cargoByType.merge(cargo.getType(), cargo.getAmount(), Integer::sum);
+            }
+            
+            // Display total amount for each cargo type
+            cargoByType.forEach((type, totalAmount) -> 
+                System.out.printf("- %s: %d units\n", type, totalAmount));
         }
     }
 } 

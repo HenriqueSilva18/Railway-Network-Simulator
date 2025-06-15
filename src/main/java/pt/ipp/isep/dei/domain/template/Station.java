@@ -8,10 +8,12 @@ import java.util.List;
 public class Station implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    private static final int DEFAULT_STORAGE_CAPACITY = 100;
     private final String nameID;
     private final Position position;
     private final StationType stationType;
-    private final int storageCapacity;
+    private int storageCapacity;
+    private int currentStorage;
     private final int buildingSlots;
     private final List<Cargo> availableCargo;
     private final List<Cargo> requestedCargo;
@@ -49,6 +51,7 @@ public class Station implements Serializable {
         }
         
         this.storageCapacity = storageCapacity;
+        this.currentStorage = 0;
         this.availableCargo = new ArrayList<>();
         this.requestedCargo = new ArrayList<>();
         this.servedCities = new ArrayList<>();
@@ -87,6 +90,16 @@ public class Station implements Serializable {
 
     public List<City> getServedCities() {
         return new ArrayList<>(servedCities);
+    }
+
+    public List<Industry> getServedIndustries() {
+        List<Industry> servedIndustries = new ArrayList<>();
+        for (Industry industry : map.getIndustries()) {
+            if (isWithinRadius(industry.getPosition())) {
+                servedIndustries.add(industry);
+            }
+        }
+        return servedIndustries;
     }
 
     public List<Building> getBuildings() {
@@ -343,11 +356,52 @@ public class Station implements Serializable {
         return installNewBuilding(building, currentYear);
     }
 
-    public boolean isWithinRadius(Position otherPosition) {
-        int radius = stationType.getEconomicRadius();
-        int dx = Math.abs(position.getX() - otherPosition.getX());
-        int dy = Math.abs(position.getY() - otherPosition.getY());
-        return dx <= radius && dy <= radius;
+    public boolean isWithinRadius(Position position) {
+        if (position == null) {
+            return false;
+        }
+
+        // Get the station's center point
+        int centerX = this.position.getX();
+        int centerY = this.position.getY();
+
+        // Calculate the radius based on station type
+        int radius;
+        switch (stationType.getName()) {
+            case StationType.DEPOT:
+                radius = 1; // 3x3 area (1 cell in each direction from center)
+                break;
+            case StationType.STATION:
+                radius = 1; // 4x4 area (1.5 cells in each direction from center)
+                break;
+            case StationType.TERMINAL:
+                radius = 2; // 5x5 area (2 cells in each direction from center)
+                break;
+            default:
+                return false;
+        }
+
+        // For stations, we need to handle the 4x4 area specially
+        if (stationType.getName().equals(StationType.STATION)) {
+            // For stations, we need to check if the position is within the 4x4 area
+            // This means we need to check if it's within 1.5 cells in each direction
+            int posX = position.getX();
+            int posY = position.getY();
+            
+            // Calculate the distance from the center
+            double dx = Math.abs(posX - centerX);
+            double dy = Math.abs(posY - centerY);
+            
+            // For stations, we allow positions that are within 1.5 cells
+            return dx <= 1.5 && dy <= 1.5;
+        }
+
+        // For depots and terminals, use the standard square area check
+        int posX = position.getX();
+        int posY = position.getY();
+        
+        return posX >= centerX - radius && posX <= centerX + radius &&
+               posY >= centerY - radius && posY <= centerY + radius;
     }
     
     /**
@@ -434,25 +488,15 @@ public class Station implements Serializable {
     }
     
     public boolean addCargo(Cargo cargo) {
-        if (cargo == null) {
+        if (cargo == null) return false;
+        
+        // Check if adding this cargo would exceed storage capacity
+        if (currentStorage + cargo.getAmount() > storageCapacity) {
             return false;
         }
         
-        // Check if we have space
-        if (!hasStorageCapacity(cargo.getAmount())) {
-            return false;
-        }
-        
-        // Check if we already have this type of cargo
-        for (Cargo existingCargo : availableCargo) {
-            if (existingCargo.getType().equals(cargo.getType())) {
-                existingCargo.addAmount(cargo.getAmount());
-                return true;
-            }
-        }
-        
-        // If we don't have this type of cargo, add it
         availableCargo.add(cargo);
+        updateCurrentStorage();
         return true;
     }
     
@@ -462,6 +506,7 @@ public class Station implements Serializable {
         }
         
         availableCargo.removeIf(c -> c.getName().equals(cargo.getName()));
+        updateCurrentStorage();
     }
     
     public void updateDemand(int currentYear) {
@@ -470,7 +515,7 @@ public class Station implements Serializable {
         
         // Get cities and industries in radius
         List<City> cities = getServedCities();
-        List<Industry> industries = getIndustriesInRadius();
+        List<Industry> industries = getServedIndustries();
         
         // Add demands from cities
         for (City city : cities) {
@@ -504,16 +549,6 @@ public class Station implements Serializable {
 
     public List<Cargo> getDemandedCargo() {
         return new ArrayList<>(demandedCargo);
-    }
-
-    private List<Industry> getIndustriesInRadius() {
-        List<Industry> industries = new ArrayList<>();
-        for (Industry industry : map.getIndustries()) {
-            if (isWithinRadius(industry.getPosition())) {
-                industries.add(industry);
-            }
-        }
-        return industries;
     }
 
     @Override
@@ -589,5 +624,116 @@ public class Station implements Serializable {
             }
         }
         return false;
+    }
+
+    /**
+     * Updates the available cargo based on served cities and industries
+     * This should be called periodically (e.g., yearly) to update cargo amounts
+     */
+    public void updateAvailableCargo() {
+        // Do not clear existing cargo; accumulate new cargo instead
+        // availableCargo.clear(); // Removed this line
+
+        // Get cargo from cities
+        for (City city : servedCities) {
+            // Add passengers
+            int passengerAmount = city.getPassengerProduction();
+            if (passengerAmount > 0) {
+                addOrUpdateCargo("Passengers from " + city.getNameID(), passengerAmount, "passenger");
+            }
+
+            // Add mail
+            int mailAmount = city.getMailProduction();
+            if (mailAmount > 0) {
+                addOrUpdateCargo("Mail from " + city.getNameID(), mailAmount, "mail");
+            }
+        }
+
+        // Get cargo from industries
+        for (Industry industry : getServedIndustries()) {
+            String industryType = industry.getType();
+            double productionRate = industry.getProductionRate();
+            int baseAmount = 5; // Base amount as defined in Simulator
+
+            if ("Mine".equals(industryType)) {
+                String cargoType = industry.getNameID().toLowerCase().contains("coal") ? "coal" : "ore";
+                int amount = (int) (baseAmount * productionRate);
+                addOrUpdateCargo(cargoType + " from " + industry.getNameID(), amount, cargoType);
+            } else if ("Farm".equals(industryType)) {
+                int amount = (int) (baseAmount * productionRate);
+                addOrUpdateCargo("Food from " + industry.getNameID(), amount, "food");
+            } else if ("Steel Mill".equals(industryType)) {
+                int amount = (int) (baseAmount * productionRate);
+                addOrUpdateCargo("Steel from " + industry.getNameID(), amount, "steel");
+            } else if ("Port".equals(industryType)) {
+                int amount = (int) (baseAmount * productionRate);
+                addOrUpdateCargo("Goods from " + industry.getNameID(), amount, "goods");
+            }
+        }
+    }
+
+    /**
+     * Adds or updates cargo in the available cargo list
+     * If cargo of the same type exists, adds to its amount
+     * If not, creates new cargo entry
+     */
+    private void addOrUpdateCargo(String name, int amount, String type) {
+        // Check if we already have this type of cargo
+        for (Cargo cargo : availableCargo) {
+            if (cargo.getType().equals(type)) {
+                // Check if adding the new amount would exceed storage capacity
+                if (currentStorage + amount > storageCapacity) {
+                    // If it would exceed capacity, only add up to the capacity limit
+                    int remainingCapacity = storageCapacity - currentStorage;
+                    if (remainingCapacity > 0) {
+                        cargo.addAmount(remainingCapacity);
+                        updateCurrentStorage();
+                    }
+                    return;
+                }
+                // If we have enough capacity, add the full amount
+                cargo.addAmount(amount);
+                updateCurrentStorage();
+                return;
+            }
+        }
+        
+        // If we don't have this type, check if we have capacity for new cargo
+        if (currentStorage + amount > storageCapacity) {
+            // If it would exceed capacity, only add up to the capacity limit
+            int remainingCapacity = storageCapacity - currentStorage;
+            if (remainingCapacity > 0) {
+                Cargo newCargo = new Cargo(type, remainingCapacity, 365, type);
+                availableCargo.add(newCargo);
+                updateCurrentStorage();
+            }
+            return;
+        }
+        
+        // If we have enough capacity, add new cargo
+        Cargo newCargo = new Cargo(type, amount, 365, type);
+        availableCargo.add(newCargo);
+        updateCurrentStorage();
+    }
+
+    /**
+     * Gets the total amount of cargo of a specific type
+     */
+    public int getTotalCargoAmount(String type) {
+        return availableCargo.stream()
+                .filter(cargo -> cargo.getType().equals(type))
+                .mapToInt(Cargo::getAmount)
+                .sum();
+    }
+
+    public int getCurrentStorage() {
+        return currentStorage;
+    }
+
+    public void updateCurrentStorage() {
+        this.currentStorage = 0;
+        for (Cargo cargo : availableCargo) {
+            this.currentStorage += cargo.getAmount();
+        }
     }
 } 

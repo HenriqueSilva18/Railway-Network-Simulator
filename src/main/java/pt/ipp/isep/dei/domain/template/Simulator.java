@@ -25,7 +25,7 @@ public class Simulator {
     private final java.util.Map<String, List<Cargo>> generatedCargoHistory;
     private final Random random;
     private int cargoCyclesCompleted;
-    private final int CARGO_GENERATION_INTERVAL = 5; // in simulated days, e.g., generate cargo every 5 simulated days
+    private static final int CARGO_GENERATION_INTERVAL = 60000; // Changed to 1 minute (in milliseconds)
     private double productionRate;
 
     // Threading members for Option A
@@ -271,34 +271,64 @@ public class Simulator {
         for (Station station : stations) {
             // Check if station needs cargo (below capacity)
             if (station.getAvailableStorage() > 0) {
-                List<City> cities = station.getServedCities();
-                List<Industry> industries = getIndustriesServedByStation(station);
+                // Handle city production
+                for (City city : station.getServedCities()) {
+                    // Calculate total cargo needed for this city
+                    int passengerAmount = city.getPassengerProduction();
+                    int mailAmount = city.getMailProduction();
+                    int totalAmount = passengerAmount + mailAmount;
 
-                // Generate cargo only if station is below capacity
-                for (City city : cities) {
-                    if (station.getAvailableStorage() > 0) {
-                        List<Cargo> cityCargo = generateCargoForCity(city);
-                        for (Cargo cargo : cityCargo) {
-                            if (station.hasStorageCapacity(cargo.getAmount())) {
-                                addCargoToStation(station, cargo);
+                    // Only proceed if we have enough space for both
+                    if (totalAmount > 0 && station.hasStorageCapacity(totalAmount)) {
+                        // Generate passengers
+                        if (passengerAmount > 0) {
+                            Cargo passengerCargo = new Cargo(
+                                "Passengers from " + city.getNameID(),
+                                passengerAmount,
+                                365,
+                                "passengers"
+                            );
+                            passengerCargo.setCreationDate(new Date());
+                            if (station.addCargo(passengerCargo)) {
+                                String cityKey = "city_" + city.getNameID();
+                                generatedCargoHistory.computeIfAbsent(cityKey, k -> new ArrayList<>()).add(passengerCargo);
+                            }
+                        }
+
+                        // Generate mail
+                        if (mailAmount > 0) {
+                            Cargo mailCargo = new Cargo(
+                                "Mail from " + city.getNameID(),
+                                mailAmount,
+                                365,
+                                "mail"
+                            );
+                            mailCargo.setCreationDate(new Date());
+                            if (station.addCargo(mailCargo)) {
+                                String cityKey = "city_" + city.getNameID();
+                                generatedCargoHistory.computeIfAbsent(cityKey, k -> new ArrayList<>()).add(mailCargo);
                             }
                         }
                     }
                 }
 
-                for (Industry industry : industries) {
+                // Handle industry production
+                for (Industry industry : station.getServedIndustries()) {
                     if (station.getAvailableStorage() > 0) {
                         List<Cargo> industryCargo = generateCargoForIndustry(industry);
                         for (Cargo cargo : industryCargo) {
                             if (station.hasStorageCapacity(cargo.getAmount())) {
-                                addCargoToStation(station, cargo);
+                                if (station.addCargo(cargo)) {
+                                    String industryKey = "industry_" + industry.getNameID();
+                                    generatedCargoHistory.computeIfAbsent(industryKey, k -> new ArrayList<>()).add(cargo);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        this.lastCargoGenerationDate = (Date) this.currentSimulatedDate.clone(); // Mark generation for this date
+        this.lastCargoGenerationDate = (Date) this.currentSimulatedDate.clone();
         this.cargoCyclesCompleted++;
     }
 
@@ -336,14 +366,14 @@ public class Simulator {
         List<Cargo> generatedItems = new ArrayList<>();
         // Using currentSimulatedDate as the creation date for cargo for consistency
         String passengersName = "Passengers from " + city.getNameID() + " on " + this.currentSimulatedDate;
-        int passengerAmount = random.nextInt(10) + 5;
-        Cargo passengers = new Cargo(passengersName, passengerAmount, 2, "passenger");
+        int passengerAmount = random.nextInt(10) + 1; // Random between 1-10
+        Cargo passengers = new Cargo(passengersName, passengerAmount, 365, "passenger"); // Lifespan of 1 year
         passengers.setCreationDate((Date) this.currentSimulatedDate.clone());
         generatedItems.add(passengers);
 
         String mailName = "Mail from " + city.getNameID() + " on " + this.currentSimulatedDate;
-        int mailAmount = random.nextInt(5) + 1;
-        Cargo mail = new Cargo(mailName, mailAmount, 7, "mail");
+        int mailAmount = random.nextInt(10) + 1; // Random between 1-10
+        Cargo mail = new Cargo(mailName, mailAmount, 365, "mail"); // Lifespan of 1 year
         mail.setCreationDate((Date) this.currentSimulatedDate.clone());
         generatedItems.add(mail);
 
@@ -355,37 +385,54 @@ public class Simulator {
     public List<Cargo> generateCargoForIndustry(Industry industry) {
         List<Cargo> generatedItems = new ArrayList<>();
         String industryType = industry.getType();
-        double effectiveProductionRate = industry.getProductionRate() > 0 ? industry.getProductionRate() : this.productionRate;
-        String cargoBaseName = " from " + industry.getNameID() + " on " + this.currentSimulatedDate;
+        double productionRate = industry.getProductionRate();
+        int baseAmount = 5; // Base amount as defined in Simulator
 
         if ("Mine".equals(industryType)) {
-            int amount = (int) (10 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5)); // Random factor between 0.5 and 1.0
             String cargoType = industry.getNameID().toLowerCase().contains("coal") ? "coal" : "ore";
-            Cargo cargo = new Cargo(cargoType + cargoBaseName, amount, 30, cargoType);
+            int amount = (int) (baseAmount * productionRate);
+            Cargo cargo = new Cargo(
+                cargoType.substring(0, 1).toUpperCase() + cargoType.substring(1) + " from " + industry.getNameID(),
+                amount,
+                365,
+                cargoType
+            );
             cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
             generatedItems.add(cargo);
         } else if ("Farm".equals(industryType)) {
-            int amount = (int) (8 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            Cargo cargo = new Cargo("Food" + cargoBaseName, amount, 15, "food");
+            int amount = (int) (baseAmount * productionRate);
+            Cargo cargo = new Cargo(
+                "Food from " + industry.getNameID(),
+                amount,
+                365,
+                "food"
+            );
             cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
             generatedItems.add(cargo);
         } else if ("Steel Mill".equals(industryType)) {
-            int amount = (int) (5 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            Cargo cargo = new Cargo("Steel" + cargoBaseName, amount, 60, "steel");
+            int amount = (int) (baseAmount * productionRate);
+            Cargo cargo = new Cargo(
+                "Steel from " + industry.getNameID(),
+                amount,
+                365,
+                "steel"
+            );
             cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
             generatedItems.add(cargo);
         } else if ("Port".equals(industryType)) {
-            int amount = (int) (15 * effectiveProductionRate * (random.nextDouble() * 0.5 + 0.5));
-            Cargo cargo = new Cargo("Goods" + cargoBaseName, amount, 30, "goods"); // Generic goods for port
+            int amount = (int) (baseAmount * productionRate);
+            Cargo cargo = new Cargo(
+                "Goods from " + industry.getNameID(),
+                amount,
+                365,
+                "goods"
+            );
             cargo.setCreationDate((Date) this.currentSimulatedDate.clone());
             generatedItems.add(cargo);
         }
-        // Add other industry types as needed
 
-        if (!generatedItems.isEmpty()) {
-            String industryKey = "industry_" + industry.getNameID();
-            generatedCargoHistory.computeIfAbsent(industryKey, k -> new ArrayList<>()).addAll(generatedItems);
-        }
+        String industryKey = "industry_" + industry.getNameID();
+        generatedCargoHistory.computeIfAbsent(industryKey, k -> new ArrayList<>()).addAll(generatedItems);
         return generatedItems;
     }
 

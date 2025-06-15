@@ -43,6 +43,8 @@ public class ListStationsDialogController implements Initializable {
     @FXML
     private ListView<String> servedCitiesListView;
     @FXML
+    private ListView<String> servedIndustriesListView;
+    @FXML
     private ListView<String> availableCargoListView;
     @FXML
     private ListView<String> requestedCargoListView;
@@ -126,13 +128,18 @@ public class ListStationsDialogController implements Initializable {
         // Set the current station in ApplicationSession
         ApplicationSession.getInstance().setCurrentStation(station);
         
+        // Update available cargo before displaying details
+        station.updateAvailableCargo();
+        
         // Update basic information
         stationNameLabel.setText(station.getNameID());
         stationTypeLabel.setText(station.getStationType().getName());
         stationPositionLabel.setText(String.format("(%d, %d)", 
             station.getPosition().getX(), 
             station.getPosition().getY()));
-        storageCapacityLabel.setText(String.valueOf(station.getStorageCapacity()));
+        storageCapacityLabel.setText(String.format("%d/%d units", 
+            station.getCurrentStorage(),
+            station.getStorageCapacity()));
         buildingSlotsLabel.setText(String.format("%d/%d", station.getBuildings().size(), station.getBuildingSlots()));
         
         // Update buildings list and events log
@@ -183,6 +190,17 @@ public class ListStationsDialogController implements Initializable {
             }
         });
         servedCitiesListView.setItems(cityItems);
+
+        // Update served industries list
+        ObservableList<String> industryItems = FXCollections.observableArrayList();
+        Set<String> displayedIndustries = new HashSet<>();
+        station.getServedIndustries().forEach(industry -> {
+            String industryName = industry.getNameID();
+            if (displayedIndustries.add(industryName)) {
+                industryItems.add(String.format("%s (%s)", industryName, industry.getType()));
+            }
+        });
+        servedIndustriesListView.setItems(industryItems);
         
         // Update available cargo list
         ObservableList<String> availableItems = FXCollections.observableArrayList();
@@ -209,6 +227,7 @@ public class ListStationsDialogController implements Initializable {
         buildingEventsLog.setText("");
         
         servedCitiesListView.setItems(FXCollections.observableArrayList());
+        servedIndustriesListView.setItems(FXCollections.observableArrayList());
         availableCargoListView.setItems(FXCollections.observableArrayList());
         requestedCargoListView.setItems(FXCollections.observableArrayList());
     }
