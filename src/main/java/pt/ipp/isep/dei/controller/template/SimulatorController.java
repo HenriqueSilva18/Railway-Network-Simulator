@@ -9,6 +9,14 @@ import java.util.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Controller for simulator operations
@@ -18,6 +26,10 @@ public class SimulatorController {
     private final MapRepository mapRepository;
     private final ScenarioRepository scenarioRepository;
     private final EditorRepository editorRepository;
+    private final TrainRepository trainRepository;
+    private final StationRepository stationRepository;
+    private final RouteRepository routeRepository;
+    private final PlayerRepository playerRepository;
     
     // Background simulation support
     private Timer simulationTimer;
@@ -31,6 +43,8 @@ public class SimulatorController {
     
     private final Set<Integer> shownBuildingNotifications = new HashSet<>(); // Track years where notifications were shown
     
+    private static final String SAVED_GAMES_DIR = "saved_games";
+    
     /**
      * Constructor for the simulator controller
      */
@@ -40,6 +54,18 @@ public class SimulatorController {
         this.mapRepository = repositories.getMapRepository();
         this.scenarioRepository = repositories.getScenarioRepository();
         this.editorRepository = repositories.getEditorRepository();
+        this.trainRepository = repositories.getTrainRepository();
+        this.stationRepository = repositories.getStationRepository();
+        this.routeRepository = repositories.getRouteRepository();
+        this.playerRepository = repositories.getPlayerRepository();
+        createSavedGamesDirectory();
+    }
+
+    private void createSavedGamesDirectory() {
+        File directory = new File(SAVED_GAMES_DIR);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
     }
     
     /**
@@ -616,5 +642,216 @@ public class SimulatorController {
         if (!newlyAvailableBuildings.isEmpty()) {
             SimulationNotificationHelper.showBuildingAvailabilityNotification(currentYear, newlyAvailableBuildings);
         }
+    }
+
+    public boolean saveGame(String saveName) {
+        if (saveName == null || saveName.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            // Get current game state
+            Scenario currentScenario = scenarioRepository.getCurrentScenario();
+            if (currentScenario == null) {
+                return false;
+            }
+
+            // Create game state object
+            GameState gameState = new GameState(
+                currentScenario,
+                scenarioRepository.getCurrentDate(),
+                getCurrentPlayerBudget(),
+                getActiveTrains(),
+                getCurrentStations(),
+                getCurrentRoutes(),
+                getCurrentYear(),
+                currentScenario.getNameID(),
+                currentScenario.getNameID()
+            );
+
+            // Save to file
+            String filePath = SAVED_GAMES_DIR + File.separator + saveName + ".sav";
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+                oos.writeObject(gameState);
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean loadGame(String saveName) {
+        if (saveName == null || saveName.trim().isEmpty()) {
+            System.out.println("LoadGame: Invalid save name provided.");
+            return false;
+        }
+
+        String filePath = SAVED_GAMES_DIR + File.separator + saveName + ".sav";
+        File savFile = new File(filePath);
+        if (!savFile.exists()) {
+            filePath = SAVED_GAMES_DIR + File.separator + saveName + ".game";
+            File gameFile = new File(filePath);
+            if (!gameFile.exists()) {
+                System.out.println("LoadGame: File not found at " + savFile.getAbsolutePath() + " or " + gameFile.getAbsolutePath());
+                return false;
+            }
+        }
+
+        System.out.println("LoadGame: Attempting to load from file: " + filePath);
+
+        try (
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))
+        ) {
+            GameState gameState = (GameState) ois.readObject();
+            System.out.println("LoadGame: GameState object successfully read from file.");
+
+            // Stop current simulation if running
+            if (isSimulationRunningInBackground()) {
+                System.out.println("LoadGame: Stopping background simulation before loading.");
+                stopSimulation();
+            }
+
+            // Restore game state
+            System.out.println("LoadGame: Restoring scenario...");
+            scenarioRepository.setCurrentScenario(gameState.getScenario());
+            System.out.println("LoadGame: Scenario restored: " + (scenarioRepository.getCurrentScenario() != null ? scenarioRepository.getCurrentScenario().getNameID() : "null"));
+
+            System.out.println("LoadGame: Restoring date...");
+            scenarioRepository.setCurrentDate(gameState.getCurrentDate());
+            System.out.println("LoadGame: Date restored: " + scenarioRepository.getCurrentDate());
+
+            System.out.println("LoadGame: Restoring player budget...");
+            restorePlayerBudget(gameState.getCurrentBudget());
+            System.out.println("LoadGame: Player budget restored.");
+
+            System.out.println("LoadGame: Restoring active trains...");
+            restoreActiveTrains(gameState.getActiveTrains());
+            System.out.println("LoadGame: Active trains restored.");
+
+            System.out.println("LoadGame: Restoring stations...");
+            restoreStations(gameState.getStations());
+            System.out.println("LoadGame: Stations restored.");
+
+            System.out.println("LoadGame: Restoring routes...");
+            restoreRoutes(gameState.getRoutes());
+            System.out.println("LoadGame: Routes restored.");
+            
+            System.out.println("LoadGame: Game loaded successfully!");
+            return true;
+        } catch (IOException e) {
+            System.err.println("LoadGame: IOException during game load: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (ClassNotFoundException e) {
+            System.err.println("LoadGame: ClassNotFoundException during game load: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<String> getSavedGames() {
+        File savedGamesDir = new File(SAVED_GAMES_DIR);
+        if (!savedGamesDir.exists() || !savedGamesDir.isDirectory()) {
+            System.out.println("Saved games directory not found or is not a directory: " + savedGamesDir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        File[] files = savedGamesDir.listFiles((dir, name) -> name.endsWith(".sav") || name.endsWith(".game"));
+        if (files == null) {
+            System.out.println("No files found in saved games directory: " + savedGamesDir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        List<String> savedGames = new ArrayList<>();
+        for (File file : files) {
+            String fileName = file.getName();
+            if (fileName.endsWith(".sav")) {
+                savedGames.add(fileName.replace(".sav", ""));
+            } else if (fileName.endsWith(".game")) {
+                savedGames.add(fileName.replace(".game", ""));
+            }
+        }
+        System.out.println("Found saved games: " + savedGames);
+        return savedGames;
+    }
+
+    private double getCurrentPlayerBudget() {
+        Player player = getCurrentPlayer();
+        return player != null ? player.getCurrentBudget() : 0.0;
+    }
+
+    private void restorePlayerBudget(double budget) {
+        Player player = getCurrentPlayer();
+        if (player != null) {
+            player.deductFromBudget(player.getCurrentBudget()); // Clear current budget
+            player.addToBudget(budget); // Set new budget
+        }
+    }
+
+    private List<Train> getActiveTrains() {
+        // Implementation to get all active trains
+        return trainRepository.getAllTrains();
+    }
+
+    private void restoreActiveTrains(List<Train> trains) {
+        // Clear existing trains
+        List<Train> existingTrains = trainRepository.getAllTrains();
+        for (Train train : existingTrains) {
+            trainRepository.delete(train.getNameID());
+        }
+        
+        // Add saved trains
+        for (Train train : trains) {
+            trainRepository.save(train);
+        }
+    }
+
+    private List<Station> getCurrentStations() {
+        // Implementation to get all stations
+        return stationRepository.getAllStations();
+    }
+
+    private void restoreStations(List<Station> stations) {
+        // Clear existing stations
+        List<Station> existingStations = stationRepository.getAllStations();
+        for (Station station : existingStations) {
+            stationRepository.remove(station.getNameID());
+        }
+        
+        // Add saved stations
+        for (Station station : stations) {
+            stationRepository.save(station);
+        }
+    }
+
+    private List<Route> getCurrentRoutes() {
+        // Implementation to get all routes
+        return routeRepository.getAll();
+    }
+
+    private void restoreRoutes(List<Route> routes) {
+        // Clear existing routes
+        List<Route> existingRoutes = routeRepository.getAll();
+        for (Route route : existingRoutes) {
+            routeRepository.delete(route.getNameID());
+        }
+        
+        // Add saved routes
+        for (Route route : routes) {
+            routeRepository.save(route);
+        }
+    }
+
+    private Player getCurrentPlayer() {
+        UserSession currentSession = ApplicationSession.getInstance().getCurrentSession();
+        if (currentSession == null) {
+            return null;
+        }
+        return playerRepository.getPlayerByEmail(currentSession.getUserEmail());
+    }
+
+    public ScenarioRepository getScenarioRepository() {
+        return scenarioRepository;
     }
 } 
