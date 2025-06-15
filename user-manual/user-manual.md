@@ -4,55 +4,67 @@
 
 1. [Introduction](#1-introduction)
 
-   1.1 [Purpose](#11-purpose)
+    1.1 [Purpose](#11-purpose)
 
-   1.2 [System Overview](#12-system-overview)
+    1.2 [System Overview](#12-system-overview)
 
-   1.3 [Glossary](#13-glossary)
+    1.3 [Glossary](#13-glossary)
 
 
 2. [Getting Started](#2-getting-started)
 
-   2.1 [Login System](#21-login-system)
+    2.1 [Login System](#21-login-system)
 
-   2.2 [Role Selection](#22-role-selection)
+    2.2 [Role Selection](#22-role-selection)
 
-   2.3 [Main Menu](#23-main-menu)
+    2.3 [Main Menu](#23-main-menu)
 
 
 3. [Editor Features](#3-editor-features)
 
-   3.1 [Map Creation](#31-map-creation)
+    3.1 [Map Creation](#31-map-creation)
 
-   3.2 [Industry Management](#32-industry-management)
+    3.2 [Industry Management](#32-industry-management)
 
-   3.3 [City Management](#33-city-management)
+    3.3 [City Management](#33-city-management)
 
-   3.4 [Scenario Creation](#34-scenario-creation)
+    3.4 [Scenario Creation](#34-scenario-creation)
+
+    3.5 [Map and Scenario File Management](#35-map-and-scenario-file-management)
 
 
 4. [Player Features](#4-player-features)
 
-   4.1 [Station Management](#41-station-management)
+    4.1 [Graphical Interface Overview](#41-graphical-interface-overview)
 
-   4.2 [Station Upgrades](#42-station-upgrades)
+    4.2 [Map Interaction](#42-map-interaction)
 
-   4.3 [Station List and Details](#43-station-list-and-details)
+    4.3 [Station Management](#43-station-management)
 
-   4.4 [Railway Line Construction](#44-railway-line-construction)
+    4.4 [Station Upgrades](#44-station-upgrades)
 
-   4.5 [Locomotive Management](#45-locomotive-management)
+    4.5 [Station List and Details](#45-station-list-and-details)
 
-   4.6 [Train Route Management](#46-train-route-management)
+    4.6 [Railway Line Construction](#46-railway-line-construction)
 
-   4.7 [Train List](#47-train-list)
+    4.7 [Locomotive Management](#47-locomotive-management)
+
+    4.8 [Train Route Management](#48-train-route-management)
+
+    4.9 [Train List and Monitoring](#49-train-list-and-monitoring)
+
+    4.10 [Statistics and Analytics](#410-statistics-and-analytics)
+
+    4.11 [Game State Management](#411-game-state-management)
+
+    4.12 [Financial Management](#412-financial-management)
 
 
 5. [Simulator Features](#5-simulator-features)
 
-   5.1 [Cargo Generation](#51-cargo-generation)
+    5.1 [Cargo Generation](#51-cargo-generation)
 
-   5.2 [Network Statistics](#52-network-statistics)
+    5.2 [Network Statistics](#52-network-statistics)
 
 ## 1. Introduction
 
@@ -110,22 +122,31 @@ Key Features:
 |:------------------------------------------|:-----------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------|
 | **Acceptance Criteria (AC)**              | **Critérios de Aceitação**                           | Conditions that a user story must meet to be considered complete.                                                                            |
 | **Agile SCRUM**                           | **Agile SCRUM**                                      | An iterative and incremental framework for managing teamwork, used in this project for sprint-based development.                             |
+| **Asymptotic Behavior**                   | **Comportamento Assintótico**                        | The performance characteristic of an algorithm as the input size approaches infinity.                                                        |
 | **Backlog**                               | **Backlog**                                          | A prioritized list of tasks or user stories to be completed in a project.                                                                    |
+| **Best-Fitting Curve**                    | **Curva de Melhor Ajuste**                           | A mathematical curve that best represents the relationship between variables in observed data.                                               |
 | **Boxplot**                               | **Diagrama de Caixa**                                | A standardized way to display data distribution based on quartiles, highlighting outliers.                                                   |
 | **Business Rules Validation**             | **Validação de Regras de Negócio**                   | Ensuring that all business rules are respected when recording and updating data.                                                             |
 | **CamelCase**                             | **CamelCase**                                        | A naming convention where words are joined without spaces and capitalized, e.g., `myVariableName`.                                           |
+| **Confidence Level**                      | **Nível de Confiança**                               | A statistical measure of the probability that a parameter falls within a specified range of values.                                          |
+| **Correlation**                           | **Correlação**                                       | A statistical measure indicating the extent to which two variables are related.                                                              |
+| **Dependent Variable**                    | **Variável Dependente**                              | A variable whose value depends on that of another variable (e.g., revenue depending on cargo amount).                                        |
+| **File Persistence**                      | **Persistência em Ficheiro**                         | Storing data in files to maintain its state between program executions.                                                                      |
 | **GraphStream**                           | **GraphStream**                                      | Tool used to visualize graph structures (e.g. railway networks) in Java.                                                                     |
 | **Graphviz**                              | **Graphviz**                                         | Tool used to visualize graph structures (e.g. railway networks) in Python.                                                                   |
+| **Independent Variable**                  | **Variável Independente**                            | A variable whose variation does not depend on another variable (e.g., cargo type).                                                           |
 | **Input/Output Operations**               | **Operações de Entrada/Saída**                       | Methods responsible for handling user input and system output, typically excluded from unit tests.                                           |
 | **Iterative and Incremental Development** | **Desenvolvimento Iterativo e Incremental**          | A development process where the project is broken into small iterations, each adding functionality incrementally.                            |
 | **Histogram**                             | **Histograma**                                       | A graphical representation of data distribution using bars, where each bar groups data into intervals (bins).                                |
 | **JaCoCo**                                | **JaCoCo**                                           | A Java code coverage tool used to generate reports on unit test coverage.                                                                    |
 | **Java**                                  | **Java**                                             | The programming language in which the application must be developed.                                                                         |
+| **JavaFX**                                | **JavaFX**                                           | A platform for creating desktop applications with a graphical user interface in Java.                                                        |
 | **Javadoc**                               | **Javadoc**                                          | A tool used for generating API documentation from Java source code comments.                                                                 |
 | **JUnit 5**                               | **JUnit 5**                                          | A framework for writing and executing unit tests in Java.                                                                                    |
 | **Jupyter Notebook**                      | **Jupyter Notebook**                                 | An interactive development environment for Python, used for statistical analysis and documentation.                                          |
 | **Key Performance Indicators (KPIs)**     | **Indicadores-Chave de Desempenho (KPIs)**           | Metrics used to evaluate the efficiency and profitability of railway operations (e.g. station profits).                                      |
 | **LaTeX**                                 | **LaTeX**                                            | A document preparation system used for formatting detailed descriptions and statistical analyses in the Jupyter Notebook.                    |
+| **Linear Regression Model**               | **Modelo de Regressão Linear**                       | A statistical model that examines the linear relationship between a dependent variable and one or more independent variables.                |
 | **Markdown Format**                       | **Formato Markdown**                                 | A lightweight markup language for documentation.                                                                                             |
 | **Minimal Viable Product (MVP)**          | **Produto Mínimo Viável (MVP)**                      | The most basic version of a product that can be released to meet initial requirements.                                                       |
 | **Non-functional Requirements**           | **Requisitos Não Funcionais**                        | Constraints and quality attributes that a system must adhere to, such as performance, security, and maintainability.                         |
@@ -133,65 +154,93 @@ Key Features:
 | **Object Serialization**                  | **Serialização de Objetos**                          | A process that converts objects into a format that can be stored and reconstructed later, ensuring data persistence between successive runs. |
 | **Primitive Operations**                  | **Operações Primitivas**                             | Basic operations (e.g. loops) implemented without relying on external library functions.                                                     |
 | **Product Owner**                         | **Product Owner**                                    | The person representing the organization developing the game, responsible for defining requirements.                                         |
+| **Pseudocode**                            | **Pseudocódigo**                                     | A notation resembling a simplified programming language, used to describe algorithms in a human-readable form.                               |
 | **Python**                                | **Python**                                           | A programming language used for statistical analysis.                                                                                        |
 | **Scrum Board**                           | **Quadro Scrum**                                     | A visual tool used to track progress of tasks in a sprint (e.g., Backlog, ToDo, In Process, Testing, Done).                                  |
 | **Scrum Master**                          | **Scrum Master**                                     | A team role responsible for ensuring the team follows Agile practices during a sprint.                                                       |
+| **Serialization**                         | **Serialização**                                     | The process of converting an object into a format that can be stored or transmitted and reconstructed later.                                 |
+| **Shortest Path Algorithm**               | **Algoritmo do Caminho Mais Curto**                  | An algorithm that finds the path between two vertices in a graph with the minimum sum of edge weights.                                       |
 | **Software Analysis and Design**          | **Análise e Conceção de Software**                   | The process of identifying software requirements and structuring the system to meet them effectively.                                        |
 | **Statistical Analysis**                  | **Análise Estatística**                              | Methods to analyze data.                                                                                                                     |
 | **SVG Format**                            | **Formato SVG**                                      | A vector graphics format used for storing images and diagrams in software development.                                                       |
 | **System Users**                          | **Utilizadores do Sistema**                          | Refers to different users who interact with the system, including Editors and Players.                                                       |
 | **Test-Driven Development (TDD)**         | **Desenvolvimento Guiado por Testes (TDD)**          | A development approach where tests are written before the code they validate.                                                                |
+| **Time Complexity**                       | **Complexidade Temporal**                            | A measure of how the execution time of an algorithm increases with the size of the input.                                                    |
 | **Unit Tests**                            | **Testes Unitários**                                 | Tests that validate the functionality of individual methods in a program, typically implemented using JUnit 5.                               |
 | **User Story (US)**                       | **História de Utilizador (US)**                      | A short description of a feature from the perspective of a user, often including acceptance criteria.                                        |
+| **Worst-Case Analysis**                   | **Análise de Pior Caso**                             | The evaluation of an algorithm's performance under the most unfavorable input conditions.                                                    |
 
 ## Railway Simulation Terms
 
-| **_Term_** (EN)                 | **_Termo_** (PT)                        | **_Description_** (EN)                                                                                                                                        |
-|:--------------------------------|:----------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Building**                    | **Edifício**                            | A structure at a station that provides services like communication, storage, or administration.                                                               |
-| **Cargo**                       | **Carga**                               | Goods or passengers transported by trains. It includes raw materials, mail, passengers and products.                                                          |
-| **Cargo Type**                  | **Tipo de Carga**                       | The classification of cargo transported by trains, such as passengers, mail, coal, iron ore, steel, etc.                                                      |
-| **Carriage**                    | **Carruagem**                           | A rail vehicle used to transport cargo, such as passengers, mail, coal, or steel.                                                                             |
-| **City**                        | **Cidade**                              | An urban area on the map that generates and consumes cargo like passengers, mail, and final products.                                                         |
-| **Depot**                       | **Depósito**                            | A small railway station with a short economic radius, mainly used for train maintenance (50k, 3x3 radius).                                                    |
-| **Diesel Locomotive**           | **Locomotiva a Diesel**                 | A type of locomotive powered by diesel fuel, more efficient than steam locomotives.                                                                           |
-| **Economic Radius**             | **Raio Económico**                      | The area around a station where industries and cities contribute to its supply and demand.                                                                    |
-| **Editor**                      | **Editor**                              | A person who can create maps and scenarios that can be provided in a bundle with the game or sold separately.                                                 |
-| **Electric Locomotive**         | **Locomotiva Elétrica**                 | A train engine that requires electrified railway lines to operate.                                                                                            |
-| **Electrified Railway Line**    | **Linha Ferroviária Electrificada**     | A railway line equipped with electrical power to support electric locomotives.                                                                                |
-| **Farm**                        | **Quinta**                              | A primary sector industry that produces agricultural resources like cereals, wool, or coffee.                                                                 |
-| **Final Product**               | **Produto Final**                       | A processed good, such as textiles, food, or automobiles, consumed by cities.                                                                                 |
-| **Historical Restrictions**     | **Restrições Históricas**               | Simulation constraints defining which historical events will be happening during the scenario.                                                                |
-| **House Blocks**                | **Blocos Habitacionais**                | Residential units in a city that generate and consume cargo (passengers, mail, goods). Their quantity affects the city's economic activity in the simulation. |
-| **Industry**                    | **Indústria**                           | A facility that produces, processes, or exports cargo.                                                                                                        |
-| **Locomotive**                  | **Locomotiva**                          | The engine of a train that provides traction. It can be powered by steam, diesel, or electricity.                                                             |
-| **Locomotive Type**             | **Tipo de Locomotiva**                  | The classification of locomotives based on their propulsion system, such as steam, diesel, or electric.                                                       |
-| **Mail**                        | **Correio**                             | A type of cargo representing postal services transported between cities.                                                                                      |
-| **Map**                         | **Mapa**                                | The virtual representation of the railway world, where cities, industries, and stations are placed.                                                           |
-| **Mine**                        | **Mina**                                | A primary sector industry that, depending on its type, can extract coal, iron, bauxite, etc., which can be transported to steel mills.                        |
-| **Mixed Industry**              | **Indústria Mista**                     | An industry like a port that can import/export and transform cargo.                                                                                           |
-| **Outlier Profits**             | **Lucros Atípicos**                     | Profits significantly higher/lower than the average.                                                                                                          |
-| **Passenger Traffic**           | **Tráfego de Passageiros**              | The volume of passengers arriving at stations.                                                                                                                |
-| **Passengers**                  | **Passageiros**                         | People transported by trains between cities.                                                                                                                  |
-| **Player**                      | **Jogador**                             | A person who wants to play a game; in advanced versions, a scenario can be played by multiple players simultaneously.                                         |
-| **Port**                        | **Porto**                               | A mixed industry that handles cargo import and export, and can transform resources.                                                                           |
-| **Primary Sector Industry**     | **Indústria do Sector Primário**        | An industry that generates raw resources like coal, iron ore, or cereals.                                                                                     |
-| **Railway**                     | **Caminho de Ferro**                    | A transportation system using trains on tracks to move cargo and passengers.                                                                                  |
-| **Railway Connectivity**        | **Conectividade Ferroviária**           | The topological representation of stations and lines, including electrified routes.                                                                           |
-| **Railway Line**                | **Linha Ferroviária**                   | A track connecting two railway stations, allowing trains to travel between them.                                                                              |
-| **Resource**                    | **Recurso**                             | A type of raw material extracted or produced by primary sector industries.                                                                                    |
-| **Route**                       | **Rota**                                | A predefined path for a train, including stations where cargo is loaded/unloaded.                                                                             |
-| **Scenario**                    | **Cenário**                             | A predefined game configuration with a specific time period, technological constraints, and historical events.                                                |
-| **Station**                     | **Estação**                             | A facility where trains stop to load and unload cargo.                                                                                                        |
-| **Station Building Slot**       | **Espaço de Construção na Estação**     | A designated area within a station for constructing buildings.                                                                                                |
-| **Steam Locomotive**            | **Locomotiva a Vapor**                  | A type of locomotive powered by coal and steam, commonly used in early railway history.                                                                       |
-| **Technological Restrictions**  | **Restrições Tecnológicas**             | Constraints in a scenario defining which locomotives or industries are available.                                                                             |
-| **Terminal**                    | **Terminal**                            | A large railway station with a wide economic radius (200k, 5x5 radius).                                                                                       |
-| **Time Restrictions**           | **Restrições Temporais**                | Constraints in a scenario defining the period in which the simulation takes place.                                                                            |
-| **Track Type**                  | **Tipo de Linha**                       | Classification of railway lines, including single, double, single electrified, and double electrified.                                                        |
-| **Train**                       | **Comboio**                             | A vehicle composed of a locomotive and carriages, used to transport cargo and passengers.                                                                     |
-| **Transforming Industry**       | **Indústria Transformadora**            | An industry that processes raw materials into final products, such as a steel mill or automobile factory.                                                     |
-| **Upgrade**                     | **Melhoria**                            | An addition to a station (e.g., telegraph, hotel) that enhances its functionality or performance.                                                             |
+| **_Term_** (EN)                | **_Termo_** (PT)                    | **_Description_** (EN)                                                                                                                                                       |
+|:-------------------------------|:------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Arrival Event**              | **Evento de Chegada**               | A simulation event that occurs when a train arrives at a station, tracking metrics like traveled distance, duration, revenue, and fuel expenses.                             |
+| **Building**                   | **Edifício**                        | A structure at a station that provides services like communication, storage, or administration.                                                                              |
+| **Building Evolution**         | **Evolução de Edifício**            | The process of upgrading a station building to a more advanced version, with associated costs and effects.                                                                   |
+| **Cargo**                      | **Carga**                           | Goods or passengers transported by trains. It includes raw materials, mail, passengers and products.                                                                         |
+| **Cargo Generation Event**     | **Evento de Geração de Carga**      | A simulation event that creates new cargo at a specific location, with properties like amount, type, and storage station.                                                    |
+| **Cargo Mode**                 | **Modo de Carga**                   | The method of loading cargo onto a train, which can be FULL (train departs when fully loaded), HALF (departs when half loaded), or AVAILABLE (departs with available cargo). |
+| **Cargo Type**                 | **Tipo de Carga**                   | The classification of cargo transported by trains, such as passengers, mail, coal, iron ore, steel, etc.                                                                     |
+| **Carriage**                   | **Carruagem**                       | A rail vehicle used to transport cargo, such as passengers, mail, coal, or steel.                                                                                            |
+| **City**                       | **Cidade**                          | An urban area on the map that generates and consumes cargo like passengers, mail, and final products.                                                                        |
+| **Demand**                     | **Procura**                         | The need for specific cargo types at a station, which affects the delivery payment rates (ranging from 1-9).                                                                 |
+| **Departure Event**            | **Evento de Partida**               | A simulation event that occurs when a train leaves a station, tracking the loaded cargo and next destination.                                                                |
+| **Depot**                      | **Depósito**                        | A small railway station with a short economic radius, mainly used for train maintenance (50k, 3x3 radius).                                                                   |
+| **Diesel Locomotive**          | **Locomotiva a Diesel**             | A type of locomotive powered by diesel fuel, more efficient than steam locomotives.                                                                                          |
+| **Economic Radius**            | **Raio Económico**                  | The area around a station where industries and cities contribute to its supply and demand.                                                                                   |
+| **Editor**                     | **Editor**                          | A person who can create maps and scenarios that can be provided in a bundle with the game or sold separately.                                                                |
+| **Electric Locomotive**        | **Locomotiva Elétrica**             | A train engine that requires electrified railway lines to operate.                                                                                                           |
+| **Electrified Railway Line**   | **Linha Ferroviária Electrificada** | A railway line equipped with electrical power to support electric locomotives.                                                                                               |
+| **Expenses**                   | **Despesas**                        | Costs associated with railway operations, including track maintenance, train maintenance, and fuel.                                                                          |
+| **Farm**                       | **Quinta**                          | A primary sector industry that produces agricultural resources like cereals, wool, or coffee.                                                                                |
+| **Final Product**              | **Produto Final**                   | A processed good, such as textiles, food, or automobiles, consumed by cities.                                                                                                |
+| **Financial Results**          | **Resultados Financeiros**          | The annual summary of expenses and revenues for the railway network.                                                                                                         |
+| **Fuel Cost**                  | **Custo de Combustível**            | The expense related to powering locomotives, based on distance traveled.                                                                                                     |
+| **Historical Restrictions**    | **Restrições Históricas**           | Simulation constraints defining which historical events will be happening during the scenario.                                                                               |
+| **House Blocks**               | **Blocos Habitacionais**            | Residential units in a city that generate and consume cargo (passengers, mail, goods). Their quantity affects the city's economic activity in the simulation.                |
+| **Industry**                   | **Indústria**                       | A facility that produces, processes, or exports cargo.                                                                                                                       |
+| **Industry Sector**            | **Sector Industrial**               | A classification of industries based on their economic role, defining their cargo generation and consumption patterns.                                                       |
+| **Locomotive**                 | **Locomotiva**                      | The engine of a train that provides traction. It can be powered by steam, diesel, or electricity.                                                                            |
+| **Locomotive Type**            | **Tipo de Locomotiva**              | The classification of locomotives based on their propulsion system, such as steam, diesel, or electric.                                                                      |
+| **Mail**                       | **Correio**                         | A type of cargo representing postal services transported between cities.                                                                                                     |
+| **Maintenance Route**          | **Rota de Manutenção**              | A path that passes once by each railway line for maintenance purposes.                                                                                                       |
+| **Map**                        | **Mapa**                            | The virtual representation of the railway world, where cities, industries, and stations are placed.                                                                          |
+| **Mine**                       | **Mina**                            | A primary sector industry that, depending on its type, can extract coal, iron, bauxite, etc., which can be transported to steel mills.                                       |
+| **Mixed Industry**             | **Indústria Mista**                 | An industry like a port that can import/export and transform cargo.                                                                                                          |
+| **Offer**                      | **Oferta**                          | The available cargo at a station for transport, generated by industries and cities in its economic radius.                                                                   |
+| **Outlier Profits**            | **Lucros Atípicos**                 | Profits significantly higher/lower than the average.                                                                                                                         |
+| **Passenger Traffic**          | **Tráfego de Passageiros**          | The volume of passengers arriving at stations.                                                                                                                               |
+| **Passengers**                 | **Passageiros**                     | People transported by trains between cities.                                                                                                                                 |
+| **Player**                     | **Jogador**                         | A person who wants to play a game; in advanced versions, a scenario can be played by multiple players simultaneously.                                                        |
+| **Point of Route**             | **Ponto de Rota**                   | A specific location in a route where cargo operations (loading/unloading) can occur, associated with a station.                                                              |
+| **Port**                       | **Porto**                           | A mixed industry that handles cargo import and export, and can transform resources.                                                                                          |
+| **Primary Sector Industry**    | **Indústria do Sector Primário**    | An industry that generates raw resources like coal, iron ore, or cereals.                                                                                                    |
+| **Railway**                    | **Caminho de Ferro**                | A transportation system using trains on tracks to move cargo and passengers.                                                                                                 |
+| **Railway Connectivity**       | **Conectividade Ferroviária**       | The topological representation of stations and lines, including electrified routes.                                                                                          |
+| **Railway Line**               | **Linha Ferroviária**               | A track connecting two railway stations, allowing trains to travel between them.                                                                                             |
+| **Resource**                   | **Recurso**                         | A type of raw material extracted or produced by primary sector industries.                                                                                                   |
+| **Revenue**                    | **Receita**                         | Income generated from cargo deliveries, affected by demand levels and distance.                                                                                              |
+| **Route**                      | **Rota**                            | A predefined path for a train, including stations where cargo is loaded/unloaded.                                                                                            |
+| **Scenario**                   | **Cenário**                         | A predefined game configuration with a specific time period, technological constraints, and historical events.                                                               |
+| **Shortest Route**             | **Rota Mais Curta**                 | The path between two stations with the minimum total distance, potentially passing through specific intermediate stations.                                                   |
+| **Simulation**                 | **Simulação**                       | The active state of the railway system where trains move and cargo is generated according to rules.                                                                          |
+| **Simulation Report**          | **Relatório de Simulação**          | A comprehensive summary of a simulation run, including financial metrics, duration, and overall performance indicators.                                                      |
+| **Station**                    | **Estação**                         | A facility where trains stop to load and unload cargo.                                                                                                                       |
+| **Station Building Slot**      | **Espaço de Construção na Estação** | A designated area within a station for constructing buildings.                                                                                                               |
+| **Station Type**               | **Tipo de Estação**                 | A classification of stations (e.g., depot, terminal) that defines their economic radius, cost, and capabilities.                                                             |
+| **Steam Locomotive**           | **Locomotiva a Vapor**              | A type of locomotive powered by coal and steam, commonly used in early railway history.                                                                                      |
+| **Technological Restrictions** | **Restrições Tecnológicas**         | Constraints in a scenario defining which locomotives or industries are available.                                                                                            |
+| **Terminal**                   | **Terminal**                        | A large railway station with a wide economic radius (200k, 5x5 radius).                                                                                                      |
+| **Time Restrictions**          | **Restrições Temporais**            | Constraints in a scenario defining the period in which the simulation takes place.                                                                                           |
+| **Track Maintenance**          | **Manutenção de Vias**              | The cost associated with maintaining railway lines, based on their length.                                                                                                   |
+| **Track Type**                 | **Tipo de Linha**                   | Classification of railway lines, including single, double, single electrified, and double electrified.                                                                       |
+| **Train**                      | **Comboio**                         | A vehicle composed of a locomotive and carriages, used to transport cargo and passengers.                                                                                    |
+| **Train Maintenance**          | **Manutenção de Comboios**          | The cost associated with maintaining locomotives, based on their properties.                                                                                                 |
+| **Train Schedule**             | **Horário do Comboio**              | The timetable that defines when a train departs and arrives at each station on its route.                                                                                    |
+| **Train Type**                 | **Tipo de Comboio**                 | The classification of trains based on their locomotive type, such as steam, diesel, or electric.                                                                             |
+| **Transforming Industry**      | **Indústria Transformadora**        | An industry that processes raw materials into final products, such as a steel mill or automobile factory.                                                                    |
+| **Upgrade**                    | **Melhoria**                        | An addition to a station (e.g., telegraph, hotel) that enhances its functionality or performance.                                                                            |
+| **Wear and Tear**              | **Desgaste**                        | The gradual deterioration of railway lines and trains over time, requiring maintenance.                                                                                      |
 
 ## 2. Getting Started
 
@@ -331,21 +380,47 @@ The system provides a secure authentication system with role-based access contro
 
 ![ViewScenarioLayout](pngs/ViewScenarioLayout3.png)
 
+---
+
 ## 4. Player Features
+
+### 4.1. Map & Scenario Selection
+
+Overview
+
+### Console Interface
+
+- #### The Player must select the first option in the Player Menu:
 
 ![PlayerMenu](pngs/PlayerMenu1.png)
 
-- First asks to choose map and scenario:
+- #### Then it needs to select the Map and Scenario:
 
 ![PlayerMenu](pngs/PlayerMenu2.png)
 
 ![PlayerMenu](pngs/PlayerMenu3.png)
 
-- Then the Player menu for the scenario will show:
+- #### Then the Player menu for the simulation will show:
 
 ![PlayerMenu](pngs/PlayerMenu4.png)
 
-### 4.1 Station Management
+### Graphical Interface
+
+- #### The Player must navigate to the Top Left corner and select FILE > Select Map and Scenario:
+
+![PlayerMenu](pngs/PlayerMenuUI1.png)
+
+- #### Then it needs to select the Map and Scenario, and then confirm:
+
+![PlayerMenu](pngs/PlayerMenuUI2.png)
+
+- #### Then the Map/Scenario layout will appear:
+
+![PlayerMenu](pngs/PlayerMenuUI3.png)
+
+## 4.2. Station Management
+
+### **Functionality Overview:**
 - Build different station types:
   - Depot
   - Station
@@ -356,14 +431,34 @@ The system provides a secure authentication system with role-based access contro
   - Station: Player-defined (NE, SE, NW, SW)
 - Prevent overbuilding
 
-![BuildStation](pngs/BuildStation.png)
+### Console Interface
 
-### 4.2 View Stations and Upgrades
+- #### The Player must select all information of the station:
+
+![BuildStation](pngs/BuildStation1.png)
+
+- #### Then all the Station information will be displayed, and the Player needs to confirm:
+
+![BuildStation](pngs/BuildStation2.png)
+
+### Graphical Interface
+
+- #### The Player must navigate and click in the Manage Infrastructure > Build Station:
+
+![BuildStation](pngs/BuildStationUI1.png)
+
+- #### Then the Player must fill all the Station data, click on preview, and finally build:
+
+![BuildStation](pngs/BuildStationUI2.png)
+
+## 4.3 View Stations and Upgrades
+
+### **Functionality Overview:**
 - Add buildings and improvements to stations
 - Time-based availability of upgrades
 - Manage equipment compatibility:
   - Mutually exclusive options
-  - Replacement of outdated technology
+  - Replacement/removal of outdated technology
 
 - View complete station list
 - Access detailed station information:
@@ -371,38 +466,66 @@ The system provides a secure authentication system with role-based access contro
     - Cargo demand/supply
     - Current status
 
-- First it will ask to choose station:
+### Console Interface
+
+- #### First it will ask to choose station:
 
 ![UpgradeStation](pngs/UpgradeStation1.png)
 
-- Then it will show station detail, and ask for selection:
+- #### Then it will show station detail, and ask for selection:
 
 ![UpgradeStation](pngs/UpgradeStation2.png)
 
-- Then iw will ask for which upgrade the player wants:
+- #### Then it will ask for which upgrade the player wants, and upgrade data:
 
 ![UpgradeStation](pngs/UpgradeStation3.png)
 
 ![UpgradeStation](pngs/UpgradeStation4.png)
 
-### 4.4 Railway Line Construction
+- #### Then it will ask confirmation:
+
+![UpgradeStation](pngs/UpgradeStation5.png)
+
+### Graphical Interface
+
+- #### The Player must navigate and click in the Manage Infrastructure > Upgrade Station:
+
+![UpgradeStation](pngs/UpgradeStationUI1.png)
+
+- #### Then it needs to select the station to upgrade:
+
+![UpgradeStation](pngs/UpgradeStationUI2.png)
+
+- #### Player then needs to choose the upgrade, and select one available option, to be able to upgrade the station:
+
+![UpgradeStation](pngs/UpgradeStationUI3.png)
+
+
+## 4.4 Railway Line Construction
+
+### **Functionality Overview:**
 - Connect stations with railway lines
+- 
 - Select stations from registered station list
 
+### Console Interface
 
-First aks stations to connect:
+- #### First aks the stations to connect:
 
-![BuildRailwayLine](pngs/BuildRailwayLine.png)
+![BuildRailwayLine](pngs/BuildRailwayLine1.png)
 
-Then asks for confirmation
+- #### Then asks data and confirmation:
 
 ![BuildRailwayLine](pngs/BuildRailwayLine2.png)
 
+- #### Map with RailwayLine:
+
 ![BuildRailwayLine](pngs/BuildRailwayLine3.png)
 
-Map with RailwayLine:
+### Graphical Interface
 
-![BuildRailwayLine](pngs/BuildRailwayLine4.png)
+
+
 
 ### 4.5 Locomotive Management
 - Purchase new locomotives
