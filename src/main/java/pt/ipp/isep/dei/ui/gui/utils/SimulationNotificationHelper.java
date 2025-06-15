@@ -2,7 +2,9 @@ package pt.ipp.isep.dei.ui.gui.utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import pt.ipp.isep.dei.domain.template.Building;
+import pt.ipp.isep.dei.domain.template.Locomotive;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,5 +44,30 @@ public class SimulationNotificationHelper {
             // Mark this year's notification as shown
             shownBuildingNotifications.add(currentYear);
         }
+    }
+
+    public static void showLocomotiveAvailabilityNotification(int year, Locomotive locomotive) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("New Locomotive Available");
+            alert.setHeaderText("New Locomotive Model Available in " + year);
+            alert.setContentText(String.format("The %s locomotive model is now available for purchase!\n\n" +
+                    "Type: %s\n" +
+                    "Power: %d HP\n" +
+                    "Top Speed: %d km/h\n" +
+                    "Price: $%.2f",
+                    locomotive.getNameID(),
+                    locomotive.getType(),
+                    locomotive.getPower(),
+                    (int)locomotive.getTopSpeed(),
+                    locomotive.getPrice()));
+            
+            // Add custom styling
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStyleClass().add("locomotive-notification");
+            dialogPane.setStyle("-fx-background-color: #f0f8ff;");
+            
+            alert.show();
+        });
     }
 } 

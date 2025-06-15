@@ -1,9 +1,12 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RailwayLine {
+public class RailwayLine implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String nameID;
     private final Station startStation;
     private final Station endStation;

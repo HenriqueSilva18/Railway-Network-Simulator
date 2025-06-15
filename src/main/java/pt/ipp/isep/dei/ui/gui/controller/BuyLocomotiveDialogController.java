@@ -69,8 +69,20 @@ public class BuyLocomotiveDialogController implements Initializable {
                 if (empty || locomotive == null) {
                     setText(null);
                 } else {
-                    setText(String.format("%s - $%.2f",
-                            locomotive.getNameID(), locomotive.getPrice()));
+                    int currentYear = controller.getCurrentYear();
+                    String availabilityStatus = locomotive.getAvailabilityYear() <= currentYear ? 
+                        "Available" : "Available in year " + locomotive.getAvailabilityYear();
+                    setText(String.format("%s - $%.2f (%s)",
+                            locomotive.getNameID(), 
+                            locomotive.getPrice(),
+                            availabilityStatus));
+                    
+                    // Style based on availability
+                    if (locomotive.getAvailabilityYear() > currentYear) {
+                        setStyle("-fx-text-fill: gray; -fx-font-style: italic;");
+                    } else {
+                        setStyle("");
+                    }
                 }
             }
         });
@@ -221,16 +233,20 @@ public class BuyLocomotiveDialogController implements Initializable {
             details.append("Top Speed: ").append(selectedLocomotive.getTopSpeed()).append(" km/h\n");
             details.append("Fuel Cost: $").append(selectedLocomotive.getFuelCost()).append("\n");
             details.append("Maintenance Cost: $").append(selectedLocomotive.getMaintenancePrice()).append("\n");
-            details.append("Availability Year: ").append(selectedLocomotive.getAvailabilityYear()).append("\n");
+            
+            int currentYear = controller.getCurrentYear();
+            if (selectedLocomotive.getAvailabilityYear() > currentYear) {
+                details.append("\nAvailability: Will be available in year ").append(selectedLocomotive.getAvailabilityYear()).append("\n");
+                details.append("(Current year: ").append(currentYear).append(")\n");
+                purchaseButton.setDisable(true);
+            } else {
+                details.append("\nAvailability: Currently available\n");
+                details.append("(Available since year ").append(selectedLocomotive.getAvailabilityYear()).append(")\n");
+                updateBudgetLabels(); // This will handle purchase button state
+            }
 
-
-            // Usa o TextArea para mostrar detalhes
             locomotiveDetailsTextArea.setText(details.toString());
-
-            // Atualiza o label de preço normalmente
             priceLabel.setText(String.format("Price: $%.2f", selectedLocomotive.getPrice()));
-
-            updateBudgetLabels();
         }
     }
 
@@ -293,6 +309,14 @@ public class BuyLocomotiveDialogController implements Initializable {
             return;
         }
 
+        // Check if locomotive is available in current year
+        int currentYear = controller.getCurrentYear();
+        if (selectedLocomotive.getAvailabilityYear() > currentYear) {
+            showError(String.format("This locomotive is not available until year %d (Current year: %d).", 
+                selectedLocomotive.getAvailabilityYear(), currentYear));
+            return;
+        }
+
         Player currentPlayer = ApplicationSession.getInstance().getCurrentPlayer();
         if (currentPlayer == null) {
             showError("No player session found.");
@@ -316,7 +340,7 @@ public class BuyLocomotiveDialogController implements Initializable {
             return;
         }
 
-        // Attempt to purchase the locomotive with detailed debugging
+        // Attempt to purchase the locomotive
         boolean purchaseResult = purchaseLocomotive(selectedLocomotive);
 
         if (purchaseResult) {
@@ -335,9 +359,6 @@ public class BuyLocomotiveDialogController implements Initializable {
                 // Refresh the lists and budget
                 loadLocomotives();
                 updateBudgetLabels();
-
-                // Also try direct method to get owned locomotives
-                List<Locomotive> updatedOwnedLocomotives = controller.getPlayerLocomotives();
             });
 
             // Clear selection
@@ -346,9 +367,7 @@ public class BuyLocomotiveDialogController implements Initializable {
             locomotiveDetailsBox.setVisible(false);
 
         } else {
-            // More detailed error message
-            String detailedError = "Failed to purchase locomotive.";
-            showError(detailedError);
+            showError("Failed to purchase locomotive. It may not be available in the current year.");
         }
     }
 

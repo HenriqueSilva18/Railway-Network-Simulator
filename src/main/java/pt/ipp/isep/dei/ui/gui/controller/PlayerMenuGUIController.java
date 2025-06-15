@@ -766,24 +766,23 @@ public class PlayerMenuGUIController implements Initializable {
     private void handleAssignTrainToRoute(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AssignTrainDialog.fxml"));
-
-            if (loader.getLocation() == null) {
-                throw new IOException("Cannot find FXML file: /fxml/AssignTrainDialog.fxml");
-            }
-
             Parent root = loader.load();
-            // CORREÇÃO: Já não passamos o 'event'
+            
+            // Get the controller
+            AssignTrainToRouteDialogController controller = loader.getController();
+            
+            // Create and show the dialog
             Stage dialogStage = createDialogStage("Assign Train to Route", root);
             dialogStage.showAndWait();
-
-            AssignTrainDialogController controller = loader.getController();
+            
+            // Check if assignment was successful
             if (controller.isSuccessful()) {
                 displayCargoForRoute(controller.getSelectedRoute());
             }
-
+            
         } catch (IOException e) {
             e.printStackTrace();
-            AlertHelper.showAlert(Alert.AlertType.ERROR,"Error", "Could not open the dialog: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not open Assign Train dialog: " + e.getMessage());
         }
     }
 

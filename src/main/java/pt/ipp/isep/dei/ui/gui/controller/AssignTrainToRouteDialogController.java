@@ -29,6 +29,8 @@ public class AssignTrainToRouteDialogController implements Initializable {
     private final AssignTrainController controller;
     private final List<Train> trains;
     private final List<Route> routes;
+    private boolean successful = false;
+    private Route selectedRoute;
 
     public AssignTrainToRouteDialogController() {
         this.controller = new AssignTrainController();
@@ -103,7 +105,7 @@ public class AssignTrainToRouteDialogController implements Initializable {
     @FXML
     private void handleAssign() {
         Train selectedTrain = trainComboBox.getValue();
-        Route selectedRoute = routeComboBox.getValue();
+        selectedRoute = routeComboBox.getValue();
         int carriageCount = carriageCountSpinner.getValue();
 
         if (selectedTrain == null || selectedRoute == null) {
@@ -121,6 +123,7 @@ public class AssignTrainToRouteDialogController implements Initializable {
         AssignmentStatus status = controller.assignTrainToRoute(selectedRoute, selectedTrain);
 
         if (status == AssignmentStatus.SUCCESS) {
+            // Just close the dialog without setting successful to true
             closeDialog();
         } else {
             String errorMessage;
@@ -138,6 +141,14 @@ public class AssignTrainToRouteDialogController implements Initializable {
             }
             errorLabel.setText(errorMessage);
         }
+    }
+
+    public boolean isSuccessful() {
+        return successful;
+    }
+
+    public Route getSelectedRoute() {
+        return selectedRoute;
     }
 
     @FXML

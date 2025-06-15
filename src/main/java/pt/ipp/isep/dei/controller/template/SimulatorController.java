@@ -251,14 +251,29 @@ public class SimulatorController {
     private void checkLocomotiveAvailability() {
         Simulator simulator = simulatorRepository.getActiveSimulator();
         if (simulator == null) return;
-        int currentYear = simulator.getElapsedSimulatedDays() / 365;
-        Player player = ApplicationSession.getInstance().getCurrentPlayer();
-        if (player == null) return;
-        List<Locomotive> availableLocomotives = player.getOwnedLocomotives();
-        for (Locomotive locomotive : availableLocomotives) {
-            if (locomotive.getStartYear() <= currentYear && !locomotive.isAvailable()) {
+        
+        int currentYear = getCurrentYear();
+        Scenario currentScenario = scenarioRepository.getCurrentScenario();
+        if (currentScenario == null) return;
+        
+        // Get all locomotives from scenario
+        List<Locomotive> allLocomotives = currentScenario.getAvailableLocomotives(simulator.getCurrentSimulatedDate());
+        
+        // Track which locomotives were newly available this year
+        List<Locomotive> newlyAvailableLocomotives = new ArrayList<>();
+        
+        // Check each locomotive for availability
+        for (Locomotive locomotive : allLocomotives) {
+            if (locomotive.getAvailabilityYear() == currentYear && !locomotive.isAvailable()) {
                 locomotive.setAvailable(true);
-                System.out.println("\nNew locomotive model available: " + locomotive.getNameID());
+                newlyAvailableLocomotives.add(locomotive);
+            }
+        }
+        
+        // Show notification if any locomotives became available
+        if (!newlyAvailableLocomotives.isEmpty()) {
+            for (Locomotive locomotive : newlyAvailableLocomotives) {
+                SimulationNotificationHelper.showLocomotiveAvailabilityNotification(currentYear, locomotive);
             }
         }
     }

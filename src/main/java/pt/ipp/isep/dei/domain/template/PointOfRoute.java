@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.domain.template;
 
-public class PointOfRoute {
+import java.io.Serializable;
+
+public class PointOfRoute implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final Station station;
     private CargoMode cargoMode;
     private final String pointId;

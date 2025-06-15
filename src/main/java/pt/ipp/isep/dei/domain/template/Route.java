@@ -1,12 +1,15 @@
 package pt.ipp.isep.dei.domain.template;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class Route {
+public class Route implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String nameID;
     private List<Station> stationSequence;
     private List<Cargo> cargoList;
