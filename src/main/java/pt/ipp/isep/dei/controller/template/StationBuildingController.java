@@ -150,7 +150,7 @@ public class StationBuildingController {
         return buildStation(stationName, stationType, position, centerPoint, defaultBuilding);
     }
 
-    private Map getCurrentMap() {
+    public Map getCurrentMap() {
         return ApplicationSession.getInstance().getCurrentMap();
     }
 

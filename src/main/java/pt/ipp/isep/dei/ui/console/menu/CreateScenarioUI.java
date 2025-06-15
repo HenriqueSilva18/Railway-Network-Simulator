@@ -100,8 +100,8 @@ public class CreateScenarioUI implements Runnable {
                     portExports.addAll(exports);
 
                     // Select production
-                    System.out.println("\nSelect cargoes to produce:");
-                    List<Cargo> produces = selectCargoes(cargoList, "produce");
+                    System.out.println("\nSelect cargoes to transform:");
+                    List<Cargo> produces = selectCargoes(cargoList, "transform");
                     if (produces == null) return;
                     portProduces.addAll(produces);
                 }
@@ -185,10 +185,20 @@ public class CreateScenarioUI implements Runnable {
     private String readScenarioName() {
         while (true) {
             String nameID = Utils.readLineFromConsole("Enter scenario name: ");
-            if (nameID != null && !nameID.trim().isEmpty()) {
-                return nameID;
+            if (nameID == null || nameID.trim().isEmpty()) {
+                System.out.println("Error: Scenario name cannot be empty. Please try again.");
+                continue;
             }
-            System.out.println("Error: Scenario name cannot be empty. Please try again.");
+            if (!nameID.matches("^[a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*$")) {
+                System.out.println("\nError: Invalid scenario name. The name must:");
+                System.out.println("- Not be empty");
+                System.out.println("- Not have just a hyphen or underscore");
+                System.out.println("- Not finish with a hyphen or underscore");
+                System.out.println("- Contain only letters, numbers, underscores, and hyphens");
+                System.out.println("Please try again.\n");
+                continue;
+            }
+            return nameID;
         }
     }
 
@@ -256,7 +266,12 @@ public class CreateScenarioUI implements Runnable {
             try {
                 List<Cargo> selectedCargoes = new ArrayList<>();
                 String selection = Utils.readLineFromConsole(
-                        "Select cargoes to " + operation + " (comma-separated numbers): ");
+                        "Select cargoes to " + operation + " (comma-separated numbers, or press Enter to skip): ");
+                
+                // Return empty list if input is empty or only whitespace
+                if (selection == null || selection.trim().isEmpty()) {
+                    return selectedCargoes;
+                }
                 
                 for (String item : selection.split(",")) {
                     int index = Integer.parseInt(item.trim()) - 1;

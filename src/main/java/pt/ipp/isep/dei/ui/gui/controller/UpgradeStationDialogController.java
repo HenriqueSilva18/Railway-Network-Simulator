@@ -1,5 +1,6 @@
 package pt.ipp.isep.dei.ui.gui.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -16,6 +17,7 @@ import pt.ipp.isep.dei.domain.template.Station;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.ArrayList;
 
 public class UpgradeStationDialogController implements Initializable {
     @FXML
@@ -50,6 +52,10 @@ public class UpgradeStationDialogController implements Initializable {
     private Label buildingEffectLabel;
     @FXML
     private Label buildingEvolutionLabel;
+    @FXML
+    private Label currentBudgetLabel;
+    @FXML
+    private Label remainingBudgetLabel;
     
     @FXML
     private Button upgradeButton;
@@ -91,6 +97,7 @@ public class UpgradeStationDialogController implements Initializable {
             (observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     updateBuildingDetails(newValue);
+                    updateBudgetInfo(controller.getBuilding(newValue));
                     upgradeButton.setDisable(false);
                 } else {
                     clearBuildingDetails();
@@ -150,6 +157,22 @@ public class UpgradeStationDialogController implements Initializable {
         upgradeButton.setDisable(true);
     }
     
+    private void updateBudgetInfo(Building building) {
+        double currentBudget = ApplicationSession.getInstance().getCurrentPlayer().getCurrentBudget();
+        double cost = building.getCost();
+        double remainingBudget = currentBudget - cost;
+
+        currentBudgetLabel.setText(String.format("Current Budget: $%.2f", currentBudget));
+        remainingBudgetLabel.setText(String.format("Remaining Budget after purchase: $%.2f", remainingBudget));
+
+        // Set text color based on whether the player can afford the building
+        if (remainingBudget < 0) {
+            remainingBudgetLabel.setStyle("-fx-text-fill: red;");
+        } else {
+            remainingBudgetLabel.setStyle("-fx-text-fill: green;");
+        }
+    }
+    
     private void updateBuildingDetails(String buildingName) {
         Building.BuildingInfo info;
         
@@ -167,30 +190,22 @@ public class UpgradeStationDialogController implements Initializable {
                 Station currentStation = ApplicationSession.getInstance().getCurrentStation();
                 
                 if (currentStation != null) {
-                    // Check for same type buildings
-                    boolean hasSameType = currentStation.getBuildings().stream()
-                        .anyMatch(b -> b.getType().equals(building.getType()));
-                    if (hasSameType) {
-                        compatibilityInfo.append("Cannot install: Station already has a building of this type.\n");
+                    // Check if station has enough building slots
+                    if (currentStation.getUsedBuildingSlots() >= currentStation.getTotalBuildingSlots()) {
+                        compatibilityInfo.append("Cannot install: Station has no available building slots.\n");
                     }
                     
                     // Check for mutually exclusive buildings
-                    for (Building existingBuilding : currentStation.getBuildings()) {
-                        if (existingBuilding.isMutuallyExclusive() && 
-                            existingBuilding.getMutuallyExclusiveWith() != null &&
-                            existingBuilding.getMutuallyExclusiveWith().equals(building.getNameID())) {
+                    if (building.isMutuallyExclusive()) {
+                        boolean hasExclusiveBuilding = currentStation.getBuildings().stream()
+                            .anyMatch(b -> b.getNameID().equals(building.getMutuallyExclusiveWith()));
+                        if (hasExclusiveBuilding) {
                             compatibilityInfo.append("Cannot install: Mutually exclusive with " + 
-                                existingBuilding.getNameID() + ".\n");
-                        }
-                        if (building.isMutuallyExclusive() && 
-                            building.getMutuallyExclusiveWith() != null &&
-                            building.getMutuallyExclusiveWith().equals(existingBuilding.getNameID())) {
-                            compatibilityInfo.append("Cannot install: Mutually exclusive with " + 
-                                existingBuilding.getNameID() + ".\n");
+                                building.getMutuallyExclusiveWith() + ".\n");
                         }
                     }
                     
-                    // Check for replacement buildings
+                    // Check if this building replaces another building
                     if (building.getReplacesBuilding() != null) {
                         boolean hasBuildingToReplace = currentStation.getBuildings().stream()
                             .anyMatch(b -> b.getNameID().equals(building.getReplacesBuilding()));
@@ -222,11 +237,26 @@ public class UpgradeStationDialogController implements Initializable {
                     buildingTypeLabel.setText("Type: " + building.getType());
                     buildingCostLabel.setText(String.format("Evolution Cost: $%.2f", building.getEvolutionCost()));
                     buildingEffectLabel.setText("Current Effect: " + building.getEffect());
-                    buildingEvolutionLabel.setText("Evolves to: " + building.getEvolvesInto());
+                    
+                    // Get the evolution building info to show its availability year
+                    Building.BuildingInfo evolutionInfo = controller.getBuildingInfo(building.getEvolvesInto());
+                    if (evolutionInfo != null) {
+                        int currentYear = controller.getCurrentYear();
+                        String availabilityInfo = String.format("Evolves to: %s (Available from year %d)", 
+                            building.getEvolvesInto(), evolutionInfo.getAvailabilityYear());
+                        if (evolutionInfo.getAvailabilityYear() > currentYear) {
+                            availabilityInfo += String.format(" - %d years remaining", 
+                                evolutionInfo.getAvailabilityYear() - currentYear);
+                        }
+                        buildingEvolutionLabel.setText(availabilityInfo);
+                    } else {
+                        buildingEvolutionLabel.setText("Evolves to: " + building.getEvolvesInto());
+                    }
                     break;
                 }
             }
         }
+        updateBudgetInfo(controller.getBuilding(buildingName));
     }
     
     private void clearBuildingDetails() {
@@ -235,6 +265,8 @@ public class UpgradeStationDialogController implements Initializable {
         buildingCostLabel.setText("");
         buildingEffectLabel.setText("");
         buildingEvolutionLabel.setText("");
+        currentBudgetLabel.setText("");
+        remainingBudgetLabel.setText("");
     }
     
     @FXML

@@ -2,6 +2,8 @@ package pt.ipp.isep.dei.controller.template;
 
 import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.repository.template.*;
+import javafx.scene.control.Alert;
+import pt.ipp.isep.dei.ui.gui.utils.SimulationNotificationHelper;
 
 import java.util.*;
 import java.util.Timer;
@@ -26,6 +28,8 @@ public class SimulatorController {
     private static final double SINGLE_TRACK_SPEED_FACTOR = 0.8; // 80% of max speed on single track
     private static final double CARRIAGE_SPEED_DEGRADATION = 0.05; // 5% speed reduction per carriage
     private static final double MAX_CARRIAGE_DEGRADATION = 0.30; // Maximum 30% speed reduction
+    
+    private final Set<Integer> shownBuildingNotifications = new HashSet<>(); // Track years where notifications were shown
     
     /**
      * Constructor for the simulator controller
@@ -140,6 +144,9 @@ public class SimulatorController {
                     
                     // Check for locomotive availability
                     checkLocomotiveAvailability();
+                    
+                    // Check for building availability
+                    checkBuildingAvailability();
                     
                     // Update yearly demand if needed
                     updateYearlyDemand();
@@ -568,5 +575,28 @@ public class SimulatorController {
         Date date = simulator.getCurrentSimulatedDate();
         int year = date.getYear() + 1900; // Date.getYear() returns years since 1900
         return year;
+    }
+
+    /**
+     * Checks for newly available buildings and shows a notification
+     */
+    private void checkBuildingAvailability() {
+        Simulator simulator = simulatorRepository.getActiveSimulator();
+        if (simulator == null) return;
+        
+        int currentYear = getCurrentYear();
+        BuildingRepository buildingRepository = Repositories.getInstance().getBuildingRepository();
+        List<Building> allBuildings = buildingRepository.getNewBuildingOptions();
+        
+        List<Building> newlyAvailableBuildings = new ArrayList<>();
+        for (Building building : allBuildings) {
+            if (building.getAvailabilityYear() == currentYear) {
+                newlyAvailableBuildings.add(building);
+            }
+        }
+        
+        if (!newlyAvailableBuildings.isEmpty()) {
+            SimulationNotificationHelper.showBuildingAvailabilityNotification(currentYear, newlyAvailableBuildings);
+        }
     }
 } 

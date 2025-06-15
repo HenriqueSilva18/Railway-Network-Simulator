@@ -44,21 +44,20 @@ public class Player {
             return initialBudget; // Return initial budget if no scenario is selected
         }
         
-        // Get the current scenario from the map's scenarios list
-        List<String> scenarios = currentMap.getScenarios();
-        if (scenarios.isEmpty()) {
+        // Get the current scenario from ApplicationSession
+        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+        if (currentScenario == null) {
             return initialBudget;
         }
         
-        // Use the first active scenario as the current one
-        String currentScenario = scenarios.get(0);
+        String scenarioId = currentScenario.getNameID();
 
         // If this scenario hasn't been initialized yet, initialize it
-        if (!scenarioBudgets.containsKey(currentScenario)) {
-            initializeScenarioBudget(currentScenario);
+        if (!scenarioBudgets.containsKey(scenarioId)) {
+            initializeScenarioBudget(scenarioId);
         }
 
-        return scenarioBudgets.get(currentScenario);
+        return scenarioBudgets.get(scenarioId);
     }
 
     public List<Locomotive> getOwnedLocomotives() {
@@ -80,21 +79,20 @@ public class Player {
             return false;
         }
         
-        // Get the current scenario from the map's scenarios list
-        List<String> scenarios = currentMap.getScenarios();
-        if (scenarios.isEmpty()) {
+        // Get the current scenario from ApplicationSession
+        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+        if (currentScenario == null) {
             return false;
         }
         
-        // Use the first active scenario as the current one
-        String currentScenario = scenarios.get(0);
+        String scenarioId = currentScenario.getNameID();
         
         // If this scenario hasn't been initialized yet, initialize it
-        if (!scenarioBudgets.containsKey(currentScenario)) {
-            initializeScenarioBudget(currentScenario);
+        if (!scenarioBudgets.containsKey(scenarioId)) {
+            initializeScenarioBudget(scenarioId);
         }
         
-        double currentBudget = scenarioBudgets.get(currentScenario);
+        double currentBudget = scenarioBudgets.get(scenarioId);
         
         if (amount > currentBudget) {
             return false;
@@ -102,7 +100,7 @@ public class Player {
         
         // Update the budget for this scenario
         double newBudget = currentBudget - amount;
-        scenarioBudgets.put(currentScenario, newBudget);
+        scenarioBudgets.put(scenarioId, newBudget);
         return true;
     }
 
@@ -117,23 +115,22 @@ public class Player {
             return false;
         }
         
-        // Get the current scenario from the map's scenarios list
-        List<String> scenarios = currentMap.getScenarios();
-        if (scenarios.isEmpty()) {
+        // Get the current scenario from ApplicationSession
+        Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+        if (currentScenario == null) {
             return false;
         }
         
-        // Use the first active scenario as the current one
-        String currentScenario = scenarios.get(0);
+        String scenarioId = currentScenario.getNameID();
         
         // If this scenario hasn't been initialized yet, initialize it
-        if (!scenarioBudgets.containsKey(currentScenario)) {
-            initializeScenarioBudget(currentScenario);
+        if (!scenarioBudgets.containsKey(scenarioId)) {
+            initializeScenarioBudget(scenarioId);
         }
         
-        double currentBudget = scenarioBudgets.get(currentScenario);
+        double currentBudget = scenarioBudgets.get(scenarioId);
         double newBudget = currentBudget + amount;
-        scenarioBudgets.put(currentScenario, newBudget);
+        scenarioBudgets.put(scenarioId, newBudget);
         return true;
     }
 

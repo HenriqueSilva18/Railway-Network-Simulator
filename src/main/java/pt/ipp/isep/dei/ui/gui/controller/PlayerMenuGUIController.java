@@ -86,17 +86,6 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem simulationControlMenuItem; // Main menu
 
     @FXML
-    private MenuItem stationProfitAnalysisMenuItem; // Main menu
-    @FXML
-    private MenuItem passengerArrivalsAnalysisMenuItem; // Main menu
-    @FXML
-    private MenuItem cargoArrivalsAnalysisMenuItem; // Main menu
-    @FXML
-    private MenuItem distributionAnalysisMenuItem; // Main menu
-    @FXML
-    private MenuItem cargoRevenueAnalysisMenuItem; // Main menu
-
-    @FXML
     private MenuItem aboutMenuItem;
 
     @FXML
@@ -115,24 +104,19 @@ public class PlayerMenuGUIController implements Initializable {
     @FXML
     private VBox operationsCard;
     @FXML
-    private VBox viewCard;
-    @FXML
     private VBox simulationCard; // Added for "Simulation Control" card
     @FXML
     private VBox financialCard;  // Added for "Financial Reports" card
-    @FXML
-    private VBox statisticsCard;
 
     @FXML
-    private Label mapInfoPlaceholder; // Certifique-se que este fx:id existe no FXML
-
-
+    private Label mapInfoPlaceholder;
 
     // Context Menu Items - Instance variables to hold references
     // Infrastructure Card
     private MenuItem cardBuildStationItem;
     private MenuItem cardUpgradeStationItem;
     private MenuItem cardBuildRailwayItem;
+    private MenuItem cardListStationsItem;
 
     // Operations Card
     private MenuItem cardBuyLocomotiveItem;
@@ -142,38 +126,19 @@ public class PlayerMenuGUIController implements Initializable {
     private MenuItem cardRunSimulatorItem;
     private MenuItem cardSimulatorControlItem;
 
-    // View Card
-    private MenuItem cardViewMapItem;
-    private MenuItem cardListStationsItem;
-    private MenuItem cardViewConnectivityItem;
-    private MenuItem cardMaintenanceRouteItem;
-    private MenuItem cardShortestRouteItem;
-    private MenuItem cardFinancialResultsItem;
-
     // Simulation Card (New - placeholders)
     private MenuItem cardSimControlRunPauseItem;
     private MenuItem cardSimAdvanceTimeItem;
 
-
     // Financial Card (New - placeholders)
     private MenuItem cardFinViewReportItem;
     private MenuItem cardFinExportDataỊtem;
-
-
-    // Statistics Card
-    private MenuItem cardStationProfitItem;
-    private MenuItem cardPassengerArrivalsItem;
-    private MenuItem cardCargoArrivalsItem;
-    private MenuItem cardDistributionItem;
-    private MenuItem cardCargoRevenueItem;
-
 
     private ApplicationSession appSession = ApplicationSession.getInstance();
     private ViewScenarioLayoutController viewLayoutController; // Controller para obter dados do mapa
     private CreateRouteController createRouteController;
     private AssignTrainController assignTrainController;
     private SimulatorController simulatorController;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -194,15 +159,11 @@ public class PlayerMenuGUIController implements Initializable {
         loadMapVisualization();          // Tenta carregar a visualização do mapa no início
     }
 
-
-
     private void setupCardContextMenus() {
         setupInfrastructureCardMenu();
         setupOperationsCardMenu();
-        setupViewCardMenu();
-        setupSimulationCardMenu();   // New Call
-        setupFinancialCardMenu();    // New Call
-        setupStatisticsCardMenu();
+        setupSimulationCardMenu();
+        setupFinancialCardMenu();
     }
 
     // --- Handlers for FXML onMouseClicked (can be simple or delegate) ---
@@ -224,7 +185,6 @@ public class PlayerMenuGUIController implements Initializable {
 
     @FXML
     void handleSimulationCardClick(ActionEvent event) {
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SimulationDialog.fxml"));
             Parent root = loader.load();
@@ -248,7 +208,7 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     @FXML
-    void handleFinancialCardClick() { // NEWLY ADDED
+    void handleFinancialCardClick() {
         System.out.println("Financial Reports card clicked - context menu should show via setOnMouseClicked");
     }
 
@@ -272,8 +232,16 @@ public class PlayerMenuGUIController implements Initializable {
             cardBuildRailwayItem = new MenuItem("Build Railway Line");
             cardBuildRailwayItem.setOnAction(this::handleBuildRailwayLine);
 
-            contextMenu.getItems().addAll(cardBuildStationItem, cardUpgradeStationItem,
-                    new SeparatorMenuItem(), cardBuildRailwayItem);
+            cardListStationsItem = new MenuItem("View Stations Details");
+            cardListStationsItem.setOnAction(this::handleListStations);
+
+            contextMenu.getItems().addAll(
+                cardBuildStationItem,
+                cardUpgradeStationItem,
+                cardBuildRailwayItem,
+                new SeparatorMenuItem(),
+                cardListStationsItem
+            );
 
             setupCardHoverEffect(infrastructureCard);
             infrastructureCard.setOnMouseClicked(event -> {
@@ -320,49 +288,6 @@ public class PlayerMenuGUIController implements Initializable {
         }
     }
 
-    private void setupViewCardMenu() {
-        if (viewCard != null) {
-            ContextMenu contextMenu = new ContextMenu();
-
-            cardViewMapItem = new MenuItem("View Current Map");
-            cardViewMapItem.setOnAction(this::handleViewCurrentMap);
-
-            cardListStationsItem = new MenuItem("List Stations");
-            cardListStationsItem.setOnAction(this::handleListStations);
-
-            cardViewConnectivityItem = new MenuItem("Network Connectivity");
-            cardViewConnectivityItem.setOnAction(this::handleViewConnectivity);
-
-            cardMaintenanceRouteItem = new MenuItem("Maintenance Route");
-            cardMaintenanceRouteItem.setOnAction(this::handleViewMaintenanceRoute);
-
-            cardShortestRouteItem = new MenuItem("Shortest Route");
-            cardShortestRouteItem.setOnAction(this::handleViewShortestRoute);
-
-            // Note: This item also exists on the main menu bar.
-            // And potentially on the new "Financial Reports" card.
-            cardFinancialResultsItem = new MenuItem("Financial Results (View)");
-            cardFinancialResultsItem.setOnAction(this::handleViewFinancialResults);
-
-            contextMenu.getItems().addAll(
-                    cardViewMapItem, new SeparatorMenuItem(),
-                    cardListStationsItem, new SeparatorMenuItem(),
-                    cardViewConnectivityItem, cardMaintenanceRouteItem, cardShortestRouteItem,
-                    new SeparatorMenuItem(), cardFinancialResultsItem
-            );
-
-            setupCardHoverEffect(viewCard);
-            viewCard.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
-                    contextMenu.show(viewCard, event.getScreenX(), event.getScreenY());
-                }
-            });
-        }
-    }
-
-    /**
-     * Configura o menu de contexto para o card de Simulation Control (NOVO)
-     */
     private void setupSimulationCardMenu() {
         if (simulationCard != null) {
             ContextMenu contextMenu = new ContextMenu();
@@ -408,38 +333,6 @@ public class PlayerMenuGUIController implements Initializable {
             financialCard.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
                     contextMenu.show(financialCard, event.getScreenX(), event.getScreenY());
-                }
-            });
-        }
-    }
-
-
-    private void setupStatisticsCardMenu() {
-        if (statisticsCard != null) {
-            ContextMenu contextMenu = new ContextMenu();
-
-            cardStationProfitItem = new MenuItem("Station Profit Analysis");
-            cardStationProfitItem.setOnAction(this::handleStationProfitAnalysis);
-
-            cardPassengerArrivalsItem = new MenuItem("Passenger Arrivals Analysis");
-            cardPassengerArrivalsItem.setOnAction(this::handlePassengerArrivalsAnalysis);
-
-            cardCargoArrivalsItem = new MenuItem("Cargo Arrivals Analysis");
-            cardCargoArrivalsItem.setOnAction(this::handleCargoArrivalsAnalysis);
-
-            cardDistributionItem = new MenuItem("Distribution Analysis");
-            cardDistributionItem.setOnAction(this::handleDistributionAnalysis);
-
-            cardCargoRevenueItem = new MenuItem("Cargo Revenue Analysis");
-            cardCargoRevenueItem.setOnAction(this::handleCargoRevenueAnalysis);
-
-            contextMenu.getItems().addAll(cardStationProfitItem, cardPassengerArrivalsItem, cardCargoArrivalsItem,
-                    new SeparatorMenuItem(), cardDistributionItem, cardCargoRevenueItem);
-
-            setupCardHoverEffect(statisticsCard);
-            statisticsCard.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY || event.getButton() == MouseButton.SECONDARY) {
-                    contextMenu.show(statisticsCard, event.getScreenX(), event.getScreenY());
                 }
             });
         }
@@ -507,47 +400,29 @@ public class PlayerMenuGUIController implements Initializable {
      * Updates the state of context menu items based on the current game state.
      */
     private void updateCardMenusState() {
-        // Assuming appSession.isMapLoaded() is the correct way to check
-        boolean mapLoaded = true;
-        // If appSession doesn't have isMapLoaded(), use a placeholder for now:
-        // boolean mapLoaded = false; // or true, for testing
+        boolean mapLoaded = appSession.getCurrentMap() != null && appSession.getCurrentScenario() != null;
 
         // Infrastructure Card Items
         if (cardBuildStationItem != null) cardBuildStationItem.setDisable(!mapLoaded);
         if (cardUpgradeStationItem != null) cardUpgradeStationItem.setDisable(!mapLoaded);
         if (cardBuildRailwayItem != null) cardBuildRailwayItem.setDisable(!mapLoaded);
+        if (cardListStationsItem != null) cardListStationsItem.setDisable(!mapLoaded);
 
         // Operations Card Items
         if (cardBuyLocomotiveItem != null) cardBuyLocomotiveItem.setDisable(!mapLoaded);
         if (cardCreateRouteItem != null) cardCreateRouteItem.setDisable(!mapLoaded);
         if (cardAssignTrainItem != null) cardAssignTrainItem.setDisable(!mapLoaded);
-        if (cardRunSimulatorItem != null) cardRunSimulatorItem.setDisable(!mapLoaded);
-
-        // View Card Items
-        if (cardViewMapItem != null) cardViewMapItem.setDisable(!mapLoaded);
-        if (cardListStationsItem != null) cardListStationsItem.setDisable(!mapLoaded);
         if (cardListTrainsItem != null) cardListTrainsItem.setDisable(!mapLoaded);
-        if (cardViewConnectivityItem != null) cardViewConnectivityItem.setDisable(!mapLoaded);
-        if (cardMaintenanceRouteItem != null) cardMaintenanceRouteItem.setDisable(!mapLoaded);
-        if (cardShortestRouteItem != null) cardShortestRouteItem.setDisable(!mapLoaded);
-        if (cardFinancialResultsItem != null) cardFinancialResultsItem.setDisable(!mapLoaded);
+        if (cardRunSimulatorItem != null) cardRunSimulatorItem.setDisable(!mapLoaded);
+        if (cardSimulatorControlItem != null) cardSimulatorControlItem.setDisable(!mapLoaded);
 
-        // Simulation Card Items (NEW)
+        // Simulation Card Items
         if (cardSimControlRunPauseItem != null) cardSimControlRunPauseItem.setDisable(!mapLoaded);
-        if (cardSimAdvanceTimeItem != null) cardSimAdvanceTimeItem.setDisable(!mapLoaded); // Or other conditions
+        if (cardSimAdvanceTimeItem != null) cardSimAdvanceTimeItem.setDisable(!mapLoaded);
 
-        // Financial Card Items (NEW)
+        // Financial Card Items
         if (cardFinViewReportItem != null) cardFinViewReportItem.setDisable(!mapLoaded);
-        if (cardFinExportDataỊtem != null) cardFinExportDataỊtem.setDisable(!mapLoaded); // Or other conditions
-
-
-        // Statistics Card Items - These might be always enabled or depend on other factors
-        // For now, let's assume they don't depend on mapLoaded, or if they do:
-        if (cardStationProfitItem != null) cardStationProfitItem.setDisable(!mapLoaded); // Example
-        if (cardPassengerArrivalsItem != null) cardPassengerArrivalsItem.setDisable(!mapLoaded); // Example
-        if (cardCargoArrivalsItem != null) cardCargoArrivalsItem.setDisable(!mapLoaded); // Example
-        if (cardDistributionItem != null) cardDistributionItem.setDisable(!mapLoaded); // Example
-        if (cardCargoRevenueItem != null) cardCargoRevenueItem.setDisable(!mapLoaded); // Example
+        if (cardFinExportDataỊtem != null) cardFinExportDataỊtem.setDisable(!mapLoaded);
     }
 
 
@@ -606,17 +481,15 @@ public class PlayerMenuGUIController implements Initializable {
     }
 
     private void updateMenuItemsState() {
-        // TODO: Verificar se um mapa está carregado na ApplicationSession
-        // boolean mapLoaded = appSession.getCurrentMap() != null;
         boolean mapLoaded = appSession.getCurrentMap() != null && appSession.getCurrentScenario() != null;
 
         // File Menu
-        selectMapScenarioMenuItem.setDisable(mapLoaded); // Typically disable if a map is already loaded
-        loadGameMenuItem.setDisable(mapLoaded); // Similar logic might apply
+        selectMapScenarioMenuItem.setDisable(mapLoaded);
+        loadGameMenuItem.setDisable(mapLoaded);
         saveGameMenuItem.setDisable(!mapLoaded);
 
         // Infrastructure Menu (Main Menu Bar)
-        buildStationMenuItem.setDisable(!mapLoaded);
+        buildStationMenuItem.setDisable(mapLoaded);
         upgradeStationMenuItem.setDisable(!mapLoaded);
         buildRailwayLineMenuItem.setDisable(!mapLoaded);
 
@@ -635,13 +508,6 @@ public class PlayerMenuGUIController implements Initializable {
         viewMaintenanceRouteMenuItem.setDisable(!mapLoaded);
         viewShortestRouteMenuItem.setDisable(!mapLoaded);
         viewFinancialResultsMenuItem.setDisable(!mapLoaded);
-
-        // Statistics Menu (Main Menu Bar) - Assuming these also depend on a map being loaded
-        stationProfitAnalysisMenuItem.setDisable(!mapLoaded);
-        passengerArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
-        cargoArrivalsAnalysisMenuItem.setDisable(!mapLoaded);
-        distributionAnalysisMenuItem.setDisable(!mapLoaded);
-        cargoRevenueAnalysisMenuItem.setDisable(!mapLoaded);
 
         // Update context menus for cards as well
         updateCardMenusState();
@@ -1143,37 +1009,6 @@ public class PlayerMenuGUIController implements Initializable {
         // por um temporizador separado que verifica periodicamente o estado do simulador para manter a interface do utilizador sincronizada.
     }
 
-    // Statistics Handlers (Python/Jupyter tasks)
-    @FXML
-    void handleStationProfitAnalysis(ActionEvent event) {
-        System.out.println("Station Profit Analysis clicked");
-        showAlert("Python/Jupyter Task", "US15: Perform statistical analysis of average annual profit (Python).");
-    }
-
-    @FXML
-    void handlePassengerArrivalsAnalysis(ActionEvent event) {
-        System.out.println("Passenger Arrivals Analysis clicked");
-        showAlert("Python/Jupyter Task", "US16: Perform comparative analysis of passenger arrivals (Python).");
-    }
-
-    @FXML
-    void handleCargoArrivalsAnalysis(ActionEvent event) {
-        System.out.println("Cargo Arrivals Analysis clicked");
-        showAlert("Python/Jupyter Task", "US17: Perform analysis of cargo arriving at each station (Python).");
-    }
-
-    @FXML
-    void handleDistributionAnalysis(ActionEvent event) {
-        System.out.println("Train/Passenger/Mail Distribution clicked");
-        showAlert("Python/Jupyter Task", "US18: Perform analysis of train, passenger, and mail distribution (Python).");
-    }
-
-    @FXML
-    void handleCargoRevenueAnalysis(ActionEvent event) {
-        System.out.println("Cargo Revenue Correlation clicked");
-        showAlert("Python/Jupyter Task", "US31: Perform statistical analysis for cargo revenue correlation (Python).");
-    }
-
     @FXML
     void handleAbout(ActionEvent event) {
         System.out.println("About clicked");
@@ -1263,12 +1098,12 @@ public class PlayerMenuGUIController implements Initializable {
                 for (int x = 0; x < layoutData.width; x++) {
                     ViewScenarioLayoutController.CellData cellData = layoutData.grid[y][x];
 
-                    // Create transparent background rectangle for the cell
-                    Rectangle cellRect = new Rectangle(cellSize, cellSize);
-                    cellRect.setFill(Color.TRANSPARENT);
-                    cellRect.setStroke(Color.TRANSPARENT);
-                    cellRect.setStrokeWidth(0);
-                    mapGrid.add(cellRect, x, y);
+                    // Create a cell with border
+                    Rectangle cell = new Rectangle(cellSize, cellSize);
+                    cell.setFill(Color.TRANSPARENT);
+                    cell.setStroke(Color.LIGHTGRAY);
+                    cell.setStrokeWidth(0.5);
+                    mapGrid.add(cell, x, y);
 
                     // Add entities based on type
                     Node entityNode = null;

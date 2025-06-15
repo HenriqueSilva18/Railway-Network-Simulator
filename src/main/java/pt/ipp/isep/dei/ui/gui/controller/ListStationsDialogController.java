@@ -38,6 +38,9 @@ public class ListStationsDialogController implements Initializable {
     private ListView<String> buildingsListView;
     
     @FXML
+    private TextArea buildingEventsLog;
+    
+    @FXML
     private ListView<String> servedCitiesListView;
     @FXML
     private ListView<String> availableCargoListView;
@@ -49,9 +52,13 @@ public class ListStationsDialogController implements Initializable {
     
     private final ListStationController controller;
     private List<Station> stations;
+    private Map<String, List<String>> stationBuildingEvents; // Map of station ID to list of events
+    private Map<String, String> previousBuildingStates; // Map to track previous building states
     
     public ListStationsDialogController() {
         this.controller = new ListStationController();
+        this.stationBuildingEvents = new HashMap<>();
+        this.previousBuildingStates = new HashMap<>();
     }
     
     @Override
@@ -128,14 +135,43 @@ public class ListStationsDialogController implements Initializable {
         storageCapacityLabel.setText(String.valueOf(station.getStorageCapacity()));
         buildingSlotsLabel.setText(String.format("%d/%d", station.getBuildings().size(), station.getBuildingSlots()));
         
-        // Update buildings list
+        // Update buildings list and events log
         ObservableList<String> buildingItems = FXCollections.observableArrayList();
-        station.getBuildings().forEach(building ->
+        List<String> currentEvents = stationBuildingEvents.computeIfAbsent(station.getNameID(), k -> new ArrayList<>());
+        
+        station.getBuildings().forEach(building -> {
             buildingItems.add(String.format("%s (Type: %s) - %s",
                 building.getNameID(),
                 building.getType(),
-                building.getEffect())));
+                building.getEffect()));
+                
+            // Check for building evolution
+            String buildingKey = station.getNameID() + "_" + building.getNameID();
+            String previousState = previousBuildingStates.get(buildingKey);
+            String currentState = building.getNameID() + "_" + building.getType();
+            
+            if (previousState != null && !previousState.equals(currentState)) {
+                // Building has evolved
+                String event = String.format("[%s] Building '%s' evolved to %s",
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    previousState.split("_")[0], // Previous name
+                    building.getNameID());
+                currentEvents.add(event);
+            } else if (previousState == null) {
+                // New building
+                String event = String.format("[%s] New building '%s' (%s) constructed",
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    building.getNameID(),
+                    building.getType());
+                currentEvents.add(event);
+            }
+            
+            // Update the previous state
+            previousBuildingStates.put(buildingKey, currentState);
+        });
+        
         buildingsListView.setItems(buildingItems);
+        buildingEventsLog.setText(String.join("\n", currentEvents));
         
         // Update served cities list
         ObservableList<String> cityItems = FXCollections.observableArrayList();
@@ -170,6 +206,7 @@ public class ListStationsDialogController implements Initializable {
         storageCapacityLabel.setText("");
         buildingSlotsLabel.setText("");
         buildingsListView.setItems(FXCollections.observableArrayList());
+        buildingEventsLog.setText("");
         
         servedCitiesListView.setItems(FXCollections.observableArrayList());
         availableCargoListView.setItems(FXCollections.observableArrayList());

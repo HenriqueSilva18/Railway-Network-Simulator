@@ -99,10 +99,18 @@ public class BuildStationDialogController implements Initializable {
     }
 
     private void setupSpinners() {
+        Map currentMap = controller.getCurrentMap();
+        if (currentMap == null) {
+            return;
+        }
+
+        int maxX = currentMap.getSize().getWidth() - 1;
+        int maxY = currentMap.getSize().getHeight() - 1;
+
         SpinnerValueFactory.IntegerSpinnerValueFactory xFactory = 
-            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxX, 0);
         SpinnerValueFactory.IntegerSpinnerValueFactory yFactory = 
-            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxY, 0);
         
         xCoordSpinner.setValueFactory(xFactory);
         yCoordSpinner.setValueFactory(yFactory);

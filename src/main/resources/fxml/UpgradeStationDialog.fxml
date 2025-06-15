@@ -4,18 +4,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="15" alignment="CENTER" prefWidth="700" prefHeight="800" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.UpgradeStationDialogController">
+<VBox spacing="15" alignment="CENTER" prefWidth="900" prefHeight="650" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.UpgradeStationDialogController">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <HBox spacing="20" VBox.vgrow="ALWAYS">
+    <HBox spacing="15" VBox.vgrow="ALWAYS">
         <!-- Left Column -->
-        <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="450">
+        <VBox spacing="10" HBox.hgrow="ALWAYS" prefWidth="400">
             <!-- Station Information Section -->
             <TitledPane text="Station Information" expanded="true" VBox.vgrow="NEVER">
-                <VBox spacing="10">
-                    <GridPane hgap="15" vgap="8">
+                <VBox spacing="8">
+                    <GridPane hgap="10" vgap="6">
                         <columnConstraints>
                             <ColumnConstraints minWidth="120" prefWidth="120"/>
                             <ColumnConstraints hgrow="ALWAYS"/>
@@ -41,37 +41,45 @@
 
             <!-- Current Buildings Section -->
             <TitledPane text="Current Buildings" expanded="true" VBox.vgrow="ALWAYS">
-                <VBox spacing="10">
-                    <ListView fx:id="currentBuildingsListView" VBox.vgrow="ALWAYS" prefHeight="500" minHeight="500"/>
+                <VBox spacing="8">
+                    <ListView fx:id="currentBuildingsListView" VBox.vgrow="ALWAYS" prefHeight="350" minHeight="350"/>
                     <Button fx:id="removeBuildingButton" text="Remove Selected Building" onAction="#handleRemoveBuilding" 
-                           style="-fx-font-size: 14px;" disable="true"/>
+                           style="-fx-font-size: 12px;" disable="true"/>
                 </VBox>
             </TitledPane>
         </VBox>
 
         <!-- Right Column -->
-        <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="450">
+        <VBox spacing="10" HBox.hgrow="ALWAYS" prefWidth="450">
             <!-- Upgrade Options Section -->
             <TitledPane text="Upgrade Options" expanded="true" VBox.vgrow="NEVER">
-                <VBox spacing="15">
-                    <RadioButton fx:id="installNewBuildingRadio" text="Install New Building" selected="true" toggleGroup="$upgradeType" style="-fx-font-size: 14px;"/>
-                    <RadioButton fx:id="evolveExistingBuildingRadio" text="Evolve Existing Building" toggleGroup="$upgradeType" style="-fx-font-size: 14px;"/>
+                <VBox spacing="10">
+                    <RadioButton fx:id="installNewBuildingRadio" text="Install New Building" selected="true" toggleGroup="$upgradeType" style="-fx-font-size: 12px;"/>
+                    <RadioButton fx:id="evolveExistingBuildingRadio" text="Evolve Existing Building" toggleGroup="$upgradeType" style="-fx-font-size: 12px;"/>
                 </VBox>
             </TitledPane>
 
             <!-- Available Buildings/Evolution Options Section -->
             <TitledPane text="Available Options" expanded="true" VBox.vgrow="ALWAYS">
-                <VBox spacing="15">
-                    <ListView fx:id="availableOptionsListView" VBox.vgrow="ALWAYS" prefHeight="300" minHeight="300"/>
+                <VBox spacing="10">
+                    <ListView fx:id="availableOptionsListView" VBox.vgrow="ALWAYS" prefHeight="250" minHeight="250"/>
                     
                     <!-- Building Details Section -->
                     <TitledPane text="Selected Building Details" expanded="true" VBox.vgrow="NEVER">
-                        <VBox spacing="8" style="-fx-padding: 10;">
-                            <Label fx:id="buildingNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                            <Label fx:id="buildingTypeLabel" style="-fx-font-size: 14px;"/>
-                            <Label fx:id="buildingCostLabel" style="-fx-font-size: 14px;"/>
-                            <Label fx:id="buildingEffectLabel" style="-fx-font-size: 14px;"/>
-                            <Label fx:id="buildingEvolutionLabel" style="-fx-font-size: 14px;"/>
+                        <VBox spacing="6" style="-fx-padding: 8;">
+                            <Label fx:id="buildingNameLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label fx:id="buildingTypeLabel" style="-fx-font-size: 12px;"/>
+                            <Label fx:id="buildingCostLabel" style="-fx-font-size: 12px;"/>
+                            <Label fx:id="buildingEffectLabel" style="-fx-font-size: 12px; -fx-wrap-text: true;"/>
+                            <Label fx:id="buildingEvolutionLabel" style="-fx-font-size: 12px; -fx-wrap-text: true;"/>
+                        </VBox>
+                    </TitledPane>
+
+                    <!-- Budget Information Section -->
+                    <TitledPane text="Budget Information" expanded="true" VBox.vgrow="NEVER">
+                        <VBox spacing="6" style="-fx-padding: 8;">
+                            <Label fx:id="currentBudgetLabel" style="-fx-font-size: 12px;"/>
+                            <Label fx:id="remainingBudgetLabel" style="-fx-font-size: 12px;"/>
                         </VBox>
                     </TitledPane>
                 </VBox>
@@ -80,10 +88,10 @@
     </HBox>
 
     <!-- Action Buttons -->
-    <HBox spacing="20" alignment="CENTER" VBox.vgrow="NEVER">
+    <HBox spacing="15" alignment="CENTER" VBox.vgrow="NEVER">
         <Button fx:id="upgradeButton" text="Upgrade" onAction="#handleUpgrade" disable="true" 
-                style="-fx-font-size: 14px; -fx-min-width: 120px; -fx-min-height: 35px;"/>
+                style="-fx-font-size: 12px; -fx-min-width: 100px; -fx-min-height: 30px;"/>
         <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"
-                style="-fx-font-size: 14px; -fx-min-width: 120px; -fx-min-height: 35px;"/>
+                style="-fx-font-size: 12px; -fx-min-width: 100px; -fx-min-height: 30px;"/>
     </HBox>
 </VBox> 
