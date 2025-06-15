@@ -22,6 +22,7 @@ import pt.ipp.isep.dei.repository.template.Repositories;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -32,10 +33,8 @@ public class SimulationDialogController implements Initializable {
     @FXML private Label budgetLabel;
     @FXML private Button pauseResumeButton;
     @FXML private Button restartButton;
-    @FXML private Button generateCargoButton;
     @FXML private Button viewCargoButton;
     @FXML private Button stopButton;
-    @FXML private Button closeButton;
 
     private SimulatorController simulatorController;
     private Timeline simulationUpdateTimer;
@@ -73,7 +72,6 @@ public class SimulationDialogController implements Initializable {
 
             pauseResumeButton.setDisable(true);
             restartButton.setDisable(status == null);
-            generateCargoButton.setDisable(true);
             viewCargoButton.setDisable(true);
             stopButton.setDisable(true);
 
@@ -85,7 +83,23 @@ public class SimulationDialogController implements Initializable {
                 dateLabel.setText(sdf.format(simulator.getCurrentSimulatedDate()));
                 Player currentPlayer = appSession.getCurrentPlayer();
                 if (currentPlayer != null) {
-                    budgetLabel.setText(String.format("$%.2f", currentPlayer.getCurrentBudget()));
+                    double currentBudget = currentPlayer.getCurrentBudget();
+                    budgetLabel.setText(String.format("$%.2f", currentBudget));
+                    
+                    // Check for bankruptcy (below $1000)
+                    if (currentBudget < 1000) {
+                        String report = simulatorController.stopSimulation();
+                        if (report != null) {
+                            simulationUpdateTimer.stop();
+                            showTextDialog("Bankruptcy Alert - Simulation Stopped", 
+                                "The simulation has been stopped due to bankruptcy.\n\n" +
+                                "Your budget has fallen below $1000.\n\n" +
+                                "Final Report:\n" + report);
+                            Stage stage = (Stage) stopButton.getScene().getWindow();
+                            stage.close();
+                        }
+                        return;
+                    }
                 }
 
                 boolean isRunning = status.equals(Simulator.STATUS_RUNNING);
@@ -93,7 +107,6 @@ public class SimulationDialogController implements Initializable {
 
                 pauseResumeButton.setDisable(false);
                 restartButton.setDisable(false);
-                generateCargoButton.setDisable(false);
                 viewCargoButton.setDisable(false);
                 stopButton.setDisable(false);
             }
@@ -115,7 +128,18 @@ public class SimulationDialogController implements Initializable {
 
     @FXML
     private void handleRestart(ActionEvent event) {
-        if (confirm("Restart Simulation", "Are you sure? This will reset the simulation.")) {
+        if (confirm("Restart Simulation", "Are you sure? This will reset the simulation and your budget to its initial value.")) {
+            // Get current scenario ID before restarting
+            Scenario currentScenario = ApplicationSession.getInstance().getCurrentScenario();
+            if (currentScenario != null) {
+                String scenarioId = currentScenario.getNameID();
+                Player currentPlayer = appSession.getCurrentPlayer();
+                if (currentPlayer != null) {
+                    // Reset budget to initial value
+                    currentPlayer.initializeScenarioBudget(scenarioId);
+                }
+            }
+            
             if (!simulatorController.restartSimulation()) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Failed to restart the simulation.");
             }
@@ -130,7 +154,8 @@ public class SimulationDialogController implements Initializable {
                 simulationUpdateTimer.stop();
                 updateUI();
                 showTextDialog("Simulator Final Report", report);
-                handleClose(null);
+                Stage stage = (Stage) stopButton.getScene().getWindow();
+                stage.close();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Error", "Failed to stop the simulation.");
             }
@@ -138,28 +163,20 @@ public class SimulationDialogController implements Initializable {
     }
 
     @FXML
-    private void handleGenerateCargo(ActionEvent event) {
-        if (simulatorController.generateCargo()) {
-            //messages in english
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Cargo has been successfully generated for the stations.");
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Cargo not generated", "Not possible to generate cargo. Stations may be full or no trains are assigned to routes.");
-        }
-    }
-
-    @FXML
     private void handleViewCargo(ActionEvent event) {
-        java.util.Map<String, List<Cargo>> stationCargo = simulatorController.getCargoGenerationDetails();
+        Map<String, List<Cargo>> stationCargo = simulatorController.getCargoGenerationDetails();
         if (stationCargo.isEmpty()) {
-            showAlert(Alert.AlertType.INFORMATION, "Sem Carga", "Não há carga disponível em nenhuma estação.");
+            showAlert(Alert.AlertType.INFORMATION, "No Cargo", "There is no cargo available at any station.");
             return;
         }
 
         StringBuilder sb = new StringBuilder();
-        for (java.util.Map.Entry<String, List<Cargo>> entry : stationCargo.entrySet()) {
-            sb.append("Estação: ").append(entry.getKey()).append("\n");
+        sb.append("Current Cargo at Stations:\n\n");
+        
+        for (Map.Entry<String, List<Cargo>> entry : stationCargo.entrySet()) {
+            sb.append("Station: ").append(entry.getKey()).append("\n");
             if (entry.getValue().isEmpty()) {
-                sb.append("  - Sem carga disponível\n");
+                sb.append("  - No cargo available\n");
             } else {
                 for (Cargo cargo : entry.getValue()) {
                     sb.append("  - ").append(cargo.toString()).append("\n");
@@ -167,33 +184,26 @@ public class SimulationDialogController implements Initializable {
             }
             sb.append("\n");
         }
-        showTextDialog("Carga Atual nas Estações", sb.toString());
+        
+        showTextDialog("Current Cargo at Stations", sb.toString());
     }
 
-    @FXML
-    private void handleClose(ActionEvent event) {
-        if (simulationUpdateTimer != null) {
-            simulationUpdateTimer.stop();
-        }
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        stage.close();
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private boolean confirm(String title, String message) {
+    private boolean confirm(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(content);
+
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     private void showTextDialog(String title, String content) {

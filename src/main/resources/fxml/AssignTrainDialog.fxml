@@ -4,20 +4,26 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.AssignTrainDialogController"
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.ipp.isep.dei.ui.gui.controller.AssignTrainToRouteDialogController"
       spacing="15" style="-fx-padding: 20; -fx-pref-width: 350;">
     <Label text="Assign Train to Route" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
     <GridPane hgap="10" vgap="10">
-        <Label text="Route:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="routeComboBox" prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label text="Train:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="trainComboBox" prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Train:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="trainComboBox" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Route:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="routeComboBox" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Carriage Count:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <Spinner fx:id="carriageCountSpinner" prefWidth="250" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label fx:id="errorLabel" textFill="RED" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">

@@ -44,7 +44,6 @@
     </HBox>
 
     <VBox alignment="CENTER" spacing="10">
-        <Button fx:id="generateCargoButton" onAction="#handleGenerateCargo" maxWidth="Infinity" text="Generate Cargo Now" />
         <Button fx:id="viewCargoButton" onAction="#handleViewCargo" maxWidth="Infinity" text="See Cargo at Stations" />
     </VBox>
 
@@ -52,6 +51,5 @@
 
     <VBox alignment="CENTER" spacing="10.0">
         <Button fx:id="stopButton" onAction="#handleStop" maxWidth="Infinity" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="Stop Simulation and Get Report" />
-        <Button fx:id="closeButton" onAction="#handleClose" maxWidth="Infinity" text="Close window" />
     </VBox>
 </VBox>

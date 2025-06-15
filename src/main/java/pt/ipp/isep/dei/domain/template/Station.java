@@ -23,6 +23,7 @@ public class Station implements Serializable {
     private double demandMultiplier;
     private List<Cargo> demandedCargo;
     private transient final Map map; // Make map transient since it's a circular reference
+    private Route assignedRoute;
 
     public Station(String nameID, Position position, StationType stationType, int storageCapacity, Map map) {
         if (nameID == null || position == null || stationType == null) {
@@ -34,6 +35,7 @@ public class Station implements Serializable {
         this.stationType = stationType;
         this.currentYear = Calendar.getInstance().get(Calendar.YEAR);
         this.demandMultiplier = 1.0;
+        this.assignedRoute = null;
         
         // Initialize based on station type
         switch (stationType.getName()) {
@@ -735,5 +737,24 @@ public class Station implements Serializable {
         for (Cargo cargo : availableCargo) {
             this.currentStorage += cargo.getAmount();
         }
+    }
+
+    public Route getAssignedRoute() {
+        return assignedRoute;
+    }
+
+    public void setAssignedRoute(Route route) {
+        this.assignedRoute = route;
+    }
+
+    public CargoMode getCargoMode() {
+        if (assignedRoute != null) {
+            for (PointOfRoute point : assignedRoute.getPoints()) {
+                if (point.getStation().equals(this)) {
+                    return point.getCargoMode();
+                }
+            }
+        }
+        return null;
     }
 } 

@@ -14,6 +14,8 @@ import pt.ipp.isep.dei.controller.template.ApplicationSession;
 import pt.ipp.isep.dei.controller.template.ListStationController;
 import pt.ipp.isep.dei.domain.template.Cargo;
 import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.domain.template.CargoMode;
+import pt.ipp.isep.dei.domain.template.Route;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +35,8 @@ public class ListStationsDialogController implements Initializable {
     private Label storageCapacityLabel;
     @FXML
     private Label buildingSlotsLabel;
+    @FXML
+    private Label cargoModeLabel;
     
     @FXML
     private ListView<String> buildingsListView;
@@ -74,6 +78,15 @@ public class ListStationsDialogController implements Initializable {
             StringBuilder stationSummary = new StringBuilder();
             stationSummary.append(station.getNameID())
                 .append(" (Type: ").append(station.getStationType().getName()).append(")\n");
+            
+            // Add cargo mode if the station is part of a route
+            Route route = station.getAssignedRoute();
+            if (route != null) {
+                CargoMode mode = route.getCargoModeForStation(station);
+                if (mode != null) {
+                    stationSummary.append("Cargo Mode: ").append(mode).append("\n");
+                }
+            }
             
             // Add supply summary
             stationSummary.append("Supply: ");
@@ -141,6 +154,22 @@ public class ListStationsDialogController implements Initializable {
             station.getCurrentStorage(),
             station.getStorageCapacity()));
         buildingSlotsLabel.setText(String.format("%d/%d", station.getBuildings().size(), station.getBuildingSlots()));
+        
+        // Update cargo mode information
+        Route route = station.getAssignedRoute();
+        if (route != null) {
+            CargoMode mode = route.getCargoModeForStation(station);
+            if (mode != null) {
+                cargoModeLabel.setText("Cargo Mode: " + mode);
+                cargoModeLabel.setStyle("-fx-text-fill: #2E7D32; -fx-font-weight: bold;");  // Green color for visibility
+            } else {
+                cargoModeLabel.setText("No Cargo Mode Set");
+                cargoModeLabel.setStyle("-fx-text-fill: #757575;");  // Gray color
+            }
+        } else {
+            cargoModeLabel.setText("Not Part of Any Route");
+            cargoModeLabel.setStyle("-fx-text-fill: #757575;");  // Gray color
+        }
         
         // Update buildings list and events log
         ObservableList<String> buildingItems = FXCollections.observableArrayList();
@@ -223,6 +252,7 @@ public class ListStationsDialogController implements Initializable {
         stationPositionLabel.setText("");
         storageCapacityLabel.setText("");
         buildingSlotsLabel.setText("");
+        cargoModeLabel.setText("");
         buildingsListView.setItems(FXCollections.observableArrayList());
         buildingEventsLog.setText("");
         

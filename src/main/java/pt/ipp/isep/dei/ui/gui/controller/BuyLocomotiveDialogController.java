@@ -12,7 +12,12 @@ import pt.ipp.isep.dei.domain.template.*;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BuyLocomotiveDialogController implements Initializable {
     @FXML
@@ -155,22 +160,53 @@ public class BuyLocomotiveDialogController implements Initializable {
     }
 
     private void loadLocomotives() {
-
         // Load available locomotives
         List<Locomotive> availableLocomotives = controller.getAvailableLocomotives();
+        
+        // Group locomotives by type
+        Map<String, List<Locomotive>> locomotivesByType = availableLocomotives.stream()
+                .collect(Collectors.groupingBy(Locomotive::getType));
+        
+        // Sort types alphabetically
+        List<String> sortedTypes = new ArrayList<>(locomotivesByType.keySet());
+        Collections.sort(sortedTypes);
+        
+        // Create a new sorted list
+        List<Locomotive> sortedLocomotives = new ArrayList<>();
+        
+        // Add locomotives grouped by type and sorted by name
+        for (String type : sortedTypes) {
+            List<Locomotive> typeLocomotives = locomotivesByType.get(type);
+            typeLocomotives.sort(Comparator.comparing(Locomotive::getNameID));
+            sortedLocomotives.addAll(typeLocomotives);
+        }
+        
         availableLocomotivesList.getItems().clear();
-        availableLocomotivesList.getItems().addAll(availableLocomotives);
+        availableLocomotivesList.getItems().addAll(sortedLocomotives);
 
         // Load owned locomotives
         List<Locomotive> ownedLocomotives = controller.getPlayerLocomotives();
-
-        // Debug each owned locomotive
-        for (int i = 0; i < ownedLocomotives.size(); i++) {
-            Locomotive loc = ownedLocomotives.get(i);
-            }
-
+        
+        // Group owned locomotives by type
+        Map<String, List<Locomotive>> ownedByType = ownedLocomotives.stream()
+                .collect(Collectors.groupingBy(Locomotive::getType));
+        
+        // Sort types alphabetically
+        List<String> sortedOwnedTypes = new ArrayList<>(ownedByType.keySet());
+        Collections.sort(sortedOwnedTypes);
+        
+        // Create a new sorted list for owned locomotives
+        List<Locomotive> sortedOwnedLocomotives = new ArrayList<>();
+        
+        // Add owned locomotives grouped by type and sorted by name
+        for (String type : sortedOwnedTypes) {
+            List<Locomotive> typeLocomotives = ownedByType.get(type);
+            typeLocomotives.sort(Comparator.comparing(Locomotive::getNameID));
+            sortedOwnedLocomotives.addAll(typeLocomotives);
+        }
+        
         ownedLocomotivesList.getItems().clear();
-        ownedLocomotivesList.getItems().addAll(ownedLocomotives);
+        ownedLocomotivesList.getItems().addAll(sortedOwnedLocomotives);
     }
 
     private void updateAvailableLocomotiveDetails() {
@@ -353,7 +389,6 @@ public class BuyLocomotiveDialogController implements Initializable {
      * Debug version of purchase locomotive with detailed logging
      */
     private boolean purchaseLocomotive(Locomotive locomotive) {
-
         if (locomotive == null) {
             return false;
         }
@@ -363,7 +398,6 @@ public class BuyLocomotiveDialogController implements Initializable {
         if (player == null) {
             return false;
         }
-
 
         // Get locomotive price
         double locomotivePrice = locomotive.getPrice();
@@ -380,16 +414,6 @@ public class BuyLocomotiveDialogController implements Initializable {
 
         // Complete the purchase
         try {
-            boolean deductResult = player.deductFromBudget(locomotivePrice);
-            if (!deductResult) {
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        try {
             boolean success = controller.purchaseLocomotive(locomotive);
             return success;
         } catch (Exception e) {
@@ -397,6 +421,5 @@ public class BuyLocomotiveDialogController implements Initializable {
             showError("An error occurred while purchasing the locomotive: " + e.getMessage());
             return false;
         }
-
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Route {
     private String nameID;
@@ -12,6 +13,7 @@ public class Route {
     private Map<Station, List<Cargo>> stationCargo;
     private List<RailwayLine> railwayLines;
     private List<Train> assignedTrains;
+    private List<PointOfRoute> points;
 
     public Route(String nameID) {
         this.nameID = nameID;
@@ -20,6 +22,7 @@ public class Route {
         this.stationCargo = new HashMap<>();
         this.railwayLines = new ArrayList<>();
         this.assignedTrains = new ArrayList<>();
+        this.points = new ArrayList<>();
     }
     
     public Route(String nameID, List<Station> stationSequence) {
@@ -33,10 +36,12 @@ public class Route {
         this.stationCargo = new HashMap<>();
         this.railwayLines = new ArrayList<>();
         this.assignedTrains = new ArrayList<>();
+        this.points = new ArrayList<>();
         
-        // Initialize stationCargo map for each station
+        // Initialize stationCargo map and points for each station
         for (Station station : stationSequence) {
             stationCargo.put(station, new ArrayList<>());
+            points.add(new PointOfRoute(station, CargoMode.AVAILABLE, UUID.randomUUID().toString()));
         }
     }
 
@@ -181,6 +186,45 @@ public class Route {
             this.stationCargo,
             this.assignedTrains.size()
         );
+    }
+
+    public List<PointOfRoute> getPoints() {
+        return new ArrayList<>(points);
+    }
+
+    public PointOfRoute getPointOfRoute(String pointId) {
+        for (PointOfRoute point : points) {
+            if (point.getPointId().equals(pointId)) {
+                return point;
+            }
+        }
+        return null;
+    }
+
+    public CargoMode getCargoModeForStation(Station station) {
+        if (station == null) {
+            return null;
+        }
+        
+        for (PointOfRoute point : points) {
+            if (point.getStation().equals(station)) {
+                return point.getCargoMode();
+            }
+        }
+        return null;
+    }
+
+    public void setCargoModeForStation(Station station, CargoMode mode) {
+        if (station == null || mode == null) {
+            return;
+        }
+        
+        for (PointOfRoute point : points) {
+            if (point.getStation().equals(station)) {
+                point.setCargoMode(mode);
+                break;
+            }
+        }
     }
 
     @Override

@@ -50,6 +50,9 @@
                         
                         <Label text="Building Events Log:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold"/>
                         <TextArea fx:id="buildingEventsLog" GridPane.columnIndex="1" GridPane.rowIndex="6" prefHeight="100" minHeight="100" editable="false" wrapText="true"/>
+
+                        <Label text="Cargo Mode:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                        <Label fx:id="cargoModeLabel" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
                     </GridPane>
                 </TitledPane>
 

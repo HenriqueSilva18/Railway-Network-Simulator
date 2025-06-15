@@ -55,8 +55,9 @@ public class CreateRouteController {
         return connectedStations;
     }
 
-    public Route createRoute(String routeName, List<Station> stations) {
-        if (routeName == null || stations == null || stations.size() < 2) {
+    public Route createRoute(String routeName, List<Station> stations, List<CargoMode> cargoModes) {
+        if (routeName == null || stations == null || stations.size() < 2 || 
+            cargoModes == null || cargoModes.size() != stations.size()) {
             return null;
         }
 
@@ -81,6 +82,14 @@ public class CreateRouteController {
         // Validate that all stations are connected
         if (!route.validateStations()) {
             return null;
+        }
+
+        // Set cargo modes for each point and assign route to stations
+        List<PointOfRoute> points = route.getPoints();
+        for (int i = 0; i < points.size(); i++) {
+            Station station = points.get(i).getStation();
+            route.setCargoModeForStation(station, cargoModes.get(i));
+            station.setAssignedRoute(route);  // Set the assigned route for each station
         }
 
         // Save route

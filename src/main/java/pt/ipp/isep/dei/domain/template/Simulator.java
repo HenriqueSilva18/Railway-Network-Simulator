@@ -545,4 +545,16 @@ public class Simulator {
     public int getElapsedSimulatedDays() {
         return elapsedSimulatedDays;
     }
+
+    /**
+     * Resets the simulator's date to a specific date
+     * @param date The date to reset to
+     */
+    public void resetDate(Date date) {
+        if (date == null) {
+            return;
+        }
+        this.currentSimulatedDate = (Date) date.clone();
+        this.lastCargoGenerationDate = null;
+    }
 }

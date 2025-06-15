@@ -1,8 +1,7 @@
 package pt.ipp.isep.dei.ui.console;
 
 import pt.ipp.isep.dei.controller.template.CreateRouteController;
-import pt.ipp.isep.dei.domain.template.Route;
-import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.domain.template.*;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 
 import java.util.ArrayList;
@@ -42,6 +41,49 @@ public class CreateRouteUI implements Runnable {
         }
     }
 
+    private CargoMode selectCargoMode(String stationName) {
+        System.out.println("\n╔════════════════════════════════════════════════════════════════╗");
+        System.out.println("║                    CARGO MODE SELECTION                        ║");
+        System.out.println("╠════════════════════════════════════════════════════════════════╣");
+        System.out.println("║ Station: " + String.format("%-50s", stationName) + "║");
+        System.out.println("╠════════════════════════════════════════════════════════════════╣");
+        System.out.println("║ 1. FULL                                                       ║");
+        System.out.println("║    The train will wait at this station until all carriages     ║");
+        System.out.println("║    are fully loaded before departing                           ║");
+        System.out.println("╠════════════════════════════════════════════════════════════════╣");
+        System.out.println("║ 2. HALF                                                        ║");
+        System.out.println("║    The train will depart from this station as soon as at       ║");
+        System.out.println("║    least 50% of its carriages are loaded                       ║");
+        System.out.println("╠════════════════════════════════════════════════════════════════╣");
+        System.out.println("║ 3. AVAILABLE                                                   ║");
+        System.out.println("║    The train will depart from this station with whatever       ║");
+        System.out.println("║    cargo is currently available, regardless of capacity        ║");
+        System.out.println("╚════════════════════════════════════════════════════════════════╝");
+
+        while (true) {
+            try {
+                String input = Utils.readLineFromConsole("\nEnter your choice (1-3)");
+                if (input == null || input.trim().isEmpty()) {
+                    continue;
+                }
+
+                int choice = Integer.parseInt(input.trim());
+                switch (choice) {
+                    case 1:
+                        return CargoMode.FULL;
+                    case 2:
+                        return CargoMode.HALF;
+                    case 3:
+                        return CargoMode.AVAILABLE;
+                    default:
+                        System.out.println("\n❌ Invalid choice. Please enter a number between 1 and 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\n❌ Please enter a valid number.");
+            }
+        }
+    }
+
     @Override
     public void run() {
         System.out.println("\n=== Create New Route ===\n");
@@ -55,6 +97,7 @@ public class CreateRouteUI implements Runnable {
 
         // Create list for route stations
         List<Station> routeStations = new ArrayList<>();
+        List<CargoMode> cargoModes = new ArrayList<>();
 
         // Select first station
         Station startStation = selectStation(allStations, "Select the starting station");
@@ -63,6 +106,9 @@ public class CreateRouteUI implements Runnable {
             return;
         }
         routeStations.add(startStation);
+        CargoMode startMode = selectCargoMode(startStation.getNameID());
+        cargoModes.add(startMode);
+        displayRouteStatus(routeStations, cargoModes);
 
         // Keep adding stations until user is done
         boolean addingStations = true;
@@ -88,6 +134,9 @@ public class CreateRouteUI implements Runnable {
             }
 
             routeStations.add(nextStation);
+            CargoMode nextMode = selectCargoMode(nextStation.getNameID());
+            cargoModes.add(nextMode);
+            displayRouteStatus(routeStations, cargoModes);
         }
 
         // Get route name
@@ -98,12 +147,30 @@ public class CreateRouteUI implements Runnable {
         }
 
         // Create the route
-        Route route = controller.createRoute(routeName, routeStations);
+        Route route = controller.createRoute(routeName, routeStations, cargoModes);
         if (route != null) {
             System.out.println("\nRoute created successfully!");
             System.out.println(route);
         } else {
             System.out.println("\nFailed to create route.");
         }
+    }
+
+    private void displayRouteStatus(List<Station> stations, List<CargoMode> modes) {
+        System.out.println("\n╔════════════════════════════════════════════════════════════════╗");
+        System.out.println("║                      CURRENT ROUTE STATUS                      ║");
+        System.out.println("╠════════════════════════════════════════════════════════════════╣");
+        
+        for (int i = 0; i < stations.size(); i++) {
+            Station station = stations.get(i);
+            CargoMode mode = modes.get(i);
+            String stationInfo = String.format("║ %d. %-30s │ %-20s ║", 
+                i + 1, 
+                station.getNameID(),
+                mode.toString());
+            System.out.println(stationInfo);
+        }
+        
+        System.out.println("╚════════════════════════════════════════════════════════════════╝");
     }
 } 

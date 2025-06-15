@@ -371,6 +371,9 @@ public class SimulatorController {
             return false;
         }
         
+        // Reset the simulator's date to the scenario's start date
+        newSimulator.resetDate(currentScenario.getStartDate());
+        
         // Start the new simulator
         boolean started = newSimulator.start();
         

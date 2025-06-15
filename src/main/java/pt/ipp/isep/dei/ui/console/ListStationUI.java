@@ -5,6 +5,8 @@ import pt.ipp.isep.dei.controller.template.ListStationController;
 import pt.ipp.isep.dei.domain.template.Cargo;
 import pt.ipp.isep.dei.domain.template.Map;
 import pt.ipp.isep.dei.domain.template.Station;
+import pt.ipp.isep.dei.domain.template.Route;
+import pt.ipp.isep.dei.domain.template.CargoMode;
 import pt.ipp.isep.dei.ui.console.utils.Utils;
 import pt.ipp.isep.dei.ui.console.menu.MenuItem;
 
@@ -86,6 +88,15 @@ public class ListStationUI implements Runnable {
                 (i+1), 
                 station.getNameID(), 
                 station.getStationType().getName());
+            
+            // Display cargo mode if the station is part of a route
+            Route route = station.getAssignedRoute();
+            if (route != null) {
+                CargoMode mode = route.getCargoModeForStation(station);
+                if (mode != null) {
+                    System.out.printf("   Cargo Mode: %s\n", mode);
+                }
+            }
             
             // Display summary of available cargo
             List<Cargo> availableCargo = station.getAvailableCargo();
