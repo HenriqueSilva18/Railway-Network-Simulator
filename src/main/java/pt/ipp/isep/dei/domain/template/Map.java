@@ -24,6 +24,7 @@ public class Map implements Serializable {
 
     private static final String SCENARIOS_PATH = "docs/mdisc/data";
 
+
     private Map(String nameID, Size size) {
         this.nameID = nameID;
         this.size = size;
