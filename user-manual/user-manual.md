@@ -317,13 +317,13 @@ The system provides a secure authentication system with role-based access contro
 
 - Then it will show a preview of the map:
 
-![EditMap](pngs/EditMap3.png)
+![EditMap](pngs/editMap3.png)
 
 ### 3.2.1 Industry Management
 - Add industries to specific positions on the map
 - Select from available industry types
 - Define industry positions using X,Y coordinates
-
+- Define Map scale (in kms)
 ![AddIndustry](pngs/AddIndustry.png)
 
 ### 3.2.2 City Management
@@ -370,13 +370,9 @@ The system provides a secure authentication system with role-based access contro
 
 ### 3.4 View Scenario Layout
 
-- First asks for the Map and Scenario:
-
+- Asks for the Scenario Layout will be showed:
 ![ViewScenarioLayout](pngs/ViewScenarioLayout1.png)
-
-![ViewScenarioLayout](pngs/ViewScenarioLayout2.png)
-
-- Then the Scenario Layout will be showed:
+ 
 
 ![ViewScenarioLayout](pngs/ViewScenarioLayout3.png)
 
@@ -386,7 +382,9 @@ The system provides a secure authentication system with role-based access contro
 
 ### 4.1. Map & Scenario Selection
 
-Overview
+### **Functionality Overview:**
+
+- Select a Map and a Scenario to play
 
 ### Console Interface
 
@@ -443,6 +441,7 @@ Overview
 
 ### Graphical Interface
 
+
 - #### The Player must navigate and click in the Manage Infrastructure > Build Station:
 
 ![BuildStation](pngs/BuildStationUI1.png)
@@ -480,7 +479,6 @@ Overview
 
 ![UpgradeStation](pngs/UpgradeStation3.png)
 
-![UpgradeStation](pngs/UpgradeStation4.png)
 
 - #### Then it will ask confirmation:
 
@@ -524,8 +522,16 @@ Overview
 
 ### Graphical Interface
 
+- #### Player then needs to choose to build a railway line
 
+![BuildRailwayLine](pngs/BuildRailwayLine4.png)
 
+- #### Then it will ask to select the stations to connect
+
+![BuildRailwayLine](pngs/BuildRailwayLine5.png)
+
+- #### Then it will display it in the map
+![BuildRailwayLine](pngs/BuildRailwayLine6.png)
 
 ### 4.5 Locomotive Management
 - Purchase new locomotives
@@ -534,19 +540,65 @@ Overview
 
 ![CreateRoute](pngs/BuyLocomotive.png)
 
+
+### Graphical Interface
+
+- #### Player then needs to choose to buy a locomotive
+
+![CreateRoute](pngs/Locomotive.png)
+
+- #### Then it will ask to select the locomotive to buy
+
+![CreateRoute](pngs/Locomotive2.png)
+
 ### 4.6 Train Route Management
 - Assign trains to routes
 - Configure cargo pickup at stations
 - Set station sequence
 
-![CreateRoute](pngs/CreateRotue.png)
+![CreateRoute](pngs/CreateRoute.png)
+![CreateRoute](pngs/CreateRoute2.png)
 
-### 4.7 Train List
+### Graphical Interface
+
+- #### Player then needs to choose to create a route
+![CreateRoute](pngs/Route.png)
+- #### Then it will ask to select the stations to connect
+![CreateRoute](pngs/Route2.png)
+
+- #### Then it will be prompt to select the cargo mode for each
+![CreateRoute](pngs/Route3.png)
+
+- #### Finally, it will show the route summary and ask for confirmation
+![CreateRoute](pngs/Route4.png)
+
+### 4.7 Train Assignment
+
+- Assign a purchased locomotive to an existing route
+
+### Graphical Interface
+
+- #### Player then needs to choose to assign a locomotive to a route
+![CreateRoute](pngs/Assignment.png)
+- #### Then it will ask to select the locomotive and the route
+![CreateRoute](pngs/Assignment2.png)
+
+### 4.8 Train List
 - View all trains grouped by locomotive type
 - Sort alphabetically within groups
 - Display:
   - Locomotive details
   - Current cargo status
+
+![CreateRoute](pngs/ViewLocomotives.png)
+
+### Graphical Interface
+- #### Player then needs to choose to view the train list
+![CreateRoute](pngs/TrainList2.png)
+
+- #### Then it will show the list of trains, grouped by locomotive type
+![CreateRoute](pngs/TrainList.png)
+
 
 ## 5. Simulator Features (To be implemented)
 
