@@ -10,7 +10,10 @@ This repository contains comprehensive mathematical and computational analyses i
 
 ## 📚 User Stories & Implementations
 
-### 🔬 [US30 - Curve Fitting Analysis](docs/matcp/US30.ipynb)
+### 🔬 [US30 - Curve Fitting Analysis_IPYNB](docs/matcp/US30.ipynb)
+### 🔬 [US30 - Curve Fitting Analysis_README](docs/matcp/US30.md)
+
+
 **Product Owner Perspective: Optimal Curve Fitting**
 
 > *"As a Product Owner, I want to obtain the best-fitting curve for the previous sample, and see it graphically."*
@@ -33,7 +36,9 @@ This repository contains comprehensive mathematical and computational analyses i
 
 ---
 
-### 📈 [US31 - Revenue Correlation & Predictive Analysis](docs/matcp/US31.ipynb)
+### 📈 [US31 - Revenue Correlation & Predictive Analysis_IPYNB](docs/matcp/US31.ipynb)
+### 📈 [US31 - Revenue Correlation & Predictive Analysis_README](docs/matcp/US31.ipynb)
+
 **Player Perspective: Strategic Revenue Optimization**
 
 > *"As a Player, I want to perform statistical analysis to determine which cargo type contributes most significantly to station revenue."*
