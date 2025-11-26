@@ -1,82 +1,44 @@
-# Project Template
 
-This project template contains didactic artifacts relevant to the Integrative Project to be developed during the second semester of the [Degree in Informatics Engineering (LEI)](https://www.isep.ipp.pt/Course/Course/26) from the [School of Engineering – Polytechnic of Porto (ISEP)](https://www.isep.ipp.pt).
-
-In particular, it has:
-
-* The [Team Members and Task Distribution](docs/TeamMembersAndTasks.md) during sprints;
-* [Templates](docs/(template-files)) to capture and systematize evidence of proper application of the Software Development Process, namely regarding the activities of Requirements Engineering, OO Analysis and Design;
-* [Sample documentation](docs/outsourcing-tasks-example) and [source code](src) available as a starting point;
-* General description of how the provided application works (and it is structured).
+<h1>Railway Network Simulator</h1>
 
 
-## Maven goals
+<br />
+<h3>My Role 👨‍💻</h3>
+<p><strong>Responsible for software design/dev components, statistical analysis, and project management.</strong></p>
 
-### Run the unit tests
-```
-mvn clean test
-```
+<h2>Description</h2>
+This project is a comprehensive Railway Network Simulator developed in Java, designed to manage complex railway topologies, optimize routes, and simulate train logistics. Developed within the scope of the Informatics Engineering degree at ISEP, the system allows 'administrators' to define network topologies (stations, lines, connections) and manage resources. It enables 'players' to operate trains, manage cargo, and execute simulation scenarios based on real-world constraints. The application features both a Console UI and a Graphical User Interface (JavaFX).
+<br />
 
-### Generate javadoc for the source code
-```
-mvn javadoc:javadoc
-```
+<h2>Technologies Used</h2>
+<ul>
+<li>Programming Language: Java</li>
+<li>Build Tool: Maven</li>
+<li>GUI Framework: JavaFX (`.fxml` files)</li>
+<li>Testing: JUnit & Jacoco</li>
+<li>Algorithms: Dijkstra, Fleury, and Matrix manipulation for graph analysis</li>
+<li>Data Storage: CSV and Text file manipulation for persistence</li>
+</ul>
 
-### Generate javadoc for the test code
-```
-mvn javadoc:test-javadoc
-```
 
-### Generate Jacoco source code coverage report
-```
-mvn test jacoco:report
-```
+<h2>Features</h2>
+<ul>
+<li><strong>Network Topology Management</strong>: Create maps, build railway lines, add cities, and manage station upgrades.</li>
+<li><strong>Resource Management</strong>: Purchase and manage locomotives, carriages, and organize trains.</li>
+<li><strong>Simulation Engine</strong>: Execute simulations of train movements, schedule management, and cargo transport.</li>
+<li><strong>Graph Theory Algorithms</strong>: Calculate shortest paths, minimum spanning trees, and analyze network connectivity (e.g., identifying articulation points).</li>
+<li><strong>Dual User Interfaces</strong>: Full support for both a text-based Console UI and a visual GUI for map rendering.</li>
+</ul>
 
-### Check if thresholds limits are achieved
-```
-mvn test jacoco:check
-```
 
-## How to generate a Jar package for the project
+<h2>Project Structure</h2>
+<ul>
+<li><code>src/main/java/.../Main.java</code> & <code>MainApp.java</code>: The entry points for the Console and JavaFX applications respectively.</li>
+<li><code>domain/</code>: Core business logic classes including <code>Station</code>, <code>RailwayLine</code>, <code>Train</code>, and <code>Map</code>.</li>
+<li><code>controller/</code>: Orchestrates logic between the UI and the Domain (e.g., <code>CreateMapController</code>, <code>SimulatorController</code>).</li>
+<li><code>mdisc/</code>: Contains specific algorithms for discrete mathematics tasks like <code>DijkstraAlgorithm</code> and <code>FleuryAlgorithm</code>.</li>
+<li><code>repository/</code>: Handles data persistence and in-memory storage for objects like <code>MapRepository</code> and <code>TrainRepository</code>.</li>
+<li><code>ui/gui/</code> & <code>ui/console/</code>: Handles user interactions, including the rendering of map visualizations and dialog menus.</li>
+</ul>
 
-Place the following plugin on the appropriate place of the pom.xml file.
-
-```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-assembly-plugin</artifactId>
-    <version>3.6.0</version>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>single</goal>
-            </goals>
-            <configuration>
-                <archive>
-                    <manifest>
-                        <mainClass>pt.ipp.isep.dei.esoft.project.ui.Main</mainClass>
-                    </manifest>
-                </archive>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-Run the following command on the project root folder. You can use IntelliJ to run the command or the command line of your computer if you hav Maven installed.
-
-```
-mvn package
-```
-
-## How to run the project from the generated Jar Package
-
-Run the following command on the project root folder. You can use IntelliJ to run the command or the command line of your computer if you hav Maven installed.
-
-```
-java -jar target/project-template-1.0-SNAPSHOT-jar-with-dependencies.jar
-```
+Responsible for:
